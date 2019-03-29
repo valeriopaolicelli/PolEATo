@@ -1,0 +1,11 @@
+#Internal package file, do not edit.
+#Thu Mar 28 22:07:46 CET 2019
+1.base=/home/matte/github/PolEATo/restaurateur/build/intermediates/dex/debug/mergeExtDexDebug/out
+0.baseType=DIRECTORY
+1.baseType=DIRECTORY
+count=2
+1.set=DEX
+0.path=classes.dex
+0.set=DEX
+0.base=/home/matte/github/PolEATo/restaurateur/build/intermediates/dex/debug/mergeProjectDexDebug/out
+1.path=classes.dex

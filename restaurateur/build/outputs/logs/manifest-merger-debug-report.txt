@@ -1,0 +1,154 @@
+-- Merging decision tree log ---
+manifest
+ADDED from /home/matte/github/PolEATo/restaurateur/src/main/AndroidManifest.xml:2:1-21:12
+INJECTED from /home/matte/github/PolEATo/restaurateur/src/main/AndroidManifest.xml:2:1-21:12
+INJECTED from /home/matte/github/PolEATo/restaurateur/src/main/AndroidManifest.xml:2:1-21:12
+INJECTED from /home/matte/github/PolEATo/restaurateur/src/main/AndroidManifest.xml:2:1-21:12
+MERGED from [com.android.support:appcompat-v7:28.0.0] /home/matte/.gradle/caches/transforms-1/files-1.1/appcompat-v7-28.0.0.aar/9cf0eb628ddae5e4214a2e0252788010/AndroidManifest.xml:17:1-22:12
+MERGED from [com.android.support.constraint:constraint-layout:1.1.3] /home/matte/.gradle/caches/transforms-1/files-1.1/constraint-layout-1.1.3.aar/c54ae1d6a1dcae9e1d6f235d47ab91d5/AndroidManifest.xml:2:1-11:12
+MERGED from [com.android.support:support-fragment:28.0.0] /home/matte/.gradle/caches/transforms-1/files-1.1/support-fragment-28.0.0.aar/4b280ffc3e0a526a8929920510983fe5/AndroidManifest.xml:17:1-22:12
+MERGED from [com.android.support:animated-vector-drawable:28.0.0] /home/matte/.gradle/caches/transforms-1/files-1.1/animated-vector-drawable-28.0.0.aar/f2bca8a2f3e8590f2d40942ef2ff8444/AndroidManifest.xml:17:1-22:12
+MERGED from [com.android.support:support-core-ui:28.0.0] /home/matte/.gradle/caches/transforms-1/files-1.1/support-core-ui-28.0.0.aar/0b362135f6aae5c087b9bd28f7942e9d/AndroidManifest.xml:17:1-22:12
+MERGED from [com.android.support:support-core-utils:28.0.0] /home/matte/.gradle/caches/transforms-1/files-1.1/support-core-utils-28.0.0.aar/78d13d6a77800dd5ab5f5a3ae73ab3eb/AndroidManifest.xml:17:1-22:12
+MERGED from [com.android.support:support-vector-drawable:28.0.0] /home/matte/.gradle/caches/transforms-1/files-1.1/support-vector-drawable-28.0.0.aar/f964005b3d6c956e0d70061b12090ff3/AndroidManifest.xml:17:1-22:12
+MERGED from [com.android.support:loader:28.0.0] /home/matte/.gradle/caches/transforms-1/files-1.1/loader-28.0.0.aar/fe439091f3e74106c66490406c2ac35c/AndroidManifest.xml:17:1-22:12
+MERGED from [com.android.support:viewpager:28.0.0] /home/matte/.gradle/caches/transforms-1/files-1.1/viewpager-28.0.0.aar/d25179ffdd9ea4be789c3dd5be1193dc/AndroidManifest.xml:17:1-22:12
+MERGED from [com.android.support:coordinatorlayout:28.0.0] /home/matte/.gradle/caches/transforms-1/files-1.1/coordinatorlayout-28.0.0.aar/216f91a989d2df7ddfdac56f0724f5ab/AndroidManifest.xml:17:1-22:12
+MERGED from [com.android.support:drawerlayout:28.0.0] /home/matte/.gradle/caches/transforms-1/files-1.1/drawerlayout-28.0.0.aar/94a8a9ea040107b2e30c5b874b8cf2dc/AndroidManifest.xml:17:1-22:12
+MERGED from [com.android.support:slidingpanelayout:28.0.0] /home/matte/.gradle/caches/transforms-1/files-1.1/slidingpanelayout-28.0.0.aar/bc919aa626ab54b1ac8d774b450dfc86/AndroidManifest.xml:17:1-22:12
+MERGED from [com.android.support:customview:28.0.0] /home/matte/.gradle/caches/transforms-1/files-1.1/customview-28.0.0.aar/449e0b3d3d30a5649958e6a9f9cad1ca/AndroidManifest.xml:17:1-22:12
+MERGED from [com.android.support:swiperefreshlayout:28.0.0] /home/matte/.gradle/caches/transforms-1/files-1.1/swiperefreshlayout-28.0.0.aar/459923875d4a19656a7b7f310a016279/AndroidManifest.xml:17:1-22:12
+MERGED from [com.android.support:asynclayoutinflater:28.0.0] /home/matte/.gradle/caches/transforms-1/files-1.1/asynclayoutinflater-28.0.0.aar/2f51624e14a889b9f3f91412fe1a725c/AndroidManifest.xml:17:1-22:12
+MERGED from [com.android.support:support-compat:28.0.0] /home/matte/.gradle/caches/transforms-1/files-1.1/support-compat-28.0.0.aar/9a1ca0d2314bd32f26a4922d4033ecdb/AndroidManifest.xml:17:1-24:12
+MERGED from [com.android.support:versionedparcelable:28.0.0] /home/matte/.gradle/caches/transforms-1/files-1.1/versionedparcelable-28.0.0.aar/a6e05e906c83791a1dbd19f267903e4c/AndroidManifest.xml:17:1-25:12
+MERGED from [com.android.support:cursoradapter:28.0.0] /home/matte/.gradle/caches/transforms-1/files-1.1/cursoradapter-28.0.0.aar/74cd5cea971a45f11cde1b53c7327b0d/AndroidManifest.xml:17:1-22:12
+MERGED from [android.arch.lifecycle:runtime:1.1.1] /home/matte/.gradle/caches/transforms-1/files-1.1/runtime-1.1.1.aar/cceec237048f68d1bce0b1cdf0ac8b1d/AndroidManifest.xml:17:1-22:12
+MERGED from [com.android.support:documentfile:28.0.0] /home/matte/.gradle/caches/transforms-1/files-1.1/documentfile-28.0.0.aar/88c99c644d6684d7eb12296783887594/AndroidManifest.xml:17:1-22:12
+MERGED from [com.android.support:localbroadcastmanager:28.0.0] /home/matte/.gradle/caches/transforms-1/files-1.1/localbroadcastmanager-28.0.0.aar/e7a7b52854364eaa194914de7c0ea003/AndroidManifest.xml:17:1-22:12
+MERGED from [com.android.support:print:28.0.0] /home/matte/.gradle/caches/transforms-1/files-1.1/print-28.0.0.aar/446c0b66a0bcbd14cbc54a2df95411b8/AndroidManifest.xml:17:1-22:12
+MERGED from [android.arch.lifecycle:viewmodel:1.1.1] /home/matte/.gradle/caches/transforms-1/files-1.1/viewmodel-1.1.1.aar/9044a972cfe6bf0ee58a958219970d7d/AndroidManifest.xml:17:1-22:12
+MERGED from [android.arch.lifecycle:livedata:1.1.1] /home/matte/.gradle/caches/transforms-1/files-1.1/livedata-1.1.1.aar/4b7687dc4d1610f8c86a15262183da2c/AndroidManifest.xml:17:1-22:12
+MERGED from [android.arch.lifecycle:livedata-core:1.1.1] /home/matte/.gradle/caches/transforms-1/files-1.1/livedata-core-1.1.1.aar/1904a949a2e3429a88774168b0077931/AndroidManifest.xml:17:1-22:12
+MERGED from [android.arch.core:runtime:1.1.1] /home/matte/.gradle/caches/transforms-1/files-1.1/runtime-1.1.1.aar/f4ff8f99b2fe3ae2840cf4a117e8dfd2/AndroidManifest.xml:17:1-22:12
+MERGED from [com.android.support:interpolator:28.0.0] /home/matte/.gradle/caches/transforms-1/files-1.1/interpolator-28.0.0.aar/f385cfc51f9e019dec714de55c5439cc/AndroidManifest.xml:17:1-22:12
+INJECTED from /home/matte/github/PolEATo/restaurateur/src/main/AndroidManifest.xml:2:1-21:12
+INJECTED from /home/matte/github/PolEATo/restaurateur/src/main/AndroidManifest.xml:2:1-21:12
+INJECTED from /home/matte/github/PolEATo/restaurateur/src/main/AndroidManifest.xml:2:1-21:12
+	package
+		ADDED from /home/matte/github/PolEATo/restaurateur/src/main/AndroidManifest.xml:3:5-41
+		INJECTED from /home/matte/github/PolEATo/restaurateur/src/main/AndroidManifest.xml
+		INJECTED from /home/matte/github/PolEATo/restaurateur/src/main/AndroidManifest.xml
+	android:versionName
+		INJECTED from /home/matte/github/PolEATo/restaurateur/src/main/AndroidManifest.xml
+		ADDED from /home/matte/github/PolEATo/restaurateur/src/main/AndroidManifest.xml:2:1-21:12
+		INJECTED from /home/matte/github/PolEATo/restaurateur/src/main/AndroidManifest.xml
+	android:versionCode
+		INJECTED from /home/matte/github/PolEATo/restaurateur/src/main/AndroidManifest.xml
+		ADDED from /home/matte/github/PolEATo/restaurateur/src/main/AndroidManifest.xml:2:1-21:12
+		INJECTED from /home/matte/github/PolEATo/restaurateur/src/main/AndroidManifest.xml
+	xmlns:android
+		ADDED from /home/matte/github/PolEATo/restaurateur/src/main/AndroidManifest.xml:2:11-69
+application
+ADDED from /home/matte/github/PolEATo/restaurateur/src/main/AndroidManifest.xml:5:5-19:19
+MERGED from [com.android.support.constraint:constraint-layout:1.1.3] /home/matte/.gradle/caches/transforms-1/files-1.1/constraint-layout-1.1.3.aar/c54ae1d6a1dcae9e1d6f235d47ab91d5/AndroidManifest.xml:9:5-20
+MERGED from [com.android.support.constraint:constraint-layout:1.1.3] /home/matte/.gradle/caches/transforms-1/files-1.1/constraint-layout-1.1.3.aar/c54ae1d6a1dcae9e1d6f235d47ab91d5/AndroidManifest.xml:9:5-20
+MERGED from [com.android.support:support-compat:28.0.0] /home/matte/.gradle/caches/transforms-1/files-1.1/support-compat-28.0.0.aar/9a1ca0d2314bd32f26a4922d4033ecdb/AndroidManifest.xml:22:5-94
+MERGED from [com.android.support:support-compat:28.0.0] /home/matte/.gradle/caches/transforms-1/files-1.1/support-compat-28.0.0.aar/9a1ca0d2314bd32f26a4922d4033ecdb/AndroidManifest.xml:22:5-94
+MERGED from [com.android.support:versionedparcelable:28.0.0] /home/matte/.gradle/caches/transforms-1/files-1.1/versionedparcelable-28.0.0.aar/a6e05e906c83791a1dbd19f267903e4c/AndroidManifest.xml:22:5-23:19
+MERGED from [com.android.support:versionedparcelable:28.0.0] /home/matte/.gradle/caches/transforms-1/files-1.1/versionedparcelable-28.0.0.aar/a6e05e906c83791a1dbd19f267903e4c/AndroidManifest.xml:22:5-23:19
+	android:appComponentFactory
+		ADDED from [com.android.support:support-compat:28.0.0] /home/matte/.gradle/caches/transforms-1/files-1.1/support-compat-28.0.0.aar/9a1ca0d2314bd32f26a4922d4033ecdb/AndroidManifest.xml:22:18-91
+	android:supportsRtl
+		ADDED from /home/matte/github/PolEATo/restaurateur/src/main/AndroidManifest.xml:10:9-35
+	android:label
+		ADDED from /home/matte/github/PolEATo/restaurateur/src/main/AndroidManifest.xml:8:9-41
+	android:roundIcon
+		ADDED from /home/matte/github/PolEATo/restaurateur/src/main/AndroidManifest.xml:9:9-54
+	android:icon
+		ADDED from /home/matte/github/PolEATo/restaurateur/src/main/AndroidManifest.xml:7:9-43
+	android:allowBackup
+		ADDED from /home/matte/github/PolEATo/restaurateur/src/main/AndroidManifest.xml:6:9-35
+	android:theme
+		ADDED from /home/matte/github/PolEATo/restaurateur/src/main/AndroidManifest.xml:11:9-40
+activity#it.polito.mad.restaurateur.MainActivity
+ADDED from /home/matte/github/PolEATo/restaurateur/src/main/AndroidManifest.xml:12:9-18:20
+	android:name
+		ADDED from /home/matte/github/PolEATo/restaurateur/src/main/AndroidManifest.xml:12:19-47
+intent-filter#action:name:android.intent.action.MAIN+category:name:android.intent.category.LAUNCHER
+ADDED from /home/matte/github/PolEATo/restaurateur/src/main/AndroidManifest.xml:13:13-17:29
+action#android.intent.action.MAIN
+ADDED from /home/matte/github/PolEATo/restaurateur/src/main/AndroidManifest.xml:14:17-69
+	android:name
+		ADDED from /home/matte/github/PolEATo/restaurateur/src/main/AndroidManifest.xml:14:25-66
+category#android.intent.category.LAUNCHER
+ADDED from /home/matte/github/PolEATo/restaurateur/src/main/AndroidManifest.xml:16:17-77
+	android:name
+		ADDED from /home/matte/github/PolEATo/restaurateur/src/main/AndroidManifest.xml:16:27-74
+uses-sdk
+INJECTED from /home/matte/github/PolEATo/restaurateur/src/main/AndroidManifest.xml reason: use-sdk injection requested
+INJECTED from /home/matte/github/PolEATo/restaurateur/src/main/AndroidManifest.xml
+INJECTED from /home/matte/github/PolEATo/restaurateur/src/main/AndroidManifest.xml
+MERGED from [com.android.support:appcompat-v7:28.0.0] /home/matte/.gradle/caches/transforms-1/files-1.1/appcompat-v7-28.0.0.aar/9cf0eb628ddae5e4214a2e0252788010/AndroidManifest.xml:20:5-44
+MERGED from [com.android.support:appcompat-v7:28.0.0] /home/matte/.gradle/caches/transforms-1/files-1.1/appcompat-v7-28.0.0.aar/9cf0eb628ddae5e4214a2e0252788010/AndroidManifest.xml:20:5-44
+MERGED from [com.android.support.constraint:constraint-layout:1.1.3] /home/matte/.gradle/caches/transforms-1/files-1.1/constraint-layout-1.1.3.aar/c54ae1d6a1dcae9e1d6f235d47ab91d5/AndroidManifest.xml:5:5-7:41
+MERGED from [com.android.support.constraint:constraint-layout:1.1.3] /home/matte/.gradle/caches/transforms-1/files-1.1/constraint-layout-1.1.3.aar/c54ae1d6a1dcae9e1d6f235d47ab91d5/AndroidManifest.xml:5:5-7:41
+MERGED from [com.android.support:support-fragment:28.0.0] /home/matte/.gradle/caches/transforms-1/files-1.1/support-fragment-28.0.0.aar/4b280ffc3e0a526a8929920510983fe5/AndroidManifest.xml:20:5-44
+MERGED from [com.android.support:support-fragment:28.0.0] /home/matte/.gradle/caches/transforms-1/files-1.1/support-fragment-28.0.0.aar/4b280ffc3e0a526a8929920510983fe5/AndroidManifest.xml:20:5-44
+MERGED from [com.android.support:animated-vector-drawable:28.0.0] /home/matte/.gradle/caches/transforms-1/files-1.1/animated-vector-drawable-28.0.0.aar/f2bca8a2f3e8590f2d40942ef2ff8444/AndroidManifest.xml:20:5-44
+MERGED from [com.android.support:animated-vector-drawable:28.0.0] /home/matte/.gradle/caches/transforms-1/files-1.1/animated-vector-drawable-28.0.0.aar/f2bca8a2f3e8590f2d40942ef2ff8444/AndroidManifest.xml:20:5-44
+MERGED from [com.android.support:support-core-ui:28.0.0] /home/matte/.gradle/caches/transforms-1/files-1.1/support-core-ui-28.0.0.aar/0b362135f6aae5c087b9bd28f7942e9d/AndroidManifest.xml:20:5-44
+MERGED from [com.android.support:support-core-ui:28.0.0] /home/matte/.gradle/caches/transforms-1/files-1.1/support-core-ui-28.0.0.aar/0b362135f6aae5c087b9bd28f7942e9d/AndroidManifest.xml:20:5-44
+MERGED from [com.android.support:support-core-utils:28.0.0] /home/matte/.gradle/caches/transforms-1/files-1.1/support-core-utils-28.0.0.aar/78d13d6a77800dd5ab5f5a3ae73ab3eb/AndroidManifest.xml:20:5-44
+MERGED from [com.android.support:support-core-utils:28.0.0] /home/matte/.gradle/caches/transforms-1/files-1.1/support-core-utils-28.0.0.aar/78d13d6a77800dd5ab5f5a3ae73ab3eb/AndroidManifest.xml:20:5-44
+MERGED from [com.android.support:support-vector-drawable:28.0.0] /home/matte/.gradle/caches/transforms-1/files-1.1/support-vector-drawable-28.0.0.aar/f964005b3d6c956e0d70061b12090ff3/AndroidManifest.xml:20:5-44
+MERGED from [com.android.support:support-vector-drawable:28.0.0] /home/matte/.gradle/caches/transforms-1/files-1.1/support-vector-drawable-28.0.0.aar/f964005b3d6c956e0d70061b12090ff3/AndroidManifest.xml:20:5-44
+MERGED from [com.android.support:loader:28.0.0] /home/matte/.gradle/caches/transforms-1/files-1.1/loader-28.0.0.aar/fe439091f3e74106c66490406c2ac35c/AndroidManifest.xml:20:5-44
+MERGED from [com.android.support:loader:28.0.0] /home/matte/.gradle/caches/transforms-1/files-1.1/loader-28.0.0.aar/fe439091f3e74106c66490406c2ac35c/AndroidManifest.xml:20:5-44
+MERGED from [com.android.support:viewpager:28.0.0] /home/matte/.gradle/caches/transforms-1/files-1.1/viewpager-28.0.0.aar/d25179ffdd9ea4be789c3dd5be1193dc/AndroidManifest.xml:20:5-44
+MERGED from [com.android.support:viewpager:28.0.0] /home/matte/.gradle/caches/transforms-1/files-1.1/viewpager-28.0.0.aar/d25179ffdd9ea4be789c3dd5be1193dc/AndroidManifest.xml:20:5-44
+MERGED from [com.android.support:coordinatorlayout:28.0.0] /home/matte/.gradle/caches/transforms-1/files-1.1/coordinatorlayout-28.0.0.aar/216f91a989d2df7ddfdac56f0724f5ab/AndroidManifest.xml:20:5-44
+MERGED from [com.android.support:coordinatorlayout:28.0.0] /home/matte/.gradle/caches/transforms-1/files-1.1/coordinatorlayout-28.0.0.aar/216f91a989d2df7ddfdac56f0724f5ab/AndroidManifest.xml:20:5-44
+MERGED from [com.android.support:drawerlayout:28.0.0] /home/matte/.gradle/caches/transforms-1/files-1.1/drawerlayout-28.0.0.aar/94a8a9ea040107b2e30c5b874b8cf2dc/AndroidManifest.xml:20:5-44
+MERGED from [com.android.support:drawerlayout:28.0.0] /home/matte/.gradle/caches/transforms-1/files-1.1/drawerlayout-28.0.0.aar/94a8a9ea040107b2e30c5b874b8cf2dc/AndroidManifest.xml:20:5-44
+MERGED from [com.android.support:slidingpanelayout:28.0.0] /home/matte/.gradle/caches/transforms-1/files-1.1/slidingpanelayout-28.0.0.aar/bc919aa626ab54b1ac8d774b450dfc86/AndroidManifest.xml:20:5-44
+MERGED from [com.android.support:slidingpanelayout:28.0.0] /home/matte/.gradle/caches/transforms-1/files-1.1/slidingpanelayout-28.0.0.aar/bc919aa626ab54b1ac8d774b450dfc86/AndroidManifest.xml:20:5-44
+MERGED from [com.android.support:customview:28.0.0] /home/matte/.gradle/caches/transforms-1/files-1.1/customview-28.0.0.aar/449e0b3d3d30a5649958e6a9f9cad1ca/AndroidManifest.xml:20:5-44
+MERGED from [com.android.support:customview:28.0.0] /home/matte/.gradle/caches/transforms-1/files-1.1/customview-28.0.0.aar/449e0b3d3d30a5649958e6a9f9cad1ca/AndroidManifest.xml:20:5-44
+MERGED from [com.android.support:swiperefreshlayout:28.0.0] /home/matte/.gradle/caches/transforms-1/files-1.1/swiperefreshlayout-28.0.0.aar/459923875d4a19656a7b7f310a016279/AndroidManifest.xml:20:5-44
+MERGED from [com.android.support:swiperefreshlayout:28.0.0] /home/matte/.gradle/caches/transforms-1/files-1.1/swiperefreshlayout-28.0.0.aar/459923875d4a19656a7b7f310a016279/AndroidManifest.xml:20:5-44
+MERGED from [com.android.support:asynclayoutinflater:28.0.0] /home/matte/.gradle/caches/transforms-1/files-1.1/asynclayoutinflater-28.0.0.aar/2f51624e14a889b9f3f91412fe1a725c/AndroidManifest.xml:20:5-44
+MERGED from [com.android.support:asynclayoutinflater:28.0.0] /home/matte/.gradle/caches/transforms-1/files-1.1/asynclayoutinflater-28.0.0.aar/2f51624e14a889b9f3f91412fe1a725c/AndroidManifest.xml:20:5-44
+MERGED from [com.android.support:support-compat:28.0.0] /home/matte/.gradle/caches/transforms-1/files-1.1/support-compat-28.0.0.aar/9a1ca0d2314bd32f26a4922d4033ecdb/AndroidManifest.xml:20:5-44
+MERGED from [com.android.support:support-compat:28.0.0] /home/matte/.gradle/caches/transforms-1/files-1.1/support-compat-28.0.0.aar/9a1ca0d2314bd32f26a4922d4033ecdb/AndroidManifest.xml:20:5-44
+MERGED from [com.android.support:versionedparcelable:28.0.0] /home/matte/.gradle/caches/transforms-1/files-1.1/versionedparcelable-28.0.0.aar/a6e05e906c83791a1dbd19f267903e4c/AndroidManifest.xml:20:5-44
+MERGED from [com.android.support:versionedparcelable:28.0.0] /home/matte/.gradle/caches/transforms-1/files-1.1/versionedparcelable-28.0.0.aar/a6e05e906c83791a1dbd19f267903e4c/AndroidManifest.xml:20:5-44
+MERGED from [com.android.support:cursoradapter:28.0.0] /home/matte/.gradle/caches/transforms-1/files-1.1/cursoradapter-28.0.0.aar/74cd5cea971a45f11cde1b53c7327b0d/AndroidManifest.xml:20:5-44
+MERGED from [com.android.support:cursoradapter:28.0.0] /home/matte/.gradle/caches/transforms-1/files-1.1/cursoradapter-28.0.0.aar/74cd5cea971a45f11cde1b53c7327b0d/AndroidManifest.xml:20:5-44
+MERGED from [android.arch.lifecycle:runtime:1.1.1] /home/matte/.gradle/caches/transforms-1/files-1.1/runtime-1.1.1.aar/cceec237048f68d1bce0b1cdf0ac8b1d/AndroidManifest.xml:20:5-44
+MERGED from [android.arch.lifecycle:runtime:1.1.1] /home/matte/.gradle/caches/transforms-1/files-1.1/runtime-1.1.1.aar/cceec237048f68d1bce0b1cdf0ac8b1d/AndroidManifest.xml:20:5-44
+MERGED from [com.android.support:documentfile:28.0.0] /home/matte/.gradle/caches/transforms-1/files-1.1/documentfile-28.0.0.aar/88c99c644d6684d7eb12296783887594/AndroidManifest.xml:20:5-44
+MERGED from [com.android.support:documentfile:28.0.0] /home/matte/.gradle/caches/transforms-1/files-1.1/documentfile-28.0.0.aar/88c99c644d6684d7eb12296783887594/AndroidManifest.xml:20:5-44
+MERGED from [com.android.support:localbroadcastmanager:28.0.0] /home/matte/.gradle/caches/transforms-1/files-1.1/localbroadcastmanager-28.0.0.aar/e7a7b52854364eaa194914de7c0ea003/AndroidManifest.xml:20:5-44
+MERGED from [com.android.support:localbroadcastmanager:28.0.0] /home/matte/.gradle/caches/transforms-1/files-1.1/localbroadcastmanager-28.0.0.aar/e7a7b52854364eaa194914de7c0ea003/AndroidManifest.xml:20:5-44
+MERGED from [com.android.support:print:28.0.0] /home/matte/.gradle/caches/transforms-1/files-1.1/print-28.0.0.aar/446c0b66a0bcbd14cbc54a2df95411b8/AndroidManifest.xml:20:5-44
+MERGED from [com.android.support:print:28.0.0] /home/matte/.gradle/caches/transforms-1/files-1.1/print-28.0.0.aar/446c0b66a0bcbd14cbc54a2df95411b8/AndroidManifest.xml:20:5-44
+MERGED from [android.arch.lifecycle:viewmodel:1.1.1] /home/matte/.gradle/caches/transforms-1/files-1.1/viewmodel-1.1.1.aar/9044a972cfe6bf0ee58a958219970d7d/AndroidManifest.xml:20:5-44
+MERGED from [android.arch.lifecycle:viewmodel:1.1.1] /home/matte/.gradle/caches/transforms-1/files-1.1/viewmodel-1.1.1.aar/9044a972cfe6bf0ee58a958219970d7d/AndroidManifest.xml:20:5-44
+MERGED from [android.arch.lifecycle:livedata:1.1.1] /home/matte/.gradle/caches/transforms-1/files-1.1/livedata-1.1.1.aar/4b7687dc4d1610f8c86a15262183da2c/AndroidManifest.xml:20:5-44
+MERGED from [android.arch.lifecycle:livedata:1.1.1] /home/matte/.gradle/caches/transforms-1/files-1.1/livedata-1.1.1.aar/4b7687dc4d1610f8c86a15262183da2c/AndroidManifest.xml:20:5-44
+MERGED from [android.arch.lifecycle:livedata-core:1.1.1] /home/matte/.gradle/caches/transforms-1/files-1.1/livedata-core-1.1.1.aar/1904a949a2e3429a88774168b0077931/AndroidManifest.xml:20:5-44
+MERGED from [android.arch.lifecycle:livedata-core:1.1.1] /home/matte/.gradle/caches/transforms-1/files-1.1/livedata-core-1.1.1.aar/1904a949a2e3429a88774168b0077931/AndroidManifest.xml:20:5-44
+MERGED from [android.arch.core:runtime:1.1.1] /home/matte/.gradle/caches/transforms-1/files-1.1/runtime-1.1.1.aar/f4ff8f99b2fe3ae2840cf4a117e8dfd2/AndroidManifest.xml:20:5-44
+MERGED from [android.arch.core:runtime:1.1.1] /home/matte/.gradle/caches/transforms-1/files-1.1/runtime-1.1.1.aar/f4ff8f99b2fe3ae2840cf4a117e8dfd2/AndroidManifest.xml:20:5-44
+MERGED from [com.android.support:interpolator:28.0.0] /home/matte/.gradle/caches/transforms-1/files-1.1/interpolator-28.0.0.aar/f385cfc51f9e019dec714de55c5439cc/AndroidManifest.xml:20:5-44
+MERGED from [com.android.support:interpolator:28.0.0] /home/matte/.gradle/caches/transforms-1/files-1.1/interpolator-28.0.0.aar/f385cfc51f9e019dec714de55c5439cc/AndroidManifest.xml:20:5-44
+INJECTED from /home/matte/github/PolEATo/restaurateur/src/main/AndroidManifest.xml
+INJECTED from /home/matte/github/PolEATo/restaurateur/src/main/AndroidManifest.xml
+	android:targetSdkVersion
+		INJECTED from /home/matte/github/PolEATo/restaurateur/src/main/AndroidManifest.xml
+		ADDED from /home/matte/github/PolEATo/restaurateur/src/main/AndroidManifest.xml
+		INJECTED from /home/matte/github/PolEATo/restaurateur/src/main/AndroidManifest.xml
+	android:minSdkVersion
+		INJECTED from /home/matte/github/PolEATo/restaurateur/src/main/AndroidManifest.xml
+		ADDED from /home/matte/github/PolEATo/restaurateur/src/main/AndroidManifest.xml
+		INJECTED from /home/matte/github/PolEATo/restaurateur/src/main/AndroidManifest.xml
