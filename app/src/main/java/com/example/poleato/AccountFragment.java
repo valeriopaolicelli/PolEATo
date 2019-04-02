@@ -19,13 +19,14 @@ public class AccountFragment extends Fragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.account_frag, container,false);
-        btnTEST = (Button) view.findViewById(R.id.btnAccountFrag);
+        View view = inflater.inflate(R.layout.account_frag_layout, container,false);
+        btnTEST = (Button) view.findViewById(R.id.btnNavOffFrag);
 
         btnTEST.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Toast.makeText(getActivity(), "TESTING BUTTON ACCOUNT",Toast.LENGTH_SHORT).show();
+                ((MainActivity)getActivity()).setViewPager(3);
             }
         });
 
