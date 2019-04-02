@@ -1,38 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout
-    xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".MainActivity">
 
     <TextView
-        android:id="@+id/textTitle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="40dp"
-        android:text="Welcome to account frag"
-        android:textSize="25sp" />
-
-    <Button
-        android:id="@+id/btnNavOffFrag"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/textTitle"
-        android:layout_marginTop="183dp"
-        android:text="Go to offer_frag" />
-
-    <Button
-        android:id="@+id/btnNavResFrag"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/btnNavOffFrag"
-        android:layout_marginTop="10dp"
-        android:text="Go to reservation frag" />
-
-    <Button
-        android:id="@+id/btnNavAccountFrag"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/btnNavResFrag"
-        android:layout_marginTop="344dp"
-        android:text="Go to account_frag" />
+        android:text="Account"/>
 
 </RelativeLayout>

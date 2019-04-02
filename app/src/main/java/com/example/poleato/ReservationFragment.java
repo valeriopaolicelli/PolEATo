@@ -16,21 +16,11 @@ import android.widget.Toast;
 public class ReservationFragment extends Fragment {
     private static final String TAG = "Tab1Fragment";
 
-    private Button btnOffNav;
 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.reservation_frag_layout,container,false);
-        btnOffNav = view.findViewById(R.id.btnNavOffFrag);
-
-        btnOffNav.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Toast.makeText(getActivity(), "Go to offer Frag",Toast.LENGTH_SHORT).show();
-                ((MainActivity)getActivity()).setViewPager(1);
-            }
-        });
 
         return view;
     }

@@ -15,21 +15,9 @@ import android.widget.Toast;
 public class AccountFragment extends Fragment {
     private static final String TAG = "Tab1Fragment";
 
-    private Button btnTEST;
-
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.account_frag_layout, container,false);
-        btnTEST = (Button) view.findViewById(R.id.btnNavOffFrag);
-
-        btnTEST.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Toast.makeText(getActivity(), "TESTING BUTTON ACCOUNT",Toast.LENGTH_SHORT).show();
-                ((MainActivity)getActivity()).setViewPager(3);
-            }
-        });
-
         return view;
     }
 }
