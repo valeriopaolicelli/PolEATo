@@ -1,0 +1,4 @@
+#Mon Apr 01 12:09:22 CEST 2019
+base.0=/home/matte/github/PolEATo/deliveryman/build/intermediates/transforms/dexMerger/debug/6
+path.0=classes.dex
+renamed.0=classes.dex
