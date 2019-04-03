@@ -21,4 +21,8 @@
     <string name="camera">Camera</string>
     <string name="gallery">Gallery</string>
     <string name="edit">Edit Profile</string>
+    <string name="starters">Starters</string>
+    <string name="firsts">Firsts</string>
+    <string name="seconds">Seconds</string>
+    <string name="desserts">Desserts</string>
 </resources>
