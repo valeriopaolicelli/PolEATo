@@ -5,6 +5,7 @@ import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -15,19 +16,23 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        Toolbar toolbar= (Toolbar) findViewById(R.id.toolbar);
-        TabLayout tabLayout= (TabLayout) findViewById(R.id.tabs);
+        Toolbar toolbar= findViewById(R.id.toolbar);
+        TabLayout tabLayout= findViewById(R.id.tabs);
 
         setSupportActionBar(toolbar);
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-
+        if(getSupportActionBar()!= null)
+            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        else{
+            Log.d("Error", "getSupportActionBar is null");
+            finish();
+        }
         onViewPager = findViewById(R.id.container);
-        setUpViewPager(onViewPager);
+        addFragmentToAdapter();
 
         tabLayout.setupWithViewPager(onViewPager);
     }
 
-    private void setUpViewPager( ViewPager pager){
+    private void addFragmentToAdapter(){
         PageAdapter adapter = new PageAdapter(getSupportFragmentManager());
         adapter.addFragment(new AccountFragment(), "Account");
         adapter.addFragment(new ReservationFragment(), "Reservation");
