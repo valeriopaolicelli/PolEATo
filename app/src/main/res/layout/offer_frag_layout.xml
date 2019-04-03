@@ -8,6 +8,7 @@
     tools:context=".MainActivity">
 
     <ExpandableListView
+        android:id="@+id/ExpandableList"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
