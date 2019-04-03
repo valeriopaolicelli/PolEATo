@@ -1,3 +1,24 @@
 <resources>
     <string name="app_name">My Restaurant</string>
+    <string name="title_bar"><font size="18">Your account</font></string>
+    <string name="restaurant_name"><font size="18">Restaurant name</font></string>
+    <string name="type"><font size="18">Restaurant type</font></string>
+    <string name="info"><font size="18">Restaurant description</font></string>
+    <string name="open"><font size="18">Opening hours</font></string>
+    <string name="owner"><font size="18">Owner</font></string>
+    <string name="address"><font size="18">Address</font></string>
+    <string name="email"><font size="18">Email</font></string>
+    <string name="pay"><font size="18">Payment method</font></string>
+    <string name="other"><font size="18">Other field</font></string>
+    <string name="save"><font size="18">Apply</font></string>
+    <string name="phone"><font size="18">Phone number</font></string>
+    <string name="ch_pass"><font size="18">Change password(max 12 char)</font></string>
+    <string name="old_pass"><font size="18">Insert old password</font></string>
+    <string name="new_pass"><font size="18">Insert new password</font></string>
+    <string name="re_new_pass"><font size="18">Re-insert new password</font></string>
+    <string name="delete">Delete</string>
+    <string name="delete_image">Delete image</string>
+    <string name="camera">Camera</string>
+    <string name="gallery">Gallery</string>
+    <string name="edit">Edit Profile</string>
 </resources>
