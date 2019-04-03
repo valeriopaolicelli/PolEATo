@@ -19,6 +19,7 @@ public class MainActivity extends AppCompatActivity {
         Toolbar toolbar= findViewById(R.id.toolbar);
         TabLayout tabLayout= findViewById(R.id.tabs);
 
+
         setSupportActionBar(toolbar);
         if(getSupportActionBar()!= null)
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
