@@ -22,4 +22,8 @@
     <string name="camera">Fotocamera</string>
     <string name="gallery">Galleria</string>
     <string name="edit">Modifica profilo</string>
+    <string name="starters">Antipasti</string>
+    <string name="firsts">Primi</string>
+    <string name="seconds">Secondi</string>
+    <string name="desserts">Dolci</string>
 </resources>
