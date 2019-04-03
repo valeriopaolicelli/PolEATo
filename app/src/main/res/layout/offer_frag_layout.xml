@@ -9,9 +9,10 @@
 
 
 
-    <ExpandableListView
+    <ListView
+        android:id="@+id/listItem"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-    </ExpandableListView>
+    </ListView>
 </LinearLayout>
