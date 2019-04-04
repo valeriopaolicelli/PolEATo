@@ -1,7 +1,10 @@
 package com.example.poleato;
 
+import android.app.Activity;
 import android.content.Context;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -16,6 +19,8 @@ import java.util.List;
 
 public class DailyOfferFragment extends Fragment {
 
+    Activity hostActivity;
+    View rootview;
     ExpandableListAdapter listAdapter;
     ExpandableListView expListView;
     List<String> listDataGroup;
@@ -23,26 +28,45 @@ public class DailyOfferFragment extends Fragment {
 
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.menu, container, false);
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        this.hostActivity = this.getActivity();
+    }
 
-        // get the listview
-        expListView = (ExpandableListView) view.findViewById(R.id.expandableList);
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+
+        /* TODO HERE RESUME THE SAVED DATA FROM SHARED PREFERENCES */
 
         // preparing list data
         prepareListData();
+    }
+
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        rootview = inflater.inflate(R.layout.menu, container, false);
+
+        return rootview;
+    }
+
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+
+        // get the listview
+        expListView = (ExpandableListView) rootview.findViewById(R.id.menuList);
 
         Context con = this.getContext();
-        listAdapter = new ExpandableListAdapter(this.getContext(), listDataGroup, listDataChild);
+        listAdapter = new ExpandableListAdapter(hostActivity, listDataGroup, listDataChild);
 
         // setting list adapter
         expListView.setAdapter(listAdapter);
 
-        return view;
     }
 
     /*
-     * Preparing the list data
+     * Preparing the data list
      */
     private void prepareListData() {
         listDataGroup = new ArrayList<String>();

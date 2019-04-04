@@ -1,7 +1,7 @@
 package com.example.poleato.ExpandableListManagement;
 
-import android.content.Context;
-import android.graphics.Typeface;
+import android.app.Activity;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,17 +15,79 @@ import java.util.List;
 
 public class ExpandableListAdapter extends BaseExpandableListAdapter {
 
-    private Context _context;
+    private final LayoutInflater inf;
     private List<String> _listDataGroup; // header titles
-    // child data in format of header title, child title
-    private HashMap<String, List<String>> _listDataChild;
+    private HashMap<String, List<String>> _listDataChild; // child data in format of header title, child title
 
-    public ExpandableListAdapter(Context context, List<String> listDataHeader,
+    public ExpandableListAdapter(Activity host, List<String> listDataHeader,
                                  HashMap<String, List<String>> listChildData) {
-        this._context = context;
+
+        inf = LayoutInflater.from(host);
         this._listDataGroup = listDataHeader;
         this._listDataChild = listChildData;
+        Log.d("matte", "[Init]headers:"+_listDataGroup.toString());
+        Log.d("matte", "[Init]childs:"+_listDataChild.toString());
     }
+
+
+
+
+    @Override
+    public View getChildView(int groupPosition, final int childPosition,
+                             boolean isLastChild, View convertView, ViewGroup parent) {
+
+        Log.d("matte", "[Child]getview{ group:"+groupPosition+", child:"+childPosition+", view:"+convertView+"}");
+
+        ViewHolder holder; //recycler view pattern
+
+        String childTitle = (String) getChild(groupPosition, childPosition);
+
+        if (convertView == null){
+            convertView = inf.inflate(R.layout.layout_menu_child, parent, false);
+            holder = new ViewHolder();
+            holder.text = (TextView) convertView.findViewById(R.id.childView);
+            convertView.setTag(holder);
+        } else{
+            holder = (ViewHolder) convertView.getTag();
+        }
+
+        holder.text.setText(childTitle);
+
+        return convertView;
+    }
+
+
+
+
+
+
+    @Override
+    public View getGroupView(int groupPosition, boolean isExpanded,
+                             View convertView, ViewGroup parent) {
+
+        Log.d("matte", "[Group]getview{ group:"+groupPosition+", view:"+convertView+", name:"+getGroup(groupPosition).toString()+"}");
+        ViewHolder holder; //recycler view pattern
+
+        String groupTitle = (String) getGroup(groupPosition);
+
+        if (convertView == null){
+            convertView = inf.inflate(R.layout.layout_menu_group, parent, false);
+            holder = new ViewHolder();
+            holder.text = (TextView) convertView.findViewById(R.id.groupView);
+            convertView.setTag(holder);
+        } else{
+            holder = (ViewHolder) convertView.getTag();
+        }
+
+        holder.text.setText(groupTitle);
+
+        return convertView;
+    }
+
+
+
+
+
 
     @Override
     public Object getChild(int groupPosition, int childPosition) {
@@ -35,26 +97,7 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
 
     @Override
     public long getChildId(int groupPosition, int childPosition) {
-        return childPosition;
-    }
-
-    @Override
-    public View getChildView(int groupPosition, final int childPosition,
-                             boolean isLastChild, View convertView, ViewGroup parent) {
-
-        final String childText = (String) getChild(groupPosition, childPosition);
-
-        if (convertView == null) {
-            LayoutInflater infalInflater = (LayoutInflater) this._context
-                    .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-            convertView = infalInflater.inflate(R.layout.menu_child, null);
-        }
-
-        TextView txtListChild = (TextView) convertView
-                .findViewById(R.id.listChild);
-
-        txtListChild.setText(childText);
-        return convertView;
+        return getChild(groupPosition, childPosition).hashCode();
     }
 
     @Override
@@ -75,26 +118,9 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
 
     @Override
     public long getGroupId(int groupPosition) {
-        return groupPosition;
+        return getGroup(groupPosition).hashCode();
     }
 
-    @Override
-    public View getGroupView(int groupPosition, boolean isExpanded,
-                             View convertView, ViewGroup parent) {
-        String headerTitle = (String) getGroup(groupPosition);
-        if (convertView == null) {
-            LayoutInflater inflater = (LayoutInflater) this._context
-                    .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-            convertView = inflater.inflate(R.layout.menu_group, null);
-        }
-
-        TextView listGroup= (TextView) convertView
-                .findViewById(R.id.listGroup);
-        listGroup.setTypeface(null, Typeface.BOLD);
-        listGroup.setText(headerTitle);
-
-        return convertView;
-    }
 
     @Override
     public boolean hasStableIds() {
@@ -105,4 +131,15 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
     public boolean isChildSelectable(int groupPosition, int childPosition) {
         return true;
     }
+
+
+
+    private class ViewHolder {
+        TextView text;
+    }
+
 }
+
+
+
+
