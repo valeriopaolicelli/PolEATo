@@ -1,0 +1,565 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/colorPanelPrimary"
+    android:orientation="vertical"
+    tools:context=".EditProfile">
+
+    <android.support.v7.widget.Toolbar
+        android:id="@+id/toolbar_edit"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="50dp"
+        android:background="@color/colorPanelPrimary"
+        android:text="@string/edit"
+        app:layout_constraintBottom_toTopOf="@id/editScrollView"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_scrollFlags="scroll|enterAlways"
+        app:popupTheme="@style/ThemeOverlay.AppCompat.Light" />
+
+    <ScrollView
+        android:id="@+id/editScrollView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/colorBodyPrimary"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/toolbar_edit"
+        app:layout_constraintVertical_bias="0.0">
+
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:orientation="vertical"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <android.support.constraint.ConstraintLayout
+                android:id="@+id/ConstraintLayout"
+                android:layout_width="match_parent"
+                android:layout_height="272dp">
+
+                <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="vertical">
+
+                    <ImageView
+                        style="@style/BackGroundImageView"
+                        android:id="@+id/ivBackground"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_alignParentTop="true"
+                        android:layout_centerHorizontal="true"
+                        tools:ignore="ContentDescription"
+                        android:adjustViewBounds="true"/>
+
+                    <RelativeLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_vertical|center_horizontal">
+
+                        <android.support.design.widget.FloatingActionButton
+                            android:id="@+id/change_im"
+                            android:layout_width="151dp"
+                            android:layout_height="wrap_content"
+                            android:backgroundTint="@color/colorPanelPrimary"
+                            android:clickable="true"
+                            android:focusable="true"
+                            android:src="@mipmap/baseline_photo_camera_white_24dp"/>
+
+                    </RelativeLayout>
+                </FrameLayout>
+            </android.support.constraint.ConstraintLayout>
+
+
+            <LinearLayout
+                android:id="@+id/linearLayout2"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@color/colorBodyPrimary"
+                android:orientation="vertical"
+                android:padding="16dp">
+
+                <!-- Restaurant name -->
+
+                <android.support.constraint.ConstraintLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:descendantFocusability="beforeDescendants"
+                    android:focusableInTouchMode="true">
+
+                    <ImageView
+                        android:id="@+id/name_icon"
+                        android:contentDescription="@string/restaurant_name"
+                        android:layout_width="wrap_content"
+                        android:layout_height="37dp"
+                        android:layout_marginTop="8dp"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toStartOf="@id/input_layout_name"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="@id/input_layout_name"
+                        app:layout_constraintVertical_bias="0.466"
+                        app:srcCompat="@drawable/restaurant_icon"/>
+
+                    <android.support.design.widget.TextInputLayout
+                        android:id="@+id/input_layout_name"
+                        android:layout_width="0dp"
+                        android:layout_height="56dp"
+                        android:theme="@style/FloatLabel"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toStartOf="@id/cancel_name"
+                        app:layout_constraintStart_toEndOf="@id/name_icon"
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:layout_constraintVertical_bias="0.0">
+
+                        <EditText
+                            android:id="@+id/editTextName"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="5dp"
+                            android:hint="@string/restaurant_name"
+                            android:imeOptions="actionNext"
+                            android:inputType="text"
+                            android:maxLength="40"
+                            android:singleLine="true"
+                            android:textColor="@color/colorTextSubField" />
+
+                    </android.support.design.widget.TextInputLayout>
+
+                    <ImageButton
+                        android:id="@+id/cancel_name"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="8dp"
+                        android:layout_marginBottom="8dp"
+                        android:background="@android:color/transparent"
+                        android:contentDescription="@string/delete"
+                        android:onClick="clearText"
+                        android:src="@drawable/clear"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toEndOf="@+id/input_layout_name"
+                        app:layout_constraintTop_toTopOf="parent" />
+                </android.support.constraint.ConstraintLayout>
+
+                <Space
+                    android:layout_width="423dp"
+                    android:layout_height="10dp" />
+
+                <!-- Restaurant type -->
+
+                <android.support.constraint.ConstraintLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <ImageView
+                        android:id="@+id/type_icon"
+                        android:contentDescription="@string/type"
+                        android:layout_width="wrap_content"
+                        android:layout_height="37dp"
+                        android:layout_marginTop="8dp"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toStartOf="@id/input_layout_type"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="@id/input_layout_type"
+                        app:layout_constraintVertical_bias="0.466"
+                        app:srcCompat="@drawable/type_icon" />
+
+                    <android.support.design.widget.TextInputLayout
+                        android:id="@+id/input_layout_type"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:theme="@style/FloatLabel"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintStart_toEndOf="@id/type_icon"
+                        app:layout_constraintEnd_toStartOf="@id/cancel_type"
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:layout_constraintVertical_bias="0.0">
+
+                        <EditText
+                            android:id="@+id/editTextType"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="5dp"
+                            android:hint="@string/type"
+                            android:imeOptions="actionNext"
+
+                            android:inputType="textMultiLine"
+                            android:lines="2"
+                            android:gravity="start"
+
+                            android:overScrollMode="always"
+                            android:scrollbarStyle="insideInset"
+                            android:scrollbars="vertical"
+
+                            android:textColor="@color/colorTextSubField" />
+                    </android.support.design.widget.TextInputLayout>
+
+                    <ImageButton
+                        android:id="@+id/cancel_type"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="8dp"
+                        android:layout_marginBottom="8dp"
+                        android:background="@android:color/transparent"
+                        android:contentDescription="@string/delete"
+                        android:onClick="clearText"
+                        android:src="@drawable/clear"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toEndOf="@+id/input_layout_type"
+                        app:layout_constraintTop_toTopOf="parent" />
+                </android.support.constraint.ConstraintLayout>
+
+                <Space
+                    android:layout_width="423dp"
+                    android:layout_height="10dp" />
+
+
+
+                <!-- Info -->
+
+                <android.support.constraint.ConstraintLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <ImageView
+                        android:id="@+id/info_icon"
+                        android:contentDescription="@string/info"
+                        android:layout_width="wrap_content"
+                        android:layout_height="37dp"
+                        android:layout_marginTop="8dp"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toStartOf="@id/input_layout_info"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="@id/input_layout_info"
+                        app:layout_constraintVertical_bias="0.466"
+                        app:srcCompat="@drawable/info_icon" />
+
+                    <android.support.design.widget.TextInputLayout
+                        android:id="@+id/input_layout_info"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:theme="@style/FloatLabel"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintStart_toEndOf="@id/info_icon"
+                        app:layout_constraintEnd_toStartOf="@id/cancel_info"
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:layout_constraintVertical_bias="0.0">
+
+                        <EditText
+                            android:id="@+id/editTextInfo"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="5dp"
+                            android:hint="@string/info"
+                            android:imeOptions="actionNext"
+
+                            android:inputType="textMultiLine"
+                            android:lines="3"
+                            android:gravity="start"
+
+                            android:overScrollMode="always"
+                            android:scrollbarStyle="insideInset"
+                            android:scrollbars="vertical"
+
+                            android:maxLength="240"
+                            android:textColor="@color/colorTextSubField" />
+                    </android.support.design.widget.TextInputLayout>
+
+                    <ImageButton
+                        android:id="@+id/cancel_info"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="8dp"
+                        android:layout_marginBottom="8dp"
+                        android:background="@android:color/transparent"
+                        android:contentDescription="@string/delete"
+                        android:onClick="clearText"
+                        android:src="@drawable/clear"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toEndOf="@+id/input_layout_info"
+                        app:layout_constraintTop_toTopOf="parent" />
+                </android.support.constraint.ConstraintLayout>
+
+                <Space
+                    android:layout_width="423dp"
+                    android:layout_height="10dp" />
+
+
+                <!-- Opening hours -->
+
+                <android.support.constraint.ConstraintLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <ImageView
+                        android:id="@+id/open_icon"
+                        android:contentDescription="@string/open"
+                        android:layout_width="wrap_content"
+                        android:layout_height="37dp"
+                        android:layout_marginTop="8dp"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toStartOf="@id/input_layout_open"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="@id/input_layout_open"
+                        app:layout_constraintVertical_bias="0.466"
+                        app:srcCompat="@drawable/open_icon" />
+
+
+
+                    <android.support.design.widget.TextInputLayout
+                        android:id="@+id/input_layout_open"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:theme="@style/FloatLabel"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintStart_toEndOf="@id/open_icon"
+                        app:layout_constraintEnd_toStartOf="@id/cancel_open"
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:layout_constraintVertical_bias="0.0">
+
+                        <EditText
+                            android:id="@+id/editTextOpen"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="5dp"
+                            android:hint="@string/open"
+                            android:imeOptions="actionNext"
+
+                            android:inputType="textMultiLine"
+                            android:lines="3"
+                            android:gravity="start"
+
+                            android:overScrollMode="always"
+                            android:scrollbarStyle="insideInset"
+                            android:scrollbars="vertical"
+
+                            android:maxLength="90"
+                            android:textColor="@color/colorTextSubField" />
+                    </android.support.design.widget.TextInputLayout>
+
+
+                    <ImageButton
+                        android:id="@+id/cancel_open"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="8dp"
+                        android:layout_marginBottom="8dp"
+                        android:background="@android:color/transparent"
+                        android:contentDescription="@string/delete"
+                        android:onClick="clearText"
+                        android:src="@drawable/clear"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toEndOf="@+id/input_layout_open"
+                        app:layout_constraintTop_toTopOf="parent" />
+                </android.support.constraint.ConstraintLayout>
+
+                <Space
+                    android:layout_width="423dp"
+                    android:layout_height="10dp" />
+
+                <!-- Address -->
+                <android.support.constraint.ConstraintLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <ImageView
+                        android:id="@+id/address_icon"
+                        android:contentDescription="@string/address"
+                        android:layout_width="wrap_content"
+                        android:layout_height="37dp"
+                        android:layout_marginTop="8dp"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toStartOf="@id/input_layout_address"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="@id/input_layout_address"
+                        app:layout_constraintVertical_bias="0.466"
+                        app:srcCompat="@drawable/address_icon" />
+
+                    <android.support.design.widget.TextInputLayout
+                        android:id="@+id/input_layout_address"
+                        android:layout_width="0dp"
+                        android:layout_height="56dp"
+                        android:theme="@style/FloatLabel"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintStart_toEndOf="@id/address_icon"
+                        app:layout_constraintEnd_toStartOf="@id/cancel_address"
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:layout_constraintVertical_bias="0.0">
+
+                        <EditText
+                            android:id="@+id/editTextAddress"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="5dp"
+                            android:hint="@string/address"
+                            android:imeOptions="actionNext"
+                            android:inputType="text"
+                            android:maxLength="25"
+                            android:singleLine="true"
+                            android:textColor="@color/colorTextSubField" />
+                    </android.support.design.widget.TextInputLayout>
+
+                    <ImageButton
+                        android:id="@+id/cancel_address"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="8dp"
+                        android:layout_marginBottom="8dp"
+                        android:background="@android:color/transparent"
+                        android:contentDescription="@string/delete"
+                        android:onClick="clearText"
+                        android:src="@drawable/clear"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toEndOf="@+id/input_layout_address"
+                        app:layout_constraintTop_toTopOf="parent" />
+                </android.support.constraint.ConstraintLayout>
+
+                <Space
+                    android:layout_width="423dp"
+                    android:layout_height="10dp" />
+
+
+                <!-- Email -->
+                <android.support.constraint.ConstraintLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <ImageView
+                        android:id="@+id/email_icon"
+                        android:contentDescription="@string/email"
+                        android:layout_width="wrap_content"
+                        android:layout_height="37dp"
+                        android:layout_marginTop="8dp"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toStartOf="@id/input_layout_email"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="@id/input_layout_email"
+                        app:layout_constraintVertical_bias="0.466"
+                        app:srcCompat="@drawable/mail_icon" />
+
+                    <android.support.design.widget.TextInputLayout
+                        android:id="@+id/input_layout_email"
+                        android:layout_width="0dp"
+                        android:layout_height="56dp"
+                        android:theme="@style/FloatLabel"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintStart_toEndOf="@id/email_icon"
+                        app:layout_constraintEnd_toStartOf="@id/cancel_email"
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:layout_constraintVertical_bias="0.0">
+
+                        <EditText
+                            android:id="@+id/editTextEmail"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="5dp"
+                            android:hint="@string/email"
+                            android:imeOptions="actionNext"
+                            android:inputType="textEmailAddress"
+                            android:maxLength="254"
+                            android:singleLine="true"
+                            android:textColor="@color/colorTextSubField" />
+                    </android.support.design.widget.TextInputLayout>
+
+                    <ImageButton
+                        android:id="@+id/cancel_email"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="8dp"
+                        android:layout_marginBottom="8dp"
+                        android:background="@android:color/transparent"
+                        android:contentDescription="@string/delete"
+                        android:onClick="clearText"
+                        android:src="@drawable/clear"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toEndOf="@+id/input_layout_email"
+                        app:layout_constraintTop_toTopOf="parent" />
+                </android.support.constraint.ConstraintLayout>
+
+                <Space
+                    android:layout_width="423dp"
+                    android:layout_height="10dp" />
+
+
+                <!-- Phone -->
+                <android.support.constraint.ConstraintLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <ImageView
+                        android:id="@+id/phone_icon"
+                        android:contentDescription="@string/phone"
+                        android:layout_width="wrap_content"
+                        android:layout_height="37dp"
+                        android:layout_marginTop="8dp"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toStartOf="@id/input_layout_phone"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="@id/input_layout_phone"
+                        app:layout_constraintVertical_bias="0.466"
+                        app:srcCompat="@drawable/phone_icon" />
+
+                    <android.support.design.widget.TextInputLayout
+                        android:id="@+id/input_layout_phone"
+                        android:layout_width="0dp"
+                        android:layout_height="56dp"
+                        android:theme="@style/FloatLabel"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintStart_toEndOf="@id/phone_icon"
+                        app:layout_constraintEnd_toStartOf="@id/cancel_phone"
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:layout_constraintVertical_bias="0.0">
+
+                        <EditText
+                            android:id="@+id/editTextPhone"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="5dp"
+                            android:hint="@string/phone"
+                            android:imeOptions="actionDone"
+                            android:inputType="phone"
+                            android:maxLength="15"
+                            android:singleLine="true"
+                            android:textColor="@color/colorTextSubField" />
+                    </android.support.design.widget.TextInputLayout>
+
+                    <ImageButton
+                        android:id="@+id/cancel_phone"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="8dp"
+                        android:layout_marginBottom="8dp"
+                        android:background="@android:color/transparent"
+                        android:contentDescription="@string/delete"
+                        android:onClick="clearText"
+                        android:src="@drawable/clear"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toEndOf="@+id/input_layout_phone"
+                        app:layout_constraintTop_toTopOf="parent" />
+
+                </android.support.constraint.ConstraintLayout>
+
+                <!-- Blank view to avoid that scroll view cuts off the last field -->
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="56dp" />
+            </LinearLayout>
+        </LinearLayout>
+    </ScrollView>
+
+</android.support.constraint.ConstraintLayout>

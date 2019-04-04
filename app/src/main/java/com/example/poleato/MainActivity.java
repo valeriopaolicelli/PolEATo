@@ -16,12 +16,14 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        Toolbar toolbar= findViewById(R.id.toolbar);
-        TabLayout tabLayout= findViewById(R.id.tabs);
+        Toolbar toolbar = findViewById(R.id.toolbar);
+        TabLayout tabLayout = findViewById(R.id.tabs);
 
         setSupportActionBar(toolbar);
-        if(getSupportActionBar()!= null)
-            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        if (getSupportActionBar() != null) {
+            getSupportActionBar().setDisplayHomeAsUpEnabled(false);
+            getSupportActionBar().setIcon(R.mipmap.delivery_icon);
+        }
         else{
             Log.d("Error", "getSupportActionBar is null");
             finish();
