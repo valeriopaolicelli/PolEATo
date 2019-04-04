@@ -10,7 +10,9 @@
     <ExpandableListView
         android:id="@+id/expandableList"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:indicatorLeft="250dp"
+        android:indicatorRight="300dp">
 
     </ExpandableListView>
 </LinearLayout>

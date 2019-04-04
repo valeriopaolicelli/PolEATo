@@ -7,9 +7,8 @@
     android:padding="16dp">
     
     <TextView
-        android:id="@+id/listHeader"
+        android:id="@+id/listGroup"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="@string/starters"/>
+        android:layout_height="wrap_content" />
 
 </LinearLayout>

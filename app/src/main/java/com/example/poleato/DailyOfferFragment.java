@@ -1,5 +1,6 @@
 package com.example.poleato;
 
+import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
@@ -17,13 +18,13 @@ public class DailyOfferFragment extends Fragment {
 
     ExpandableListAdapter listAdapter;
     ExpandableListView expListView;
-    List<String> listDataHeader;
+    List<String> listDataGroup;
     HashMap<String, List<String>> listDataChild;
 
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.offer_frag_layout, container, false);
+        View view = inflater.inflate(R.layout.menu, container, false);
 
         // get the listview
         expListView = (ExpandableListView) view.findViewById(R.id.expandableList);
@@ -31,7 +32,8 @@ public class DailyOfferFragment extends Fragment {
         // preparing list data
         prepareListData();
 
-        listAdapter = new ExpandableListAdapter(this.getContext(), listDataHeader, listDataChild);
+        Context con = this.getContext();
+        listAdapter = new ExpandableListAdapter(this.getContext(), listDataGroup, listDataChild);
 
         // setting list adapter
         expListView.setAdapter(listAdapter);
@@ -43,13 +45,13 @@ public class DailyOfferFragment extends Fragment {
      * Preparing the list data
      */
     private void prepareListData() {
-        listDataHeader = new ArrayList<String>();
+        listDataGroup = new ArrayList<String>();
         listDataChild = new HashMap<String, List<String>>();
 
         // Adding child data
-        listDataHeader.add("Top 250");
-        listDataHeader.add("Now Showing");
-        listDataHeader.add("Coming Soon..");
+        listDataGroup.add("Top 250");
+        listDataGroup.add("Now Showing");
+        listDataGroup.add("Coming Soon..");
 
         // Adding child data
         List<String> top250 = new ArrayList<String>();
@@ -76,9 +78,9 @@ public class DailyOfferFragment extends Fragment {
         comingSoon.add("The Canyons");
         comingSoon.add("Europa Report");
 
-        listDataChild.put(listDataHeader.get(0), top250); // Header, Child data
-        listDataChild.put(listDataHeader.get(1), nowShowing);
-        listDataChild.put(listDataHeader.get(2), comingSoon);
+        listDataChild.put(listDataGroup.get(0), top250); // Header, Child data
+        listDataChild.put(listDataGroup.get(1), nowShowing);
+        listDataChild.put(listDataGroup.get(2), comingSoon);
     }
 
 }
