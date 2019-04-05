@@ -11,7 +11,12 @@
     <style name="BackGroundImageView">
         <item name="android:alpha">0.85</item>
         <item name="android:scaleType">centerCrop</item>
-        <item name="android:src">@mipmap/new_york_restaurant</item>
+        <item name="android:src">@drawable/empty_background</item>
+    </style>
+
+    <style name="FloatLabel" parent="Theme.AppCompat.Light.DarkActionBar">
+        <item name="colorPrimary">@color/colorTextField</item>
+        <item name="colorError">@color/colorPanelPrimary</item>
     </style>
 
 </resources>

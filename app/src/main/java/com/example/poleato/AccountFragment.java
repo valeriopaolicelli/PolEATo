@@ -1,14 +1,24 @@
 package com.example.poleato;
 
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
+import android.util.Base64;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.ScrollView;
 import android.widget.TextView;
+
+import java.io.ByteArrayOutputStream;
 
 public class AccountFragment extends Fragment {
 
@@ -19,10 +29,14 @@ public class AccountFragment extends Fragment {
     private TextView tvAddressField;
     private TextView tvEmailField;
     private TextView tvPhoneField;
+    private FloatingActionButton buttEdit;
+ //   private ImageView imageBackground;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.account_frag_layout, container,false);
+
+        // Retrieve all fields (restaurant details) in the xml file
 
         tvNameField = view.findViewById(R.id.tvNameField);
         tvTypeField = view.findViewById(R.id.tvTypeField);
@@ -31,23 +45,37 @@ public class AccountFragment extends Fragment {
         tvAddressField= view.findViewById(R.id.tvAddressField);
         tvEmailField= view.findViewById(R.id.tvEmailField);
         tvPhoneField= view.findViewById(R.id.tvPhoneField);
+    //    imageBackground= view.findViewById(R.id.ivBackground);
 
+        // Button to edit the restaurant details
+        buttEdit= view.findViewById(R.id.buttEdit);
+        buttEdit.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // new activity -> EditProfile
+                Intent i = new Intent(v.getContext(),EditProfile.class);
+                startActivity(i);
+            }
+        });
         return view;
     }
 
     @Override
     public void onResume() {
         super.onResume();
-
         //fill the views fields
         fillFields();
     }
 
+    public void collectFields(){
+
+    }
+
     public void fillFields(){
         // Data persistency: setting initial values if empty file
-        SharedPreferences fields= getActivity().getSharedPreferences("ProfileDataRestaurateur", Context.MODE_PRIVATE);
+        SharedPreferences fields= getActivity().getSharedPreferences("ProfileDataRestaurant", Context.MODE_PRIVATE);
         if(!fields.contains("Name")) {
-            SharedPreferences.Editor editor= getActivity().getSharedPreferences("ProfileDataRestaurateur", Context.MODE_PRIVATE).edit();
+            SharedPreferences.Editor editor= getActivity().getSharedPreferences("ProfileDataRestaurant", Context.MODE_PRIVATE).edit();
             editor.putString("Name", "Paninos");
             editor.putString("Type", "Pizza, kebab, panini");
             editor.putString("Info", "Locale casual, adatto a coppie e famiglie. Menù anche per vegani!");
@@ -55,6 +83,7 @@ public class AccountFragment extends Fragment {
             editor.putString("Address", "Via Barge 4");
             editor.putString("Email", "peppe.panino@example.com");
             editor.putString("Phone", "0123456789");
+            //editor.putString("Background", encodeTobase64());
             editor.apply();
         }
 
@@ -65,7 +94,7 @@ public class AccountFragment extends Fragment {
         String email= fields.getString("Email", "Nessun valore trovato");
         String address= fields.getString("Address", "Nessun valore trovato");
         String phone= fields.getString("Phone", "Nessun valore trovato");
-
+  //      String image= fields.getString("Background", encodeTobase64());
 
         // Setting the textView contents with the values stored into SharedPreferences file
         tvNameField.setText(name);
@@ -75,9 +104,24 @@ public class AccountFragment extends Fragment {
         tvAddressField.setText(address);
         tvEmailField.setText(email);
         tvPhoneField.setText(phone);
-
+     //   imageBackground.setImageBitmap(decodeBase64(image));
     }
 /*
+    public String encodeTobase64() {
+        Bitmap image = ((BitmapDrawable)imageBackground.getDrawable()).getBitmap();
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        image.compress(Bitmap.CompressFormat.PNG, 100, baos);
+        byte[] b = baos.toByteArray();
+        String imageEncoded = Base64.encodeToString(b, Base64.DEFAULT);
+        Log.d("Image Log:", imageEncoded);
+        return imageEncoded;
+    }
+
+    public Bitmap decodeBase64(String input) {
+        byte[] decodedByte = Base64.decode(input, 0);
+        return BitmapFactory
+                .decodeByteArray(decodedByte, 0, decodedByte.length);
+    }
 
     @Override
     public void onSaveInstanceState(Bundle outState) {
@@ -103,5 +147,6 @@ public class AccountFragment extends Fragment {
                     mScrollView.scrollTo(position[0], position[1]);
                 }
             });
-    }*/
+    }
+    */
 }
