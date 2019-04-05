@@ -5,14 +5,17 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
+    android:layout_below="@id/toolbar"
     tools:context=".MainActivity">
+
 
     <ExpandableListView
         android:id="@+id/menuList"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:indicatorLeft="250dp"
-        android:indicatorRight="300dp">
+        android:indicatorRight="300dp"
+        >
 
     </ExpandableListView>
 </LinearLayout>

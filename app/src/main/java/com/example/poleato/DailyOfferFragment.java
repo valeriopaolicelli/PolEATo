@@ -73,9 +73,9 @@ public class DailyOfferFragment extends Fragment {
         listDataChild = new HashMap<String, List<String>>();
 
         // Adding child data
-        listDataGroup.add("Top 250");
+        listDataGroup.add("Cooming soon..");
         listDataGroup.add("Now Showing");
-        listDataGroup.add("Coming Soon..");
+        listDataGroup.add("Top 250");
 
         // Adding child data
         List<String> top250 = new ArrayList<String>();

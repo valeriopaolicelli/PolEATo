@@ -87,12 +87,9 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
 
 
 
-
-
     @Override
     public Object getChild(int groupPosition, int childPosition) {
-        return this._listDataChild.get(this._listDataGroup.get(groupPosition))
-                .get(childPosition);
+        return this._listDataChild.get(this._listDataGroup.get(groupPosition)).get(childPosition);
     }
 
     @Override
@@ -131,7 +128,6 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
     public boolean isChildSelectable(int groupPosition, int childPosition) {
         return true;
     }
-
 
 
     private class ViewHolder {
