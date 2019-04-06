@@ -102,17 +102,31 @@ public class DailyOfferFragment extends Fragment {
         List<Food> starters = new ArrayList<Food>();
         starters.add(new Food(BitmapFactory.decodeResource(getResources(), R.drawable.caprese),
                 "Caprese", "Pomodori, mozzarella, olio e basilico", 2.50));
+        starters.add(new Food(BitmapFactory.decodeResource(getResources(), R.drawable.bruschette),
+                "Bruschette", "Pane, pomodori, olio e basilico", 1.80));
 
 
         List<Food> firsts = new ArrayList<Food>();
         firsts.add(new Food(BitmapFactory.decodeResource(getResources(), R.drawable.carbonara),
                 "Carbonara", "Spaghetti, guanciale, uovo, pepe e pecorino", 5.00));
+        firsts.add(new Food(BitmapFactory.decodeResource(getResources(), R.drawable.amatriciana),
+                "Amatriciana", "Pasta, pancetta, pomodoro, peperoncino", 3.50));
+        firsts.add(new Food(BitmapFactory.decodeResource(getResources(), R.drawable.lasagna),
+                "Lasagna", "Pomodoro, formaggio e basilico", 6.00));
+        firsts.add(new Food(BitmapFactory.decodeResource(getResources(), R.drawable.gamberetti),
+                "Gamberetti", "Pomodoro, gamberetti e melanzane", 7.00));
 
         List<Food> seconds = new ArrayList<Food>();
+        seconds.add(new Food(BitmapFactory.decodeResource(getResources(), R.drawable.pollo),
+                "Pollo al forno", "Pollo, patate e pomodoro", 8.00));
 
         List<Food> desserts = new ArrayList<Food>();
+        desserts.add(new Food(BitmapFactory.decodeResource(getResources(), R.drawable.tiramisu),
+                "Tiramisu", "Caffè, savoiardi, mascarpone e cacao", 2.00));
 
         List<Food> drinks = new ArrayList<Food>();
+        drinks.add(new Food(BitmapFactory.decodeResource(getResources(), R.drawable.poretti),
+                "Poretti 33cl", "Birra", 2.00));
 
 
         listDataChild.put(listDataGroup.get(0), starters); // Header, Child data
