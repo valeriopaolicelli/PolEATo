@@ -5,7 +5,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="#aaaaaa"
+    android:background="#bbbbbb"
     android:orientation="vertical"
 >
 
@@ -62,7 +62,7 @@
             <!-- TODO when too long it creates problems -->
             <TextView
                 android:id="@+id/cardDescription"
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="8dp"
                 android:layout_marginEnd="8dp"
