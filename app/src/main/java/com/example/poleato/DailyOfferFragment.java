@@ -57,7 +57,6 @@ public class DailyOfferFragment extends Fragment {
         // get the listview
         expListView = (ExpandableListView) rootview.findViewById(R.id.menuList);
 
-        Context con = this.getContext();
         listAdapter = new ExpandableListAdapter(hostActivity, listDataGroup, listDataChild);
 
         // setting list adapter
