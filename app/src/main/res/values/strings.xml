@@ -25,4 +25,6 @@
     <string name="firsts">Firsts</string>
     <string name="seconds">Seconds</string>
     <string name="desserts">Desserts</string>
+    <string name="drinks">Drinks</string>
+    <string name="currency">$</string>
 </resources>
