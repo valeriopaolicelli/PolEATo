@@ -1,27 +1,33 @@
 package com.example.poleato.ExpandableListManagement;
 
 import android.app.Activity;
+import android.content.res.Resources;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseExpandableListAdapter;
+import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.example.poleato.Food;
 import com.example.poleato.R;
 
+import java.text.DecimalFormat;
 import java.util.HashMap;
 import java.util.List;
 
 public class ExpandableListAdapter extends BaseExpandableListAdapter {
 
+    Activity host;
     private final LayoutInflater inf;
     private List<String> _listDataGroup; // header titles
-    private HashMap<String, List<String>> _listDataChild; // child data in format of header title, child title
+    private HashMap<String, List<Food>> _listDataChild; // child data in format of header title, child title
 
     public ExpandableListAdapter(Activity host, List<String> listDataHeader,
-                                 HashMap<String, List<String>> listChildData) {
+                                 HashMap<String, List<Food>> listChildData) {
 
+        this.host = host;
         inf = LayoutInflater.from(host);
         this._listDataGroup = listDataHeader;
         this._listDataChild = listChildData;
@@ -38,20 +44,28 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
 
         Log.d("matte", "[Child]getview{ group:"+groupPosition+", child:"+childPosition+", view:"+convertView+"}");
 
-        ViewHolder holder; //recycler view pattern
-
-        String childTitle = (String) getChild(groupPosition, childPosition);
+        FoodViewHolder holder; //recycler view pattern
 
         if (convertView == null){
             convertView = inf.inflate(R.layout.layout_menu_child, parent, false);
-            holder = new ViewHolder();
-            holder.text = (TextView) convertView.findViewById(R.id.childView);
+            holder = new FoodViewHolder();
+            holder.img = (ImageView) convertView.findViewById(R.id.cardImage);
+            holder.name = (TextView) convertView.findViewById(R.id.cardName);
+            holder.description = (TextView) convertView.findViewById(R.id.cardDescription);
+            holder.price = (TextView) convertView.findViewById(R.id.cardPrice);
             convertView.setTag(holder);
         } else{
-            holder = (ViewHolder) convertView.getTag();
+            holder = (FoodViewHolder) convertView.getTag();
         }
 
-        holder.text.setText(childTitle);
+        holder.img.setImageBitmap(getChild(groupPosition, childPosition).getImg());
+        holder.name.setText(getChild(groupPosition, childPosition).getName());
+        holder.description.setText(getChild(groupPosition, childPosition).getDescription());
+        DecimalFormat decimalFormat = new DecimalFormat("#.00"); //two decimal
+        String priceStr = decimalFormat.format(getChild(groupPosition, childPosition).getPrice());
+        String currency = host.getString(R.string.currency);
+        priceStr += currency;
+        holder.price.setText(priceStr);
 
         return convertView;
     }
@@ -73,7 +87,7 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
         if (convertView == null){
             convertView = inf.inflate(R.layout.layout_menu_group, parent, false);
             holder = new ViewHolder();
-            holder.text = (TextView) convertView.findViewById(R.id.groupView);
+            holder.text = convertView.findViewById(R.id.groupView);
             convertView.setTag(holder);
         } else{
             holder = (ViewHolder) convertView.getTag();
@@ -88,7 +102,7 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
 
 
     @Override
-    public Object getChild(int groupPosition, int childPosition) {
+    public Food getChild(int groupPosition, int childPosition) {
         return this._listDataChild.get(this._listDataGroup.get(groupPosition)).get(childPosition);
     }
 
@@ -130,7 +144,14 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
     }
 
 
-    private class ViewHolder {
+    private class FoodViewHolder {
+        ImageView img;
+        TextView name;
+        TextView description;
+        TextView price;
+    }
+
+    private class ViewHolder{
         TextView text;
     }
 

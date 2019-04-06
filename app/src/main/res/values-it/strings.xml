@@ -26,4 +26,6 @@
     <string name="firsts">Primi</string>
     <string name="seconds">Secondi</string>
     <string name="desserts">Dolci</string>
+    <string name="drinks">Bevande</string>
+    <string name="currency">€</string>
 </resources>

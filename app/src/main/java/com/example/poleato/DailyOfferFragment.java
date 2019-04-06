@@ -2,6 +2,9 @@ package com.example.poleato;
 
 import android.app.Activity;
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -10,7 +13,11 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ExpandableListView;
+import android.widget.ImageView;
+
 import com.example.poleato.ExpandableListManagement.*;
+
+import org.w3c.dom.Text;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -24,8 +31,8 @@ public class DailyOfferFragment extends Fragment {
     ExpandableListAdapter listAdapter;
     ExpandableListView expListView;
     List<String> listDataGroup;
-    HashMap<String, List<String>> listDataChild;
-
+    HashMap<String, List<Food>> listDataChild;
+    private int lastExpandedPosition = -1;
 
     @Override
     public void onAttach(Context context) {
@@ -57,6 +64,19 @@ public class DailyOfferFragment extends Fragment {
         // get the listview
         expListView = (ExpandableListView) rootview.findViewById(R.id.menuList);
 
+        // to collapse all groups except the one tapped
+        expListView.setOnGroupExpandListener(new ExpandableListView.OnGroupExpandListener() {
+
+            @Override
+            public void onGroupExpand(int groupPosition) {
+                if (lastExpandedPosition != -1
+                        && groupPosition != lastExpandedPosition) {
+                    expListView.collapseGroup(lastExpandedPosition);
+                }
+                lastExpandedPosition = groupPosition;
+            }
+        });
+
         listAdapter = new ExpandableListAdapter(hostActivity, listDataGroup, listDataChild);
 
         // setting list adapter
@@ -69,41 +89,38 @@ public class DailyOfferFragment extends Fragment {
      */
     private void prepareListData() {
         listDataGroup = new ArrayList<String>();
-        listDataChild = new HashMap<String, List<String>>();
+        listDataChild = new HashMap<String, List<Food>>();
 
         // Adding child data
-        listDataGroup.add("Cooming soon..");
-        listDataGroup.add("Now Showing");
-        listDataGroup.add("Top 250");
+        listDataGroup.add(getString(R.string.starters));
+        listDataGroup.add(getString(R.string.firsts));
+        listDataGroup.add(getString(R.string.seconds));
+        listDataGroup.add(getString(R.string.desserts));
+        listDataGroup.add(getString(R.string.drinks));
 
         // Adding child data
-        List<String> top250 = new ArrayList<String>();
-        top250.add("The Shawshank Redemption");
-        top250.add("The Godfather");
-        top250.add("The Godfather: Part II");
-        top250.add("Pulp Fiction");
-        top250.add("The Good, the Bad and the Ugly");
-        top250.add("The Dark Knight");
-        top250.add("12 Angry Men");
+        List<Food> starters = new ArrayList<Food>();
+        starters.add(new Food(BitmapFactory.decodeResource(getResources(), R.drawable.caprese),
+                "Caprese", "Pomodori, mozzarella, olio e basilico", 2.50));
 
-        List<String> nowShowing = new ArrayList<String>();
-        nowShowing.add("The Conjuring");
-        nowShowing.add("Despicable Me 2");
-        nowShowing.add("Turbo");
-        nowShowing.add("Grown Ups 2");
-        nowShowing.add("Red 2");
-        nowShowing.add("The Wolverine");
 
-        List<String> comingSoon = new ArrayList<String>();
-        comingSoon.add("2 Guns");
-        comingSoon.add("The Smurfs 2");
-        comingSoon.add("The Spectacular Now");
-        comingSoon.add("The Canyons");
-        comingSoon.add("Europa Report");
+        List<Food> firsts = new ArrayList<Food>();
+        firsts.add(new Food(BitmapFactory.decodeResource(getResources(), R.drawable.carbonara),
+                "Carbonara", "Spaghetti, guanciale, uovo, pepe e pecorino", 5.00));
 
-        listDataChild.put(listDataGroup.get(0), top250); // Header, Child data
-        listDataChild.put(listDataGroup.get(1), nowShowing);
-        listDataChild.put(listDataGroup.get(2), comingSoon);
+        List<Food> seconds = new ArrayList<Food>();
+
+        List<Food> desserts = new ArrayList<Food>();
+
+        List<Food> drinks = new ArrayList<Food>();
+
+
+        listDataChild.put(listDataGroup.get(0), starters); // Header, Child data
+        listDataChild.put(listDataGroup.get(1), firsts);
+        listDataChild.put(listDataGroup.get(2), seconds);
+        listDataChild.put(listDataGroup.get(3), desserts);
+        listDataChild.put(listDataGroup.get(4), drinks);
+
     }
 
 }
