@@ -50,6 +50,15 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:text="Hello world" />
+        <TextView
+            android:id="@+id/textView5"
+            android:textSize="18dp"
+            android:textStyle="bold"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Hello world" />
+
 
     </LinearLayout>
 

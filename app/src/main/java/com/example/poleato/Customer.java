@@ -1,16 +1,23 @@
 package com.example.poleato;
 
+enum Status{
+    REJECTED, ACCEPATANCE, COOKING, DELIVERY;
+}
 public class Customer {
     private String name;
     private String surname;
     private String notes;
     private String date;
+    private Status status;
+    private String stat;
 
     public Customer(String name, String surname, String notes, String date) {
         this.name = name;
         this.surname = surname;
         this.notes = notes;
         this.date = date;
+        this.status = Status.ACCEPATANCE;
+        this.stat = "On acceptance";
     }
     public String getName() {
         return name;
@@ -44,4 +51,24 @@ public class Customer {
         this.date = date;
     }
 
+    public Status getStatus() {
+        return status;
+    }
+
+    public void setStatus(Status status) {
+        if(status == Status.ACCEPATANCE)
+            stat = "On acceptance";
+        else if( status == Status.DELIVERY)
+            stat = "On delivery";
+        else if( status == Status.COOKING)
+            stat = "Cooking";
+        else if ( status == Status.REJECTED)
+            stat = "Rejected";
+
+        this.status = status;
+    }
+
+    public String getStat() {
+        return stat;
+    }
 }
