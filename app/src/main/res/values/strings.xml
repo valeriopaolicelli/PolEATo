@@ -6,6 +6,11 @@
     <string name="info"><font size="18">Restaurant description</font></string>
     <string name="open"><font size="18">Opening hours</font></string>
     <string name="owner"><font size="18">Owner</font></string>
+    <string name="name"><font size="18">Name</font></string>
+    <string name="surname"><font size="18">Surname</font></string>
+    <string name="date"><font size="18">Date</font></string>
+    <string name="time"><font size="18">Time</font></string>
+    <string name="seats"><font size="18">Seats</font></string>
     <string name="address"><font size="18">Address</font></string>
     <string name="email"><font size="18">Email</font></string>
     <string name="pay"><font size="18">Payment method</font></string>
@@ -21,4 +26,6 @@
     <string name="camera">Camera</string>
     <string name="gallery">Gallery</string>
     <string name="edit">Edit Profile</string>
+    <string name="dishes">Dish</string>
+    <string name="quantity">Quantity</string>
 </resources>

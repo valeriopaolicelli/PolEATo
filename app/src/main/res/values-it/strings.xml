@@ -7,6 +7,11 @@
     <string name="info"><font size="18">Descrizione ristorante</font></string>
     <string name="open"><font size="18">Orari apertura</font></string>
     <string name="owner"><font size="18">Titolare attività</font></string>
+    <string name="name"><font size="18">Nome</font></string>
+    <string name="surname"><font size="18">Cognome</font></string>
+    <string name="date"><font size="18">Data</font></string>
+    <string name="time"><font size="18">Orario</font></string>
+    <string name="seats"><font size="18">N° posti</font></string>
     <string name="address"><font size="18">Indirizzo</font></string>
     <string name="email"><font size="18">Email</font></string>
     <string name="pay"><font size="18">Metodo di pagamento</font></string>
@@ -22,4 +27,6 @@
     <string name="camera">Fotocamera</string>
     <string name="gallery">Galleria</string>
     <string name="edit">Modifica profilo</string>
+    <string name="dishes">Piatto</string>
+    <string name="quantity">Quantità</string>
 </resources>
