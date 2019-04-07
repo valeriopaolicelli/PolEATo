@@ -4,11 +4,13 @@ import android.app.Activity;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Point;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.view.Display;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -32,7 +34,11 @@ public class DailyOfferFragment extends Fragment {
     ExpandableListView expListView;
     List<String> listDataGroup;
     HashMap<String, List<Food>> listDataChild;
+    Display display;
+    Point size;
+    int width;
     private int lastExpandedPosition = -1;
+    
 
     @Override
     public void onAttach(Context context) {
@@ -43,6 +49,12 @@ public class DailyOfferFragment extends Fragment {
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        // Calculate position of ExpandableListView indicator.
+        display = getActivity().getWindowManager().getDefaultDisplay();
+        size = new Point();
+        display.getSize(size);
+        width = size.x;
+
 
         /* TODO HERE RESUME THE SAVED DATA FROM SHARED PREFERENCES */
 
@@ -53,6 +65,10 @@ public class DailyOfferFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         rootview = inflater.inflate(R.layout.menu, container, false);
+        // get the listview
+        expListView = (ExpandableListView) rootview.findViewById(R.id.menuList);
+        // fix position of ExpandableListView indicator.
+        expListView.setIndicatorBounds(width-180,0);
 
         return rootview;
     }
@@ -61,8 +77,6 @@ public class DailyOfferFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        // get the listview
-        expListView = (ExpandableListView) rootview.findViewById(R.id.menuList);
 
         // to collapse all groups except the one tapped
         expListView.setOnGroupExpandListener(new ExpandableListView.OnGroupExpandListener() {

@@ -32,7 +32,6 @@
                 android:id="@+id/cardImage"
                 android:layout_width="98dp"
                 android:layout_height="0dp"
-                android:background="@drawable/image_rounded"
                 android:scaleType="fitXY"
                 android:src="@drawable/carbonara"
                 app:layout_constraintBottom_toBottomOf="parent"
