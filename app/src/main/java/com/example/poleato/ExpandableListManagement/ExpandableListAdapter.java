@@ -53,6 +53,7 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
             holder.name = (TextView) convertView.findViewById(R.id.cardName);
             holder.description = (TextView) convertView.findViewById(R.id.cardDescription);
             holder.price = (TextView) convertView.findViewById(R.id.cardPrice);
+            holder.quantity = (TextView) convertView.findViewById(R.id.cardQuantity);
             convertView.setTag(holder);
         } else{
             holder = (FoodViewHolder) convertView.getTag();
@@ -61,11 +62,20 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
         holder.img.setImageBitmap(getChild(groupPosition, childPosition).getImg());
         holder.name.setText(getChild(groupPosition, childPosition).getName());
         holder.description.setText(getChild(groupPosition, childPosition).getDescription());
+        //price and currency
         DecimalFormat decimalFormat = new DecimalFormat("#.00"); //two decimal
         String priceStr = decimalFormat.format(getChild(groupPosition, childPosition).getPrice());
         String currency = host.getString(R.string.currency);
         priceStr += currency;
         holder.price.setText(priceStr);
+        //quantity
+        String qntStr = "(qty "+getChild(groupPosition, childPosition).getQuantity()+")";
+        holder.quantity.setText(qntStr);
+
+
+
+        //if(childPosition == 0)
+
 
         return convertView;
     }
@@ -149,6 +159,7 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
         TextView name;
         TextView description;
         TextView price;
+        TextView quantity;
     }
 
     private class ViewHolder{
