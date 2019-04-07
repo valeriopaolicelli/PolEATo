@@ -2,7 +2,7 @@ package com.example.poleato;
 
 public class Dish {
     private String name;
-    private int quantity;
+    private Integer quantity;
     private String notes;
 
     public String getName() {
@@ -13,7 +13,7 @@ public class Dish {
         this.name = name;
     }
 
-    public int getQuantity() {
+    public Integer getQuantity() {
         return quantity;
     }
 

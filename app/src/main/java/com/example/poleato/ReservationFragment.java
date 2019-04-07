@@ -14,6 +14,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.ExpandableListAdapter;
 import android.widget.ExpandableListView;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -24,123 +25,144 @@ import android.widget.Toast;
 import org.w3c.dom.Text;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 
 public class ReservationFragment extends Fragment {
     private ExpandableListView lv;
-    private ListView lv_dishes;
+    private ReservationExpandableListAdapter listAdapter;
+    private List<Customer> reservations;
+    private HashMap<String,List<Dish>> listHash = new HashMap<>();
+
     Customer c1;
     Customer c2;
-    Customer c3;
-    Customer c4;
-
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.reservation_frag_layout,container,false);
 
+        //lv = view.findViewById(R.id.reservationslv);
+        initData();
+
         lv = view.findViewById(R.id.reservationslv);
+        listAdapter = new ReservationExpandableListAdapter(getActivity(),reservations,listHash);
 
-        c1 = new Customer("Fabio", "Ricciardi", "no piccante", "04/04/2019");
-        c2 = new Customer("Michelangelo", "Moncada", "sono gay", "04/04/2019");
-        c3 = new Customer("Valerio", "Paolicelli", "sono scarso", "04/04/2019");
-        c4 = new Customer("Matteo", "Pesciaiuolo", "forza lupi rosso blu", "04/04/2019");
+        lv.setAdapter(listAdapter);
 
-
-        final ArrayList<Customer>customers = new ArrayList<>();
-        customers.add(c1);
-        customers.add(c2);
-        customers.add(c3);
-        customers.add(c4);
-
-
-        //creo istanza della classe myAdapter
-
-        final MyAdapter adapter = new MyAdapter(getActivity(),R.layout.reservation_row1_layout,customers);
-
-        //set adapter to list
-
-        lv.setAdapter(adapter);
-
-        //handle item clicks
-        lv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> adapterView, View view, int position, long l) {
-                final Customer c = (Customer) adapterView.getItemAtPosition(position);
-                final AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-
-                // Se lo stato è REJECTED, il ristoratore non può cambiarlo
-                if(c.getStatus() == Status.REJECTED){
-                    builder.setTitle("Order Rejected");
-
-                    builder.setMessage("Sorry, you've already rejected this order");
-                    builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialogInterface, int i) {
-                            dialogInterface.cancel();
-                        }
-                    });
-                }
-                else {
-
-                    //se lo status è COOKING, il ristoratore può scegliere se far partire la consegna
-                    if(c.getStatus() == Status.COOKING){
-                        builder.setTitle("Deliver order");
-
-                        builder.setMessage("Is everything ready? Status will pass into 'on delivery'");
-                        builder.setPositiveButton("Confirm", new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialogInterface, int i) {
-                                c.setStatus(Status.DELIVERY);
-                                adapter.notifyDataSetChanged();
-                            }
-                        });
-                        builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialogInterface, int i) {
-                                dialogInterface.cancel();
-                            }
-                        });
-                    }
-                    else {
-                        //Se lo stato è ACCEPTANCE, il ristoratore può accetare o rifiutare l'ordine
-                        builder.setTitle("Confirm order");
-
-                        builder.setMessage("Do you want to confirm or reject this order? Status will pass into 'on cooking'");
-
-                        builder.setPositiveButton("Confirm", new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialogInterface, int i) {
-                                c.setStatus(Status.COOKING);
-                                adapter.notifyDataSetChanged();
-
-                                //TODO: Aggiornare quantità menù
-                            }
-                        });
-                        builder.setNegativeButton("Reject", new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialogInterface, int i) {
-                                c.setStatus(Status.REJECTED);
-                                adapter.notifyDataSetChanged();
-                            }
-                        });
-                        builder.setNeutralButton("Cancel", new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialogInterface, int i) {
-                                dialogInterface.cancel();
-                            }
-                        });
-                    }
-                }
-                AlertDialog dialog = builder.create();
-                dialog.show();
-            }
-        });
+//        //creo istanza della classe myAdapter
+//
+//        final MyAdapter adapter = new MyAdapter(getActivity(),R.layout.reservation_row1_layout,customers);
+//
+//        //set adapter to list
+//
+//        lv.setAdapter(adapter);
+//
+//        //handle item clicks
+//        lv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+//            @Override
+//            public void onItemClick(AdapterView<?> adapterView, View view, int position, long l) {
+//                final Customer c = (Customer) adapterView.getItemAtPosition(position);
+//                final AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+//
+//                // Se lo stato è REJECTED, il ristoratore non può cambiarlo
+//                if(c.getStatus() == Status.REJECTED){
+//                    builder.setTitle("Order Rejected");
+//
+//                    builder.setMessage("Sorry, you've already rejected this order");
+//                    builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+//                        @Override
+//                        public void onClick(DialogInterface dialogInterface, int i) {
+//                            dialogInterface.cancel();
+//                        }
+//                    });
+//                }
+//                else {
+//
+//                    //se lo status è COOKING, il ristoratore può scegliere se far partire la consegna
+//                    if(c.getStatus() == Status.COOKING){
+//                        builder.setTitle("Deliver order");
+//
+//                        builder.setMessage("Is everything ready? Status will pass into 'on delivery'");
+//                        builder.setPositiveButton("Confirm", new DialogInterface.OnClickListener() {
+//                            @Override
+//                            public void onClick(DialogInterface dialogInterface, int i) {
+//                                c.setStatus(Status.DELIVERY);
+//                                adapter.notifyDataSetChanged();
+//                            }
+//                        });
+//                        builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+//                            @Override
+//                            public void onClick(DialogInterface dialogInterface, int i) {
+//                                dialogInterface.cancel();
+//                            }
+//                        });
+//                    }
+//                    else {
+//                        //Se lo stato è ACCEPTANCE, il ristoratore può accetare o rifiutare l'ordine
+//                        builder.setTitle("Confirm order");
+//
+//                        builder.setMessage("Do you want to confirm or reject this order? Status will pass into 'on cooking'");
+//
+//                        builder.setPositiveButton("Confirm", new DialogInterface.OnClickListener() {
+//                            @Override
+//                            public void onClick(DialogInterface dialogInterface, int i) {
+//                                c.setStatus(Status.COOKING);
+//                                adapter.notifyDataSetChanged();
+//
+//                                //TODO: Aggiornare quantità menù
+//                            }
+//                        });
+//                        builder.setNegativeButton("Reject", new DialogInterface.OnClickListener() {
+//                            @Override
+//                            public void onClick(DialogInterface dialogInterface, int i) {
+//                                c.setStatus(Status.REJECTED);
+//                                adapter.notifyDataSetChanged();
+//                            }
+//                        });
+//                        builder.setNeutralButton("Cancel", new DialogInterface.OnClickListener() {
+//                            @Override
+//                            public void onClick(DialogInterface dialogInterface, int i) {
+//                                dialogInterface.cancel();
+//                            }
+//                        });
+//                    }
+//                }
+//                AlertDialog dialog = builder.create();
+//                dialog.show();
+//            }
+//        });
 
 
 
         return view;
     }
+
+    private void initData(){
+
+        reservations = new ArrayList<>();
+        listHash = new HashMap<>();
+
+        c1 = new Customer("ID111111","Fabio", "Ricciardi", "no piccante", "04/04/2019");
+        c2 = new Customer("ID222222","Michelangelo", "Moncada", "sono gay", "04/04/2019");
+
+        reservations.add(c1);
+        reservations.add(c2);
+
+
+        Dish d1_c1= new Dish("Pasta carbonara", 1, "no cipolla");
+        Dish d2_c1= new Dish("Pizza margherita", 2, "pizze tagliate");
+        List<Dish> list1= new ArrayList<>();
+        list1.add(d1_c1);
+        list1.add(d2_c1);
+        List<Dish> list2 = new ArrayList<>();
+        list2.add(d1_c1);
+
+        listHash.put(c1.getOrder_id(),list1);
+        listHash.put(c2.getOrder_id(),list2);
+
+    }
+
+
     private class MyAdapter extends ArrayAdapter<Customer>{
         Context context;
         int resource;

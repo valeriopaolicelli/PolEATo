@@ -1,139 +1,59 @@
 package com.example.poleato;
 
-import android.app.Activity;
-import android.content.res.Resources;
-import android.util.Log;
+import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.BaseAdapter;
 import android.widget.BaseExpandableListAdapter;
-import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.example.poleato.Customer;
-import com.example.poleato.R;
-
-import java.text.DecimalFormat;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
 
-public class ReservationExpandableListAdapter {
-    Activity host;
-    private final LayoutInflater inf;
-    private List<String> _listDataGroup; // header titles
-    private HashMap<String, List<Customer>> _listDataChild; // child data in format of header title, child title
+public class ReservationExpandableListAdapter extends BaseExpandableListAdapter {
 
-    public ExpandableListAdapter(Activity host, List<String> listDataHeader,
-                                 HashMap<String, List<Customer>> listChildData) {
+    private Context context;
+    private List<Customer> reservations;
+    private HashMap<String, List<Dish>>listHashMap;
 
-        this.host = host;
-        inf = LayoutInflater.from(host);
-        this._listDataGroup = listDataHeader;
-        this._listDataChild = listChildData;
-    }
-
-
-
-
-    @Override
-    public View getChildView(int groupPosition, final int childPosition,
-                             boolean isLastChild, View convertView, ViewGroup parent) {
-
-        DishViewHolder holder; //recycler view pattern
-
-        if (convertView == null){
-            convertView = inf.inflate(R.layout.reservation_dishrow_layout, parent, false);
-            holder = new DishViewHolder();
-            holder.name = (TextView) convertView.findViewById(R.id.tv_dish_name);
-            holder.quantity = (TextView) convertView.findViewById(R.id.tv_dish_quantity);
-            holder.notes = (TextView) convertView.findViewById(R.id.tv_dish_note);
-            convertView.setTag(holder);
-        } else{
-            holder = (DishViewHolder) convertView.getTag();
-        }
-
-        holder.name.setText(getChild(groupPosition, childPosition).getName());
-        holder.quantity.setText(getChild(groupPosition, childPosition).get);
-        //price and currency
-        DecimalFormat decimalFormat = new DecimalFormat("#.00"); //two decimal
-        String priceStr = decimalFormat.format(getChild(groupPosition, childPosition).getPrice());
-        String currency = host.getString(R.string.currency);
-        priceStr += currency;
-        holder.price.setText(priceStr);
-        //quantity
-        String qntStr = "(qty "+getChild(groupPosition, childPosition).getQuantity()+")";
-        holder.quantity.setText(qntStr);
-
-
-
-        //if(childPosition == 0)
-
-
-        return convertView;
-    }
-
-
-
-
-
-
-    @Override
-    public View getGroupView(int groupPosition, boolean isExpanded,
-                             View convertView, ViewGroup parent) {
-
-        Log.d("matte", "[Group]getview{ group:"+groupPosition+", view:"+convertView+", name:"+getGroup(groupPosition).toString()+"}");
-        ViewHolder holder; //recycler view pattern
-
-        String groupTitle = (String) getGroup(groupPosition);
-
-        if (convertView == null){
-            convertView = inf.inflate(R.layout.layout_menu_group, parent, false);
-            holder = new ViewHolder();
-            holder.text = convertView.findViewById(R.id.groupView);
-            convertView.setTag(holder);
-        } else{
-            holder = (ViewHolder) convertView.getTag();
-        }
-
-        holder.text.setText(groupTitle);
-
-        return convertView;
-    }
-
-
-
-
-    @Override
-    public Customer getChild(int groupPosition, int childPosition) {
-        return this._listDataChild.get(this._listDataGroup.get(groupPosition)).get(childPosition);
-    }
-
-    @Override
-    public long getChildId(int groupPosition, int childPosition) {
-        return getChild(groupPosition, childPosition).hashCode();
-    }
-
-    @Override
-    public int getChildrenCount(int groupPosition) {
-        return this._listDataChild.get(this._listDataGroup.get(groupPosition))
-                .size();
-    }
-
-    @Override
-    public Object getGroup(int groupPosition) {
-        return this._listDataGroup.get(groupPosition);
+    public ReservationExpandableListAdapter(Context context, List<Customer> reservations, HashMap<String, List<Dish>> listHashMap) {
+        this.context = context;
+        this.reservations = reservations;
+        this.listHashMap = listHashMap;
     }
 
     @Override
     public int getGroupCount() {
-        return this._listDataGroup.size();
+        return reservations.size();
     }
 
     @Override
-    public long getGroupId(int groupPosition) {
-        return getGroup(groupPosition).hashCode();
+    public int getChildrenCount(int i) {
+        return listHashMap.get(reservations.get(i).getOrder_id()).size();
     }
 
+    @Override
+    public Object getGroup(int i) {
+        return reservations.get(i);
+    }
+
+    @Override
+    public Object getChild(int i, int i1) {
+        return listHashMap.get(reservations.get(i).getOrder_id()).get(i1); //i = group item, i1 = child item
+    }
+
+    @Override
+    public long getGroupId(int i) {
+        return i;
+    }
+
+    @Override
+    public long getChildId(int i, int i1) {
+        return i1;
+    }
 
     @Override
     public boolean hasStableIds() {
@@ -141,20 +61,44 @@ public class ReservationExpandableListAdapter {
     }
 
     @Override
-    public boolean isChildSelectable(int groupPosition, int childPosition) {
-        return true;
+    public View getGroupView(int i, boolean b, View view, ViewGroup viewGroup) {
+        Customer c = (Customer) getGroup(i);
+        if( view ==  null){
+            LayoutInflater inflater = (LayoutInflater)this.context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+            view = inflater.inflate(R.layout.reservation_row1_layout,null);
+        }
+        TextView tv_date = (TextView) view.findViewById(R.id.tvDateField);
+        TextView tv_time = (TextView) view.findViewById(R.id.tvTimeField);
+        TextView tv_status = (TextView) view.findViewById(R.id.tvStatusField);
+
+        tv_date.setText(c.getDate());
+        tv_status.setText(c.getStat());
+        tv_time.setText(c.getTime());
+
+        return view;
     }
 
+    @Override
+    public View getChildView(int i, int i1, boolean b, View view, ViewGroup viewGroup) {
 
-    private class DishViewHolder {
-        TextView notes;
-        TextView name;
-        TextView quantity;
+        final Dish dish = (Dish) getChild(i,i1);
+        if(view == null){
+            LayoutInflater inflater = (LayoutInflater)this.context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+            view = inflater.inflate(R.layout.reservation_dishrow_layout,null);
+        }
+
+        TextView tv_dish_name = (TextView) view.findViewById(R.id.tv_dish_name);
+        TextView tv_dish_quantity = (TextView) view.findViewById(R.id.tv_dish_quantity);
+        TextView tv_dish_notes = (TextView) view.findViewById(R.id.tv_dish_note);
+
+        tv_dish_name.setText(dish.getName());
+        tv_dish_quantity.setText(dish.getQuantity().toString());
+        tv_dish_notes.setText(dish.getNotes());
+        return view;
     }
 
-    private class ViewHolder{
-        TextView text;
+    @Override
+    public boolean isChildSelectable(int i, int i1) {
+        return false;
     }
-
 }
-

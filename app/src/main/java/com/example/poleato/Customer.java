@@ -6,6 +6,15 @@ enum Status{
     REJECTED, ACCEPATANCE, COOKING, DELIVERY;
 }
 public class Customer {
+    public String getOrder_id() {
+        return order_id;
+    }
+
+    public void setOrder_id(String order_id) {
+        this.order_id = order_id;
+    }
+
+    private String order_id;
     private String name;
     private String surname;
     private String notes;
@@ -14,7 +23,26 @@ public class Customer {
     private String stat;
     private List<Dish>dishes;
 
-    public Customer(String name, String surname, String notes, String date) {
+    public List<Dish> getDishes() {
+        return dishes;
+    }
+
+    public void setDishes(List<Dish> dishes) {
+        this.dishes = dishes;
+    }
+
+    public String getTime() {
+        return time;
+    }
+
+    public void setTime(String time) {
+        this.time = time;
+    }
+
+    private String time;
+
+    public Customer(String order_id, String name, String surname, String notes, String date) {
+        this.order_id = order_id;
         this.name = name;
         this.surname = surname;
         this.notes = notes;
