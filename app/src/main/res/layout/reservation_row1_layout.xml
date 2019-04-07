@@ -4,8 +4,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:padding="4dp"
-    android:background="@color/colorBackground"
+    android:background="@color/colorLine"
+    android:padding="3dp"
     tools:context=".MainActivity">
 
     <LinearLayout
@@ -25,7 +25,6 @@
                 android:id="@+id/reservation_icon"
                 android:layout_width="24dp"
                 android:layout_height="24dp"
-                android:padding="6dp"
                 android:src="@drawable/reservation_icon"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toStartOf="@id/dateLabel"
@@ -37,6 +36,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/date"
+                android:textSize="20sp"
                 android:textColor="@color/colorTextField"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toStartOf="@id/tvDateField"
@@ -51,10 +51,12 @@
                 android:singleLine="true"
                 android:text="05/04/2019"
                 android:textColor="@color/colorTextSubField"
+                android:textSize="15sp"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toStartOf="@id/timeLabel"
                 app:layout_constraintStart_toEndOf="@id/dateLabel"
-                app:layout_constraintTop_toTopOf="parent" />
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintVertical_bias="0.7" />
 
             <TextView
                 android:id="@+id/timeLabel"
@@ -62,6 +64,7 @@
                 android:layout_height="wrap_content"
                 android:layout_margin="0dp"
                 android:text="@string/time"
+                android:textSize="20sp"
                 android:textColor="@color/colorTextField"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toStartOf="@id/tvTimeField"
@@ -76,10 +79,12 @@
                 android:singleLine="true"
                 android:text="20:30"
                 android:textColor="@color/colorTextSubField"
+                android:textSize="15sp"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toStartOf="@id/statusLabel"
                 app:layout_constraintStart_toEndOf="@id/timeLabel"
-                app:layout_constraintTop_toTopOf="parent" />
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintVertical_bias="0.7" />
 
             <TextView
                 android:id="@+id/statusLabel"
@@ -88,6 +93,7 @@
                 android:maxLength="40"
                 android:singleLine="true"
                 android:text="Status"
+                android:textSize="20sp"
                 android:textColor="@color/colorTextField"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toStartOf="@id/tvStatusField"
@@ -102,10 +108,12 @@
                 android:singleLine="true"
                 android:text="On acceptance"
                 android:textColor="@color/colorTextSubField"
+                android:textSize="15sp"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toEndOf="@id/statusLabel"
-                app:layout_constraintTop_toTopOf="parent" />
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintVertical_bias="0.7" />
         </android.support.constraint.ConstraintLayout>
     </LinearLayout>
 </android.support.constraint.ConstraintLayout>

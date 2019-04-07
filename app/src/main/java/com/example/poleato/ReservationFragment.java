@@ -40,100 +40,99 @@ public class ReservationFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.reservation_frag_layout,container,false);
-
-        //lv = view.findViewById(R.id.reservationslv);
         initData();
 
         lv = view.findViewById(R.id.reservationslv);
         listAdapter = new ReservationExpandableListAdapter(getActivity(),reservations,listHash);
 
         lv.setAdapter(listAdapter);
+/*
+        lv.setOnChildClickListener(new ExpandableListView.OnChildClickListener() {
+            @Override
+            public boolean onChildClick(ExpandableListView parent, View v, int groupPosition, int childPosition, long id) {
+                final Customer c = (Customer) parent.getItemAtPosition(childPosition);
+                final AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
 
-//        //creo istanza della classe myAdapter
-//
-//        final MyAdapter adapter = new MyAdapter(getActivity(),R.layout.reservation_row1_layout,customers);
-//
-//        //set adapter to list
-//
-//        lv.setAdapter(adapter);
-//
-//        //handle item clicks
-//        lv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-//            @Override
-//            public void onItemClick(AdapterView<?> adapterView, View view, int position, long l) {
-//                final Customer c = (Customer) adapterView.getItemAtPosition(position);
-//                final AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-//
-//                // Se lo stato è REJECTED, il ristoratore non può cambiarlo
-//                if(c.getStatus() == Status.REJECTED){
-//                    builder.setTitle("Order Rejected");
-//
-//                    builder.setMessage("Sorry, you've already rejected this order");
-//                    builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
-//                        @Override
-//                        public void onClick(DialogInterface dialogInterface, int i) {
-//                            dialogInterface.cancel();
-//                        }
-//                    });
-//                }
-//                else {
-//
-//                    //se lo status è COOKING, il ristoratore può scegliere se far partire la consegna
-//                    if(c.getStatus() == Status.COOKING){
-//                        builder.setTitle("Deliver order");
-//
-//                        builder.setMessage("Is everything ready? Status will pass into 'on delivery'");
-//                        builder.setPositiveButton("Confirm", new DialogInterface.OnClickListener() {
-//                            @Override
-//                            public void onClick(DialogInterface dialogInterface, int i) {
-//                                c.setStatus(Status.DELIVERY);
-//                                adapter.notifyDataSetChanged();
-//                            }
-//                        });
-//                        builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-//                            @Override
-//                            public void onClick(DialogInterface dialogInterface, int i) {
-//                                dialogInterface.cancel();
-//                            }
-//                        });
-//                    }
-//                    else {
-//                        //Se lo stato è ACCEPTANCE, il ristoratore può accetare o rifiutare l'ordine
-//                        builder.setTitle("Confirm order");
-//
-//                        builder.setMessage("Do you want to confirm or reject this order? Status will pass into 'on cooking'");
-//
-//                        builder.setPositiveButton("Confirm", new DialogInterface.OnClickListener() {
-//                            @Override
-//                            public void onClick(DialogInterface dialogInterface, int i) {
-//                                c.setStatus(Status.COOKING);
-//                                adapter.notifyDataSetChanged();
-//
-//                                //TODO: Aggiornare quantità menù
-//                            }
-//                        });
-//                        builder.setNegativeButton("Reject", new DialogInterface.OnClickListener() {
-//                            @Override
-//                            public void onClick(DialogInterface dialogInterface, int i) {
-//                                c.setStatus(Status.REJECTED);
-//                                adapter.notifyDataSetChanged();
-//                            }
-//                        });
-//                        builder.setNeutralButton("Cancel", new DialogInterface.OnClickListener() {
-//                            @Override
-//                            public void onClick(DialogInterface dialogInterface, int i) {
-//                                dialogInterface.cancel();
-//                            }
-//                        });
-//                    }
-//                }
-//                AlertDialog dialog = builder.create();
-//                dialog.show();
-//            }
-//        });
+                // Se lo stato è REJECTED, il ristoratore non può cambiarlo
+                if(c.getStatus() == Status.REJECTED){
+                    builder.setTitle("Order Rejected");
 
+                    builder.setMessage("Sorry, you've already rejected this order");
+                    builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialogInterface, int i) {
+                            dialogInterface.cancel();
+                        }
+                    });
+                }
+                else if(c.getStatus() == Status.DELIVERY){
+                    builder.setTitle("Order Delivered");
 
+                    builder.setMessage("You've already delivered this order");
+                    builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialogInterface, int i) {
+                            dialogInterface.cancel();
+                        }
+                    });
+                }
+                else {
 
+                    //se lo status è COOKING, il ristoratore può scegliere se far partire la consegna
+                    if(c.getStatus() == Status.COOKING){
+                        builder.setTitle("Deliver order");
+
+                        builder.setMessage("Is everything ready? Status will pass into 'on delivery'");
+                        builder.setPositiveButton("Confirm", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialogInterface, int i) {
+                                c.setStatus(Status.DELIVERY);
+                                listAdapter.notifyDataSetChanged();
+                            }
+                        });
+                        builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialogInterface, int i) {
+                                dialogInterface.cancel();
+                            }
+                        });
+                    }
+                    else {
+                        //Se lo stato è ACCEPTANCE, il ristoratore può accetare o rifiutare l'ordine
+                        builder.setTitle("Confirm order");
+
+                        builder.setMessage("Do you want to confirm or reject this order? Status will pass into 'on cooking'");
+
+                        builder.setPositiveButton("Confirm", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialogInterface, int i) {
+                                c.setStatus(Status.COOKING);
+                                listAdapter.notifyDataSetChanged();
+
+                                //TODO: Aggiornare quantità menù
+                            }
+                        });
+                        builder.setNegativeButton("Reject", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialogInterface, int i) {
+                                c.setStatus(Status.REJECTED);
+                                listAdapter.notifyDataSetChanged();
+                            }
+                        });
+                        builder.setNeutralButton("Cancel", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialogInterface, int i) {
+                                dialogInterface.cancel();
+                            }
+                        });
+                    }
+                }
+                AlertDialog dialog = builder.create();
+                dialog.show();
+                return false;
+            }
+        });
+        */
         return view;
     }
 
@@ -160,31 +159,5 @@ public class ReservationFragment extends Fragment {
         listHash.put(c1.getOrder_id(),list1);
         listHash.put(c2.getOrder_id(),list2);
 
-    }
-
-
-    private class MyAdapter extends ArrayAdapter<Customer>{
-        Context context;
-        int resource;
-        ArrayList<Customer>customers;
-
-        MyAdapter(Context context, int resource, ArrayList<Customer> customers){
-            super(context,resource,customers);
-            this.context=context;
-            this.resource = resource;
-            this.customers = customers;
-        }
-
-        @NonNull
-        @Override
-        //responsable for getting the view and attaching it to the ListView
-        public View getView(int position, View convertView, ViewGroup parent) {
-
-            LayoutInflater inflater = LayoutInflater.from(context);
-            convertView =  inflater.inflate(resource, parent, false);
-
-
-            return convertView;
-        }
     }
 }

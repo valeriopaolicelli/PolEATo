@@ -6,6 +6,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.BaseExpandableListAdapter;
+import android.widget.Button;
 import android.widget.TextView;
 
 import java.util.ArrayList;
@@ -94,11 +95,20 @@ public class ReservationExpandableListAdapter extends BaseExpandableListAdapter 
         tv_dish_name.setText(dish.getName());
         tv_dish_quantity.setText(dish.getQuantity().toString());
         tv_dish_notes.setText(dish.getNotes());
+
+        Button button = (Button) view.findViewById(R.id.myButton);
+        if(b){
+            //if is the last child, add the button on the bottom
+            button.setVisibility(View.VISIBLE);
+        } else {
+            button.setVisibility(View.GONE);
+        }
+
         return view;
     }
 
     @Override
     public boolean isChildSelectable(int i, int i1) {
-        return false;
+        return true;
     }
 }

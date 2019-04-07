@@ -17,16 +17,8 @@ public class Dish {
         return quantity;
     }
 
-    public void setQuantity(int quantity) {
-        this.quantity = quantity;
-    }
-
     public String getNotes() {
         return notes;
-    }
-
-    public void setNotes(String notes) {
-        this.notes = notes;
     }
 
     public Dish(String name, int quantity, String notes) {

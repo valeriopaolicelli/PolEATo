@@ -11,13 +11,13 @@
         android:id="@+id/dish_icon"
         android:layout_width="24dp"
         android:layout_height="24dp"
-        android:padding="6dp"
+        android:padding="0dp"
         android:src="@drawable/dishes_icon"
         app:layout_constraintBottom_toTopOf="@id/tv_dish_name"
         app:layout_constraintEnd_toStartOf="@id/dish_name_label"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.0" />
+        app:layout_constraintVertical_bias="0.52" />
 
     <TextView
         android:id="@+id/dish_name_label"
@@ -25,6 +25,7 @@
         android:layout_height="wrap_content"
         android:layout_marginEnd="32dp"
         android:text="@string/dishes"
+        android:textSize="20sp"
         android:textColor="@color/colorTextField"
         app:layout_constraintBottom_toTopOf="@id/tv_dish_name"
         app:layout_constraintEnd_toStartOf="@id/dish_quantity_label"
@@ -38,6 +39,7 @@
         android:layout_height="wrap_content"
         android:layout_margin="0dp"
         android:text="@string/quantity"
+        android:textSize="20sp"
         android:textColor="@color/colorTextField"
         app:layout_constraintBottom_toTopOf="@id/tv_dish_quantity"
         app:layout_constraintEnd_toEndOf="parent"
@@ -54,6 +56,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Pasta carbonara"
+        android:textSize="18sp"
         android:textColor="@color/colorTextSubField"
         app:layout_constraintBottom_toTopOf="@id/tv_dish_note"
         app:layout_constraintEnd_toStartOf="@id/tv_dish_quantity"
@@ -67,6 +70,7 @@
         android:layout_height="wrap_content"
         android:layout_margin="0dp"
         android:text="2"
+        android:textSize="18sp"
         android:textColor="@color/colorTextSubField"
         app:layout_constraintBottom_toTopOf="@id/tv_dish_note"
         app:layout_constraintEnd_toEndOf="parent"
@@ -80,11 +84,14 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Notes"
+        android:textSize="20sp"
         android:textColor="@color/colorTextField"
-        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintBottom_toTopOf="@id/myButton"
         app:layout_constraintEnd_toStartOf="@id/tv_dish_name"
+        app:layout_constraintHorizontal_bias="0.927"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/tv_dish_name" />
+        app:layout_constraintTop_toBottomOf="@id/tv_dish_name"
+        app:layout_constraintVertical_bias="0.384" />
 
     <TextView
         android:id="@+id/tv_dish_note"
@@ -95,9 +102,21 @@
         android:maxLength="100"
         android:maxLines="3"
         android:text="Senza aglio, cipolla, panna, prezzemolo"
+        android:textSize="18sp"
         android:textColor="@color/colorTextNoteField"
-        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintBottom_toTopOf="@id/myButton"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@id/dish_note_label"
         app:layout_constraintTop_toBottomOf="@id/tv_dish_name" />
+
+    <Button
+        android:id="@+id/myButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom|right"
+        android:text="Accept or Reject"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/tv_dish_note" />
 </android.support.constraint.ConstraintLayout>

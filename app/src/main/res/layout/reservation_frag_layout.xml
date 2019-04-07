@@ -4,6 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:padding="3dp"
     android:background="@color/colorBodyPrimary"
     android:orientation="vertical"
     tools:context=".MainActivity">
@@ -11,5 +12,9 @@
     <ExpandableListView
         android:id="@+id/reservationslv"
         android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+        android:layout_height="match_parent"
+        android:dividerHeight="2dp"
+        android:childDivider="@color/colorBodyPrimary"
+        android:divider= "@color/colorLine">
+    </ExpandableListView>
 </RelativeLayout>
