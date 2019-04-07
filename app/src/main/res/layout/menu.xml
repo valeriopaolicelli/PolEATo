@@ -18,8 +18,7 @@
         android:indicatorLeft="250dp"
         android:indicatorRight="300dp"
         android:divider="@null"
-        android:dividerHeight="0dp"
-        >
+        android:dividerHeight="0dp">
 
     </ExpandableListView>
 </LinearLayout>

@@ -8,10 +8,14 @@ import android.view.ViewGroup;
 
 public class EditFood extends Fragment {
 
+    View rootview;
+
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.edit_menu, container, false);
+        rootview = inflater.inflate(R.layout.edit_menu, container, false);
+        return rootview;
     }
 }
