@@ -118,8 +118,6 @@ public class ReservationFragment extends Fragment {
                             @Override
                             public void onClick(DialogInterface dialogInterface, int i) {
                                 c.setStatus(Status.REJECTED);
-//                        FragmentTransaction ft = getFragmentManager().beginTransaction();
-//                        ft.detach(ReservationFragment.this).attach(ReservationFragment.this).commit();
                                 adapter.notifyDataSetChanged();
                             }
                         });
@@ -140,12 +138,6 @@ public class ReservationFragment extends Fragment {
 
         return view;
     }
-
-    @Override
-    public void onResume() {
-        super.onResume();
-    }
-
     private class MyAdapter extends ArrayAdapter<Customer>{
         Context context;
         int resource;
@@ -162,27 +154,12 @@ public class ReservationFragment extends Fragment {
         @Override
         //responsable for getting the view and attaching it to the ListView
         public View getView(int position, View convertView, ViewGroup parent) {
-//            String name = getItem(position).getName();
-//            String surname = getItem(position).getSurname();
-//            String notes = getItem(position).getNotes();
-//            String date = getItem(position).getDate();
-//            String status = getItem(position).getStat();
-//
-//            Customer customer = new Customer(name, surname, notes, date);
+
             LayoutInflater inflater = LayoutInflater.from(context);
             convertView =  inflater.inflate(resource, parent, false);
-//
-//            TextView tvName = (TextView) convertView.findViewById(R.id.textView1);
-//            TextView tvSurname = (TextView) convertView.findViewById(R.id.textView2);
-//            TextView tvNotes = (TextView) convertView.findViewById(R.id.tv_dish_note);
-//            TextView tvDate = (TextView) convertView.findViewById(R.id.textView4);
-//            TextView tvStatus = (TextView) convertView.findViewById(R.id.textView5);
-//
-//            tvName.setText(name);
-//            tvSurname.setText(surname);
-//            tvDate.setText(date);
-//            tvNotes.setText(notes);
-//            tvStatus.setText(status);
+
+
+
 
             return convertView;
         }
