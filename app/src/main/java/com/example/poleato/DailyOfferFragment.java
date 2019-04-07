@@ -2,7 +2,6 @@ package com.example.poleato;
 
 import android.app.Activity;
 import android.content.Context;
-import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Point;
 import android.graphics.drawable.Drawable;
@@ -15,7 +14,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ExpandableListView;
-import android.widget.ImageView;
 
 import com.example.poleato.ExpandableListManagement.*;
 
@@ -96,6 +94,19 @@ public class DailyOfferFragment extends Fragment {
         // setting list adapter
         expListView.setAdapter(listAdapter);
 
+        // attach the onClickListener to the cardView to launch a fragment to edit the infos
+        CardView cv = hostActivity.findViewById(R.id.childView);
+        cv.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                EditFood nextFrag= new EditFood();
+                FragmentTransaction transaction = getFragmentManager().beginTransaction();
+                transaction.replace(R.id.menuList, nextFrag); // give your fragment container id in first parameter
+                transaction.commit();
+            }
+        });
+
     }
 
     /*
@@ -115,32 +126,32 @@ public class DailyOfferFragment extends Fragment {
         // Adding child data
         List<Food> starters = new ArrayList<Food>();
         starters.add(new Food(BitmapFactory.decodeResource(getResources(), R.drawable.caprese),
-                "Caprese", "Pomodori, mozzarella, olio e basilico", 2.50));
+                "Caprese", "Pomodori, mozzarella, olio e basilico", 2.50, 10));
         starters.add(new Food(BitmapFactory.decodeResource(getResources(), R.drawable.bruschette),
-                "Bruschette", "Pane, pomodori, olio e basilico", 1.80));
+                "Bruschette", "Pane, pomodori, olio e basilico", 1.80, 10));
 
 
         List<Food> firsts = new ArrayList<Food>();
         firsts.add(new Food(BitmapFactory.decodeResource(getResources(), R.drawable.carbonara),
-                "Carbonara", "Spaghetti, guanciale, uovo, pepe e pecorino", 5.00));
+                "Carbonara", "Spaghetti, guanciale, uovo, pepe e pecorino", 5.00,10));
         firsts.add(new Food(BitmapFactory.decodeResource(getResources(), R.drawable.amatriciana),
-                "Amatriciana", "Pasta, pancetta, pomodoro, peperoncino", 3.50));
+                "Amatriciana", "Pasta, pancetta, pomodoro, peperoncino", 3.50,10));
         firsts.add(new Food(BitmapFactory.decodeResource(getResources(), R.drawable.lasagna),
-                "Lasagna", "Pomodoro, formaggio e basilico", 6.00));
+                "Lasagna", "Pomodoro, formaggio e basilico", 6.00, 5));
         firsts.add(new Food(BitmapFactory.decodeResource(getResources(), R.drawable.gamberetti),
-                "Gamberetti", "Pomodoro, gamberetti e melanzane", 7.00));
+                "Gamberetti", "Pomodoro, gamberetti e melanzane", 7.00, 7));
 
         List<Food> seconds = new ArrayList<Food>();
         seconds.add(new Food(BitmapFactory.decodeResource(getResources(), R.drawable.pollo),
-                "Pollo al forno", "Pollo, patate e pomodoro", 8.00));
+                "Pollo al forno", "Pollo, patate e pomodoro", 8.00, 10));
 
         List<Food> desserts = new ArrayList<Food>();
         desserts.add(new Food(BitmapFactory.decodeResource(getResources(), R.drawable.tiramisu),
-                "Tiramisu", "Caffè, savoiardi, mascarpone e cacao", 2.00));
+                "Tiramisu", "Caffè, savoiardi, mascarpone e cacao", 2.00, 10));
 
         List<Food> drinks = new ArrayList<Food>();
         drinks.add(new Food(BitmapFactory.decodeResource(getResources(), R.drawable.tiramisu),
-                "Poretti 33cl", "Birra", 2.00));
+                "Poretti 33cl", "Birra", 2.00, 10));
 
 
         listDataChild.put(listDataGroup.get(0), starters); // Header, Child data
