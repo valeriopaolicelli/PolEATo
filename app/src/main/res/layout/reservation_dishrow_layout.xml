@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginTop="8dp"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    app:layout_constraintTop_toTopOf="parent"
+    xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <ImageView
+        android:id="@+id/dish_icon"
+        android:layout_width="24dp"
+        android:layout_height="24dp"
+        android:padding="6dp"
+        android:src="@drawable/dishes_icon"
+        app:layout_constraintBottom_toTopOf="@id/tv_dish_name"
+        app:layout_constraintEnd_toStartOf="@id/dish_name_label"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.0" />
+
+    <TextView
+        android:id="@+id/dish_name_label"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="32dp"
+        android:text="@string/dishes"
+        android:textColor="@color/colorTextField"
+        app:layout_constraintBottom_toTopOf="@id/tv_dish_name"
+        app:layout_constraintEnd_toStartOf="@id/dish_quantity_label"
+        app:layout_constraintStart_toEndOf="@id/dish_icon"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.0" />
+
+    <TextView
+        android:id="@+id/dish_quantity_label"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="0dp"
+        android:text="@string/quantity"
+        android:textColor="@color/colorTextField"
+        app:layout_constraintBottom_toTopOf="@id/tv_dish_quantity"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@id/dish_name_label"
+        app:layout_constraintTop_toTopOf="parent" />
+
+
+    <!-- Content -->
+
+
+    <!-- to define icon refers to status -->
+    <TextView
+        android:id="@+id/tv_dish_name"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Pasta carbonara"
+        android:textColor="@color/colorTextSubField"
+        app:layout_constraintBottom_toTopOf="@id/tv_dish_note"
+        app:layout_constraintEnd_toStartOf="@id/tv_dish_quantity"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="@id/dish_name_label"
+        app:layout_constraintTop_toBottomOf="@id/dish_name_label" />
+
+    <TextView
+        android:id="@+id/tv_dish_quantity"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="0dp"
+        android:text="2"
+        android:textColor="@color/colorTextSubField"
+        app:layout_constraintBottom_toTopOf="@id/tv_dish_note"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.21"
+        app:layout_constraintStart_toStartOf="@id/dish_quantity_label"
+        app:layout_constraintTop_toBottomOf="@id/dish_quantity_label" />
+
+    <!-- Notes about dish -->
+    <TextView
+        android:id="@+id/dish_note_label"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Notes"
+        android:textColor="@color/colorTextField"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@id/tv_dish_name"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/tv_dish_name" />
+
+    <TextView
+        android:id="@+id/tv_dish_note"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginEnd="8dp"
+        android:maxLength="100"
+        android:maxLines="3"
+        android:text="Senza aglio, cipolla, panna, prezzemolo"
+        android:textColor="@color/colorTextNoteField"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@id/dish_note_label"
+        app:layout_constraintTop_toBottomOf="@id/tv_dish_name" />
+</android.support.constraint.ConstraintLayout>
