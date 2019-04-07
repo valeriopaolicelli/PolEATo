@@ -14,6 +14,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.ExpandableListAdapter;
 import android.widget.ExpandableListView;
 import android.widget.ImageView;
@@ -46,6 +47,15 @@ public class ReservationFragment extends Fragment {
         listAdapter = new ReservationExpandableListAdapter(getActivity(),reservations,listHash);
 
         lv.setAdapter(listAdapter);
+
+        Button button= view.findViewById(R.id.myButton);
+        //TODO enable button "accept or reject"
+        button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+            }
+        });
 /*
         lv.setOnChildClickListener(new ExpandableListView.OnChildClickListener() {
             @Override

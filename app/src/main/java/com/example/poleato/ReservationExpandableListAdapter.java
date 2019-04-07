@@ -71,10 +71,11 @@ public class ReservationExpandableListAdapter extends BaseExpandableListAdapter 
         TextView tv_date = (TextView) view.findViewById(R.id.tvDateField);
         TextView tv_time = (TextView) view.findViewById(R.id.tvTimeField);
         TextView tv_status = (TextView) view.findViewById(R.id.tvStatusField);
-
+//TODO time is not showed
+//TODO arrow of listview group should be on the right and more visible
         tv_date.setText(c.getDate());
-        tv_status.setText(c.getStat());
         tv_time.setText(c.getTime());
+        tv_status.setText(c.getStat());
 
         return view;
     }
@@ -98,7 +99,7 @@ public class ReservationExpandableListAdapter extends BaseExpandableListAdapter 
 
         Button button = (Button) view.findViewById(R.id.myButton);
         if(b){
-            //if is the last child, add the button on the bottom
+            //if is the last child, add the button "accept or reject" on the bottom
             button.setVisibility(View.VISIBLE);
         } else {
             button.setVisibility(View.GONE);
@@ -109,6 +110,6 @@ public class ReservationExpandableListAdapter extends BaseExpandableListAdapter 
 
     @Override
     public boolean isChildSelectable(int i, int i1) {
-        return true;
+        return false;
     }
 }

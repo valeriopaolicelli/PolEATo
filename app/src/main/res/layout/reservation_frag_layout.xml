@@ -13,8 +13,8 @@
         android:id="@+id/reservationslv"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:dividerHeight="2dp"
-        android:childDivider="@color/colorBodyPrimary"
+        android:dividerHeight="0.5dp"
+        android:childDivider="@color/colorLine"
         android:divider= "@color/colorLine">
     </ExpandableListView>
 </RelativeLayout>
