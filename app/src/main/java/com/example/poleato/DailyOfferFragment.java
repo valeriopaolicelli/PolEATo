@@ -125,7 +125,7 @@ public class DailyOfferFragment extends Fragment {
                 "Tiramisu", "Caffè, savoiardi, mascarpone e cacao", 2.00));
 
         List<Food> drinks = new ArrayList<Food>();
-        drinks.add(new Food(BitmapFactory.decodeResource(getResources(), R.drawable.poretti),
+        drinks.add(new Food(BitmapFactory.decodeResource(getResources(), R.drawable.tiramisu),
                 "Poretti 33cl", "Birra", 2.00));
 
 
