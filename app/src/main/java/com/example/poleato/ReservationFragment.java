@@ -53,7 +53,7 @@ public class ReservationFragment extends Fragment {
 
         //creo istanza della classe myAdapter
 
-        final MyAdapter adapter = new MyAdapter(getActivity(),R.layout.reservation_row_layout,customers);
+        final MyAdapter adapter = new MyAdapter(getActivity(),R.layout.reservation_row1_layout,customers);
 
         //set adapter to list
 
@@ -110,6 +110,8 @@ public class ReservationFragment extends Fragment {
                             public void onClick(DialogInterface dialogInterface, int i) {
                                 c.setStatus(Status.COOKING);
                                 adapter.notifyDataSetChanged();
+
+                                //TODO: Aggiornare quantità menù
                             }
                         });
                         builder.setNegativeButton("Reject", new DialogInterface.OnClickListener() {
@@ -160,27 +162,27 @@ public class ReservationFragment extends Fragment {
         @Override
         //responsable for getting the view and attaching it to the ListView
         public View getView(int position, View convertView, ViewGroup parent) {
-            String name = getItem(position).getName();
-            String surname = getItem(position).getSurname();
-            String notes = getItem(position).getNotes();
-            String date = getItem(position).getDate();
-            String status = getItem(position).getStat();
-
-            Customer customer = new Customer(name, surname, notes, date);
+//            String name = getItem(position).getName();
+//            String surname = getItem(position).getSurname();
+//            String notes = getItem(position).getNotes();
+//            String date = getItem(position).getDate();
+//            String status = getItem(position).getStat();
+//
+//            Customer customer = new Customer(name, surname, notes, date);
             LayoutInflater inflater = LayoutInflater.from(context);
             convertView =  inflater.inflate(resource, parent, false);
-
-            TextView tvName = (TextView) convertView.findViewById(R.id.textView1);
-            TextView tvSurname = (TextView) convertView.findViewById(R.id.textView2);
-            TextView tvNotes = (TextView) convertView.findViewById(R.id.textView3);
-            TextView tvDate = (TextView) convertView.findViewById(R.id.textView4);
-            TextView tvStatus = (TextView) convertView.findViewById(R.id.textView5);
-
-            tvName.setText(name);
-            tvSurname.setText(surname);
-            tvDate.setText(date);
-            tvNotes.setText(notes);
-            tvStatus.setText(status);
+//
+//            TextView tvName = (TextView) convertView.findViewById(R.id.textView1);
+//            TextView tvSurname = (TextView) convertView.findViewById(R.id.textView2);
+//            TextView tvNotes = (TextView) convertView.findViewById(R.id.tv_dish_note);
+//            TextView tvDate = (TextView) convertView.findViewById(R.id.textView4);
+//            TextView tvStatus = (TextView) convertView.findViewById(R.id.textView5);
+//
+//            tvName.setText(name);
+//            tvSurname.setText(surname);
+//            tvDate.setText(date);
+//            tvNotes.setText(notes);
+//            tvStatus.setText(status);
 
             return convertView;
         }
