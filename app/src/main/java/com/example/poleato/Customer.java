@@ -1,5 +1,7 @@
 package com.example.poleato;
 
+import java.util.List;
+
 enum Status{
     REJECTED, ACCEPATANCE, COOKING, DELIVERY;
 }
@@ -10,6 +12,7 @@ public class Customer {
     private String date;
     private Status status;
     private String stat;
+    private List<Dish>dishes;
 
     public Customer(String name, String surname, String notes, String date) {
         this.name = name;

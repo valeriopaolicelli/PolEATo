@@ -14,7 +14,9 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.ExpandableListView;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -26,7 +28,8 @@ import java.util.List;
 
 
 public class ReservationFragment extends Fragment {
-    private ListView lv;
+    private ExpandableListView lv;
+    private ListView lv_dishes;
     Customer c1;
     Customer c2;
     Customer c3;
@@ -157,8 +160,6 @@ public class ReservationFragment extends Fragment {
 
             LayoutInflater inflater = LayoutInflater.from(context);
             convertView =  inflater.inflate(resource, parent, false);
-
-
 
 
             return convertView;
