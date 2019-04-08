@@ -1,23 +1,16 @@
 package com.example.poleato;
 
+import android.content.Context;
+
 import java.util.List;
 
 enum Status{
-    REJECTED, ACCEPATANCE, COOKING, DELIVERY;
+    REJECTED, ACCEPATANCE, COOKING, DELIVERY
 }
 public class Customer {
-    public String getOrder_id() {
-        return order_id;
-    }
-
-    public void setOrder_id(String order_id) {
-        this.order_id = order_id;
-    }
-
     private String order_id;
     private String name;
     private String surname;
-    private String notes;
     private String date;
     private Status status;
     private String stat;
@@ -41,14 +34,14 @@ public class Customer {
 
     private String time;
 
-    public Customer(String order_id, String name, String surname, String notes, String date) {
+    public Customer(String order_id, String name, String surname, String date, String time, Context context) {
         this.order_id = order_id;
         this.name = name;
         this.surname = surname;
-        this.notes = notes;
         this.date = date;
+        this.time= time;
         this.status = Status.ACCEPATANCE;
-        this.stat = "On acceptance";
+        this.stat = context.getString(R.string.new_order);
     }
     public String getName() {
         return name;
@@ -66,13 +59,6 @@ public class Customer {
         this.surname = surname;
     }
 
-    public String getNotes() {
-        return notes;
-    }
-
-    public void setNotes(String notes) {
-        this.notes = notes;
-    }
 
     public String getDate() {
         return date;
@@ -86,20 +72,23 @@ public class Customer {
         return status;
     }
 
-    public void setStatus(Status status) {
+    public void setStatus(Status status, Context context) {
         if(status == Status.ACCEPATANCE)
-            stat = "On acceptance";
+            stat = context.getString(R.string.new_order);
         else if( status == Status.DELIVERY)
-            stat = "On delivery";
+            stat = context.getString(R.string.delivery);
         else if( status == Status.COOKING)
-            stat = "Cooking";
+            stat = context.getString(R.string.cooking);
         else if ( status == Status.REJECTED)
-            stat = "Rejected";
-
+            stat = context.getString(R.string.reject);
         this.status = status;
     }
 
     public String getStat() {
         return stat;
+    }
+
+    public String getOrder_id() {
+        return order_id;
     }
 }

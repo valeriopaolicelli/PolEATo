@@ -30,7 +30,7 @@ public class AccountFragment extends Fragment {
     private TextView tvEmailField;
     private TextView tvPhoneField;
     private FloatingActionButton buttEdit;
- //   private ImageView imageBackground;
+    //   private ImageView imageBackground;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -45,7 +45,7 @@ public class AccountFragment extends Fragment {
         tvAddressField= view.findViewById(R.id.tvAddressField);
         tvEmailField= view.findViewById(R.id.tvEmailField);
         tvPhoneField= view.findViewById(R.id.tvPhoneField);
-    //    imageBackground= view.findViewById(R.id.ivBackground);
+        //    imageBackground= view.findViewById(R.id.ivBackground);
 
         // Button to edit the restaurant details
         buttEdit= view.findViewById(R.id.buttEdit);
@@ -94,7 +94,7 @@ public class AccountFragment extends Fragment {
         String email= fields.getString("Email", "Nessun valore trovato");
         String address= fields.getString("Address", "Nessun valore trovato");
         String phone= fields.getString("Phone", "Nessun valore trovato");
-  //      String image= fields.getString("Background", encodeTobase64());
+        //      String image= fields.getString("Background", encodeTobase64());
 
         // Setting the textView contents with the values stored into SharedPreferences file
         tvNameField.setText(name);
@@ -104,7 +104,7 @@ public class AccountFragment extends Fragment {
         tvAddressField.setText(address);
         tvEmailField.setText(email);
         tvPhoneField.setText(phone);
-     //   imageBackground.setImageBitmap(decodeBase64(image));
+        //   imageBackground.setImageBitmap(decodeBase64(image));
     }
 /*
     public String encodeTobase64() {

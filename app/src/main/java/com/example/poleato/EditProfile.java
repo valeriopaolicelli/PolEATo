@@ -58,7 +58,7 @@ public class EditProfile extends AppCompatActivity {
             finish();
         }
 
-      //  change_im = findViewById(R.id.change_im);
+        //  change_im = findViewById(R.id.change_im);
         //fill the maps
         collectFields();
         //fill the fields
@@ -127,46 +127,46 @@ public class EditProfile extends AppCompatActivity {
             });
 
     }
-/*
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == RESULT_LOAD_IMG) {
-            if (resultCode == RESULT_OK) {
-                try {
-                    final Uri imageUri = data.getData();
-                    final InputStream imageStream = getContentResolver().openInputStream(imageUri);
-                    final Bitmap selectedImage = BitmapFactory.decodeStream(imageStream);
-                    imageBackground.setImageBitmap(selectedImage);
-                } catch (FileNotFoundException e) {
-                    e.printStackTrace();
-                    Toast.makeText(this, "Something went wrong", Toast.LENGTH_LONG).show();
-                }
+    /*
+        @Override
+        protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+            super.onActivityResult(requestCode, resultCode, data);
+            if (requestCode == RESULT_LOAD_IMG) {
+                if (resultCode == RESULT_OK) {
+                    try {
+                        final Uri imageUri = data.getData();
+                        final InputStream imageStream = getContentResolver().openInputStream(imageUri);
+                        final Bitmap selectedImage = BitmapFactory.decodeStream(imageStream);
+                        imageBackground.setImageBitmap(selectedImage);
+                    } catch (FileNotFoundException e) {
+                        e.printStackTrace();
+                        Toast.makeText(this, "Something went wrong", Toast.LENGTH_LONG).show();
+                    }
 
-            } else {
-                SharedPreferences fields= this.getSharedPreferences("ProfileDataRestaurant", Context.MODE_PRIVATE);
-                image= fields.getString("ProfileImage", encodeTobase64());
-                imageBackground.setImageBitmap(decodeBase64(image));
+                } else {
+                    SharedPreferences fields= this.getSharedPreferences("ProfileDataRestaurant", Context.MODE_PRIVATE);
+                    image= fields.getString("ProfileImage", encodeTobase64());
+                    imageBackground.setImageBitmap(decodeBase64(image));
+                }
             }
         }
-    }
 
-    public String encodeTobase64() {
-        Bitmap image = ((BitmapDrawable)imageBackground.getDrawable()).getBitmap();
-        ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        image.compress(Bitmap.CompressFormat.PNG, 100, baos);
-        byte[] b = baos.toByteArray();
-        String imageEncoded = Base64.encodeToString(b, Base64.DEFAULT);
-        Log.d("Image Log:", imageEncoded);
-        return imageEncoded;
-    }
+        public String encodeTobase64() {
+            Bitmap image = ((BitmapDrawable)imageBackground.getDrawable()).getBitmap();
+            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+            image.compress(Bitmap.CompressFormat.PNG, 100, baos);
+            byte[] b = baos.toByteArray();
+            String imageEncoded = Base64.encodeToString(b, Base64.DEFAULT);
+            Log.d("Image Log:", imageEncoded);
+            return imageEncoded;
+        }
 
-    public Bitmap decodeBase64(String input) {
-        byte[] decodedByte = Base64.decode(input, 0);
-        return BitmapFactory
-                .decodeByteArray(decodedByte, 0, decodedByte.length);
-    }
-*/
+        public Bitmap decodeBase64(String input) {
+            byte[] decodedByte = Base64.decode(input, 0);
+            return BitmapFactory
+                    .decodeByteArray(decodedByte, 0, decodedByte.length);
+        }
+    */
     public void collectFields(){
         editTextFields.put("Name",(EditText)findViewById(R.id.editTextName));
         editTextFields.put("Type",(EditText)findViewById(R.id.editTextType));
@@ -184,7 +184,7 @@ public class EditProfile extends AppCompatActivity {
         imageButtons.put("Email", (ImageButton)findViewById(R.id.cancel_email));
         imageButtons.put("Phone", (ImageButton)findViewById(R.id.cancel_phone));
 
-      //  imageBackground= findViewById(R.id.ivBackground);
+        //  imageBackground= findViewById(R.id.ivBackground);
     }
 
     private void fillFields() {
@@ -196,7 +196,7 @@ public class EditProfile extends AppCompatActivity {
         String email = fields.getString("Email", "Nessun valore trovato");
         String address = fields.getString("Address", "Nessun valore trovato");
         String phone = fields.getString("Phone", "Nessun valore trovato");
-      //  image= fields.getString("Background", "Nessun valore trovato");
+        //  image= fields.getString("Background", "Nessun valore trovato");
 
         editTextFields.get("Name").setText(name);
         editTextFields.get("Type").setText(type);
@@ -278,40 +278,40 @@ public class EditProfile extends AppCompatActivity {
             editor.putString("Address", editTextFields.get("Address").getText().toString());
             editor.putString("Email", editTextFields.get("Email").getText().toString());
             editor.putString("Phone", editTextFields.get("Phone").getText().toString());
-    //        editor.putString("Background", encodeTobase64());
+            //        editor.putString("Background", encodeTobase64());
             editor.apply();
             Toast.makeText(this, "Saved", Toast.LENGTH_LONG).show();
 
             finish();
         }
     }
-/*
-    public void changeImage(View view) {
-        PopupMenu popup = new PopupMenu(EditProfile.this, change_im);
-        popup.getMenuInflater().inflate(
-                R.menu.popup_menu, popup.getMenu());
-        popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
-            // implement click listener.
-            @Override
-            public boolean onMenuItemClick(MenuItem item) {
-                switch (item.getItemId()) {
-                    case R.id.gallery:
-                        Intent photoPickerIntent = new Intent(Intent.ACTION_PICK);
-                        photoPickerIntent.setType("image/*");
-                        startActivityForResult(photoPickerIntent, RESULT_LOAD_IMG);
-                        return true;
-                    case R.id.removeImage:
-                        removeProfileImage();
-                        return true;
+    /*
+        public void changeImage(View view) {
+            PopupMenu popup = new PopupMenu(EditProfile.this, change_im);
+            popup.getMenuInflater().inflate(
+                    R.menu.popup_menu, popup.getMenu());
+            popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+                // implement click listener.
+                @Override
+                public boolean onMenuItemClick(MenuItem item) {
+                    switch (item.getItemId()) {
+                        case R.id.gallery:
+                            Intent photoPickerIntent = new Intent(Intent.ACTION_PICK);
+                            photoPickerIntent.setType("image/*");
+                            startActivityForResult(photoPickerIntent, RESULT_LOAD_IMG);
+                            return true;
+                        case R.id.removeImage:
+                            removeProfileImage();
+                            return true;
 
-                    default:
-                        return false;
+                        default:
+                            return false;
+                    }
                 }
-            }
-        });
-        popup.show();
-    }
-*/
+            });
+            popup.show();
+        }
+    */
     public void clearText(View view) {
         if (view.getId() == R.id.cancel_name)
             editTextFields.get("Name").setText("");
@@ -328,11 +328,11 @@ public class EditProfile extends AppCompatActivity {
         else if(view.getId() == R.id.cancel_phone)
             editTextFields.get("Phone").setText("");
     }
-/*
-    public void removeProfileImage(){
-        imageBackground.setImageResource(R.drawable.empty_background);
-    }
-*/
+    /*
+        public void removeProfileImage(){
+            imageBackground.setImageResource(R.drawable.empty_background);
+        }
+    */
     public void handleButton(){
         for(ImageButton b : imageButtons.values())
             b.setVisibility(View.INVISIBLE);

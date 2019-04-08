@@ -29,4 +29,11 @@
     <string name="edit">Modifica profilo</string>
     <string name="dishes">Piatto</string>
     <string name="quantity">Quantità</string>
+    <string name="note">Note</string>
+    <string name="status">Stato</string>
+    <string name="new_order">Nuovo ordine</string>
+    <string name="cooking">Preparazione</string>
+    <string name="delivery">In consegna</string>
+    <string name="reject">Rifiutato</string>
+    <string name="button_reservation">Accetta o Rifiuta</string>
 </resources>

@@ -23,23 +23,28 @@
 
             <ImageView
                 android:id="@+id/reservation_icon"
-                android:layout_width="24dp"
-                android:layout_height="24dp"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:layout_marginStart="16dp"
                 android:src="@drawable/reservation_icon"
                 app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toStartOf="@id/dateLabel"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintVertical_bias="0.478"
+                tools:ignore="ContentDescription" />
 
             <TextView
                 android:id="@+id/dateLabel"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:layout_marginEnd="24dp"
+                android:layout_marginBottom="8dp"
                 android:text="@string/date"
-                android:textSize="20sp"
                 android:textColor="@color/colorTextField"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toStartOf="@id/tvDateField"
+                android:textSize="20sp"
+                app:layout_constraintBottom_toTopOf="@id/tvDateField"
+                app:layout_constraintEnd_toStartOf="@id/timeLabel"
                 app:layout_constraintStart_toEndOf="@id/reservation_icon"
                 app:layout_constraintTop_toTopOf="parent" />
 
@@ -47,73 +52,79 @@
                 android:id="@+id/tvDateField"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginEnd="24dp"
+                android:layout_marginBottom="8dp"
                 android:maxLength="40"
                 android:singleLine="true"
-                android:text="05/04/2019"
                 android:textColor="@color/colorTextSubField"
                 android:textSize="15sp"
                 app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toStartOf="@id/timeLabel"
-                app:layout_constraintStart_toEndOf="@id/dateLabel"
-                app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintVertical_bias="0.7" />
+                app:layout_constraintEnd_toStartOf="@id/tvTimeField"
+                app:layout_constraintHorizontal_bias="0.0"
+                app:layout_constraintStart_toStartOf="@+id/dateLabel"
+                app:layout_constraintTop_toBottomOf="@id/dateLabel" />
 
             <TextView
                 android:id="@+id/timeLabel"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_margin="0dp"
+                android:layout_marginEnd="16dp"
+                android:layout_marginBottom="8dp"
                 android:text="@string/time"
-                android:textSize="20sp"
                 android:textColor="@color/colorTextField"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toStartOf="@id/tvTimeField"
-                app:layout_constraintStart_toEndOf="@id/tvDateField"
+                android:textSize="20sp"
+                app:layout_constraintBottom_toTopOf="@id/tvTimeField"
+                app:layout_constraintEnd_toStartOf="@id/statusLabel"
+                app:layout_constraintStart_toEndOf="@id/dateLabel"
                 app:layout_constraintTop_toTopOf="parent" />
 
             <TextView
                 android:id="@+id/tvTimeField"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginEnd="24dp"
+                android:layout_marginBottom="8dp"
                 android:maxLength="40"
                 android:singleLine="true"
-                android:text="20:30"
                 android:textColor="@color/colorTextSubField"
                 android:textSize="15sp"
                 app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toStartOf="@id/statusLabel"
-                app:layout_constraintStart_toEndOf="@id/timeLabel"
-                app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintVertical_bias="0.7" />
+                app:layout_constraintEnd_toStartOf="@id/tvStatusField"
+                app:layout_constraintHorizontal_bias="0.0"
+                app:layout_constraintStart_toStartOf="@id/timeLabel"
+                app:layout_constraintTop_toBottomOf="@id/timeLabel" />
 
             <TextView
                 android:id="@+id/statusLabel"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginEnd="24dp"
+                android:layout_marginBottom="8dp"
                 android:maxLength="40"
                 android:singleLine="true"
-                android:text="Status"
-                android:textSize="20sp"
+                android:text="@string/status"
                 android:textColor="@color/colorTextField"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toStartOf="@id/tvStatusField"
-                app:layout_constraintStart_toEndOf="@id/tvTimeField"
+                android:textSize="20sp"
+                app:layout_constraintBottom_toTopOf="@id/tvStatusField"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@id/timeLabel"
                 app:layout_constraintTop_toTopOf="parent" />
 
             <TextView
                 android:id="@+id/tvStatusField"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginEnd="16dp"
+                android:layout_marginBottom="8dp"
                 android:maxLength="40"
                 android:singleLine="true"
-                android:text="On acceptance"
                 android:textColor="@color/colorTextSubField"
                 android:textSize="15sp"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toEndOf="@id/statusLabel"
-                app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintVertical_bias="0.7" />
+                app:layout_constraintHorizontal_bias="0.0"
+                app:layout_constraintStart_toStartOf="@id/statusLabel"
+                app:layout_constraintTop_toBottomOf="@id/statusLabel" />
         </android.support.constraint.ConstraintLayout>
     </LinearLayout>
 </android.support.constraint.ConstraintLayout>
