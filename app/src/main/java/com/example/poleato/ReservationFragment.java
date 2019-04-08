@@ -20,13 +20,13 @@ public class ReservationFragment extends Fragment {
     private ExpandableListView lv;
     private ReservationExpandableListAdapter listAdapter;
     private ExpandableListView expListView;
-    private List<Customer> reservations;
+    private List<Reservation> reservations;
     private HashMap<String,List<Dish>> listHash = new HashMap<>();
     private Display display;
     private Point size;
     private int width;
-    private Customer c1;
-    private Customer c2;
+    private Reservation c1;
+    private Reservation c2;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -61,8 +61,8 @@ public class ReservationFragment extends Fragment {
         reservations = new ArrayList<>();
         listHash = new HashMap<>();
 
-        c1 = new Customer("ID111111","Fabio", "Ricciardi", "04/04/2019", "20.30", getContext());
-        c2 = new Customer("ID222222","Michelangelo", "Moncada", "04/04/2019", "19.20", getContext());
+        c1 = new Reservation("ID111111","Fabio", "Ricciardi", "04/04/2019", "20.30", getContext());
+        c2 = new Reservation("ID222222","Michelangelo", "Moncada", "04/04/2019", "19.20", getContext());
 
         reservations.add(c1);
         reservations.add(c2);

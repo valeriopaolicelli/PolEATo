@@ -7,7 +7,7 @@ import java.util.List;
 enum Status{
     REJECTED, ACCEPATANCE, COOKING, DELIVERY
 }
-public class Customer {
+public class Reservation {
     private String order_id;
     private String name;
     private String surname;
@@ -34,7 +34,7 @@ public class Customer {
 
     private String time;
 
-    public Customer(String order_id, String name, String surname, String date, String time, Context context) {
+    public Reservation(String order_id, String name, String surname, String date, String time, Context context) {
         this.order_id = order_id;
         this.name = name;
         this.surname = surname;

@@ -8,24 +8,20 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.BaseAdapter;
 import android.widget.BaseExpandableListAdapter;
 import android.widget.Button;
 import android.widget.TextView;
-import android.widget.Toast;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.concurrent.CopyOnWriteArrayList;
 
 public class ReservationExpandableListAdapter extends BaseExpandableListAdapter {
     //TODO change text button when status changes
     private Context context;
-    private List<Customer> reservations;
+    private List<Reservation> reservations;
     private HashMap<String, List<Dish>>listHashMap;
 
-    public ReservationExpandableListAdapter(Context context, List<Customer> reservations, HashMap<String, List<Dish>> listHashMap) {
+    public ReservationExpandableListAdapter(Context context, List<Reservation> reservations, HashMap<String, List<Dish>> listHashMap) {
         this.context = context;
         this.reservations = reservations;
         this.listHashMap = listHashMap;
@@ -68,7 +64,7 @@ public class ReservationExpandableListAdapter extends BaseExpandableListAdapter 
 
     @Override
     public View getGroupView(int i, boolean b, View view, ViewGroup viewGroup) {
-        Customer c = (Customer) getGroup(i);
+        Reservation c = (Reservation) getGroup(i);
         ViewHolder holder;         // To handle the button 'accept or reject', new private class (ViewHolder) is created
 
         if( view ==  null){
@@ -125,7 +121,7 @@ public class ReservationExpandableListAdapter extends BaseExpandableListAdapter 
                 @SuppressLint("ResourceAsColor")
                 @Override
                 public void onClick(View v) {
-                    final Customer c= reservations.get(pos);
+                    final Reservation c= reservations.get(pos);
                     final AlertDialog.Builder builder = new AlertDialog.Builder(v.getContext());
 
                     Log.d("Valerio","Old status: " + c.getStatus().toString());
