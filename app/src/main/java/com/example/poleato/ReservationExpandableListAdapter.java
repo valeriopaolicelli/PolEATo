@@ -98,6 +98,7 @@ public class ReservationExpandableListAdapter extends BaseExpandableListAdapter 
     public View getChildView(int i, int i1, boolean isLast, View view, final ViewGroup viewGroup) {
 
         final Dish dish = (Dish) getChild(i,i1);
+        boolean flag = false;
         if(view == null){
             LayoutInflater inflater = (LayoutInflater)this.context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
             view = inflater.inflate(R.layout.reservation_dishrow_layout,null);
@@ -111,20 +112,23 @@ public class ReservationExpandableListAdapter extends BaseExpandableListAdapter 
         tv_dish_quantity.setText(dish.getQuantity().toString());
         tv_dish_notes.setText(dish.getNotes());
 
-        Button button = (Button) view.findViewById(R.id.myButton);
+        final Button button = (Button) view.findViewById(R.id.myButton);
 
-        final int pos= i; // position in reservation.get must be final
-        if(isLast){
-            //if is the last child, add the button "accept or reject" on the bottom
+        final Reservation c= reservations.get(i);
+        //true => order on delivery or rejected, restaurateur can't do nothing anymore
+        if(c.getStatus() == Status.REJECTED || c.getStatus() == Status.DELIVERY)
+            flag = true;
+
+        if(isLast && !flag){
             button.setVisibility(View.VISIBLE);
+            //if is the last child, add the button "accept or reject" on the bottom
             button.setOnClickListener(new View.OnClickListener() {
                 @SuppressLint("ResourceAsColor")
                 @Override
                 public void onClick(View v) {
-                    final Reservation c= reservations.get(pos);
                     final AlertDialog.Builder builder = new AlertDialog.Builder(v.getContext());
 
-                    Log.d("Valerio","Old status: " + c.getStatus().toString());
+                   // Log.d("Valerio","Old status: " + c.getStatus().toString());
 
                     if(c.getStatus() == Status.REJECTED){
                         builder.setTitle("Order Rejected");
@@ -139,7 +143,6 @@ public class ReservationExpandableListAdapter extends BaseExpandableListAdapter 
                     }
                     else if(c.getStatus() == Status.DELIVERY){
                         builder.setTitle("Order Delivered");
-
                         builder.setMessage("You've already delivered this order");
                         builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
                             @Override
@@ -178,7 +181,9 @@ public class ReservationExpandableListAdapter extends BaseExpandableListAdapter 
                             builder.setPositiveButton("Confirm", new DialogInterface.OnClickListener() {
                                 @Override
                                 public void onClick(DialogInterface dialogInterface, int i) {
+                                    // Change button text
                                     c.setStatus(Status.COOKING, context);
+                                    button.setText("Deliver order");
                                     notifyDataSetChanged();
 
                                     //TODO: Aggiornare quantità menù
