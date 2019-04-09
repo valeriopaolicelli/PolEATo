@@ -36,4 +36,6 @@
     <string name="delivery">In consegna</string>
     <string name="reject">Rifiutato</string>
     <string name="button_reservation">Accetta o Rifiuta</string>
+    <string name="button_delivery">E\' pronto</string>
+    <string name="order">ID</string>
 </resources>

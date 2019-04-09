@@ -1,10 +1,8 @@
 package com.example.poleato;
 
-import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -65,16 +63,10 @@ public class ReservationExpandableListAdapter extends BaseExpandableListAdapter 
     @Override
     public View getGroupView(int i, boolean b, View view, ViewGroup viewGroup) {
         Reservation c = (Reservation) getGroup(i);
-        ViewHolder holder;         // To handle the button 'accept or reject', new private class (ViewHolder) is created
 
         if( view ==  null){
-            holder= new ViewHolder();
             LayoutInflater inflater = (LayoutInflater)this.context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
             view = inflater.inflate(R.layout.reservation_row1_layout,null);
-            holder.button= view.findViewById(R.id.myButton);
-            view.setTag(holder);
-        }else {
-            holder = (ViewHolder) view.getTag();
         }
 
         TextView tv_date = (TextView) view.findViewById(R.id.tvDateField);
@@ -84,6 +76,7 @@ public class ReservationExpandableListAdapter extends BaseExpandableListAdapter 
         tv_date.setText(c.getDate());
         tv_time.setText(c.getTime());
         tv_status.setText(c.getStat());
+
         if(tv_status.getText().equals(context.getString(R.string.reject))) {
             tv_status.setTextColor(context.getResources().getColor(R.color.colorTextRejected));
         }
@@ -123,7 +116,6 @@ public class ReservationExpandableListAdapter extends BaseExpandableListAdapter 
             button.setVisibility(View.VISIBLE);
             //if is the last child, add the button "accept or reject" on the bottom
             button.setOnClickListener(new View.OnClickListener() {
-                @SuppressLint("ResourceAsColor")
                 @Override
                 public void onClick(View v) {
                     final AlertDialog.Builder builder = new AlertDialog.Builder(v.getContext());
@@ -152,12 +144,11 @@ public class ReservationExpandableListAdapter extends BaseExpandableListAdapter 
                         });
                     }
                     else {
-
                         //se lo status è COOKING, il ristoratore può scegliere se far partire la consegna
                         if(c.getStatus() == Status.COOKING){
                             builder.setTitle("Deliver order");
 
-                            builder.setMessage("Is everything ready? Status will pass into 'on delivery'");
+                            builder.setMessage("Is everything ready? Status will pass to 'on delivery'");
                             builder.setPositiveButton("Confirm", new DialogInterface.OnClickListener() {
                                 @Override
                                 public void onClick(DialogInterface dialogInterface, int i) {
@@ -176,7 +167,7 @@ public class ReservationExpandableListAdapter extends BaseExpandableListAdapter 
                             //Se lo stato è ACCEPTANCE, il ristoratore può accetare o rifiutare l'ordine
                             builder.setTitle("Confirm order");
 
-                            builder.setMessage("Do you want to confirm or reject this order? Status will pass into 'on cooking'");
+                            builder.setMessage("Do you want to confirm or reject this order? Status will pass to 'on cooking'");
 
                             builder.setPositiveButton("Confirm", new DialogInterface.OnClickListener() {
                                 @Override
@@ -225,7 +216,4 @@ public class ReservationExpandableListAdapter extends BaseExpandableListAdapter 
         super.notifyDataSetChanged();
     }
 
-    private class ViewHolder{
-        Button button;
-    }
 }

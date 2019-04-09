@@ -47,7 +47,7 @@ public class ReservationFragment extends Fragment {
         lv = view.findViewById(R.id.reservationslv);
 
         //fix expandablelistview arrow position
-        lv.setIndicatorBounds(width-160, 0);
+        lv.setIndicatorBounds(width-GetDipsFromPixel(35), width-GetDipsFromPixel(5));
 
         listAdapter = new ReservationExpandableListAdapter(getActivity(),reservations,listHash);
 
@@ -56,13 +56,20 @@ public class ReservationFragment extends Fragment {
         return view;
     }
 
+    public int GetDipsFromPixel(float pixels){
+        // Get the screen's density scale
+        final float scale = getResources().getDisplayMetrics().density;
+        // Convert the dps to pixels, based on density scale
+        return (int) (pixels * scale + 0.5f);
+    }
+
     private void initData(){
 
         reservations = new ArrayList<>();
         listHash = new HashMap<>();
 
-        c1 = new Reservation("ID111111","Fabio", "Ricciardi", "04/04/2019", "20.30", getContext());
-        c2 = new Reservation("ID222222","Michelangelo", "Moncada", "04/04/2019", "19.20", getContext());
+        c1 = new Reservation("A100","Fabio", "Ricciardi", "04/04/2019", "20.30", getContext());
+        c2 = new Reservation("A101","Michelangelo", "Moncada", "04/04/2019", "19.20", getContext());
 
         reservations.add(c1);
         reservations.add(c2);
