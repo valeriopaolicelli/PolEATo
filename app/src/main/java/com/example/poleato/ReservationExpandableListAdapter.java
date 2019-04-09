@@ -177,7 +177,6 @@ public class ReservationExpandableListAdapter extends BaseExpandableListAdapter 
                                     c.setStatus(Status.COOKING, context);
                                     holder.button.setText("Deliver order");
                                     notifyDataSetChanged();
-
                                     //TODO: Aggiornare quantità menù
                                 }
                             });
