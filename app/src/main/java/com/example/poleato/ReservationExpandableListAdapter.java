@@ -118,7 +118,7 @@ public class ReservationExpandableListAdapter extends BaseExpandableListAdapter 
                 @Override
                 public void onClick(View v) {
                     final AlertDialog.Builder builder = new AlertDialog.Builder(v.getContext());
-
+                    //TODO transfer all strings to file
                     if(c.getStatus() == Status.DELIVERY){
                         builder.setTitle("Deliver details");
                         String msg= v.getResources().getString(R.string.order) + ": " + c.getOrder_id() + "\n"

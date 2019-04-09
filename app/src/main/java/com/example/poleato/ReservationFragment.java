@@ -14,7 +14,6 @@ import java.util.HashMap;
 import java.util.List;
 
 //TODO status persistency
-//TODO add name, surname, address in the box, when the order is on delivering
 
 public class ReservationFragment extends Fragment {
     private ExpandableListView lv;
