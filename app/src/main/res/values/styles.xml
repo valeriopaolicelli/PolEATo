@@ -19,4 +19,9 @@
         <item name="colorError">@color/colorPanelPrimary</item>
     </style>
 
+    <style name = "FullScreenDialog" parent = "Theme.AppCompat.DialogWhenLarge">
+        <item name = "windowNoTitle">true</item>
+        <item name="android:windowAnimationStyle">@style/Animation.AppCompat.Dialog</item>
+    </style>
+
 </resources>

@@ -4,11 +4,12 @@ import android.app.Activity;
 import android.content.Context;
 import android.graphics.BitmapFactory;
 import android.graphics.Point;
-import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
+import android.support.v7.widget.CardView;
 import android.view.Display;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -17,8 +18,6 @@ import android.widget.ExpandableListView;
 
 import com.example.poleato.ExpandableListManagement.*;
 
-import org.w3c.dom.Text;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -26,22 +25,35 @@ import java.util.List;
 
 public class DailyOfferFragment extends Fragment {
 
-    Activity hostActivity;
-    View rootview;
-    ExpandableListAdapter listAdapter;
-    ExpandableListView expListView;
-    List<String> listDataGroup;
-    HashMap<String, List<Food>> listDataChild;
-    Display display;
-    Point size;
+    private Activity hostActivity;
+    private View fragView;
+    private ExpandableListAdapter listAdapter;
+    private ExpandableListView expListView;
+    private List<String> listDataGroup;
+    private HashMap<String, List<Food>> listDataChild;
+    private FloatingActionButton floatingActionButton;
+    private Display display;
+    private Point size;
     int width;
     private int lastExpandedPosition = -1;
-    
+    private FragmentDListener fragmentDListener;
+
+
+    public interface  FragmentDListener {
+        void onInputDSent(Object input);
+    }
+
 
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
         this.hostActivity = this.getActivity();
+
+        if(context instanceof FragmentDListener){
+            fragmentDListener = (FragmentDListener) context;
+        }else {
+            throw new RuntimeException(context.toString() + " must implement FragmentDListener");
+        }
     }
 
     @Override
@@ -62,13 +74,21 @@ public class DailyOfferFragment extends Fragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        rootview = inflater.inflate(R.layout.menu, container, false);
+        fragView = inflater.inflate(R.layout.dailyoffer_frag_layout, container, false);
         // get the listview
-        expListView = (ExpandableListView) rootview.findViewById(R.id.menuList);
+        expListView = (ExpandableListView) fragView.findViewById(R.id.menuList);
         // fix position of ExpandableListView indicator.
         expListView.setIndicatorBounds(width-180,0);
 
-        return rootview;
+        floatingActionButton = fragView.findViewById(R.id.floatingButton);
+        floatingActionButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                fragmentDListener.onInputDSent(this);
+            }
+        });
+
+        return fragView;
     }
 
     @Override
@@ -95,17 +115,17 @@ public class DailyOfferFragment extends Fragment {
         expListView.setAdapter(listAdapter);
 
         // attach the onClickListener to the cardView to launch a fragment to edit the infos
-        CardView cv = hostActivity.findViewById(R.id.childView);
-        cv.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
-                EditFood nextFrag= new EditFood();
-                FragmentTransaction transaction = getFragmentManager().beginTransaction();
-                transaction.replace(R.id.menuList, nextFrag); // give your fragment container id in first parameter
-                transaction.commit();
-            }
-        });
+//        CardView cv = hostActivity.findViewById(R.id.childView);
+//        cv.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+////
+////                EditFoodFragment nextFrag= new EditFoodFragment();
+////                FragmentTransaction transaction = getFragmentManager().beginTransaction();
+////                transaction.replace(R.id.menuList, nextFrag); // give your fragment container id in first parameter
+////                transaction.commit();
+//            }
+//        });
 
     }
 
@@ -162,5 +182,10 @@ public class DailyOfferFragment extends Fragment {
 
     }
 
+    @Override
+    public void onDetach() {
+        super.onDetach();
+        fragmentDListener = null;
+    }
 }
 

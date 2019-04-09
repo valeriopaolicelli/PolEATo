@@ -24,10 +24,17 @@
             app:tabGravity="fill"/>
     </android.support.design.widget.AppBarLayout>
 
+    <!--<FrameLayout-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="match_parent"-->
+        <!--android:id="@+id/edit_food_fragment_id">-->
+    <!--</FrameLayout>-->
+
     <android.support.v4.view.ViewPager
         android:id="@+id/container"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         app:layout_behavior="@string/appbar_scrolling_view_behavior"/>
     <!-- app:layout_behavior="@string/appbar_scrolling_view_behavior" -->
+
 </android.support.design.widget.CoordinatorLayout>
