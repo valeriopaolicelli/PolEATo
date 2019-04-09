@@ -2,6 +2,8 @@ package com.example.poleato;
 
 import android.graphics.Point;
 import android.os.Bundle;
+import android.os.Parcelable;
+import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.view.Display;
 import android.view.LayoutInflater;
@@ -18,7 +20,6 @@ import java.util.List;
 public class ReservationFragment extends Fragment {
     private ExpandableListView lv;
     private ReservationExpandableListAdapter listAdapter;
-    private ExpandableListView expListView;
     private List<Reservation> reservations;
     private HashMap<String,List<Dish>> listHash = new HashMap<>();
     private Display display;
@@ -51,7 +52,6 @@ public class ReservationFragment extends Fragment {
         listAdapter = new ReservationExpandableListAdapter(getActivity(),reservations,listHash);
 
         lv.setAdapter(listAdapter);
-
         return view;
     }
 

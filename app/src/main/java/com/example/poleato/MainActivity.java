@@ -1,5 +1,6 @@
 package com.example.poleato;
 
+import android.content.Context;
 import android.support.design.widget.TabLayout;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
@@ -35,10 +36,11 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void addFragmentToAdapter(){
+        Context context= getApplicationContext();
         PageAdapter adapter = new PageAdapter(getSupportFragmentManager());
-        adapter.addFragment(new AccountFragment(), "Account");
-        adapter.addFragment(new ReservationFragment(), "Reservation");
-        adapter.addFragment(new DailyOfferFragment(), "DailyOffer");
+        adapter.addFragment(new AccountFragment(), context.getString(R.string.tab1));
+        adapter.addFragment(new ReservationFragment(), context.getString(R.string.tab2));
+        adapter.addFragment(new DailyOfferFragment(), context.getString(R.string.tab3));
         onViewPager.setAdapter(adapter);
     }
 

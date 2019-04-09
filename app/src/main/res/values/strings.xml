@@ -39,4 +39,14 @@
     <string name="order">ID</string>
     <string name="order_info">Info deliver</string>
     <string name="order_deliver">Deliver order</string>
+    <string name="tab1">Account</string>
+    <string name="tab2">Reservations</string>
+    <string name="tab3">Menu</string>
+    <string name="title_deliver">Deliver order</string>
+    <string name="msg_deliver">Is everything ready? Status will pass to \'on delivery\'</string>
+    <string name="choice_confirm">Confirm</string>
+    <string name="choice_reject">Reject</string>
+    <string name="choice_cancel">Cancel</string>
+    <string name="title_confirm">Confirm order</string>
+    <string name="msg_confirm">Do you want to confirm or reject this order? Status will pass to 'on cooking'</string>
 </resources>
