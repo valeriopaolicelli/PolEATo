@@ -83,7 +83,6 @@ public class ReservationExpandableListAdapter extends BaseExpandableListAdapter 
         else if(tv_status.getText().equals(context.getString(R.string.delivery))){
             tv_status.setTextColor(context.getResources().getColor(R.color.colorTextAccepted));
         }
-
         return view;
     }
 
@@ -109,7 +108,7 @@ public class ReservationExpandableListAdapter extends BaseExpandableListAdapter 
 
         final Reservation c= reservations.get(i);
         //true => order on delivery or rejected, restaurateur can't do nothing anymore
-        if(c.getStatus() == Status.REJECTED || c.getStatus() == Status.DELIVERY)
+        if(c.getStatus() == Status.REJECTED)
             flag = true;
 
         if(isLast && !flag){
@@ -120,22 +119,14 @@ public class ReservationExpandableListAdapter extends BaseExpandableListAdapter 
                 public void onClick(View v) {
                     final AlertDialog.Builder builder = new AlertDialog.Builder(v.getContext());
 
-                   // Log.d("Valerio","Old status: " + c.getStatus().toString());
-
-                    if(c.getStatus() == Status.REJECTED){
-                        builder.setTitle("Order Rejected");
-
-                        builder.setMessage("Sorry, you've already rejected this order");
-                        builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialogInterface, int i) {
-                                dialogInterface.cancel();
-                            }
-                        });
-                    }
-                    else if(c.getStatus() == Status.DELIVERY){
-                        builder.setTitle("Order Delivered");
-                        builder.setMessage("You've already delivered this order");
+                    if(c.getStatus() == Status.DELIVERY){
+                        builder.setTitle("Deliver details");
+                        String msg= v.getResources().getString(R.string.order) + ": " + c.getOrder_id() + "\n"
+                                  + v.getResources().getString(R.string.date) + ": " + c.getDate() + " "
+                                  + v.getResources().getString(R.string.time) + ": " + c.getTime() + "\n"
+                                  + v.getResources().getString(R.string.surname) + ": " + c.getSurname() + "\n"
+                                  + v.getResources().getString(R.string.address) + ": " + c.getAddress() + "\n";
+                        builder.setMessage(msg);
                         builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialogInterface, int i) {
@@ -153,6 +144,7 @@ public class ReservationExpandableListAdapter extends BaseExpandableListAdapter 
                                 @Override
                                 public void onClick(DialogInterface dialogInterface, int i) {
                                     c.setStatus(Status.DELIVERY, context);
+                                    button.setText(context.getString(R.string.order_info));
                                     notifyDataSetChanged();
                                 }
                             });
@@ -199,6 +191,7 @@ public class ReservationExpandableListAdapter extends BaseExpandableListAdapter 
                     dialog.show();
                 }
             });
+
         } else {
             button.setVisibility(View.GONE);
         }

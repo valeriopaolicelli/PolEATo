@@ -38,4 +38,6 @@
     <string name="button_reservation">Accetta o Rifiuta</string>
     <string name="button_delivery">E\' pronto</string>
     <string name="order">ID</string>
+    <string name="order_info">Info consegna</string>
+    <string name="order_deliver">Consegna</string>
 </resources>

@@ -68,12 +68,11 @@ public class ReservationFragment extends Fragment {
         reservations = new ArrayList<>();
         listHash = new HashMap<>();
 
-        c1 = new Reservation("A100","Fabio", "Ricciardi", "04/04/2019", "20.30", getContext());
-        c2 = new Reservation("A101","Michelangelo", "Moncada", "04/04/2019", "19.20", getContext());
+        c1 = new Reservation("A100","Fabio", "Ricciardi", "Corso duca degli abruzzi, 24","04/04/2019", "20.30", getContext());
+        c2 = new Reservation("A101","Michelangelo", "Moncada", "Via rossana, 26", "04/04/2019", "19.20", getContext());
 
         reservations.add(c1);
         reservations.add(c2);
-
 
         Dish d1_c1= new Dish("Pasta carbonara", 1, "no cipolla");
         Dish d2_c1= new Dish("Pizza margherita", 2, "pizze tagliate");

@@ -37,4 +37,6 @@
     <string name="button_reservation">Accept or Reject</string>
     <string name="button_delivery">Ready</string>
     <string name="order">ID</string>
+    <string name="order_info">Info deliver</string>
+    <string name="order_deliver">Deliver order</string>
 </resources>
