@@ -50,7 +50,7 @@ public class MainActivity extends AppCompatActivity implements DailyOfferFragmen
     }
 
     @Override
-    public void onInputDSent(Object input) {
+    public void onInputDSent(Object o) {
 //        getSupportFragmentManager().beginTransaction()
 //                .add(editFoodFragment, "Blank Fragment")
 //                .setTransitionStyle(R.style.FullScreenDialog)
@@ -59,8 +59,9 @@ public class MainActivity extends AppCompatActivity implements DailyOfferFragmen
         editFoodFragment.show(getSupportFragmentManager(), "tag");
     }
 
+
     @Override
-    public void onInputESent(CharSequence input) {
+    public void onInputESent(String plateType, Food food) {
 
     }
 }

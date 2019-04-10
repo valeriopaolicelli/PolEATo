@@ -28,4 +28,12 @@
     <string name="desserts">Desserts</string>
     <string name="drinks">Drinks</string>
     <string name="currency">$</string>
+
+    <string-array name="plates_array">
+        <item>Starters</item>
+        <item>Firsts</item>
+        <item>Seconds</item>
+        <item>Desserts</item>
+        <item>Drinks</item>
+    </string-array>
 </resources>

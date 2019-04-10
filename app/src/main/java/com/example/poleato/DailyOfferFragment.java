@@ -40,7 +40,7 @@ public class DailyOfferFragment extends Fragment {
 
 
     public interface  FragmentDListener {
-        void onInputDSent(Object input);
+        void onInputDSent(Object o);
     }
 
 

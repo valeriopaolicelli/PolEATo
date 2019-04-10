@@ -7,6 +7,12 @@ import org.w3c.dom.Text;
 
 public class Food {
 
+    private Bitmap img;
+    private String name;
+    private String description;
+    private Double price;
+    private int quantity;
+
     public Food(Bitmap img, String name, String description, Double price, int quantity){
 
         this.img = img;
@@ -35,10 +41,5 @@ public class Food {
     public int getQuantity() {
         return quantity;
     }
-
-    private Bitmap img;
-    private String name;
-    private String description;
-    private Double price;
-    private int quantity;
+    
 }

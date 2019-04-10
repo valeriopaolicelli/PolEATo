@@ -19,9 +19,13 @@
         <item name="colorError">@color/colorPanelPrimary</item>
     </style>
 
-    <style name = "FullScreenDialog" parent = "Theme.AppCompat.DialogWhenLarge">
+    <style name = "FullScreenDialog" parent = "Theme.MaterialComponents.DialogWhenLarge">
+        <item name="android:statusBarColor">@color/colorPrimaryDark</item>
         <item name = "windowNoTitle">true</item>
-        <item name="android:windowAnimationStyle">@style/Animation.AppCompat.Dialog</item>
+        <item name="android:windowIsFloating">false</item>
+        <item name="android:windowAnimationStyle">@style/Animation.AppCompat.DropDownUp</item>
+        <!--<item name="android:windowEnterAnimation">@android:anim/fade_in</item>-->
+        <!--<item name="android:windowExitAnimation">@android:anim/fade_out</item>-->
     </style>
 
 </resources>
