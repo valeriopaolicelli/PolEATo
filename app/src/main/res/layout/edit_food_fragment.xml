@@ -33,26 +33,44 @@
     <!-- image and title -->
 
 
-    <RelativeLayout
+    <android.support.constraint.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
+
+        <android.support.design.widget.FloatingActionButton
+            android:id="@+id/floatingActionButton"
+            android:layout_width="56dp"
+            android:layout_height="56dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginBottom="8dp"
+            android:clickable="true"
+            android:src="@mipmap/baseline_photo_camera_white_24dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.653"
+            app:layout_constraintStart_toStartOf="@+id/imageFood"
+            app:layout_constraintTop_toTopOf="@+id/imageFood"
+            app:layout_constraintVertical_bias="1.0" />
 
         <ImageView
             android:id="@+id/imageFood"
             android:layout_width="match_parent"
-            android:layout_height="230dp"
-            android:layout_marginTop="19dp"
-            android:layout_marginBottom="16dp"
+            android:layout_height="200dp"
+            android:layout_marginTop="16dp"
             android:scaleType="fitCenter"
-            android:src="@drawable/carbonara" />
+            android:src="@drawable/carbonara"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
 
-    </RelativeLayout>
+    </android.support.constraint.ConstraintLayout>
 
-    <TextView
+    <EditText
         android:id="@+id/nameFood"
         android:layout_width="match_parent"
-        android:layout_height="32dp"
-        android:layout_marginBottom="20dp"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="10dp"
         android:gravity="center"
         android:text="Carbonara"
         android:textColor="#444444"

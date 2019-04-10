@@ -5,7 +5,9 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Matrix;
 import android.graphics.drawable.BitmapDrawable;
+import android.media.ExifInterface;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -29,6 +31,7 @@ import android.support.v7.widget.Toolbar;
 
 import java.io.ByteArrayOutputStream;
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.io.InputStream;
 import java.util.TreeMap;
 
@@ -167,6 +170,113 @@ public class EditProfile extends AppCompatActivity {
                 .decodeByteArray(decodedByte, 0, decodedByte.length);
     }
 */
+
+//    @Override
+//    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+//        super.onActivityResult(requestCode, resultCode, data);
+//        if (requestCode == REQUEST_TAKE_PHOTO){
+//            if (resultCode == RESULT_OK) {
+//                setPic(currentPhotoPath);
+//            }
+//            else {
+//                SharedPreferences fields= this.getSharedPreferences("ProfileDataCustomer", Context.MODE_PRIVATE);
+//                image= fields.getString("ProfileImage", encodeTobase64());
+//                profileImage.setImageBitmap(decodeBase64(image));
+//            }
+//        }
+//        if (requestCode == RESULT_LOAD_IMG) {
+//            if (resultCode == RESULT_OK) {
+//                try {
+//                    final Uri imageUri = data.getData();
+//                    final InputStream imageStream = getContentResolver().openInputStream(imageUri);
+//                    final Bitmap selectedImage = BitmapFactory.decodeStream(imageStream);
+//                    profileImage.setImageBitmap(selectedImage);
+//                } catch (FileNotFoundException e) {
+//                    e.printStackTrace();
+//                    Toast.makeText(this, "Something went wrong", Toast.LENGTH_LONG).show();
+//                }
+//
+//            } else {
+//                SharedPreferences fields= this.getSharedPreferences("ProfileDataCustomer", Context.MODE_PRIVATE);
+//                image= fields.getString("ProfileImage", encodeTobase64());
+//                profileImage.setImageBitmap(decodeBase64(image));
+//            }
+//        }
+//    }
+//
+//    private void setPic(String currentPhotoPath) {
+//        // Get the dimensions of the View
+//        int targetW = profileImage.getWidth();
+//        int targetH = profileImage.getHeight();
+//
+//        // Get the dimensions of the bitmap
+//        BitmapFactory.Options bmOptions = new BitmapFactory.Options();
+//        bmOptions.inJustDecodeBounds = true;
+//        BitmapFactory.decodeFile(currentPhotoPath, bmOptions);
+//        int photoW = bmOptions.outWidth;
+//        int photoH = bmOptions.outHeight;
+//
+//        // Determine how much to scale down the image
+//        int scaleFactor = Math.min(photoW / targetW, photoH / targetH);
+//
+//        // Decode the image file into a Bitmap sized to fill the View
+//        bmOptions.inJustDecodeBounds = false;
+//        bmOptions.inSampleSize = scaleFactor;
+//
+//        Bitmap bitmap = BitmapFactory.decodeFile(currentPhotoPath, bmOptions);
+//
+//        if(bitmap != null) {
+//
+//            try {
+//                bitmap = rotateImageIfRequired(bitmap, currentPhotoPath);
+//            } catch (IOException e) {
+//                e.printStackTrace();
+//            }
+//
+//            profileImage.setImageBitmap(bitmap);
+//        }
+//    }
+//
+//    private static Bitmap rotateImageIfRequired(Bitmap img, String currentPhotoPath) throws IOException {
+//
+//        ExifInterface ei = new ExifInterface(currentPhotoPath);
+//        int orientation = ei.getAttributeInt(ExifInterface.TAG_ORIENTATION, ExifInterface.ORIENTATION_NORMAL);
+//
+//        switch (orientation) {
+//            case ExifInterface.ORIENTATION_ROTATE_90:
+//                return rotateImage(img, 90);
+//            case ExifInterface.ORIENTATION_ROTATE_180:
+//                return rotateImage(img, 180);
+//            case ExifInterface.ORIENTATION_ROTATE_270:
+//                return rotateImage(img, 270);
+//            default:
+//                return img;
+//        }
+//    }
+//
+//    private static Bitmap rotateImage(Bitmap img, int degree) {
+//        Matrix matrix = new Matrix();
+//        matrix.postRotate(degree);
+//        Bitmap rotatedImg = Bitmap.createBitmap(img, 0, 0, img.getWidth(), img.getHeight(), matrix, true);
+//        img.recycle();
+//        return rotatedImg;
+//    }
+//
+//    public static String encodeTobase64() {
+//        Bitmap image = ((BitmapDrawable)profileImage.getDrawable()).getBitmap();
+//        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+//        image.compress(Bitmap.CompressFormat.PNG, 100, baos);
+//        byte[] b = baos.toByteArray();
+//        String imageEncoded = Base64.encodeToString(b, Base64.DEFAULT);
+//        Log.d("Image Log:", imageEncoded);
+//        return imageEncoded;
+//    }
+//
+//    public static Bitmap decodeBase64(String input) {
+//        byte[] decodedByte = Base64.decode(input, 0);
+//        return BitmapFactory
+//                .decodeByteArray(decodedByte, 0, decodedByte.length);
+//    }
     public void collectFields(){
         editTextFields.put("Name",(EditText)findViewById(R.id.editTextName));
         editTextFields.put("Type",(EditText)findViewById(R.id.editTextType));

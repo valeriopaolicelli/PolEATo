@@ -182,6 +182,18 @@ public class DailyOfferFragment extends Fragment {
 
     }
 
+    public void addFood(String category, Food food) {
+        try{
+            for(String s : listDataGroup){
+                if(s == category){
+                    listDataChild.get(s).add(food);
+                }
+            }
+        }catch(RuntimeException e){
+            e.getMessage();
+        }
+    }
+
     @Override
     public void onDetach() {
         super.onDetach();

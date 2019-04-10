@@ -9,10 +9,13 @@ import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 
+import java.util.List;
+
 public class MainActivity extends AppCompatActivity implements DailyOfferFragment.FragmentDListener,
         EditFoodFragment.FragmentEListener {
 
     private ViewPager onViewPager;
+    private PageAdapter adapter;
     private DailyOfferFragment dailyOfferFragment;
     private EditFoodFragment editFoodFragment;
 
@@ -39,10 +42,19 @@ public class MainActivity extends AppCompatActivity implements DailyOfferFragmen
         tabLayout.setupWithViewPager(onViewPager);
 
         editFoodFragment = new EditFoodFragment();
+
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+        dailyOfferFragment = (DailyOfferFragment) adapter.getMyItem(2);
+
     }
 
     private void addFragmentToAdapter() {
-        PageAdapter adapter = new PageAdapter(getSupportFragmentManager());
+        adapter = new PageAdapter(getSupportFragmentManager());
         adapter.addFragment(new AccountFragment(), "Account");
         adapter.addFragment(new ReservationFragment(), "Reservation");
         adapter.addFragment(new DailyOfferFragment(), "DailyOffer");
@@ -62,6 +74,6 @@ public class MainActivity extends AppCompatActivity implements DailyOfferFragmen
 
     @Override
     public void onInputESent(String plateType, Food food) {
-
+        dailyOfferFragment.addFood(plateType, food);
     }
 }

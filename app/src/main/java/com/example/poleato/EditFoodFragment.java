@@ -22,7 +22,7 @@ import android.widget.TextView;
 public class EditFoodFragment extends DialogFragment {
     private FragmentEListener fragmentEListener;
     private ImageView imageFood;
-    private TextView editFood;
+    private EditText editFood;
     private Spinner spinnerFood;
     private String plateType;
     private EditText editDescription;
@@ -57,7 +57,7 @@ public class EditFoodFragment extends DialogFragment {
         spinnerFood.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                plateType = (String) parent.getItemAtPosition(position);
+                plateType = (String) parent.getItemAtPosition(position).toString();
             }
 
             @Override
@@ -82,8 +82,9 @@ public class EditFoodFragment extends DialogFragment {
                         , Double.valueOf(editPrice.getText().toString())
                         , Integer.valueOf(editQuantity.getText().toString()));
 //                CharSequence input = editText.getText();
-                fragmentEListener.onInputESent(plateType, food);
-                dismiss();
+                    fragmentEListener.onInputESent(plateType, food);
+                    dismiss();
+
             }
         });
 
