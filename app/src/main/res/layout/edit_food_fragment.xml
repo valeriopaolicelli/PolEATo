@@ -9,7 +9,7 @@
     android:descendantFocusability="beforeDescendants"
     android:focusableInTouchMode="true"
     android:orientation="vertical"
-    tools:context=".EditFoodFragment">
+    tools:context=".AddFoodFragment">
 
     <!--android:layout_below="@id/toolbar2"-->
     <!--<android.support.design.widget.AppBarLayout-->

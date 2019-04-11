@@ -1,23 +1,19 @@
 package com.example.poleato;
 
-import android.arch.lifecycle.ViewModelProviders;
 import android.support.design.widget.TabLayout;
-import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 
-import java.util.List;
-
 public class MainActivity extends AppCompatActivity implements DailyOfferFragment.FragmentDListener,
-        EditFoodFragment.FragmentEListener {
+        AddFoodFragment.FragmentEListener {
 
     private ViewPager onViewPager;
     private PageAdapter adapter;
     private DailyOfferFragment dailyOfferFragment;
-    private EditFoodFragment editFoodFragment;
+    private AddFoodFragment addFoodFragment;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -41,7 +37,7 @@ public class MainActivity extends AppCompatActivity implements DailyOfferFragmen
 
         tabLayout.setupWithViewPager(onViewPager);
 
-        editFoodFragment = new EditFoodFragment();
+        addFoodFragment = new AddFoodFragment();
 
     }
 
@@ -64,11 +60,11 @@ public class MainActivity extends AppCompatActivity implements DailyOfferFragmen
     @Override
     public void onInputDSent(Object o) {
 //        getSupportFragmentManager().beginTransaction()
-//                .add(editFoodFragment, "Blank Fragment")
+//                .add(addFoodFragment, "Blank Fragment")
 //                .setTransitionStyle(R.style.FullScreenDialog)
 //                .addToBackStack(null)
 //                .commit();
-        editFoodFragment.show(getSupportFragmentManager(), "tag");
+        addFoodFragment.show(getSupportFragmentManager(), "tag");
     }
 
 
