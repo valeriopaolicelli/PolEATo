@@ -29,5 +29,15 @@
     <string name="drinks">Bevande</string>
     <string name="currency">€</string>
     <string name="dish_type">Tipologia:</string>
+    <string name="modify">Modifica</string>
+    <string name="remove">Rimuovi</string>
+
+    <string-array name="plates_array">
+        <item>Antipasti</item>
+        <item>Primi</item>
+        <item>Secondi</item>
+        <item>Dolci</item>
+        <item>Bevande</item>
+    </string-array>
 
 </resources>
