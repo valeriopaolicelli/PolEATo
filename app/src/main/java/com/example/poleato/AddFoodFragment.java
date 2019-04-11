@@ -16,8 +16,11 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.DialogFragment;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.content.FileProvider;
 import android.support.v7.widget.PopupMenu;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Base64;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -28,6 +31,7 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.Spinner;
 import android.widget.Toast;
@@ -37,10 +41,11 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.TreeMap;
 
 import static android.app.Activity.RESULT_OK;
 
-public class EditFoodFragment extends DialogFragment {
+public class AddFoodFragment extends DialogFragment {
 
     private static final int REQUEST_TAKE_PHOTO = 1;
     private static final int RESULT_LOAD_IMG = 2;
@@ -49,14 +54,127 @@ public class EditFoodFragment extends DialogFragment {
     private FragmentEListener fragmentEListener;
     private FloatingActionButton change_im;
     private ImageView imageFood;
-    private EditText editFood;
     private Spinner spinnerFood;
     private String plateType;
-    private EditText editDescription;
-    private EditText editPrice;
-    private EditText editQuantity;
+
+    private TreeMap<String, ImageButton> imageButtons= new TreeMap<>();
+    private TreeMap<String,EditText> editTextFields= new TreeMap<>();
 
     private Button buttonSave;
+
+    public void clearText(View view) {
+        if(view.getId() == R.id.cancel_name)
+            editTextFields.get("Name").setText("");
+        else if(view.getId() == R.id.cancel_description)
+            editTextFields.get("Description").setText("");
+        else if(view.getId() == R.id.cancel_price)
+            editTextFields.get("Price").setText("");
+        else if(view.getId() == R.id.cancel_quantity)
+            editTextFields.get("Quantity").setText("");
+    }
+
+    public void handleButton(){
+        for(ImageButton b : imageButtons.values())
+            b.setVisibility(View.INVISIBLE);
+
+        String[] fieldName= {"Name", "Description", "Price", "Quantity"};
+        for (int i=0; i<fieldName.length; i++){
+            final EditText field= editTextFields.get(fieldName[i]);
+            final ImageButton button= imageButtons.get(fieldName[i]);
+            if(field != null && button != null) {
+                field.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+                    @Override
+                    public void onFocusChange(View view, boolean hasFocus) {
+                        if (hasFocus)
+                            showButton(field, button);
+                        else
+                            hideButton(button);
+                    }
+                });
+
+                field.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        showButton(field, button);
+                    }
+                });
+            }
+        }
+    }
+
+    public void showButton(EditText field, ImageButton button){
+        if(field.getText().toString().length()>0)
+            button.setVisibility(View.VISIBLE);
+        else
+            button.setVisibility(View.INVISIBLE);
+    }
+
+    public void hideButton(ImageButton button){
+        button.setVisibility(View.INVISIBLE);
+    }
+
+    public void buttonListener(){
+        EditText field;
+        String[] fieldName= {"Name", "Description", "Price", "Quantity"};
+        for (int i=0; i<fieldName.length; i++){
+            field= editTextFields.get(fieldName[i]);
+            final ImageButton button= imageButtons.get(fieldName[i]);
+            if(button!=null && field != null) {
+                field.addTextChangedListener(new TextWatcher() {
+                    @Override
+                    public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+                        if (s.toString().trim().length() == 0) {
+                            button.setVisibility(View.INVISIBLE);
+                        } else {
+                            button.setVisibility(View.VISIBLE);
+                        }
+                    }
+
+                    @Override
+                    public void onTextChanged(CharSequence s, int start, int before, int count) {
+                        if (s.toString().trim().length() == 0) {
+                            button.setVisibility(View.INVISIBLE);
+                        } else {
+                            button.setVisibility(View.VISIBLE);
+                        }
+                    }
+
+                    @Override
+                    public void afterTextChanged(Editable s) {
+                        if (s.toString().trim().length() == 0) {
+                            button.setVisibility(View.INVISIBLE);
+                        } else {
+                            button.setVisibility(View.VISIBLE);
+                        }
+                    }
+                });
+            }
+            else
+                return;
+        }
+    }
+
+    public void collectFields(View v){
+
+        editTextFields.put("Name",(EditText)v.findViewById(R.id.nameFood));
+        editTextFields.put("Description",(EditText)v.findViewById(R.id.editDescription));
+        editTextFields.put("Price",(EditText)v.findViewById(R.id.editPrice));
+        editTextFields.put("Quantity",(EditText)v.findViewById(R.id.editQuantity));
+
+        imageButtons.put("Name", (ImageButton)v.findViewById(R.id.cancel_name));
+        imageButtons.put("Description", (ImageButton)v.findViewById(R.id.cancel_description));
+        imageButtons.put("Price", (ImageButton)v.findViewById(R.id.cancel_price));
+        imageButtons.put("Quantity", (ImageButton)v.findViewById(R.id.cancel_quantity));
+
+        for(ImageButton b : imageButtons.values()){
+            b.setOnClickListener(new View.OnClickListener(){
+                @Override
+                public void onClick(View v) {
+                    clearText(v);
+                }
+            });
+        }
+    }
 
     public interface  FragmentEListener {
         void onInputESent(String plateType, Food food);
@@ -95,28 +213,52 @@ public class EditFoodFragment extends DialogFragment {
 
         change_im = v.findViewById(R.id.frag_change_im);
         imageFood = v.findViewById(R.id.imageFood);
-        editFood = v.findViewById(R.id.nameFood);
-        editDescription = v.findViewById(R.id.editDescription);
-        editPrice = v.findViewById(R.id.editPrice);
-        editQuantity = v.findViewById(R.id.editQuantity);
         buttonSave = v.findViewById(R.id.button_frag_save);
-
+        collectFields(v);
+        handleButton();
+        buttonListener();
         // Set listener to send DATA to main activity that sends them to DailyOfferFragment
 
         buttonSave.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Food food = new Food(((BitmapDrawable)imageFood.getDrawable()).getBitmap()
-                        , editFood.getText().toString()
-                        , editDescription.getText().toString()
-                        , Double.valueOf(editPrice.getText().toString())
-                        , Integer.valueOf(editQuantity.getText().toString()));
+                boolean wrongField= false;
+                String[] fieldName = {"Name", "Description", "Price", "Quantity"};
+                for (int i = 0; i < fieldName.length; i++) {
+                    EditText field = editTextFields.get(fieldName[i]);
+                    if(field != null){
+                        if (field.getText().toString().equals("")) {
+                            Toast.makeText(getContext(), getContext().getString(R.string.empty_field), Toast.LENGTH_LONG).show();
+                            field.setBackground(ContextCompat.getDrawable(getContext(), R.drawable.border_wrong_field));
+                            wrongField = true;
+                        } else
+                            field.setBackground(ContextCompat.getDrawable(getContext(), R.drawable.border_right_field));
+                    }
+                    else
+                        return;
+                }
+                if(!editTextFields.get("Price").getText().toString().matches("[0-9]+(\\.[0-9]+)?") ){
+                    Toast.makeText(getContext(), getContext().getString(R.string.error_format_price), Toast.LENGTH_LONG).show();
+                    editTextFields.get("Price").setBackground(ContextCompat.getDrawable(getContext(), R.drawable.border_wrong_field));
+                    wrongField = true;
+                }
+                if(!editTextFields.get("Quantity").getText().toString().matches("[0-9]+") ){
+                    Toast.makeText(getContext(), getContext().getString(R.string.error_format_quantity), Toast.LENGTH_LONG).show();
+                    editTextFields.get("Quantity").setBackground(ContextCompat.getDrawable(getContext(), R.drawable.border_wrong_field));
+                    wrongField = true;
+                }
+                if(!wrongField){
+                    Food food = new Food(((BitmapDrawable) imageFood.getDrawable()).getBitmap()
+                            , editTextFields.get("Name").getText().toString()
+                            , editTextFields.get("Description").getText().toString()
+                            , Double.valueOf(editTextFields.get("Price").getText().toString())
+                            , Integer.valueOf(editTextFields.get("Quantity").getText().toString()));
 
-                // I send even plateType to now where insert new food
+                    // I send even plateType to now where insert new food
 
                     fragmentEListener.onInputESent(plateType, food);
                     dismiss();
-
+                }
             }
         });
 
@@ -278,6 +420,7 @@ public class EditFoodFragment extends DialogFragment {
         currentPhotoPath = image.getAbsolutePath();
         return image;
     }
+
     public void removeProfileImage(){
         imageFood.setImageResource(R.drawable.food_default);
     }
@@ -355,5 +498,4 @@ public class EditFoodFragment extends DialogFragment {
         return BitmapFactory
                 .decodeByteArray(decodedByte, 0, decodedByte.length);
     }
-
 }
