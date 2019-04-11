@@ -38,7 +38,7 @@
         android:layout_height="wrap_content">
 
         <android.support.design.widget.FloatingActionButton
-            android:id="@+id/floatingActionButton"
+            android:id="@+id/frag_change_im"
             android:layout_width="56dp"
             android:layout_height="56dp"
             android:layout_marginTop="8dp"
@@ -58,7 +58,7 @@
             android:layout_height="200dp"
             android:layout_marginTop="16dp"
             android:scaleType="fitCenter"
-            android:src="@drawable/carbonara"
+            android:src="@drawable/food_default"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
