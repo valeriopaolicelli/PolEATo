@@ -21,6 +21,7 @@ import android.widget.ExpandableListView;
 
 import com.example.poleato.ExpandableListManagement.*;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -72,7 +73,9 @@ public class DailyOfferFragment extends Fragment {
         /* TODO HERE RESUME THE SAVED DATA FROM SHARED PREFERENCES */
 
         // preparing list data
-        prepareListData();
+        //prepareListData();
+        initGroup();
+        initChild();
     }
 
     @Override
@@ -139,8 +142,25 @@ public class DailyOfferFragment extends Fragment {
 
     }
 
+    private void initGroup(){
+        listDataGroup = new ArrayList<>();
+        listDataGroup.add(getString(R.string.starters));
+        listDataGroup.add(getString(R.string.firsts));
+        listDataGroup.add(getString(R.string.seconds));
+        listDataGroup.add(getString(R.string.desserts));
+        listDataGroup.add(getString(R.string.drinks));
+    }
+
+    private void initChild(){
+
+        listDataChild = new HashMap<>();
+        for(int idx = 0; idx < listDataGroup.size(); idx ++)
+            listDataChild.put(listDataGroup.get(idx), new ArrayList<Food>());
+
+    }
+
     /*
-     * Preparing the data list
+     * Preparing the data list for DEBUG
      */
     private void prepareListData() {
         listDataGroup = new ArrayList<String>();
