@@ -44,6 +44,20 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
 
 
 
+    public void insertChild(final int groupPosition, Food food){
+        this._listDataChild.get(getGroup(groupPosition).toString()).add(food);
+        notifyDataSetChanged();
+    }
+
+    public void insertChild(String groupTag, Food food){
+        this._listDataChild.get(groupTag).add(food);
+        notifyDataSetChanged();
+    }
+
+    public void removeChild(final int groupPosition, final int childPosition){
+        this._listDataChild.get(getGroup(groupPosition).toString()).remove(childPosition);
+        notifyDataSetChanged();
+    }
 
     @Override
     public View getChildView(final int groupPosition, final int childPosition,
@@ -80,6 +94,7 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
         String qntStr = "(qty "+getChild(groupPosition, childPosition).getQuantity()+")";
         holder.quantity.setText(qntStr);
 
+        // three dots vertical menu
         ImageButton settingsButton = convertView.findViewById(R.id.cardSettings);
         settingsButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -106,11 +121,8 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
                     public boolean onMenuItemClick(MenuItem item) {
 
                         Log.d("matte", item.getTitle().toString());
-                        Food toRemove = getChild(groupPosition, childPosition);
-                        List<Food> listChildGroup = _listDataChild.get(getGroup(groupPosition));
-                        listChildGroup.remove(toRemove);
-                        notifyDataSetChanged();
-                        return false;
+                        removeChild(groupPosition, childPosition);
+                        return true;
                     }
                 });
 

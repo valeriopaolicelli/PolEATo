@@ -44,7 +44,6 @@ public class MainActivity extends AppCompatActivity implements DailyOfferFragmen
     @Override
     protected void onResume() {
         super.onResume();
-
         dailyOfferFragment = (DailyOfferFragment) adapter.getMyItem(2);
 
     }

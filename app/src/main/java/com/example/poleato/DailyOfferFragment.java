@@ -214,11 +214,7 @@ public class DailyOfferFragment extends Fragment {
 
     public void addFood(String category, Food food) {
         try{
-            for(String s : listDataGroup){
-                if(s == category){
-                    listDataChild.get(s).add(food);
-                }
-            }
+            this.listAdapter.insertChild(category, food);
         }catch(RuntimeException e){
             e.getMessage();
         }
