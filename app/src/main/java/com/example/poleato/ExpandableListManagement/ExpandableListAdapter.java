@@ -58,14 +58,14 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
             holder.quantity = (TextView) convertView.findViewById(R.id.cardQuantity);
             convertView.setTag(holder);
 
-            button_delete = convertView.findViewById(R.id.buttonDelete);
+            /*button_delete = convertView.findViewById(R.id.buttonDelete);
             button_delete.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     _listDataChild.remove(getChild(groupPosition, childPosition));
                     notifyDataSetChanged();
                 }
-            });
+            });*/
         } else{
             holder = (FoodViewHolder) convertView.getTag();
         }

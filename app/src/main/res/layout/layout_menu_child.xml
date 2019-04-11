@@ -42,34 +42,36 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="8dp"
-                android:layout_marginEnd="16dp"
+                android:layout_marginTop="8dp"
+                android:layout_marginEnd="8dp"
                 android:layout_marginBottom="8dp"
                 android:gravity="center_horizontal|center_vertical"
                 android:text="Carbonara"
                 android:textColor="#444444"
                 android:textSize="20sp"
                 app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toStartOf="@+id/buttonEdit"
-                app:layout_constraintHorizontal_bias="1.0"
+                app:layout_constraintEnd_toStartOf="@+id/cardPrice"
+                app:layout_constraintHorizontal_bias="0.0"
                 app:layout_constraintStart_toEndOf="@+id/cardImage"
                 app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintVertical_bias="0.173" />
+                app:layout_constraintVertical_bias="0.213" />
 
             <TextView
                 android:id="@+id/cardPrice"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_width="36dp"
+                android:layout_height="19dp"
                 android:layout_marginStart="8dp"
                 android:layout_marginEnd="8dp"
+                android:layout_marginBottom="32dp"
                 android:text="2,50$"
+                android:textAllCaps="false"
                 android:textColor="#000000"
+                android:textSize="14sp"
                 android:textStyle="bold"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintHorizontal_bias="0.411"
-                app:layout_constraintStart_toEndOf="@+id/cardImage"
-                app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintVertical_bias="0.95" />
+                app:layout_constraintStart_toEndOf="@+id/cardName"
+                app:layout_constraintTop_toBottomOf="@+id/cardSettings" />
 
 
             <TextView
@@ -77,66 +79,39 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="8dp"
-                android:layout_marginTop="4dp"
-                android:layout_marginEnd="16dp"
+                android:layout_marginTop="8dp"
+                android:layout_marginEnd="8dp"
                 android:layout_marginBottom="8dp"
                 android:gravity="center_horizontal|center_vertical"
                 android:text="Pancetta, formaggio ahhhsniadodnaifoahfioajf"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toStartOf="@+id/buttonDelete"
+                app:layout_constraintBottom_toTopOf="@+id/cardQuantity"
+                app:layout_constraintEnd_toStartOf="@+id/cardPrice"
                 app:layout_constraintStart_toEndOf="@+id/cardImage"
-                app:layout_constraintTop_toBottomOf="@+id/cardName"
-                app:layout_constraintVertical_bias="0.0" />
+                app:layout_constraintTop_toBottomOf="@+id/cardName" />
 
             <TextView
                 android:id="@+id/cardQuantity"
                 android:layout_width="wrap_content"
                 android:layout_height="16dp"
                 android:layout_marginStart="8dp"
-                android:layout_marginTop="8dp"
                 android:layout_marginEnd="8dp"
+                android:layout_marginBottom="8dp"
                 android:text="(qty 10)"
                 android:textSize="12sp"
                 app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintHorizontal_bias="1.0"
-                app:layout_constraintStart_toEndOf="@+id/cardImage"
-                app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintVertical_bias="0.895" />
+                app:layout_constraintEnd_toStartOf="@+id/cardPrice"
+                app:layout_constraintStart_toEndOf="@+id/cardImage" />
 
-            <Button
-                android:id="@+id/buttonEdit"
-                android:layout_width="24dp"
-                android:layout_height="24dp"
-                android:layout_marginStart="8dp"
-                android:layout_marginTop="16dp"
-                android:layout_marginBottom="8dp"
-                android:clickable="true"
-                android:background="@drawable/ic_baseline_edit_24px"
-                app:layout_constraintBottom_toBottomOf="parent"
+            <ImageView
+                android:id="@+id/cardSettings"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="32dp"
+                android:layout_marginTop="8dp"
+                android:src="@drawable/ic_baseline_more_vert_24px"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintHorizontal_bias="0.937"
-                app:layout_constraintStart_toEndOf="@+id/cardImage"
-                app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintVertical_bias="0.0"
-                android:focusable="true" />
-
-            <Button
-                android:id="@+id/buttonDelete"
-                android:layout_width="24dp"
-                android:layout_height="24dp"
-                android:layout_marginStart="8dp"
-                android:layout_marginTop="50dp"
-                android:layout_marginBottom="8dp"
-                android:background="@drawable/ic_baseline_delete_24px"
-                android:clickable="true"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintHorizontal_bias="0.937"
-                app:layout_constraintStart_toEndOf="@+id/cardImage"
-                app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintVertical_bias="0.0"
-                android:focusable="true" />
+                app:layout_constraintStart_toEndOf="@+id/cardName"
+                app:layout_constraintTop_toTopOf="parent" />
 
         </android.support.constraint.ConstraintLayout>
 
