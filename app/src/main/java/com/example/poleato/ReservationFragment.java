@@ -6,13 +6,14 @@ import android.os.Parcelable;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.util.Log;
 import android.view.Display;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ExpandableListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -42,7 +43,7 @@ public class ReservationFragment extends Fragment {
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+    public View onCreateView(final LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.reservation_frag_layout,container,false);
         initData();
 
@@ -55,6 +56,22 @@ public class ReservationFragment extends Fragment {
         listAdapter = new ReservationExpandableListAdapter(getActivity(),reservations,listHash);
 
         lv.setAdapter(listAdapter);
+
+        lv.setOnGroupClickListener(new ExpandableListView.OnGroupClickListener() {
+            @Override
+            public boolean onGroupClick(ExpandableListView expandableListView, View view, int i, long l) {
+                Button b = (Button) view.findViewById(R.id.myButton);
+
+                if(!lv.isGroupExpanded(i)){
+                    b.setVisibility(View.VISIBLE);
+                }else
+                     b.setVisibility(View.GONE);
+
+
+                return false;
+            }
+        });
+
         return view;
     }
 
