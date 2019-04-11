@@ -28,6 +28,7 @@
     <string name="desserts">Desserts</string>
     <string name="drinks">Drinks</string>
     <string name="currency">$</string>
+    <string name="dish_type">Type:</string>
 
     <string-array name="plates_array">
         <item>Starters</item>

@@ -115,6 +115,23 @@ public class DailyOfferFragment extends Fragment {
         // setting list adapter
         expListView.setAdapter(listAdapter);
 
+    }
+
+    @Override
+    public void onSaveInstanceState(@NonNull Bundle outState) {
+        super.onSaveInstanceState(outState);
+
+        outState.putInt("lastExpandedPosition", this.lastExpandedPosition);
+    }
+
+    @Override
+    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+
+        if (savedInstanceState != null) {
+            // Restore last state for checked position.
+            this.lastExpandedPosition = savedInstanceState.getInt("lastExpandedPosition", -1);
+        }
 
 
     }
@@ -160,7 +177,7 @@ public class DailyOfferFragment extends Fragment {
                 "Tiramisu", "Caffè, savoiardi, mascarpone e cacao", 2.00, 10));
 
         List<Food> drinks = new ArrayList<Food>();
-        drinks.add(new Food(BitmapFactory.decodeResource(getResources(), R.drawable.tiramisu),
+        drinks.add(new Food(BitmapFactory.decodeResource(getResources(), R.drawable.poretti),
                 "Poretti 33cl", "Birra", 2.00, 10));
 
 
