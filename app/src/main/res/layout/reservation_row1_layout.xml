@@ -17,9 +17,11 @@
             android:layout_height="match_parent"
             app:layout_constraintTop_toTopOf="parent">
 
-            <ImageView
-                android:id="@+id/reservation_icon"
+            <CheckBox
+                android:id="@+id/selectAllCheckBox"
+                android:visibility="gone"
                 android:layout_width="40dp"
+                android:focusable="false"
                 android:layout_height="40dp"
                 android:layout_marginStart="16dp"
                 android:src="@drawable/reservation_icon"
@@ -41,7 +43,7 @@
                 android:textSize="20sp"
                 app:layout_constraintBottom_toTopOf="@id/tvDateField"
                 app:layout_constraintEnd_toStartOf="@id/timeLabel"
-                app:layout_constraintStart_toEndOf="@id/reservation_icon"
+                app:layout_constraintStart_toEndOf="@id/selectAllCheckBox"
                 app:layout_constraintTop_toTopOf="parent" />
 
             <TextView

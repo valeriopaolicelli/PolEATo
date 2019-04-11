@@ -10,8 +10,11 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseExpandableListAdapter;
 import android.widget.Button;
+import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.TextView;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
@@ -66,6 +69,10 @@ public class ReservationExpandableListAdapter extends BaseExpandableListAdapter 
     public View getGroupView(int i, boolean b, View view, ViewGroup viewGroup) {
         final Reservation c = (Reservation) getGroup(i);
         final ViewHolder holder;
+        boolean buttonflag = false;
+        List<Dish> dishes = listHashMap.get(c.getOrder_id());
+
+        final int position = i;
         boolean flag = false;
         if( view ==  null){
             holder = new ViewHolder();
@@ -76,6 +83,7 @@ public class ReservationExpandableListAdapter extends BaseExpandableListAdapter 
             holder.tv_time = (TextView) view.findViewById(R.id.tvTimeField);
             holder.tv_status = (TextView) view.findViewById(R.id.tvStatusField);
             holder.button = (Button) view.findViewById(R.id.myButton);
+            holder.selectAllCheckBox = (CheckBox) view.findViewById(R.id.selectAllCheckBox);
 
             view.setTag(holder);
         }else{
@@ -93,12 +101,43 @@ public class ReservationExpandableListAdapter extends BaseExpandableListAdapter 
             else if (c.getStatus() == Status.DELIVERY)
                 holder.tv_status.setTextColor(context.getResources().getColor(R.color.colorTextAccepted));
 
-                if (c.getStatus() == Status.REJECTED)
-                    flag = true;
+        if (c.getStatus() == Status.REJECTED)
+            flag = true;
 
-                if (!flag) {
-                    //if is the last child, add the button "accept or reject" on the bottom
-                    holder.button.setOnClickListener(new View.OnClickListener() {
+        // Se lo stato è COOKING allora compare la checkbox
+        if(c.getStatus() == Status.COOKING) {
+            holder.selectAllCheckBox.setVisibility(View.VISIBLE);
+            for (Dish d : dishes ){
+                if(d.isChecked())
+                    buttonflag =true;
+                else{
+                    buttonflag=false;
+                    break;
+                }
+            }
+            if(buttonflag){
+                holder.button.setVisibility(View.VISIBLE);
+            }
+            else
+                holder.button.setVisibility(View.GONE);
+        }
+        else
+            holder.selectAllCheckBox.setVisibility(View.GONE);
+
+        holder.selectAllCheckBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
+                if(holder.selectAllCheckBox.isChecked()){
+                    c.setChecked(true);
+                }
+                else
+                    c.setChecked(false);
+                notifyDataSetChanged();
+            }
+        });
+
+        if (!flag) {
+            holder.button.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
                             final AlertDialog.Builder builder = new AlertDialog.Builder(v.getContext());
@@ -195,12 +234,39 @@ public class ReservationExpandableListAdapter extends BaseExpandableListAdapter 
         TextView tv_dish_name = (TextView) view.findViewById(R.id.tv_dish_name);
         TextView tv_dish_quantity = (TextView) view.findViewById(R.id.tv_dish_quantity);
         TextView tv_dish_notes = (TextView) view.findViewById(R.id.tv_dish_note);
+        CheckBox dish_chechbox = (CheckBox) view.findViewById(R.id.dish_checkbox);
 
         if(tv_dish_name!=null && tv_dish_notes!=null && tv_dish_quantity!=null) {
             tv_dish_name.setText(dish.getName());
             tv_dish_quantity.setText(dish.getQuantity().toString());
             tv_dish_notes.setText(dish.getNotes());
         }
+
+        if (c.getStatus() == Status.COOKING)
+            dish_chechbox.setVisibility(View.VISIBLE);
+        else
+            dish_chechbox.setVisibility(View.GONE);
+
+        // Controllo se la prenotazione ha la checkbox spuntata
+        if(c.isChecked()){
+            // Controllo se il piatto ha la checkbox spuntata, la spunto se così non fosse
+            if(!dish_chechbox.isChecked()){
+                dish_chechbox.setChecked(true);
+                dish.setChecked(true);
+                notifyDataSetChanged();
+            }
+        }
+
+        dish_chechbox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
+                if(dish.isChecked())
+                    dish.setChecked(false);
+                else
+                    dish.setChecked(true);
+                notifyDataSetChanged();
+            }
+        });
         /*final Button button = (Button) view.findViewById(R.id.myButton);
 
 
@@ -309,6 +375,7 @@ public class ReservationExpandableListAdapter extends BaseExpandableListAdapter 
 
     private class ViewHolder {
         protected Button button;
+        CheckBox selectAllCheckBox;
         TextView tv_dish_name;
         TextView tv_dish_quantity;
         TextView tv_dish_notes;

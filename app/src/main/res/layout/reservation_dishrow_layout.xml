@@ -16,12 +16,13 @@
         app:layout_constraintTop_toTopOf="parent"
         xmlns:android="http://schemas.android.com/apk/res/android">
 
-        <ImageView
-            android:id="@+id/dish_icon"
+        <CheckBox
+            android:id="@+id/dish_checkbox"
             android:layout_width="35dp"
             android:layout_height="35dp"
             android:layout_marginStart="4dp"
             android:layout_marginTop="32dp"
+            android:visibility="gone"
             android:padding="0dp"
             android:src="@drawable/dishes_icon"
             app:layout_constraintStart_toStartOf="parent"
@@ -40,7 +41,7 @@
             app:layout_constraintBottom_toTopOf="@id/dish_quantity_label"
             app:layout_constraintEnd_toStartOf="@id/tv_dish_name"
             app:layout_constraintHorizontal_bias="0.13"
-            app:layout_constraintStart_toEndOf="@id/dish_icon"
+            app:layout_constraintStart_toEndOf="@id/dish_checkbox"
             app:layout_constraintTop_toTopOf="parent" />
 
         <TextView

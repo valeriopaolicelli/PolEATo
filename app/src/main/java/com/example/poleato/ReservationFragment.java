@@ -4,6 +4,8 @@ import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.graphics.Point;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.RecyclerView;
 import android.view.Display;
@@ -103,5 +105,16 @@ public class ReservationFragment extends Fragment {
 
         listHash.put(c1.getOrder_id(),list1);
         listHash.put(c2.getOrder_id(),list2);
+    }
+
+    @Override
+    public void onSaveInstanceState(@NonNull Bundle outState) {
+        super.onSaveInstanceState(outState);
+
+    }
+
+    @Override
+    public void onViewStateRestored(@Nullable Bundle savedInstanceState) {
+        super.onViewStateRestored(savedInstanceState);
     }
 }

@@ -13,6 +13,7 @@ public class Reservation {
     private String date;
     private Status status;
     private String stat;
+    private boolean checked;
 
     public String getTime() {
         return time;
@@ -73,4 +74,12 @@ public class Reservation {
     }
 
     public String getAddress(){ return address;}
+
+    public boolean isChecked() {
+        return checked;
+    }
+
+    public void setChecked(boolean checked) {
+        this.checked = checked;
+    }
 }
