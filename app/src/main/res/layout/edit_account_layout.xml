@@ -46,37 +46,39 @@
                 android:layout_width="match_parent"
                 android:layout_height="272dp">
 
-                <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                <ImageView
+                    android:id="@+id/ivBackground"
+                    style="@style/BackGroundImageView"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:orientation="vertical">
+                    android:layout_alignParentTop="true"
+                    android:layout_centerHorizontal="true"
+                    android:adjustViewBounds="true"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    tools:ignore="ContentDescription" />
 
-                    <ImageView
-                        style="@style/BackGroundImageView"
-                        android:id="@+id/ivBackground"
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:layout_alignParentTop="true"
-                        android:layout_centerHorizontal="true"
-                        tools:ignore="ContentDescription"
-                        android:adjustViewBounds="true"/>
+                <android.support.design.widget.FloatingActionButton
+                    android:id="@+id/change_im"
+                    android:layout_width="151dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="8dp"
+                    android:layout_marginTop="8dp"
+                    android:layout_marginEnd="8dp"
+                    android:layout_marginBottom="8dp"
+                    android:backgroundTint="@color/colorPanelPrimary"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:src="@mipmap/baseline_photo_camera_white_24dp"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintHorizontal_bias="0.976"
+                    app:layout_constraintStart_toStartOf="@+id/ivBackground"
+                    app:layout_constraintTop_toTopOf="@+id/ivBackground"
+                    app:layout_constraintVertical_bias="0.96" />
 
-                    <RelativeLayout
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="center_vertical|center_horizontal">
-
-                        <android.support.design.widget.FloatingActionButton
-                            android:id="@+id/change_im"
-                            android:layout_width="151dp"
-                            android:layout_height="wrap_content"
-                            android:backgroundTint="@color/colorPanelPrimary"
-                            android:clickable="true"
-                            android:focusable="true"
-                            android:src="@mipmap/baseline_photo_camera_white_24dp"/>
-
-                    </RelativeLayout>
-                </FrameLayout>
             </android.support.constraint.ConstraintLayout>
 
 
@@ -98,16 +100,16 @@
 
                     <ImageView
                         android:id="@+id/name_icon"
-                        android:contentDescription="@string/restaurant_name"
                         android:layout_width="wrap_content"
                         android:layout_height="37dp"
                         android:layout_marginTop="8dp"
+                        android:contentDescription="@string/restaurant_name"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintEnd_toStartOf="@id/input_layout_name"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toTopOf="@id/input_layout_name"
                         app:layout_constraintVertical_bias="0.466"
-                        app:srcCompat="@drawable/restaurant_icon"/>
+                        app:srcCompat="@drawable/restaurant_icon" />
 
                     <android.support.design.widget.TextInputLayout
                         android:id="@+id/input_layout_name"
@@ -162,10 +164,10 @@
 
                     <ImageView
                         android:id="@+id/type_icon"
-                        android:contentDescription="@string/type"
                         android:layout_width="wrap_content"
                         android:layout_height="37dp"
                         android:layout_marginTop="8dp"
+                        android:contentDescription="@string/type"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintEnd_toStartOf="@id/input_layout_type"
                         app:layout_constraintStart_toStartOf="parent"
@@ -179,8 +181,8 @@
                         android:layout_height="wrap_content"
                         android:theme="@style/FloatLabel"
                         app:layout_constraintBottom_toBottomOf="parent"
-                        app:layout_constraintStart_toEndOf="@id/type_icon"
                         app:layout_constraintEnd_toStartOf="@id/cancel_type"
+                        app:layout_constraintStart_toEndOf="@id/type_icon"
                         app:layout_constraintTop_toTopOf="parent"
                         app:layout_constraintVertical_bias="0.0">
 
@@ -189,12 +191,12 @@
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:layout_marginStart="5dp"
+                            android:gravity="start"
                             android:hint="@string/type"
-                            android:imeOptions="actionNext"
 
+                            android:imeOptions="actionNext"
                             android:inputType="textMultiLine"
                             android:lines="2"
-                            android:gravity="start"
 
                             android:overScrollMode="always"
                             android:scrollbarStyle="insideInset"
@@ -224,7 +226,6 @@
                     android:layout_height="10dp" />
 
 
-
                 <!-- Info -->
 
                 <android.support.constraint.ConstraintLayout
@@ -233,10 +234,10 @@
 
                     <ImageView
                         android:id="@+id/info_icon"
-                        android:contentDescription="@string/info"
                         android:layout_width="wrap_content"
                         android:layout_height="37dp"
                         android:layout_marginTop="8dp"
+                        android:contentDescription="@string/info"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintEnd_toStartOf="@id/input_layout_info"
                         app:layout_constraintStart_toStartOf="parent"
@@ -250,8 +251,8 @@
                         android:layout_height="wrap_content"
                         android:theme="@style/FloatLabel"
                         app:layout_constraintBottom_toBottomOf="parent"
-                        app:layout_constraintStart_toEndOf="@id/info_icon"
                         app:layout_constraintEnd_toStartOf="@id/cancel_info"
+                        app:layout_constraintStart_toEndOf="@id/info_icon"
                         app:layout_constraintTop_toTopOf="parent"
                         app:layout_constraintVertical_bias="0.0">
 
@@ -260,18 +261,18 @@
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:layout_marginStart="5dp"
+                            android:gravity="start"
                             android:hint="@string/info"
-                            android:imeOptions="actionNext"
 
+                            android:imeOptions="actionNext"
                             android:inputType="textMultiLine"
                             android:lines="3"
-                            android:gravity="start"
-
-                            android:overScrollMode="always"
-                            android:scrollbarStyle="insideInset"
-                            android:scrollbars="vertical"
 
                             android:maxLength="240"
+                            android:overScrollMode="always"
+                            android:scrollbarStyle="insideInset"
+
+                            android:scrollbars="vertical"
                             android:textColor="@color/colorTextSubField" />
                     </android.support.design.widget.TextInputLayout>
 
@@ -304,10 +305,10 @@
 
                     <ImageView
                         android:id="@+id/open_icon"
-                        android:contentDescription="@string/open"
                         android:layout_width="wrap_content"
                         android:layout_height="37dp"
                         android:layout_marginTop="8dp"
+                        android:contentDescription="@string/open"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintEnd_toStartOf="@id/input_layout_open"
                         app:layout_constraintStart_toStartOf="parent"
@@ -316,15 +317,14 @@
                         app:srcCompat="@drawable/open_icon" />
 
 
-
                     <android.support.design.widget.TextInputLayout
                         android:id="@+id/input_layout_open"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:theme="@style/FloatLabel"
                         app:layout_constraintBottom_toBottomOf="parent"
-                        app:layout_constraintStart_toEndOf="@id/open_icon"
                         app:layout_constraintEnd_toStartOf="@id/cancel_open"
+                        app:layout_constraintStart_toEndOf="@id/open_icon"
                         app:layout_constraintTop_toTopOf="parent"
                         app:layout_constraintVertical_bias="0.0">
 
@@ -333,18 +333,18 @@
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:layout_marginStart="5dp"
+                            android:gravity="start"
                             android:hint="@string/open"
-                            android:imeOptions="actionNext"
 
+                            android:imeOptions="actionNext"
                             android:inputType="textMultiLine"
                             android:lines="3"
-                            android:gravity="start"
-
-                            android:overScrollMode="always"
-                            android:scrollbarStyle="insideInset"
-                            android:scrollbars="vertical"
 
                             android:maxLength="90"
+                            android:overScrollMode="always"
+                            android:scrollbarStyle="insideInset"
+
+                            android:scrollbars="vertical"
                             android:textColor="@color/colorTextSubField" />
                     </android.support.design.widget.TextInputLayout>
 
@@ -376,10 +376,10 @@
 
                     <ImageView
                         android:id="@+id/address_icon"
-                        android:contentDescription="@string/address"
                         android:layout_width="wrap_content"
                         android:layout_height="37dp"
                         android:layout_marginTop="8dp"
+                        android:contentDescription="@string/address"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintEnd_toStartOf="@id/input_layout_address"
                         app:layout_constraintStart_toStartOf="parent"
@@ -393,8 +393,8 @@
                         android:layout_height="56dp"
                         android:theme="@style/FloatLabel"
                         app:layout_constraintBottom_toBottomOf="parent"
-                        app:layout_constraintStart_toEndOf="@id/address_icon"
                         app:layout_constraintEnd_toStartOf="@id/cancel_address"
+                        app:layout_constraintStart_toEndOf="@id/address_icon"
                         app:layout_constraintTop_toTopOf="parent"
                         app:layout_constraintVertical_bias="0.0">
 
@@ -439,10 +439,10 @@
 
                     <ImageView
                         android:id="@+id/email_icon"
-                        android:contentDescription="@string/email"
                         android:layout_width="wrap_content"
                         android:layout_height="37dp"
                         android:layout_marginTop="8dp"
+                        android:contentDescription="@string/email"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintEnd_toStartOf="@id/input_layout_email"
                         app:layout_constraintStart_toStartOf="parent"
@@ -456,8 +456,8 @@
                         android:layout_height="56dp"
                         android:theme="@style/FloatLabel"
                         app:layout_constraintBottom_toBottomOf="parent"
-                        app:layout_constraintStart_toEndOf="@id/email_icon"
                         app:layout_constraintEnd_toStartOf="@id/cancel_email"
+                        app:layout_constraintStart_toEndOf="@id/email_icon"
                         app:layout_constraintTop_toTopOf="parent"
                         app:layout_constraintVertical_bias="0.0">
 
@@ -502,10 +502,10 @@
 
                     <ImageView
                         android:id="@+id/phone_icon"
-                        android:contentDescription="@string/phone"
                         android:layout_width="wrap_content"
                         android:layout_height="37dp"
                         android:layout_marginTop="8dp"
+                        android:contentDescription="@string/phone"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintEnd_toStartOf="@id/input_layout_phone"
                         app:layout_constraintStart_toStartOf="parent"
@@ -519,8 +519,8 @@
                         android:layout_height="56dp"
                         android:theme="@style/FloatLabel"
                         app:layout_constraintBottom_toBottomOf="parent"
-                        app:layout_constraintStart_toEndOf="@id/phone_icon"
                         app:layout_constraintEnd_toStartOf="@id/cancel_phone"
+                        app:layout_constraintStart_toEndOf="@id/phone_icon"
                         app:layout_constraintTop_toTopOf="parent"
                         app:layout_constraintVertical_bias="0.0">
 
