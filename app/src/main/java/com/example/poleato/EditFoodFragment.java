@@ -2,13 +2,27 @@ package com.example.poleato;
 
 import android.app.Dialog;
 import android.content.Context;
+import android.content.Intent;
+import android.content.SharedPreferences;
+import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Matrix;
+import android.graphics.drawable.BitmapDrawable;
+import android.media.ExifInterface;
+import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
+import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
+import android.support.v4.content.FileProvider;
+import android.support.v7.widget.PopupMenu;
+import android.util.Base64;
+import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
@@ -19,7 +33,18 @@ import android.widget.ImageView;
 import android.widget.Spinner;
 import android.widget.TextView;
 
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
+
 public class EditFoodFragment extends DialogFragment {
+
+    private static final int REQUEST_TAKE_PHOTO = 1;
+    private static final int RESULT_LOAD_IMG = 2;
+    private String currentPhotoPath;
+
     private FragmentEListener fragmentEListener;
     private ImageView imageFood;
     private EditText editFood;
@@ -72,6 +97,9 @@ public class EditFoodFragment extends DialogFragment {
         editPrice = v.findViewById(R.id.editPrice);
         editQuantity = v.findViewById(R.id.editQuantity);
         buttonSave = v.findViewById(R.id.button_frag_save);
+
+        // Set listener to send DATA to main activity that sends them to DailyOfferFragment
+
         buttonSave.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -81,7 +109,9 @@ public class EditFoodFragment extends DialogFragment {
                         , editDescription.getText().toString()
                         , Double.valueOf(editPrice.getText().toString())
                         , Integer.valueOf(editQuantity.getText().toString()));
-//                CharSequence input = editText.getText();
+
+                // I send even plateType to now where insert new food
+
                     fragmentEListener.onInputESent(plateType, food);
                     dismiss();
 
@@ -102,6 +132,8 @@ public class EditFoodFragment extends DialogFragment {
     public void onStart() {
         super.onStart();
         Dialog dialog = getDialog();
+
+        // Set dialog Full screen (You have to control even style.xml to change all params)
         if (dialog != null) {
             int width = ViewGroup.LayoutParams.MATCH_PARENT;
             int height = ViewGroup.LayoutParams.MATCH_PARENT;
@@ -130,4 +162,190 @@ public class EditFoodFragment extends DialogFragment {
         fragmentEListener = null;
     }
 
+//        @Override
+//    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+//        super.onActivityResult(requestCode, resultCode, data);
+//        if (requestCode == REQUEST_TAKE_PHOTO){
+//            if (resultCode == RESULT_OK) {
+//                setPic(currentPhotoPath);
+//            }
+//            else {
+//                SharedPreferences fields= this.getSharedPreferences("ProfileDataRestaurant", Context.MODE_PRIVATE);
+//                image= fields.getString("ProfileImage", encodeTobase64());
+//                profileImage.setImageBitmap(decodeBase64(image));
+//            }
+//        }
+//        if (requestCode == RESULT_LOAD_IMG) {
+//            if (resultCode == RESULT_OK) {
+//                try {
+//                    final Uri imageUri = data.getData();
+//                    final InputStream imageStream = getContentResolver().openInputStream(imageUri);
+//                    final Bitmap selectedImage = BitmapFactory.decodeStream(imageStream);
+//                    profileImage.setImageBitmap(selectedImage);
+//                } catch (FileNotFoundException e) {
+//                    e.printStackTrace();
+//                    Toast.makeText(this, "Something went wrong", Toast.LENGTH_LONG).show();
+//                }
+//
+//            } else {
+//                SharedPreferences fields= this.getSharedPreferences("ProfileDataCustomer", Context.MODE_PRIVATE);
+//                image= fields.getString("ProfileImage", encodeTobase64());
+//                profileImage.setImageBitmap(decodeBase64(image));
+//            }
+//        }
+//    }
+//
+//    public void changeImage(View view) {
+//        PopupMenu popup = new PopupMenu(EditFoodFragment.this, change_im);
+//        popup.getMenuInflater().inflate(
+//                R.menu.popup_menu, popup.getMenu());
+//        popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+//            // implement click listener.
+//            @Override
+//            public boolean onMenuItemClick(MenuItem item) {
+//                switch (item.getItemId()) {
+//                    case R.id.camera:
+//                        // create Intent with photoFile
+//                        dispatchTakePictureIntent();
+//                        return true;
+//                    case R.id.gallery:
+//                        Intent photoPickerIntent = new Intent(Intent.ACTION_PICK);
+//                        photoPickerIntent.setType("image/*");
+//                        startActivityForResult(photoPickerIntent, RESULT_LOAD_IMG);
+//                        return true;
+//                    case R.id.removeImage:
+////                        removeProfileImage();
+//                        return true;
+//
+//                    default:
+//                        return false;
+//                }
+//            }
+//        });
+//        popup.show();
+//    }
+//
+//    // create Intent with photoFile
+//
+//    private void dispatchTakePictureIntent() {
+//        getActivity().
+//        Uri photoURI;
+//        Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+//        // Ensure that there's a camera activity to handle the intent
+//        if (takePictureIntent.resolveActivity(getActivity().getPackageManager()) != null) {
+//            // Create the File where the photo should go
+//            File photoFile = null;
+//            try {
+//                photoFile = createImageFile();
+//            } catch (IOException ex) {
+//                // Error occurred while creating the File
+//
+//            }
+//            // Continue only if the File was successfully created
+//            if (photoFile != null) {
+//                photoURI = FileProvider.getUriForFile(getContext(),
+//                        "com.example.android.fileproviderFood",
+//                        photoFile);
+//                takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI);
+//                startActivityForResult(takePictureIntent, REQUEST_TAKE_PHOTO);
+//            }
+//        }
+//    }
+//
+//    // Function to create image file with ExternalFilesDir
+//
+//    private File createImageFile() throws IOException {
+//        // Create an image file name
+//        //String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
+//        String imageFileName = "JPEG_" + "profile";
+//        File storageDir = getExternalFilesDir(Environment.DIRECTORY_PICTURES);
+//
+//        File image = File.createTempFile(
+//                imageFileName,  /* prefix */
+//                ".jpg",         /* suffix */
+//                storageDir      /* directory */
+//        );
+//
+//        // Save a file: path for use with ACTION_VIEW intents
+//        currentPhotoPath = image.getAbsolutePath();
+//        return image;
+//    }
+//    public void removeProfileImage(){
+//        profileImage.setImageResource(R.drawable.image_empty);
+//    }
+//
+//    private void setPic(String currentPhotoPath) {
+//        // Get the dimensions of the View
+//        int targetW = profileImage.getWidth();
+//        int targetH = profileImage.getHeight();
+//
+//        // Get the dimensions of the bitmap
+//        BitmapFactory.Options bmOptions = new BitmapFactory.Options();
+//        bmOptions.inJustDecodeBounds = true;
+//        BitmapFactory.decodeFile(currentPhotoPath, bmOptions);
+//        int photoW = bmOptions.outWidth;
+//        int photoH = bmOptions.outHeight;
+//
+//        // Determine how much to scale down the image
+//        int scaleFactor = Math.min(photoW / targetW, photoH / targetH);
+//
+//        // Decode the image file into a Bitmap sized to fill the View
+//        bmOptions.inJustDecodeBounds = false;
+//        bmOptions.inSampleSize = scaleFactor;
+//
+//        Bitmap bitmap = BitmapFactory.decodeFile(currentPhotoPath, bmOptions);
+//
+//        if(bitmap != null) {
+//
+//            try {
+//                bitmap = rotateImageIfRequired(bitmap, currentPhotoPath);
+//            } catch (IOException e) {
+//                e.printStackTrace();
+//            }
+//
+//            profileImage.setImageBitmap(bitmap);
+//        }
+//    }
+//
+//    private static Bitmap rotateImageIfRequired(Bitmap img, String currentPhotoPath) throws IOException {
+//
+//        ExifInterface ei = new ExifInterface(currentPhotoPath);
+//        int orientation = ei.getAttributeInt(ExifInterface.TAG_ORIENTATION, ExifInterface.ORIENTATION_NORMAL);
+//
+//        switch (orientation) {
+//            case ExifInterface.ORIENTATION_ROTATE_90:
+//                return rotateImage(img, 90);
+//            case ExifInterface.ORIENTATION_ROTATE_180:
+//                return rotateImage(img, 180);
+//            case ExifInterface.ORIENTATION_ROTATE_270:
+//                return rotateImage(img, 270);
+//            default:
+//                return img;
+//        }
+//    }
+//
+//    private static Bitmap rotateImage(Bitmap img, int degree) {
+//        Matrix matrix = new Matrix();
+//        matrix.postRotate(degree);
+//        Bitmap rotatedImg = Bitmap.createBitmap(img, 0, 0, img.getWidth(), img.getHeight(), matrix, true);
+//        img.recycle();
+//        return rotatedImg;
+//    }
+//
+//    public static String encodeTobase64() {
+//        Bitmap image = ((BitmapDrawable)profileImage.getDrawable()).getBitmap();
+//        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+//        image.compress(Bitmap.CompressFormat.PNG, 100, baos);
+//        byte[] b = baos.toByteArray();
+//        String imageEncoded = Base64.encodeToString(b, Base64.DEFAULT);
+//        Log.d("Image Log:", imageEncoded);
+//        return imageEncoded;
+//    }
+//
+//    public static Bitmap decodeBase64(String input) {
+//        byte[] decodedByte = Base64.decode(input, 0);
+//        return BitmapFactory
+//                .decodeByteArray(decodedByte, 0, decodedByte.length);
+//    }
+//
 }

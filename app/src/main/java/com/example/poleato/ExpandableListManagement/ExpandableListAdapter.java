@@ -7,6 +7,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseExpandableListAdapter;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -23,6 +24,7 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
     private final LayoutInflater inf;
     private List<String> _listDataGroup; // header titles
     private HashMap<String, List<Food>> _listDataChild; // child data in format of header title, child title
+    private Button button_delete;
 
     public ExpandableListAdapter(Activity host, List<String> listDataHeader,
                                  HashMap<String, List<Food>> listChildData) {
@@ -39,7 +41,7 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
 
 
     @Override
-    public View getChildView(int groupPosition, final int childPosition,
+    public View getChildView(final int groupPosition, final int childPosition,
                              boolean isLastChild, View convertView, ViewGroup parent) {
 
         Log.d("matte", "[Child]getview{ group:"+groupPosition+", child:"+childPosition+", view:"+convertView+"}");
@@ -55,6 +57,15 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
             holder.price = (TextView) convertView.findViewById(R.id.cardPrice);
             holder.quantity = (TextView) convertView.findViewById(R.id.cardQuantity);
             convertView.setTag(holder);
+
+            button_delete = convertView.findViewById(R.id.buttonDelete);
+            button_delete.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    _listDataChild.remove(getChild(groupPosition, childPosition));
+                    notifyDataSetChanged();
+                }
+            });
         } else{
             holder = (FoodViewHolder) convertView.getTag();
         }

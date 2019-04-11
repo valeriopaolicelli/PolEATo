@@ -109,23 +109,13 @@ public class DailyOfferFragment extends Fragment {
             }
         });
 
+        // list Adapter of ExpandableList
         listAdapter = new ExpandableListAdapter(hostActivity, listDataGroup, listDataChild);
 
         // setting list adapter
         expListView.setAdapter(listAdapter);
 
-        // attach the onClickListener to the cardView to launch a fragment to edit the infos
-//        CardView cv = hostActivity.findViewById(R.id.childView);
-//        cv.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-////
-////                EditFoodFragment nextFrag= new EditFoodFragment();
-////                FragmentTransaction transaction = getFragmentManager().beginTransaction();
-////                transaction.replace(R.id.menuList, nextFrag); // give your fragment container id in first parameter
-////                transaction.commit();
-//            }
-//        });
+
 
     }
 

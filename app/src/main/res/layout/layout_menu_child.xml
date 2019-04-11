@@ -42,30 +42,34 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="8dp"
-                android:layout_marginEnd="8dp"
+                android:layout_marginEnd="16dp"
+                android:layout_marginBottom="8dp"
                 android:gravity="center_horizontal|center_vertical"
                 android:text="Carbonara"
                 android:textColor="#444444"
                 android:textSize="20sp"
                 app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toStartOf="@+id/cardPrice"
-                app:layout_constraintHorizontal_bias="0.0"
+                app:layout_constraintEnd_toStartOf="@+id/buttonEdit"
+                app:layout_constraintHorizontal_bias="1.0"
                 app:layout_constraintStart_toEndOf="@+id/cardImage"
                 app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintVertical_bias="0.364" />
+                app:layout_constraintVertical_bias="0.173" />
 
             <TextView
                 android:id="@+id/cardPrice"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
                 android:layout_marginEnd="8dp"
                 android:text="2,50$"
                 android:textColor="#000000"
                 android:textStyle="bold"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.411"
+                app:layout_constraintStart_toEndOf="@+id/cardImage"
                 app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintVertical_bias="0.393" />
+                app:layout_constraintVertical_bias="0.95" />
 
 
             <TextView
@@ -73,21 +77,21 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="8dp"
-                android:layout_marginTop="8dp"
-                android:layout_marginEnd="8dp"
+                android:layout_marginTop="4dp"
+                android:layout_marginEnd="16dp"
                 android:layout_marginBottom="8dp"
                 android:gravity="center_horizontal|center_vertical"
                 android:text="Pancetta, formaggio ahhhsniadodnaifoahfioajf"
                 app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toStartOf="@+id/cardPrice"
+                app:layout_constraintEnd_toStartOf="@+id/buttonDelete"
                 app:layout_constraintStart_toEndOf="@+id/cardImage"
                 app:layout_constraintTop_toBottomOf="@+id/cardName"
-                app:layout_constraintVertical_bias="0.68" />
+                app:layout_constraintVertical_bias="0.0" />
 
             <TextView
                 android:id="@+id/cardQuantity"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_height="16dp"
                 android:layout_marginStart="8dp"
                 android:layout_marginTop="8dp"
                 android:layout_marginEnd="8dp"
@@ -95,10 +99,44 @@
                 android:textSize="12sp"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toEndOf="@+id/cardDescription"
-                app:layout_constraintTop_toBottomOf="@+id/cardPrice"
-                app:layout_constraintVertical_bias="0.83" />
+                app:layout_constraintHorizontal_bias="1.0"
+                app:layout_constraintStart_toEndOf="@+id/cardImage"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintVertical_bias="0.895" />
 
+            <Button
+                android:id="@+id/buttonEdit"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:layout_marginStart="8dp"
+                android:layout_marginTop="16dp"
+                android:layout_marginBottom="8dp"
+                android:clickable="true"
+                android:background="@drawable/ic_baseline_edit_24px"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.937"
+                app:layout_constraintStart_toEndOf="@+id/cardImage"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintVertical_bias="0.0"
+                android:focusable="true" />
+
+            <Button
+                android:id="@+id/buttonDelete"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:layout_marginStart="8dp"
+                android:layout_marginTop="50dp"
+                android:layout_marginBottom="8dp"
+                android:background="@drawable/ic_baseline_delete_24px"
+                android:clickable="true"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.937"
+                app:layout_constraintStart_toEndOf="@+id/cardImage"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintVertical_bias="0.0"
+                android:focusable="true" />
 
         </android.support.constraint.ConstraintLayout>
 
