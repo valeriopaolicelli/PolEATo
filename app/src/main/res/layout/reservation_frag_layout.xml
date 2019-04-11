@@ -13,5 +13,6 @@
         android:layout_height="match_parent"
         android:divider="@color/colorPanelPrimary"
         android:dividerHeight="0dp"
-        android:padding="3dp"/>
+        android:padding="3dp"
+        />
 </RelativeLayout>

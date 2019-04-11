@@ -1,6 +1,8 @@
 package com.example.poleato;
 
 public class Dish {
+
+    // REFERENCE TO FOOD CLASS
     private String name;
     private Integer quantity;
     private String notes;
