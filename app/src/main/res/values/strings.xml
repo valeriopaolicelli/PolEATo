@@ -48,5 +48,5 @@
     <string name="choice_reject">Reject</string>
     <string name="choice_cancel">Cancel</string>
     <string name="title_confirm">Confirm order</string>
-    <string name="msg_confirm">Do you want to confirm or reject this order? Status will pass to 'on cooking'</string>
+    <string name="msg_confirm">Do you want to confirm or reject this order? Status will pass to \'on cooking\'</string>
 </resources>

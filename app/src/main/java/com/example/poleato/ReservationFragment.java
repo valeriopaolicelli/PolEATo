@@ -4,12 +4,15 @@ import android.graphics.Point;
 import android.os.Bundle;
 import android.os.Parcelable;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.Display;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ExpandableListView;
+import android.widget.TextView;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -83,5 +86,32 @@ public class ReservationFragment extends Fragment {
 
         listHash.put(c1.getOrder_id(),list1);
         listHash.put(c2.getOrder_id(),list2);
+    }
+
+    @Override
+    public void onSaveInstanceState(@NonNull Bundle outState) {
+        super.onSaveInstanceState(outState);
+        ArrayList<String> statusPersistence= new ArrayList<>();
+        for(int i=0; i<listAdapter.getGroupCount(); i++){
+            View v= listAdapter.getGroupView(i, false, null, lv);
+            TextView status= v.findViewById(R.id.tvStatusField);
+            statusPersistence.add(i, status.getText().toString());
+        }
+        outState.putStringArrayList("Status_Persistence", statusPersistence);
+    }
+
+    @Override
+    public void onViewStateRestored(@Nullable Bundle savedInstanceState) {
+        super.onViewStateRestored(savedInstanceState);
+        ArrayList<String> statusPersistence;
+        if(savedInstanceState!=null) {
+            statusPersistence = savedInstanceState.getStringArrayList("Status_Persistence");
+            if (statusPersistence != null)
+                if (statusPersistence.size() > 0) {
+                    for (int i = 0; i < listAdapter.getGroupCount(); i++) {
+                        reservations.get(i).setStat(statusPersistence.get(i), getContext());
+                    }
+                }
+        }
     }
 }

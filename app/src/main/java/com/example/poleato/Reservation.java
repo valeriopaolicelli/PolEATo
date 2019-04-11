@@ -54,18 +54,30 @@ public class Reservation {
 
     public void setStatus(Status status, Context context) {
         if(status == Status.ACCEPATANCE)
-            stat = context.getString(R.string.new_order);
+            this.stat = context.getString(R.string.new_order);
         else if( status == Status.DELIVERY)
-            stat = context.getString(R.string.delivery);
+            this.stat = context.getString(R.string.delivery);
         else if( status == Status.COOKING)
-            stat = context.getString(R.string.cooking);
+            this.stat = context.getString(R.string.cooking);
         else if ( status == Status.REJECTED)
-            stat = context.getString(R.string.reject);
+            this.stat = context.getString(R.string.reject);
         this.status = status;
     }
 
     public String getStat() {
         return stat;
+    }
+
+    public void setStat(String stat, Context context) {
+        this.stat= stat;
+        if(stat.equals(context.getString(R.string.new_order)))
+            this.status= Status.ACCEPATANCE;
+        if(stat.equals(context.getString(R.string.delivery)))
+            this.status= Status.DELIVERY;
+        if(stat.equals(context.getString(R.string.cooking)))
+            this.status= Status.COOKING;
+        if(stat.equals(context.getString(R.string.reject)))
+            this.status= Status.REJECTED;
     }
 
     public String getOrder_id() {
