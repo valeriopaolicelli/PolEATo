@@ -2,12 +2,17 @@ package com.example.poleato.ExpandableListManagement;
 
 import android.app.Activity;
 import android.content.res.Resources;
+import android.support.v7.widget.PopupMenu;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseExpandableListAdapter;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -20,7 +25,7 @@ import java.util.List;
 
 public class ExpandableListAdapter extends BaseExpandableListAdapter {
 
-    Activity host;
+    private final Activity host;
     private final LayoutInflater inf;
     private List<String> _listDataGroup; // header titles
     private HashMap<String, List<Food>> _listDataChild; // child data in format of header title, child title
@@ -83,14 +88,41 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
         String qntStr = "(qty "+getChild(groupPosition, childPosition).getQuantity()+")";
         holder.quantity.setText(qntStr);
 
+        ImageButton settingsButton = convertView.findViewById(R.id.cardSettings);
+        settingsButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Log.d("matte", "inside showPopup");
+                PopupMenu popup = new PopupMenu(host, v);
+                MenuInflater inflater = popup.getMenuInflater();
+                inflater.inflate(R.menu.popup_cardview, popup.getMenu());
+                popup.show();
+                Menu itemList = popup.getMenu();
+                MenuItem modify = itemList.getItem(0);
+                modify.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
+                    @Override
+                    public boolean onMenuItemClick(MenuItem item) {
 
+                        Log.d("matte", item.getTitle().toString());
+                        return false;
+                    }
+                });
 
-        //if(childPosition == 0)
+                MenuItem remove = itemList.getItem(1);
+                remove.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
+                    @Override
+                    public boolean onMenuItemClick(MenuItem item) {
 
+                        Log.d("matte", item.getTitle().toString());
+                        return false;
+                    }
+                });
+
+            }
+        });
 
         return convertView;
     }
-
 
 
 

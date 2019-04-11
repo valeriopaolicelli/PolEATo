@@ -29,6 +29,9 @@
     <string name="drinks">Drinks</string>
     <string name="currency">$</string>
     <string name="dish_type">Type:</string>
+    <string name="modify">Modify</string>
+    <string name="remove">Remove</string>
+
 
     <string-array name="plates_array">
         <item>Starters</item>
