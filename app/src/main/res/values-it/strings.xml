@@ -28,4 +28,6 @@
     <string name="desserts">Dolci</string>
     <string name="drinks">Bevande</string>
     <string name="currency">€</string>
+    <string name="dish_type">Tipologia:</string>
+
 </resources>
