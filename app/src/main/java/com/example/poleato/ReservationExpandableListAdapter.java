@@ -91,12 +91,9 @@ public class ReservationExpandableListAdapter extends BaseExpandableListAdapter 
         }else{
             holder = (ViewHolder) view.getTag();
         }
-
-
             holder.tv_date.setText(c.getDate());
             holder.tv_time.setText(c.getTime());
             holder.tv_status.setText(c.getStat());
-
 
         if (c.getStatus() == Status.REJECTED) {
             flag = true;
@@ -104,28 +101,36 @@ public class ReservationExpandableListAdapter extends BaseExpandableListAdapter 
         }
             else if (c.getStatus() == Status.DELIVERY)
                 holder.tv_status.setTextColor(context.getResources().getColor(R.color.colorTextAccepted));
-            
+            else if (c.getStatus() == Status.ACCEPATANCE ) {
+                holder.button.setText("Accept or reject");
+                holder.tv_status.setTextColor(context.getResources().getColor(R.color.colorTextSubField));
+                holder.button.setVisibility(View.VISIBLE);
+        }
         // Se lo stato è COOKING allora compare la checkbox
         if(c.getStatus() == Status.COOKING) {
+            holder.button.setText("Deliver Order");
+            holder.tv_status.setTextColor(context.getResources().getColor(R.color.colorTextSubField));
             holder.selectAllCheckBox.setVisibility(View.VISIBLE);
             assert dishes != null;
-            for (Dish d : dishes ){
-                if(d.isChecked())
-                    //Se tutti i piatti sono pronti allora l'ordine può partire
-                    buttonflag =true;
-                else{
-                    buttonflag=false;
-                    break;
+
+            if(c.isChecked())
+                buttonflag=true;
+            else {
+                for (Dish d : dishes) {
+                    if (d.isChecked())
+                        //Se tutti i piatti sono pronti allora l'ordine può partire
+                        buttonflag = true;
+                    else {
+                        buttonflag = false;
+                        break;
+                    }
                 }
             }
-            if(buttonflag && listView.isGroupExpanded(i)){
-                holder.button.setVisibility(View.VISIBLE);
-            }
-            else
-                holder.button.setVisibility(View.GONE);
         }
         else
             holder.selectAllCheckBox.setVisibility(View.GONE);
+
+
 
         holder.selectAllCheckBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
@@ -139,6 +144,7 @@ public class ReservationExpandableListAdapter extends BaseExpandableListAdapter 
             }
         });
 
+        final boolean bflag = buttonflag;
         if (!flag) {
             holder.button.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -163,7 +169,11 @@ public class ReservationExpandableListAdapter extends BaseExpandableListAdapter 
                         if (c.getStatus() == Status.COOKING) {
                             builder.setTitle("Deliver order");
 
+                            if(bflag)
                             builder.setMessage("Is everything ready? Status will pass to 'on delivery'");
+                            else
+                                builder.setMessage("Not all dishes are checked. Do you want to " +
+                                        "start your delivery anyway?");
                             builder.setPositiveButton("Confirm", new DialogInterface.OnClickListener() {
                                 @Override
                                 public void onClick(DialogInterface dialogInterface, int i) {
@@ -191,8 +201,6 @@ public class ReservationExpandableListAdapter extends BaseExpandableListAdapter 
                                     c.setStatus(Status.COOKING, context);
                                     holder.button.setText("Deliver order");
                                     notifyDataSetChanged();
-
-                                    //TODO: Aggiornare quantità menù
                                 }
                             });
                             builder.setNegativeButton("Reject", new DialogInterface.OnClickListener() {
@@ -230,7 +238,7 @@ public class ReservationExpandableListAdapter extends BaseExpandableListAdapter 
 
         ExpandableListView listView = (ExpandableListView) viewGroup;
         List<Dish> dishes = listHashMap.get(c.getOrder_id());
-        ViewHolder holder;
+        final ChildHolder holder;
         boolean buttonflag = false;
 
         //CALCOLO POSIZIONE GRUPPO E RELATIVA VIEW
@@ -240,20 +248,20 @@ public class ReservationExpandableListAdapter extends BaseExpandableListAdapter 
         View group = listView.getChildAt(flatPosition-first);
 
         if(view == null){
-            holder= new ViewHolder();
+            holder= new ChildHolder();
 
             LayoutInflater inflater = (LayoutInflater)this.context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
             view = inflater.inflate(R.layout.reservation_dishrow_layout,null);
             holder.tv_dish_name= (TextView) view.findViewById(R.id.tv_dish_name);
-            holder.button= (Button) group.findViewById(R.id.myButton);
             holder.tv_dish_quantity = (TextView) view.findViewById(R.id.tv_dish_quantity);
             holder.tv_dish_notes= (TextView) view.findViewById(R.id.tv_dish_note);
             holder.dish_chechbox= (CheckBox) view.findViewById(R.id.dish_checkbox);
+            holder.group_checkbox= (CheckBox) group.findViewById(R.id.selectAllCheckBox);
 
             view.setTag(holder);
         }
         else
-            holder= (ViewHolder) view.getTag();
+            holder= (ChildHolder) view.getTag();
 
         holder.tv_dish_name.setText(dish.getName());
         holder.tv_dish_quantity.setText(dish.getQuantity().toString());
@@ -274,22 +282,6 @@ public class ReservationExpandableListAdapter extends BaseExpandableListAdapter 
                     notifyDataSetChanged();
                 }
             }
-            //Controllo ogni volta se tutti i piatti hanno lo stato checked
-            assert dishes != null;
-            for (Dish d : dishes ){
-                if(d.isChecked())
-                    //In caso positivo, allora deve essere mostrato il bottone per consegnare
-                    buttonflag =true;
-                else{
-                    buttonflag=false;
-                    break;
-                }
-            }
-            //Se tutti i piatti hanno lo stato a checked allora l'ordine può partire e il gruppo è aperto
-            if(buttonflag && listView.isGroupExpanded(i))
-                holder.button.setVisibility(View.VISIBLE);
-            else
-                holder.button.setVisibility(View.GONE);
         }
         else
             holder.dish_chechbox.setVisibility(View.GONE);
@@ -299,6 +291,8 @@ public class ReservationExpandableListAdapter extends BaseExpandableListAdapter 
             public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
                 if(dish.isChecked()){
                     dish.setChecked(false);
+                    c.setChecked(false);
+                    holder.group_checkbox.setChecked(false);
                     }
                 else
                     dish.setChecked(true);
@@ -321,12 +315,18 @@ public class ReservationExpandableListAdapter extends BaseExpandableListAdapter 
     private class ViewHolder {
         protected Button button;
         CheckBox selectAllCheckBox;
-        TextView tv_dish_name;
-        TextView tv_dish_quantity;
-        TextView tv_dish_notes;
         TextView tv_date;
         TextView tv_time;
         TextView tv_status;
         CheckBox dish_chechbox;
+    }
+
+    private class ChildHolder{
+        Button childButton;
+        TextView tv_dish_name;
+        TextView tv_dish_quantity;
+        TextView tv_dish_notes;
+        CheckBox dish_chechbox;
+        CheckBox group_checkbox;
     }
 }

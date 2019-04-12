@@ -148,7 +148,7 @@
         android:layout_marginStart="8dp"
         android:layout_marginEnd="8dp"
         android:layout_marginBottom="8dp"
-        android:visibility="gone"
+        android:visibility="visible"
         android:background="@drawable/button_style"
         android:focusable="false"
         android:padding="7dp"

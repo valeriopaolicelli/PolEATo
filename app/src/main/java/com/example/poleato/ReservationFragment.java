@@ -57,19 +57,19 @@ public class ReservationFragment extends Fragment {
 
         lv.setAdapter(listAdapter);
 
-        lv.setOnGroupClickListener(new ExpandableListView.OnGroupClickListener() {
+    /*    lv.setOnGroupClickListener(new ExpandableListView.OnGroupClickListener() {
             @Override
             public boolean onGroupClick(ExpandableListView expandableListView, View view, int i, long l) {
                 Button b = (Button) view.findViewById(R.id.myButton);
 
-                if(!lv.isGroupExpanded(i)){
+                if(!expandableListView.isGroupExpanded(i)){
                     b.setVisibility(View.VISIBLE);
                 }else
                      b.setVisibility(View.GONE);
                 return false;
             }
         });
-
+*/
         return view;
     }
 
