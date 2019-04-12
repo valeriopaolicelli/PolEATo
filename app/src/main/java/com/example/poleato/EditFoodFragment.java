@@ -64,6 +64,7 @@ public class EditFoodFragment extends DialogFragment {
     private Button buttonSave;
 
     private Food toModify;
+    private Bundle bundle;
 
 
 
@@ -212,9 +213,10 @@ public class EditFoodFragment extends DialogFragment {
 
         Log.d("matte", "Inside EditFoodFragment");
 
-        Bundle bundle = getArguments();
+        bundle = getArguments();
 
         toModify = (Food) bundle.getSerializable("foodToModify");
+
 
     }
 
@@ -334,9 +336,6 @@ public class EditFoodFragment extends DialogFragment {
         }
     }
 
-    public void updateEditText (CharSequence charSequence) {
-//        editText.setText(charSequence);
-    }
 
     @Override
     public void onAttach(Context context) {
@@ -353,6 +352,7 @@ public class EditFoodFragment extends DialogFragment {
     public void onDetach() {
         super.onDetach();
         fragmentEditListener = null;
+        bundle.clear();
     }
 
 

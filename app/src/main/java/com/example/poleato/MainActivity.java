@@ -107,6 +107,7 @@ public class MainActivity extends AppCompatActivity implements DailyOfferFragmen
 //                .setTransitionStyle(R.style.FullScreenDialog)
 //                .addToBackStack(null)
 //                .commit();
+        addFoodFragment = new AddFoodFragment();
         addFoodFragment.show(getSupportFragmentManager(), "addFoodFragment");
     }
 
@@ -117,6 +118,7 @@ public class MainActivity extends AppCompatActivity implements DailyOfferFragmen
      */
     @Override
     public void onInputShowEditSent(Food foodToModify) {
+        editFoodFragment = new EditFoodFragment();
         Bundle bundle = new Bundle();
         bundle.putSerializable("foodToModify", foodToModify);
         editFoodFragment.setArguments(bundle);
@@ -168,9 +170,6 @@ public class MainActivity extends AppCompatActivity implements DailyOfferFragmen
         addFragmentToAdapter();
 
         tabLayout.setupWithViewPager(onViewPager);
-
-        addFoodFragment = new AddFoodFragment();
-        editFoodFragment = new EditFoodFragment();
 
     }
 
