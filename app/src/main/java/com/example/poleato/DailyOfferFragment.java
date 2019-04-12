@@ -200,12 +200,9 @@ public class DailyOfferFragment extends Fragment {
 
     private void initChild(){
 
-        if(listDataChild == null)
-        {
-            listDataChild = new HashMap<>();
-            for(int idx = 0; idx < listDataGroup.size(); idx ++)
-                listDataChild.put(listDataGroup.get(idx), new ArrayList<Food>());
-        }
+        listDataChild = new HashMap<>();
+        for(int idx = 0; idx < listDataGroup.size(); idx ++)
+            listDataChild.put(listDataGroup.get(idx), new ArrayList<Food>());
 
     }
 
