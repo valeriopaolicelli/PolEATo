@@ -47,7 +47,7 @@
             android:src="@mipmap/baseline_photo_camera_white_24dp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.653"
+            app:layout_constraintHorizontal_bias="0.954"
             app:layout_constraintStart_toStartOf="@+id/imageFood"
             app:layout_constraintTop_toTopOf="@+id/imageFood"
             app:layout_constraintVertical_bias="1.0" />

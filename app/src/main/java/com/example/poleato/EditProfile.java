@@ -138,6 +138,10 @@ public class EditProfile extends AppCompatActivity {
                 }
             });
 
+        SharedPreferences fields = getSharedPreferences("ProfileDataRestaurant", Context.MODE_PRIVATE);
+        image = fields.getString("BackgroundTmp", encodeTobase64());
+        profileImage.setImageBitmap(decodeBase64(image));
+
     }
 
     @Override
@@ -163,6 +167,7 @@ public class EditProfile extends AppCompatActivity {
                     SharedPreferences.Editor editor =
                             this.getSharedPreferences("ProfileDataRestaurant", Context.MODE_PRIVATE).edit();
                     editor.putString("BackgroundTmp", encodeTobase64());
+                    editor.apply();
                 } catch (FileNotFoundException e) {
                     e.printStackTrace();
                     Toast.makeText(this, "Something went wrong", Toast.LENGTH_LONG).show();
