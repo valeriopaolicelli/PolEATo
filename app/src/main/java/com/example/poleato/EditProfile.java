@@ -10,10 +10,14 @@ import android.graphics.drawable.BitmapDrawable;
 import android.media.ExifInterface;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
+import android.provider.MediaStore;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.content.ContextCompat;
+import android.support.v4.content.FileProvider;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.PopupMenu;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Base64;
@@ -24,12 +28,12 @@ import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
-import android.widget.PopupMenu;
 import android.widget.ScrollView;
 import android.widget.Toast;
 import android.support.v7.widget.Toolbar;
 
 import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
@@ -37,13 +41,16 @@ import java.util.TreeMap;
 
 public class EditProfile extends AppCompatActivity {
 
+    private static final int REQUEST_TAKE_PHOTO = 1;
+    private static final int RESULT_LOAD_IMG = 2;
+    private String currentPhotoPath;
+
     private TreeMap<String,ImageButton> imageButtons= new TreeMap<>();
     private TreeMap<String,EditText> editTextFields= new TreeMap<>();
 
- /*   private static int RESULT_LOAD_IMG = 1;
     private String image;
     private FloatingActionButton change_im;
-    private ImageView imageBackground;*/
+    private ImageView profileImage;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -61,7 +68,6 @@ public class EditProfile extends AppCompatActivity {
             finish();
         }
 
-      //  change_im = findViewById(R.id.change_im);
         //fill the maps
         collectFields();
         //fill the fields
@@ -87,6 +93,9 @@ public class EditProfile extends AppCompatActivity {
         edOpen.addTextChangedListener(llOpen);
         edType.addTextChangedListener(llType);
         edInfo.addTextChangedListener(llInfo);
+
+        profileImage = findViewById(R.id.ivBackground);
+        change_im = findViewById(R.id.change_im);
 
     }
 
@@ -130,32 +139,178 @@ public class EditProfile extends AppCompatActivity {
             });
 
     }
-/*
+
     @Override
-    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+    public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == REQUEST_TAKE_PHOTO){
+            if (resultCode == RESULT_OK) {
+                setPic(currentPhotoPath);
+            }
+            else {
+                SharedPreferences fields= getSharedPreferences("ProfileDataRestaurant", Context.MODE_PRIVATE);
+                image = fields.getString("Background", encodeTobase64());
+                profileImage.setImageBitmap(decodeBase64(image));
+            }
+        }
         if (requestCode == RESULT_LOAD_IMG) {
             if (resultCode == RESULT_OK) {
                 try {
                     final Uri imageUri = data.getData();
                     final InputStream imageStream = getContentResolver().openInputStream(imageUri);
                     final Bitmap selectedImage = BitmapFactory.decodeStream(imageStream);
-                    imageBackground.setImageBitmap(selectedImage);
+                    profileImage.setImageBitmap(selectedImage);
                 } catch (FileNotFoundException e) {
                     e.printStackTrace();
                     Toast.makeText(this, "Something went wrong", Toast.LENGTH_LONG).show();
                 }
 
             } else {
-                SharedPreferences fields= this.getSharedPreferences("ProfileDataRestaurant", Context.MODE_PRIVATE);
-                image= fields.getString("ProfileImage", encodeTobase64());
-                imageBackground.setImageBitmap(decodeBase64(image));
+                SharedPreferences fields = getSharedPreferences("ProfileDataCustomer", Context.MODE_PRIVATE);
+                image = fields.getString("Background", encodeTobase64());
+                profileImage.setImageBitmap(decodeBase64(image));
             }
         }
     }
 
-    public String encodeTobase64() {
-        Bitmap image = ((BitmapDrawable)imageBackground.getDrawable()).getBitmap();
+    public void changeImage(View view) {
+        android.support.v7.widget.PopupMenu popup = new android.support.v7.widget.PopupMenu(this, change_im);
+        popup.getMenuInflater().inflate(
+                R.menu.popup_menu, popup.getMenu());
+        popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+            // implement click listener.
+            @Override
+            public boolean onMenuItemClick(MenuItem item) {
+                switch (item.getItemId()) {
+                    case R.id.camera:
+                        // create Intent with photoFile
+                        dispatchTakePictureIntent();
+                        return true;
+                    case R.id.gallery:
+                        Intent photoPickerIntent = new Intent(Intent.ACTION_PICK);
+                        photoPickerIntent.setType("image/*");
+                        startActivityForResult(photoPickerIntent, RESULT_LOAD_IMG);
+                        return true;
+                    case R.id.removeImage:
+                        removeProfileImage();
+                        return true;
+
+                    default:
+                        return false;
+                }
+            }
+        });
+        popup.show();
+    }
+
+    // create Intent with photoFile
+
+    private void dispatchTakePictureIntent() {
+        Uri photoURI;
+        Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+        // Ensure that there's a camera activity to handle the intent
+        if (takePictureIntent.resolveActivity(getPackageManager()) != null) {
+            // Create the File where the photo should go
+            File photoFile = null;
+            try {
+                photoFile = createImageFile();
+            } catch (IOException ex) {
+                // Error occurred while creating the File
+
+            }
+            // Continue only if the File was successfully created
+            if (photoFile != null) {
+                photoURI = FileProvider.getUriForFile(this,
+                        "com.example.android.fileproviderFood",
+                        photoFile);
+                takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI);
+                startActivityForResult(takePictureIntent, REQUEST_TAKE_PHOTO);
+            }
+        }
+    }
+
+    // Function to create image file with ExternalFilesDir
+
+    private File createImageFile() throws IOException {
+        // Create an image file name
+        //String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
+        String imageFileName = "JPEG_" + "profile";
+        File storageDir = getExternalFilesDir(Environment.DIRECTORY_PICTURES);
+
+        File image = File.createTempFile(
+                imageFileName,  /* prefix */
+                ".jpg",         /* suffix */
+                storageDir      /* directory */
+        );
+
+        // Save a file: path for use with ACTION_VIEW intents
+        currentPhotoPath = image.getAbsolutePath();
+        return image;
+    }
+    public void removeProfileImage(){
+        profileImage.setImageResource(R.drawable.food_default);
+    }
+
+    private void setPic(String currentPhotoPath) {
+        // Get the dimensions of the View
+        int targetW = profileImage.getWidth();
+        int targetH = profileImage.getHeight();
+
+        // Get the dimensions of the bitmap
+        BitmapFactory.Options bmOptions = new BitmapFactory.Options();
+        bmOptions.inJustDecodeBounds = true;
+        BitmapFactory.decodeFile(currentPhotoPath, bmOptions);
+        int photoW = bmOptions.outWidth;
+        int photoH = bmOptions.outHeight;
+
+        // Determine how much to scale down the image
+        int scaleFactor = Math.min(photoW / targetW, photoH / targetH);
+
+        // Decode the image file into a Bitmap sized to fill the View
+        bmOptions.inJustDecodeBounds = false;
+        bmOptions.inSampleSize = scaleFactor;
+
+        Bitmap bitmap = BitmapFactory.decodeFile(currentPhotoPath, bmOptions);
+
+        if(bitmap != null) {
+
+            try {
+                bitmap = rotateImageIfRequired(bitmap, currentPhotoPath);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
+            profileImage.setImageBitmap(bitmap);
+        }
+    }
+
+    private static Bitmap rotateImageIfRequired(Bitmap img, String currentPhotoPath) throws IOException {
+
+        ExifInterface ei = new ExifInterface(currentPhotoPath);
+        int orientation = ei.getAttributeInt(ExifInterface.TAG_ORIENTATION, ExifInterface.ORIENTATION_NORMAL);
+
+        switch (orientation) {
+            case ExifInterface.ORIENTATION_ROTATE_90:
+                return rotateImage(img, 90);
+            case ExifInterface.ORIENTATION_ROTATE_180:
+                return rotateImage(img, 180);
+            case ExifInterface.ORIENTATION_ROTATE_270:
+                return rotateImage(img, 270);
+            default:
+                return img;
+        }
+    }
+
+    private static Bitmap rotateImage(Bitmap img, int degree) {
+        Matrix matrix = new Matrix();
+        matrix.postRotate(degree);
+        Bitmap rotatedImg = Bitmap.createBitmap(img, 0, 0, img.getWidth(), img.getHeight(), matrix, true);
+        img.recycle();
+        return rotatedImg;
+    }
+
+    private String encodeTobase64() {
+        Bitmap image = ((BitmapDrawable) profileImage.getDrawable()).getBitmap();
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         image.compress(Bitmap.CompressFormat.PNG, 100, baos);
         byte[] b = baos.toByteArray();
@@ -169,114 +324,7 @@ public class EditProfile extends AppCompatActivity {
         return BitmapFactory
                 .decodeByteArray(decodedByte, 0, decodedByte.length);
     }
-*/
 
-//    @Override
-//    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
-//        super.onActivityResult(requestCode, resultCode, data);
-//        if (requestCode == REQUEST_TAKE_PHOTO){
-//            if (resultCode == RESULT_OK) {
-//                setPic(currentPhotoPath);
-//            }
-//            else {
-//                SharedPreferences fields= this.getSharedPreferences("ProfileDataCustomer", Context.MODE_PRIVATE);
-//                image= fields.getString("ProfileImage", encodeTobase64());
-//                profileImage.setImageBitmap(decodeBase64(image));
-//            }
-//        }
-//        if (requestCode == RESULT_LOAD_IMG) {
-//            if (resultCode == RESULT_OK) {
-//                try {
-//                    final Uri imageUri = data.getData();
-//                    final InputStream imageStream = getContentResolver().openInputStream(imageUri);
-//                    final Bitmap selectedImage = BitmapFactory.decodeStream(imageStream);
-//                    profileImage.setImageBitmap(selectedImage);
-//                } catch (FileNotFoundException e) {
-//                    e.printStackTrace();
-//                    Toast.makeText(this, "Something went wrong", Toast.LENGTH_LONG).show();
-//                }
-//
-//            } else {
-//                SharedPreferences fields= this.getSharedPreferences("ProfileDataCustomer", Context.MODE_PRIVATE);
-//                image= fields.getString("ProfileImage", encodeTobase64());
-//                profileImage.setImageBitmap(decodeBase64(image));
-//            }
-//        }
-//    }
-//
-//    private void setPic(String currentPhotoPath) {
-//        // Get the dimensions of the View
-//        int targetW = profileImage.getWidth();
-//        int targetH = profileImage.getHeight();
-//
-//        // Get the dimensions of the bitmap
-//        BitmapFactory.Options bmOptions = new BitmapFactory.Options();
-//        bmOptions.inJustDecodeBounds = true;
-//        BitmapFactory.decodeFile(currentPhotoPath, bmOptions);
-//        int photoW = bmOptions.outWidth;
-//        int photoH = bmOptions.outHeight;
-//
-//        // Determine how much to scale down the image
-//        int scaleFactor = Math.min(photoW / targetW, photoH / targetH);
-//
-//        // Decode the image file into a Bitmap sized to fill the View
-//        bmOptions.inJustDecodeBounds = false;
-//        bmOptions.inSampleSize = scaleFactor;
-//
-//        Bitmap bitmap = BitmapFactory.decodeFile(currentPhotoPath, bmOptions);
-//
-//        if(bitmap != null) {
-//
-//            try {
-//                bitmap = rotateImageIfRequired(bitmap, currentPhotoPath);
-//            } catch (IOException e) {
-//                e.printStackTrace();
-//            }
-//
-//            profileImage.setImageBitmap(bitmap);
-//        }
-//    }
-//
-//    private static Bitmap rotateImageIfRequired(Bitmap img, String currentPhotoPath) throws IOException {
-//
-//        ExifInterface ei = new ExifInterface(currentPhotoPath);
-//        int orientation = ei.getAttributeInt(ExifInterface.TAG_ORIENTATION, ExifInterface.ORIENTATION_NORMAL);
-//
-//        switch (orientation) {
-//            case ExifInterface.ORIENTATION_ROTATE_90:
-//                return rotateImage(img, 90);
-//            case ExifInterface.ORIENTATION_ROTATE_180:
-//                return rotateImage(img, 180);
-//            case ExifInterface.ORIENTATION_ROTATE_270:
-//                return rotateImage(img, 270);
-//            default:
-//                return img;
-//        }
-//    }
-//
-//    private static Bitmap rotateImage(Bitmap img, int degree) {
-//        Matrix matrix = new Matrix();
-//        matrix.postRotate(degree);
-//        Bitmap rotatedImg = Bitmap.createBitmap(img, 0, 0, img.getWidth(), img.getHeight(), matrix, true);
-//        img.recycle();
-//        return rotatedImg;
-//    }
-//
-//    public static String encodeTobase64() {
-//        Bitmap image = ((BitmapDrawable)profileImage.getDrawable()).getBitmap();
-//        ByteArrayOutputStream baos = new ByteArrayOutputStream();
-//        image.compress(Bitmap.CompressFormat.PNG, 100, baos);
-//        byte[] b = baos.toByteArray();
-//        String imageEncoded = Base64.encodeToString(b, Base64.DEFAULT);
-//        Log.d("Image Log:", imageEncoded);
-//        return imageEncoded;
-//    }
-//
-//    public static Bitmap decodeBase64(String input) {
-//        byte[] decodedByte = Base64.decode(input, 0);
-//        return BitmapFactory
-//                .decodeByteArray(decodedByte, 0, decodedByte.length);
-//    }
     public void collectFields(){
         editTextFields.put("Name",(EditText)findViewById(R.id.editTextName));
         editTextFields.put("Type",(EditText)findViewById(R.id.editTextType));
@@ -294,7 +342,7 @@ public class EditProfile extends AppCompatActivity {
         imageButtons.put("Email", (ImageButton)findViewById(R.id.cancel_email));
         imageButtons.put("Phone", (ImageButton)findViewById(R.id.cancel_phone));
 
-      //  imageBackground= findViewById(R.id.ivBackground);
+        profileImage = findViewById(R.id.ivBackground);
     }
 
     private void fillFields() {
@@ -306,7 +354,7 @@ public class EditProfile extends AppCompatActivity {
         String email = fields.getString("Email", "Nessun valore trovato");
         String address = fields.getString("Address", "Nessun valore trovato");
         String phone = fields.getString("Phone", "Nessun valore trovato");
-      //  image= fields.getString("Background", "Nessun valore trovato");
+        image= fields.getString("Background", "Nessun valore trovato");
 
         editTextFields.get("Name").setText(name);
         editTextFields.get("Type").setText(type);
@@ -315,10 +363,10 @@ public class EditProfile extends AppCompatActivity {
         editTextFields.get("Address").setText(address);
         editTextFields.get("Email").setText(email);
         editTextFields.get("Phone").setText(phone);
-     /*   if(image.equals("Nessun valore trovato"))
-            imageBackground.setImageResource(R.drawable.empty_background);
+        if(image.equals("Nessun valore trovato"))
+            profileImage.setImageResource(R.mipmap.new_york_restaurant);
         else
-            imageBackground.setImageBitmap(decodeBase64(image));*/
+            profileImage.setImageBitmap(decodeBase64(image));
     }
 
     public void saveChanges(MenuItem item) {
@@ -388,40 +436,14 @@ public class EditProfile extends AppCompatActivity {
             editor.putString("Address", editTextFields.get("Address").getText().toString());
             editor.putString("Email", editTextFields.get("Email").getText().toString());
             editor.putString("Phone", editTextFields.get("Phone").getText().toString());
-    //        editor.putString("Background", encodeTobase64());
+            editor.putString("Background", encodeTobase64());
             editor.apply();
             Toast.makeText(this, "Saved", Toast.LENGTH_LONG).show();
 
             finish();
         }
     }
-/*
-    public void changeImage(View view) {
-        PopupMenu popup = new PopupMenu(EditProfile.this, change_im);
-        popup.getMenuInflater().inflate(
-                R.menu.popup_menu, popup.getMenu());
-        popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
-            // implement click listener.
-            @Override
-            public boolean onMenuItemClick(MenuItem item) {
-                switch (item.getItemId()) {
-                    case R.id.gallery:
-                        Intent photoPickerIntent = new Intent(Intent.ACTION_PICK);
-                        photoPickerIntent.setType("image/*");
-                        startActivityForResult(photoPickerIntent, RESULT_LOAD_IMG);
-                        return true;
-                    case R.id.removeImage:
-                        removeProfileImage();
-                        return true;
 
-                    default:
-                        return false;
-                }
-            }
-        });
-        popup.show();
-    }
-*/
     public void clearText(View view) {
         if (view.getId() == R.id.cancel_name)
             editTextFields.get("Name").setText("");
@@ -440,7 +462,7 @@ public class EditProfile extends AppCompatActivity {
     }
 /*
     public void removeProfileImage(){
-        imageBackground.setImageResource(R.drawable.empty_background);
+        profileImage.setImageResource(R.drawable.empty_background);
     }
 */
     public void handleButton(){

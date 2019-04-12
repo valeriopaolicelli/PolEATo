@@ -139,6 +139,7 @@ public class DailyOfferFragment extends Fragment {
 
     }
 
+
     /*
      * Preparing the data list
      */

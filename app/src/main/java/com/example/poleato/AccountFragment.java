@@ -7,6 +7,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.util.Base64;
@@ -30,7 +31,7 @@ public class AccountFragment extends Fragment {
     private TextView tvEmailField;
     private TextView tvPhoneField;
     private FloatingActionButton buttEdit;
- //   private ImageView imageBackground;
+    private ImageView imageBackground;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -42,10 +43,10 @@ public class AccountFragment extends Fragment {
         tvTypeField = view.findViewById(R.id.tvTypeField);
         tvInfoField = view.findViewById(R.id.tvInfoField);
         tvOpenField = view.findViewById(R.id.tvOpenField);
-        tvAddressField= view.findViewById(R.id.tvAddressField);
-        tvEmailField= view.findViewById(R.id.tvEmailField);
-        tvPhoneField= view.findViewById(R.id.tvPhoneField);
-    //    imageBackground= view.findViewById(R.id.ivBackground);
+        tvAddressField = view.findViewById(R.id.tvAddressField);
+        tvEmailField = view.findViewById(R.id.tvEmailField);
+        tvPhoneField = view.findViewById(R.id.tvPhoneField);
+        imageBackground = view.findViewById(R.id.ivBackground2);
 
         // Button to edit the restaurant details
         buttEdit= view.findViewById(R.id.buttEdit);
@@ -83,7 +84,7 @@ public class AccountFragment extends Fragment {
             editor.putString("Address", "Via Barge 4");
             editor.putString("Email", "peppe.panino@example.com");
             editor.putString("Phone", "0123456789");
-            //editor.putString("Background", encodeTobase64());
+            editor.putString("Background", encodeTobase64());
             editor.apply();
         }
 
@@ -94,7 +95,7 @@ public class AccountFragment extends Fragment {
         String email= fields.getString("Email", "Nessun valore trovato");
         String address= fields.getString("Address", "Nessun valore trovato");
         String phone= fields.getString("Phone", "Nessun valore trovato");
-  //      String image= fields.getString("Background", encodeTobase64());
+        String image= fields.getString("Background", encodeTobase64());
 
         // Setting the textView contents with the values stored into SharedPreferences file
         tvNameField.setText(name);
@@ -104,9 +105,9 @@ public class AccountFragment extends Fragment {
         tvAddressField.setText(address);
         tvEmailField.setText(email);
         tvPhoneField.setText(phone);
-     //   imageBackground.setImageBitmap(decodeBase64(image));
+        imageBackground.setImageBitmap(decodeBase64(image));
     }
-/*
+
     public String encodeTobase64() {
         Bitmap image = ((BitmapDrawable)imageBackground.getDrawable()).getBitmap();
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
@@ -135,18 +136,20 @@ public class AccountFragment extends Fragment {
 
 
     @Override
-    protected void onRestoreInstanceState(Bundle savedInstanceState) {
-        super.onRestoreInstanceState(savedInstanceState);
+    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
 
         final ScrollView mScrollView = getView().findViewById(R.id.mainScrollView);
         //restoring scrollview position
-        final int[] position = savedInstanceState.getIntArray("ARTICLE_SCROLL_POSITION");
-        if(position != null)
-            mScrollView.post(new Runnable() {
-                public void run() {
-                    mScrollView.scrollTo(position[0], position[1]);
-                }
-            });
+//        final int[] position = savedInstanceState.getIntArray("ARTICLE_SCROLL_POSITION");
+//        if (position != null) {
+//            mScrollView.post(new Runnable() {
+//                public void run() {
+//                    mScrollView.scrollTo(position[0], position[1]);
+//                }
+//            });
+//        }
+
     }
-    */
+
 }
