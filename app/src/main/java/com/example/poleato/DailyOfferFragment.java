@@ -63,23 +63,6 @@ public class DailyOfferFragment extends Fragment {
         void onInputShowEditSent(Food foodToModify);
     }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
@@ -108,8 +91,6 @@ public class DailyOfferFragment extends Fragment {
         display.getSize(size);
         width = size.x;
 
-
-
         /* TODO HERE RESUME THE SAVED DATA FROM SHARED PREFERENCES */
 
         // preparing list data
@@ -124,7 +105,7 @@ public class DailyOfferFragment extends Fragment {
         // get the listview
         expListView = (ExpandableListView) fragView.findViewById(R.id.menuList);
         // fix position of ExpandableListView indicator.
-        expListView.setIndicatorBounds(width-180,0);
+        expListView.setIndicatorBounds(width-GetDipsFromPixel(35), width-GetDipsFromPixel(5));
 
         floatingActionButton = fragView.findViewById(R.id.floatingButton);
         floatingActionButton.setOnClickListener(new View.OnClickListener() {
@@ -135,6 +116,13 @@ public class DailyOfferFragment extends Fragment {
         });
 
         return fragView;
+    }
+
+    public int GetDipsFromPixel(float pixels){
+        // Get the screen's density scale
+        final float scale = getResources().getDisplayMetrics().density;
+        // Convert the dps to pixels, based on density scale
+        return (int) (pixels * scale + 0.5f);
     }
 
     @Override
