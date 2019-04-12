@@ -148,12 +148,11 @@ public class EditProfile extends AppCompatActivity {
     @Override
     public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == REQUEST_TAKE_PHOTO){
+        if (requestCode == REQUEST_TAKE_PHOTO) {
             if (resultCode == RESULT_OK) {
-                setPic(currentPhotoPath);
-            }
-            else {
-                SharedPreferences fields= getSharedPreferences("ProfileDataRestaurant", Context.MODE_PRIVATE);
+                setPic(currentPhotoPath);0
+            } else {
+                SharedPreferences fields = getSharedPreferences("ProfileDataRestaurant", Context.MODE_PRIVATE);
                 image = fields.getString("BackgroundTmp", encodeTobase64());
                 profileImage.setImageBitmap(decodeBase64(image));
             }
@@ -180,6 +179,7 @@ public class EditProfile extends AppCompatActivity {
                 profileImage.setImageBitmap(decodeBase64(image));
             }
         }
+    }
 
     public void changeImage(View view) {
         android.support.v7.widget.PopupMenu popup = new android.support.v7.widget.PopupMenu(this, change_im);
