@@ -141,9 +141,11 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
         return convertView;
     }
 
+    @Override
+    public void onGroupExpanded(int groupPosition) {
+        super.onGroupExpanded(groupPosition);
 
-
-
+    }
 
     @Override
     public View getGroupView(int groupPosition, boolean isExpanded,

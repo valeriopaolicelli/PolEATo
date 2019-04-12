@@ -62,7 +62,6 @@ public class MainActivity extends AppCompatActivity implements DailyOfferFragmen
      */
     @Override
     public void onInputShowEditSent(Food foodToModify) {
-
         editFoodFragment.show(getSupportFragmentManager(), "editFoodFragment");
     }
 
