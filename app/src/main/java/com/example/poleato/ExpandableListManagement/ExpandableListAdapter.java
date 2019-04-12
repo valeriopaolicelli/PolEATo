@@ -16,6 +16,7 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.example.poleato.DailyOfferFragment;
 import com.example.poleato.Food;
 import com.example.poleato.R;
 
@@ -30,14 +31,17 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
     private List<String> _listDataGroup; // header titles
     private HashMap<String, List<Food>> _listDataChild; // child data in format of header title, child title
     private Button button_delete;
+    private DailyOfferFragment.FragmentShowEditListener frShow; //to notify to open the EditFoodFragment
 
     public ExpandableListAdapter(Activity host, List<String> listDataHeader,
-                                 HashMap<String, List<Food>> listChildData) {
+                                 HashMap<String, List<Food>> listChildData,
+                                 DailyOfferFragment.FragmentShowEditListener frShow) {
 
         this.host = host;
         inf = LayoutInflater.from(host);
         this._listDataGroup = listDataHeader;
         this._listDataChild = listChildData;
+        this.frShow = frShow;
         Log.d("matte", "[Init]headers:"+_listDataGroup.toString());
         Log.d("matte", "[Init]childs:"+_listDataChild.toString());
     }
@@ -105,12 +109,17 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
                 inflater.inflate(R.menu.popup_cardview, popup.getMenu());
                 popup.show();
                 Menu itemList = popup.getMenu();
+
+
                 MenuItem modify = itemList.getItem(0);
                 modify.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
                     @Override
                     public boolean onMenuItemClick(MenuItem item) {
 
                         Log.d("matte", item.getTitle().toString());
+
+                        frShow.onInputShowEditSent(getChild(groupPosition, childPosition));
+
                         return false;
                     }
                 });

@@ -40,12 +40,47 @@ public class DailyOfferFragment extends Fragment {
     private Point size;
     int width;
     private int lastExpandedPosition = -1;
+
+
+
+            /* ********************************
+               ********   INTERFACES   ********
+               ******************************** */
+
+    /**
+     * Interface to communicate to run the AddFoodFragment to the host activity
+     */
     private FragmentShowAddListener fragmentShowAddListener;
-
-
     public interface  FragmentShowAddListener {
         void onInputShowAddSent(Object o);
     }
+
+    /**
+     * Interface to communicate to run the EditFoodFragment to the host activity
+     */
+    private FragmentShowEditListener fragmentShowEditListener;
+    public interface  FragmentShowEditListener {
+        void onInputShowEditSent(Food foodToModify);
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
     @Override
@@ -56,7 +91,14 @@ public class DailyOfferFragment extends Fragment {
         if(context instanceof FragmentShowAddListener){
             fragmentShowAddListener = (FragmentShowAddListener) context;
         }else {
-            throw new RuntimeException(context.toString() + " must implement FragmentDListener");
+            throw new RuntimeException(context.toString() + " must implement FragmentShowAddListener");
+        }
+
+
+        if(context instanceof FragmentShowEditListener){
+            fragmentShowEditListener = (FragmentShowEditListener) context;
+        }else {
+            throw new RuntimeException(context.toString() + " must implement FragmentShowEditListener");
         }
     }
 
@@ -73,9 +115,9 @@ public class DailyOfferFragment extends Fragment {
         /* TODO HERE RESUME THE SAVED DATA FROM SHARED PREFERENCES */
 
         // preparing list data
-        //prepareListData();
-        initGroup();
-        initChild();
+        prepareListData();
+        //initGroup();
+        //initChild();
     }
 
     @Override
@@ -116,7 +158,7 @@ public class DailyOfferFragment extends Fragment {
         });
 
         // list Adapter of ExpandableList
-        listAdapter = new ExpandableListAdapter(hostActivity, listDataGroup, listDataChild);
+        listAdapter = new ExpandableListAdapter(hostActivity, listDataGroup, listDataChild, fragmentShowEditListener);
 
         // setting list adapter
         expListView.setAdapter(listAdapter);

@@ -51,7 +51,7 @@ public class AddFoodFragment extends DialogFragment {
     private static final int RESULT_LOAD_IMG = 2;
     private String currentPhotoPath;
 
-    private FragmentAddListener fragmentAddListener;
+
     private FloatingActionButton change_im;
     private ImageView imageFood;
     private Spinner spinnerFood;
@@ -61,6 +61,27 @@ public class AddFoodFragment extends DialogFragment {
     private TreeMap<String,EditText> editTextFields= new TreeMap<>();
 
     private Button buttonSave;
+
+
+
+
+
+    /* ********************************
+     ********** INTERFACES **********
+     ******************************** */
+
+    /**
+     *  Interface to communicate the food adding to the host activity
+     */
+    private FragmentAddListener fragmentAddListener;
+    public interface  FragmentAddListener {
+        void onInputAddSent(String plateType, Food food);
+    }
+
+
+
+
+
 
     public void clearText(View view) {
         if(view.getId() == R.id.cancel_name)
@@ -176,9 +197,6 @@ public class AddFoodFragment extends DialogFragment {
         }
     }
 
-    public interface  FragmentAddListener {
-        void onInputAddSent(String plateType, Food food);
-    }
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
