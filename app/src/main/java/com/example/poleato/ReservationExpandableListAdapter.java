@@ -8,10 +8,13 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseExpandableListAdapter;
 import android.widget.Button;
+import android.widget.ExpandableListView;
 import android.widget.TextView;
 
 import java.util.HashMap;
 import java.util.List;
+
+import static android.view.View.GONE;
 
 public class ReservationExpandableListAdapter extends BaseExpandableListAdapter {
     //TODO change text button when status changes
@@ -63,6 +66,7 @@ public class ReservationExpandableListAdapter extends BaseExpandableListAdapter 
     @Override
     public View getGroupView(int i, boolean b, View view, ViewGroup viewGroup) {
         final Reservation c = (Reservation) getGroup(i);
+        ExpandableListView listView = (ExpandableListView) viewGroup;
         final ViewHolder holder;
         boolean flag = false;
         if( view ==  null){
@@ -74,18 +78,21 @@ public class ReservationExpandableListAdapter extends BaseExpandableListAdapter 
             holder.tv_time = (TextView) view.findViewById(R.id.tvTimeField);
             holder.tv_status = (TextView) view.findViewById(R.id.tvStatusField);
             holder.button = (Button) view.findViewById(R.id.myButton);
-
+            holder.button.setVisibility(GONE);
             view.setTag(holder);
         }else{
             holder = (ViewHolder) view.getTag();
         }
 
+        holder.tv_date.setText(c.getDate());
+        holder.tv_time.setText(c.getTime());
+        holder.tv_status.setText(c.getStat());
+        holder.button.setText(c.getButtonText());
 
-            holder.tv_date.setText(c.getDate());
-            holder.tv_time.setText(c.getTime());
-            holder.tv_status.setText(c.getStat());
-            holder.button.setText(c.getButtonText());
-
+        if(!listView.isGroupExpanded(i))
+            holder.button.setVisibility(GONE);
+        else
+            holder.button.setVisibility(View.VISIBLE);
 
         if (c.getStatus() == Status.REJECTED)
                 holder.tv_status.setTextColor(context.getResources().getColor(R.color.colorTextRejected));
@@ -176,7 +183,7 @@ public class ReservationExpandableListAdapter extends BaseExpandableListAdapter 
                     });
 
                 } else {
-                    holder.button.setVisibility(View.GONE);
+                    holder.button.setVisibility(GONE);
                 }
 
         return view;
