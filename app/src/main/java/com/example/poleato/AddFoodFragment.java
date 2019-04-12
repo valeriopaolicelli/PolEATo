@@ -41,6 +41,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.text.DecimalFormat;
 import java.util.TreeMap;
 
 import static android.app.Activity.RESULT_OK;
@@ -255,7 +256,7 @@ public class AddFoodFragment extends DialogFragment {
                     else
                         return;
                 }
-                if(!editTextFields.get("Price").getText().toString().matches("[0-9]+(\\.[0-9]+)?") ){
+                if(!editTextFields.get("Price").getText().toString().matches("[0-9]+([\\.\\,][0-9]+)?") ){
                     Toast.makeText(getContext(), getContext().getString(R.string.error_format_price), Toast.LENGTH_LONG).show();
                     editTextFields.get("Price").setBackground(ContextCompat.getDrawable(getContext(), R.drawable.border_wrong_field));
                     wrongField = true;
@@ -266,10 +267,14 @@ public class AddFoodFragment extends DialogFragment {
                     wrongField = true;
                 }
                 if(!wrongField){
+
+                    String priceString = editTextFields.get("Price").getText().toString();
+                    priceString = priceString.replaceAll(",", ".");
+
                     Food food = new Food(((BitmapDrawable) imageFood.getDrawable()).getBitmap()
                             , editTextFields.get("Name").getText().toString()
                             , editTextFields.get("Description").getText().toString()
-                            , Double.valueOf(editTextFields.get("Price").getText().toString())
+                            , Double.valueOf(priceString)
                             , Integer.valueOf(editTextFields.get("Quantity").getText().toString()));
 
                     // I send even plateType to now where insert new food

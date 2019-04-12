@@ -63,6 +63,10 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
         notifyDataSetChanged();
     }
 
+    public void refresh(){
+        notifyDataSetChanged();
+    }
+
     @Override
     public View getChildView(final int groupPosition, final int childPosition,
                              boolean isLastChild, View convertView, ViewGroup parent) {
@@ -118,7 +122,8 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
 
                         Log.d("matte", item.getTitle().toString());
 
-                        frShow.onInputShowEditSent(getChild(groupPosition, childPosition));
+                        Food f = getChild(groupPosition, childPosition);
+                        frShow.onInputShowEditSent(f);
 
                         return false;
                     }

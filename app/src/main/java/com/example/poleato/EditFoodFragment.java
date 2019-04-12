@@ -41,6 +41,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.text.DecimalFormat;
 import java.util.TreeMap;
 
 import static android.app.Activity.RESULT_OK;
@@ -60,6 +61,8 @@ public class EditFoodFragment extends DialogFragment {
 
     private Button buttonSave;
 
+    private Food toModify;
+
 
 
 
@@ -74,11 +77,6 @@ public class EditFoodFragment extends DialogFragment {
     public interface  FragmentEditListener {
         void onInputEditSent();
     }
-
-
-
-
-
 
 
 
@@ -209,6 +207,13 @@ public class EditFoodFragment extends DialogFragment {
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setStyle(DialogFragment.STYLE_NORMAL, R.style.FullScreenDialog);
+
+        Log.d("matte", "Inside EditFoodFragment");
+
+        Bundle bundle = getArguments();
+
+        toModify = (Food) bundle.getSerializable("foodToModify");
+
     }
 
     @Override
@@ -217,14 +222,33 @@ public class EditFoodFragment extends DialogFragment {
         View v = inflater.inflate(R.layout.edit_food_fragment, container, false);
 
 
+
+
+
+
         change_im = v.findViewById(R.id.frag_change_im);
         imageFood = v.findViewById(R.id.imageFood);
         buttonSave = v.findViewById(R.id.button_frag_save);
         collectFields(v);
         handleButton();
         buttonListener();
-        // Set listener to send DATA to main activity that sends them to DailyOfferFragment
 
+        imageFood.setImageBitmap(toModify.getImg());
+
+        editTextFields.get("Name").setText(toModify.getName());
+        editTextFields.get("Description").setText(toModify.getDescription());
+
+
+        DecimalFormat decimalFormat = new DecimalFormat("#.00"); //two decimal
+        final String priceStr = decimalFormat.format(toModify.getPrice());
+        editTextFields.get("Price").setText(priceStr);
+
+
+        editTextFields.get("Quantity").setText(String.valueOf(toModify.getQuantity()));
+
+
+
+        // Set listener to send DATA to main activity that sends them to DailyOfferFragment
         buttonSave.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -243,7 +267,7 @@ public class EditFoodFragment extends DialogFragment {
                     else
                         return;
                 }
-                if(!editTextFields.get("Price").getText().toString().matches("[0-9]+(\\.[0-9]+)?") ){
+                if(!editTextFields.get("Price").getText().toString().matches("[0-9]+([\\.\\,][0-9]+)?") ){
                     Toast.makeText(getContext(), getContext().getString(R.string.error_format_price), Toast.LENGTH_LONG).show();
                     editTextFields.get("Price").setBackground(ContextCompat.getDrawable(getContext(), R.drawable.border_wrong_field));
                     wrongField = true;
@@ -254,14 +278,22 @@ public class EditFoodFragment extends DialogFragment {
                     wrongField = true;
                 }
                 if(!wrongField){
-                    Food food = new Food(((BitmapDrawable) imageFood.getDrawable()).getBitmap()
+                    /*Food food = new Food(((BitmapDrawable) imageFood.getDrawable()).getBitmap()
                             , editTextFields.get("Name").getText().toString()
                             , editTextFields.get("Description").getText().toString()
                             , Double.valueOf(editTextFields.get("Price").getText().toString())
-                            , Integer.valueOf(editTextFields.get("Quantity").getText().toString()));
+                            , Integer.valueOf(editTextFields.get("Quantity").getText().toString()));*/
 
-                    // I send even plateType to now where insert new food
+                    toModify.setImg(((BitmapDrawable) imageFood.getDrawable()).getBitmap());
+                    toModify.setName(editTextFields.get("Name").getText().toString());
+                    toModify.setDescription(editTextFields.get("Description").getText().toString());
 
+                    String priceString = editTextFields.get("Price").getText().toString();
+                    priceString = priceString.replaceAll(",", ".");
+                    toModify.setPrice(Double.valueOf(priceString));
+                    toModify.setQuantity(Integer.valueOf(editTextFields.get("Quantity").getText().toString()));
+
+                    //Notify to expandableListView that data have been changed
                     fragmentEditListener.onInputEditSent();
                     dismiss();
                 }
@@ -281,7 +313,6 @@ public class EditFoodFragment extends DialogFragment {
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-
 
     }
 
@@ -318,6 +349,8 @@ public class EditFoodFragment extends DialogFragment {
         super.onDetach();
         fragmentEditListener = null;
     }
+
+
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {

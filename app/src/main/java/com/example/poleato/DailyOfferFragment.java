@@ -262,6 +262,10 @@ public class DailyOfferFragment extends Fragment {
         }
     }
 
+    public void notifyDataChange(){
+        this.listAdapter.refresh();
+    }
+
     @Override
     public void onDetach() {
         super.onDetach();
