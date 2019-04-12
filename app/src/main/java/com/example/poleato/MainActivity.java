@@ -14,6 +14,7 @@ public class MainActivity extends AppCompatActivity implements DailyOfferFragmen
     private PageAdapter adapter;
     private DailyOfferFragment dailyOfferFragment;
     private AddFoodFragment addFoodFragment;
+    private EditFoodFragment editFoodFragment;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -38,6 +39,7 @@ public class MainActivity extends AppCompatActivity implements DailyOfferFragmen
         tabLayout.setupWithViewPager(onViewPager);
 
         addFoodFragment = new AddFoodFragment();
+        editFoodFragment = new EditFoodFragment();
 
     }
 
@@ -71,4 +73,9 @@ public class MainActivity extends AppCompatActivity implements DailyOfferFragmen
     public void onInputESent(String plateType, Food food) {
         dailyOfferFragment.addFood(plateType, food);
     }
+
+
+
+
+
 }
