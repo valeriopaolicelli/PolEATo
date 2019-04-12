@@ -15,6 +15,7 @@ public class Reservation {
     private String date;
     private Status status;
     private String stat;
+    private String buttonText;
     private boolean checked;
 
     private ArrayList<Dish>dishes = new ArrayList<>();
@@ -34,6 +35,7 @@ public class Reservation {
         this.time= time;
         this.status = Status.ACCEPATANCE;
         this.stat = context.getString(R.string.new_order);
+        this.buttonText= context.getString(R.string.button_reservation);
     }
     public String getName() {
         return name;
@@ -108,5 +110,13 @@ public class Reservation {
     }
     public void addDishtoReservation(Dish d){
         this.dishes.add(d);
+    }
+
+    public String getButtonText(){
+        return buttonText;
+    }
+
+    public void setButtonText(String text){
+        this.buttonText= text;
     }
 }

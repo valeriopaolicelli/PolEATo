@@ -84,6 +84,7 @@ public class ReservationExpandableListAdapter extends BaseExpandableListAdapter 
             holder.tv_date.setText(c.getDate());
             holder.tv_time.setText(c.getTime());
             holder.tv_status.setText(c.getStat());
+            holder.button.setText(c.getButtonText());
 
 
         if (c.getStatus() == Status.REJECTED)
@@ -126,6 +127,7 @@ public class ReservationExpandableListAdapter extends BaseExpandableListAdapter 
                                         public void onClick(DialogInterface dialogInterface, int i) {
                                             c.setStatus(Status.DELIVERY, context);
                                             holder.button.setText(context.getString(R.string.order_info));
+                                            c.setButtonText(context.getString(R.string.order_info));
                                             notifyDataSetChanged();
                                         }
                                     });
@@ -147,6 +149,7 @@ public class ReservationExpandableListAdapter extends BaseExpandableListAdapter 
                                             // Change button text
                                             c.setStatus(Status.COOKING, context);
                                             holder.button.setText(context.getString(R.string.title_deliver));
+                                            c.setButtonText(context.getString(R.string.title_deliver));
                                             notifyDataSetChanged();
 
                                             //TODO: Aggiornare quantità menù
@@ -159,7 +162,7 @@ public class ReservationExpandableListAdapter extends BaseExpandableListAdapter 
                                             notifyDataSetChanged();
                                         }
                                     });
-                                    builder.setNeutralButton(context.getString(R.string.choice_confirm), new DialogInterface.OnClickListener() {
+                                    builder.setNeutralButton(context.getString(R.string.choice_cancel), new DialogInterface.OnClickListener() {
                                         @Override
                                         public void onClick(DialogInterface dialogInterface, int i) {
                                             dialogInterface.cancel();

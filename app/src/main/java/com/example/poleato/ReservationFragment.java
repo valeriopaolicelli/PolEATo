@@ -122,24 +122,32 @@ public class ReservationFragment extends Fragment {
     public void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
         ArrayList<String> statusPersistence= new ArrayList<>();
+        ArrayList<String> textButtonPersistence= new ArrayList<>();
+
         for(int i=0; i<listAdapter.getGroupCount(); i++){
             View v= listAdapter.getGroupView(i, false, null, lv);
             TextView status= v.findViewById(R.id.tvStatusField);
+            Button button= v.findViewById(R.id.myButton);
             statusPersistence.add(i, status.getText().toString());
+            textButtonPersistence.add(i, button.getText().toString());
         }
         outState.putStringArrayList("Status_Persistence", statusPersistence);
+        outState.putStringArrayList("Button_Text_Persistence", textButtonPersistence);
     }
 
     @Override
     public void onViewStateRestored(@Nullable Bundle savedInstanceState) {
         super.onViewStateRestored(savedInstanceState);
         ArrayList<String> statusPersistence;
+        ArrayList<String> buttonTextPersistence;
         if(savedInstanceState!=null) {
             statusPersistence = savedInstanceState.getStringArrayList("Status_Persistence");
-            if (statusPersistence != null)
-                if (statusPersistence.size() > 0) {
+            buttonTextPersistence= savedInstanceState.getStringArrayList("Button_Text_Persistence");
+            if (statusPersistence != null && buttonTextPersistence != null)
+                if (statusPersistence.size() > 0 && buttonTextPersistence.size()>0) {
                     for (int i = 0; i < listAdapter.getGroupCount(); i++) {
                         reservations.get(i).setStat(statusPersistence.get(i), getContext());
+                        reservations.get(i).setButtonText(buttonTextPersistence.get(i));
                     }
                 }
         }
