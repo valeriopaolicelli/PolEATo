@@ -51,11 +51,9 @@ public class EditFoodFragment extends DialogFragment {
     private static final int RESULT_LOAD_IMG = 2;
     private String currentPhotoPath;
 
-    private FragmentFListener fragmentFListener;
+
     private FloatingActionButton change_im;
     private ImageView imageFood;
-    private Spinner spinnerFood;
-    private String plateType;
 
     private TreeMap<String, ImageButton> imageButtons= new TreeMap<>();
     private TreeMap<String,EditText> editTextFields= new TreeMap<>();
@@ -64,9 +62,25 @@ public class EditFoodFragment extends DialogFragment {
 
 
 
-    public interface  FragmentFListener {
-        void onInputFSent();
+
+    /* ********************************
+     ********   INTERFACES   ********
+     ******************************** */
+
+    /**
+     *  Interface to communicate the food edit to the host activity
+     */
+    private FragmentEditListener fragmentEditListener;
+    public interface  FragmentEditListener {
+        void onInputEditSent();
     }
+
+
+
+
+
+
+
 
     public void clearText(View view) {
         if(view.getId() == R.id.cancel_name)
@@ -183,6 +197,14 @@ public class EditFoodFragment extends DialogFragment {
     }
 
 
+
+
+
+
+    /* ***********************************
+     ********   ANDROID CALLBACKS   ****
+     *********************************** */
+
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -240,7 +262,7 @@ public class EditFoodFragment extends DialogFragment {
 
                     // I send even plateType to now where insert new food
 
-                    fragmentFListener.onInputFSent();
+                    fragmentEditListener.onInputEditSent();
                     dismiss();
                 }
             }
@@ -284,8 +306,8 @@ public class EditFoodFragment extends DialogFragment {
     public void onAttach(Context context) {
         super.onAttach(context);
 
-        if(context instanceof FragmentFListener){
-            fragmentFListener = (FragmentFListener) context;
+        if(context instanceof FragmentEditListener){
+            fragmentEditListener = (FragmentEditListener) context;
         }else {
             throw new RuntimeException(context.toString() + " must implement FragmentListener");
         }
@@ -294,7 +316,7 @@ public class EditFoodFragment extends DialogFragment {
     @Override
     public void onDetach() {
         super.onDetach();
-        fragmentFListener = null;
+        fragmentEditListener = null;
     }
 
     @Override
