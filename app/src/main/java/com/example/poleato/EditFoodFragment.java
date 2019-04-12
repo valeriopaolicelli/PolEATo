@@ -235,7 +235,7 @@ public class EditFoodFragment extends DialogFragment {
         handleButton();
         buttonListener();
 
-        imageFood.setImageBitmap(toModify.getImg());
+//        imageFood.setImageBitmap(toModify.getImg());
 
         editTextFields.get("Name").setText(toModify.getName());
         editTextFields.get("Description").setText(toModify.getDescription());
@@ -315,9 +315,9 @@ public class EditFoodFragment extends DialogFragment {
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        SharedPreferences fields = getContext().getSharedPreferences("ProfileDataRestaurant", Context.MODE_PRIVATE);
-        image = fields.getString("BackgroundTmpE", encodeTobase64());
-        imageFood.setImageBitmap(decodeBase64(image));
+//        SharedPreferences fields = getContext().getSharedPreferences("ProfileDataRestaurant", Context.MODE_PRIVATE);
+//        image = fields.getString("BackgroundTmpE", encodeTobase64());
+//        imageFood.setImageBitmap(decodeBase64(image));
 
     }
 
@@ -365,9 +365,9 @@ public class EditFoodFragment extends DialogFragment {
                 setPic(currentPhotoPath);
             }
             else {
-                SharedPreferences fields= getContext().getSharedPreferences("ProfileDataRestaurant", Context.MODE_PRIVATE);
-                image= fields.getString("ProfileImage", encodeTobase64());
-                imageFood.setImageBitmap(decodeBase64(image));
+//                SharedPreferences fields= getContext().getSharedPreferences("ProfileDataRestaurant", Context.MODE_PRIVATE);
+//                image= fields.getString("ProfileImage", encodeTobase64());
+//                imageFood.setImageBitmap(decodeBase64(image));
             }
         }
         if (requestCode == RESULT_LOAD_IMG) {
@@ -377,19 +377,19 @@ public class EditFoodFragment extends DialogFragment {
                     final InputStream imageStream = getContext().getContentResolver().openInputStream(imageUri);
                     final Bitmap selectedImage = BitmapFactory.decodeStream(imageStream);
                     imageFood.setImageBitmap(selectedImage);
-                    SharedPreferences.Editor editor =
-                            getContext().getSharedPreferences("ProfileDataRestaurant", Context.MODE_PRIVATE).edit();
-                    editor.putString("BackgroundTmpE", encodeTobase64());
-                    editor.apply();
+//                    SharedPreferences.Editor editor =
+//                            getContext().getSharedPreferences("ProfileDataRestaurant", Context.MODE_PRIVATE).edit();
+//                    editor.putString("BackgroundTmpE", encodeTobase64());
+//                    editor.apply();
                 } catch (FileNotFoundException e) {
                     e.printStackTrace();
                     Toast.makeText(getContext(), "Something went wrong", Toast.LENGTH_LONG).show();
                 }
 
             } else {
-                SharedPreferences fields = getContext().getSharedPreferences("ProfileDataRestaurant", Context.MODE_PRIVATE);
-                image = fields.getString("BackgroundTmpE", encodeTobase64());
-                imageFood.setImageBitmap(decodeBase64(image));
+//                SharedPreferences fields = getContext().getSharedPreferences("ProfileDataRestaurant", Context.MODE_PRIVATE);
+//                image = fields.getString("BackgroundTmpE", encodeTobase64());
+//                imageFood.setImageBitmap(decodeBase64(image));
             }
         }
     }
