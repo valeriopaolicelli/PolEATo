@@ -1,10 +1,8 @@
 package com.example.poleato;
 
-import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
-import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -104,7 +102,7 @@ public class ReservationExpandableListAdapter extends BaseExpandableListAdapter 
                             final AlertDialog.Builder builder = new AlertDialog.Builder(v.getContext());
                             //TODO transfer all strings to file
                             if (c.getStatus() == Status.DELIVERY) {
-                                builder.setTitle("Deliver details");
+                                builder.setTitle(context.getString(R.string.title_deliver));
                                 String msg = v.getResources().getString(R.string.order) + ": " + c.getOrder_id() + "\n"
                                         + v.getResources().getString(R.string.date) + ": " + c.getDate() + " "
                                         + v.getResources().getString(R.string.time) + ": " + c.getTime() + "\n"
@@ -120,10 +118,10 @@ public class ReservationExpandableListAdapter extends BaseExpandableListAdapter 
                             } else {
                                 //se lo status è COOKING, il ristoratore può scegliere se far partire la consegna
                                 if (c.getStatus() == Status.COOKING) {
-                                    builder.setTitle("Deliver order");
+                                    builder.setTitle(context.getString(R.string.title_deliver));
 
-                                    builder.setMessage("Is everything ready? Status will pass to 'on delivery'");
-                                    builder.setPositiveButton("Confirm", new DialogInterface.OnClickListener() {
+                                    builder.setMessage(context.getString(R.string.msg_deliver));
+                                    builder.setPositiveButton(context.getString(R.string.choice_confirm), new DialogInterface.OnClickListener() {
                                         @Override
                                         public void onClick(DialogInterface dialogInterface, int i) {
                                             c.setStatus(Status.DELIVERY, context);
@@ -131,7 +129,7 @@ public class ReservationExpandableListAdapter extends BaseExpandableListAdapter 
                                             notifyDataSetChanged();
                                         }
                                     });
-                                    builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                                    builder.setNegativeButton(context.getString(R.string.choice_cancel), new DialogInterface.OnClickListener() {
                                         @Override
                                         public void onClick(DialogInterface dialogInterface, int i) {
                                             dialogInterface.cancel();
@@ -139,29 +137,29 @@ public class ReservationExpandableListAdapter extends BaseExpandableListAdapter 
                                     });
                                 } else {
                                     //Se lo stato è ACCEPTANCE, il ristoratore può accetare o rifiutare l'ordine
-                                    builder.setTitle("Confirm order");
+                                    builder.setTitle(context.getString(R.string.title_confirm));
 
-                                    builder.setMessage("Do you want to confirm or reject this order? Status will pass to 'on cooking'");
+                                    builder.setMessage(context.getString(R.string.msg_confirm));
 
-                                    builder.setPositiveButton("Confirm", new DialogInterface.OnClickListener() {
+                                    builder.setPositiveButton(context.getString(R.string.choice_confirm), new DialogInterface.OnClickListener() {
                                         @Override
                                         public void onClick(DialogInterface dialogInterface, int i) {
                                             // Change button text
                                             c.setStatus(Status.COOKING, context);
-                                            holder.button.setText("Deliver order");
+                                            holder.button.setText(context.getString(R.string.title_deliver));
                                             notifyDataSetChanged();
 
                                             //TODO: Aggiornare quantità menù
                                         }
                                     });
-                                    builder.setNegativeButton("Reject", new DialogInterface.OnClickListener() {
+                                    builder.setNegativeButton(context.getString(R.string.choice_reject), new DialogInterface.OnClickListener() {
                                         @Override
                                         public void onClick(DialogInterface dialogInterface, int i) {
                                             c.setStatus(Status.REJECTED, context);
                                             notifyDataSetChanged();
                                         }
                                     });
-                                    builder.setNeutralButton("Cancel", new DialogInterface.OnClickListener() {
+                                    builder.setNeutralButton(context.getString(R.string.choice_confirm), new DialogInterface.OnClickListener() {
                                         @Override
                                         public void onClick(DialogInterface dialogInterface, int i) {
                                             dialogInterface.cancel();
@@ -185,114 +183,26 @@ public class ReservationExpandableListAdapter extends BaseExpandableListAdapter 
     public View getChildView(int i, int i1, boolean isLast, View view, final ViewGroup viewGroup) {
 
         final Dish dish = (Dish) getChild(i,i1);
-        boolean flag = false;
+        ViewHolderChild holder;
         if(view == null){
+            holder= new ViewHolderChild();
             LayoutInflater inflater = (LayoutInflater)this.context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
             view = inflater.inflate(R.layout.reservation_dishrow_layout,null);
+            holder.tv_dish_name= (TextView) view.findViewById(R.id.tv_dish_name);
+            holder.tv_dish_quantity = (TextView) view.findViewById(R.id.tv_dish_quantity);
+            holder.tv_dish_notes = (TextView) view.findViewById(R.id.tv_dish_note);
+            view.setTag(holder);
+        }else{
+            holder= (ViewHolderChild) view.getTag();
         }
 
-        TextView tv_dish_name = (TextView) view.findViewById(R.id.tv_dish_name);
-        TextView tv_dish_quantity = (TextView) view.findViewById(R.id.tv_dish_quantity);
-        TextView tv_dish_notes = (TextView) view.findViewById(R.id.tv_dish_note);
 
-        if(tv_dish_name!=null && tv_dish_notes!=null && tv_dish_quantity!=null) {
-            tv_dish_name.setText(dish.getName());
-            tv_dish_quantity.setText(dish.getQuantity().toString());
-            tv_dish_notes.setText(dish.getNotes());
+        if(holder.tv_dish_name!=null && holder.tv_dish_notes!=null && holder.tv_dish_quantity!=null) {
+            holder.tv_dish_name.setText(dish.getName());
+            holder.tv_dish_quantity.setText(dish.getQuantity().toString());
+            holder.tv_dish_notes.setText(dish.getNotes());
         }
-        /*final Button button = (Button) view.findViewById(R.id.myButton);
 
-
-
-        //true => order on delivery or rejected, restaurateur can't do nothing anymore
-        if(c.getStatus() == Status.REJECTED)
-            flag = true;
-
-        if(isLast && !flag){
-            button.setVisibility(View.VISIBLE);
-            //if is the last child, add the button "accept or reject" on the bottom
-            button.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    final AlertDialog.Builder builder = new AlertDialog.Builder(v.getContext());
-                    //TODO transfer all strings to file
-                    if(c.getStatus() == Status.DELIVERY){
-                        builder.setTitle("Deliver details");
-                        String msg= v.getResources().getString(R.string.order) + ": " + c.getOrder_id() + "\n"
-                                  + v.getResources().getString(R.string.date) + ": " + c.getDate() + " "
-                                  + v.getResources().getString(R.string.time) + ": " + c.getTime() + "\n"
-                                  + v.getResources().getString(R.string.surname) + ": " + c.getSurname() + "\n"
-                                  + v.getResources().getString(R.string.address) + ": " + c.getAddress() + "\n";
-                        builder.setMessage(msg);
-                        builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialogInterface, int i) {
-                                dialogInterface.cancel();
-                            }
-                        });
-                    }
-                    else {
-                        //se lo status è COOKING, il ristoratore può scegliere se far partire la consegna
-                        if(c.getStatus() == Status.COOKING){
-                            builder.setTitle("Deliver order");
-
-                            builder.setMessage("Is everything ready? Status will pass to 'on delivery'");
-                            builder.setPositiveButton("Confirm", new DialogInterface.OnClickListener() {
-                                @Override
-                                public void onClick(DialogInterface dialogInterface, int i) {
-                                    c.setStatus(Status.DELIVERY, context);
-                                    button.setText(context.getString(R.string.order_info));
-                                    notifyDataSetChanged();
-                                }
-                            });
-                            builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-                                @Override
-                                public void onClick(DialogInterface dialogInterface, int i) {
-                                    dialogInterface.cancel();
-                                }
-                            });
-                        }
-                        else {
-                            //Se lo stato è ACCEPTANCE, il ristoratore può accetare o rifiutare l'ordine
-                            builder.setTitle("Confirm order");
-
-                            builder.setMessage("Do you want to confirm or reject this order? Status will pass to 'on cooking'");
-
-                            builder.setPositiveButton("Confirm", new DialogInterface.OnClickListener() {
-                                @Override
-                                public void onClick(DialogInterface dialogInterface, int i) {
-                                    // Change button text
-                                    c.setStatus(Status.COOKING, context);
-                                    button.setText("Deliver order");
-                                    notifyDataSetChanged();
-
-                                    //TODO: Aggiornare quantità menù
-                                }
-                            });
-                            builder.setNegativeButton("Reject", new DialogInterface.OnClickListener() {
-                                @Override
-                                public void onClick(DialogInterface dialogInterface, int i) {
-                                    c.setStatus(Status.REJECTED, context);
-                                    notifyDataSetChanged();
-                                }
-                            });
-                            builder.setNeutralButton("Cancel", new DialogInterface.OnClickListener() {
-                                @Override
-                                public void onClick(DialogInterface dialogInterface, int i) {
-                                    dialogInterface.cancel();
-                                }
-                            });
-                        }
-                    }
-                    AlertDialog dialog = builder.create();
-                    dialog.show();
-                }
-            });
-
-        } else {
-            button.setVisibility(View.GONE);
-        }
-*/
         return view;
     }
 
@@ -308,11 +218,14 @@ public class ReservationExpandableListAdapter extends BaseExpandableListAdapter 
 
     private class ViewHolder {
         protected Button button;
-        TextView tv_dish_name;
-        TextView tv_dish_quantity;
-        TextView tv_dish_notes;
         TextView tv_date;
         TextView tv_time;
         TextView tv_status;
+    }
+
+    private class ViewHolderChild{
+        TextView tv_dish_name;
+        TextView tv_dish_quantity;
+        TextView tv_dish_notes;
     }
 }
