@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout
+    android:id="@+id/dishRowLinearLayout"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginTop="8dp"
+    android:padding="3dp"
+    android:background="@drawable/child_style"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    app:layout_constraintTop_toTopOf="parent"
+    xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <ImageView
+        android:id="@+id/dishIcon"
+        android:layout_width="35dp"
+        android:layout_height="35dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="4dp"
+        android:padding="0dp"
+        android:src="@drawable/dishes_icon"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@id/dish_name_label"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <CheckBox
+        android:id="@+id/dish_checkbox"
+        android:layout_width="35dp"
+        android:layout_height="35dp"
+        android:layout_marginStart="8dp"
+        android:padding="0dp"
+        android:visibility="invisible"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@id/tv_dish_quantity"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/dish_name_label"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="57dp"
+        android:text="@string/dishes"
+        android:textColor="@color/colorTextField"
+        android:textSize="20sp"
+        app:layout_constraintBottom_toTopOf="@id/dish_quantity_label"
+        app:layout_constraintEnd_toStartOf="@id/tv_dish_name"
+        app:layout_constraintHorizontal_bias="0.13"
+        app:layout_constraintStart_toEndOf="@id/dishIcon"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/tv_dish_name"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="8dp"
+        android:layout_marginBottom="8dp"
+        android:textColor="@color/colorTextSubField"
+        android:textSize="18sp"
+        app:layout_constraintBottom_toTopOf="@id/tv_dish_quantity"
+        app:layout_constraintEnd_toStartOf="@id/dish_checkbox"
+        app:layout_constraintStart_toEndOf="@id/dish_name_label"
+        app:layout_constraintTop_toTopOf="@id/dish_name_label" />
+
+    <TextView
+        android:id="@+id/dish_quantity_label"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="21dp"
+        android:text="@string/quantity"
+        android:textColor="@color/colorTextField"
+        android:textSize="20sp"
+        app:layout_constraintBottom_toTopOf="@id/dish_note_label"
+        app:layout_constraintEnd_toStartOf="@id/tv_dish_quantity"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="@id/dish_name_label"
+        app:layout_constraintTop_toBottomOf="@id/dish_name_label" />
+
+    <TextView
+        android:id="@+id/tv_dish_quantity"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="8dp"
+        android:textColor="@color/colorTextSubField"
+        android:textSize="18sp"
+        app:layout_constraintBottom_toTopOf="@id/tv_dish_note"
+        app:layout_constraintEnd_toStartOf="@id/dish_checkbox"
+        app:layout_constraintStart_toStartOf="@id/tv_dish_name"
+        app:layout_constraintTop_toTopOf="@id/dish_quantity_label" />
+
+    <!-- Notes about dish -->
+    <TextView
+        android:id="@+id/dish_note_label"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="44dp"
+        android:text="@string/note"
+        android:textColor="@color/colorTextField"
+        android:textSize="20sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@id/tv_dish_note"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="@id/dish_quantity_label"
+        app:layout_constraintTop_toBottomOf="@id/dish_quantity_label" />
+
+    <TextView
+        android:id="@+id/tv_dish_note"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="8dp"
+        android:layout_marginBottom="4dp"
+        android:maxLength="100"
+        android:maxLines="3"
+        android:textColor="@color/colorTextNoteField"
+        android:textSize="18sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@id/dish_checkbox"
+        app:layout_constraintStart_toStartOf="@id/tv_dish_quantity"
+        app:layout_constraintTop_toTopOf="@id/dish_note_label" />
+</android.support.constraint.ConstraintLayout>

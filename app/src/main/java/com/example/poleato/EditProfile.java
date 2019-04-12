@@ -68,6 +68,7 @@ public class EditProfile extends AppCompatActivity {
             finish();
         }
 
+        //  change_im = findViewById(R.id.change_im);
         //fill the maps
         collectFields();
         //fill the fields
@@ -179,7 +180,6 @@ public class EditProfile extends AppCompatActivity {
                 profileImage.setImageBitmap(decodeBase64(image));
             }
         }
-    }
 
     public void changeImage(View view) {
         android.support.v7.widget.PopupMenu popup = new android.support.v7.widget.PopupMenu(this, change_im);

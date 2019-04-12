@@ -7,6 +7,11 @@
     <string name="info"><font size="18">Descrizione ristorante</font></string>
     <string name="open"><font size="18">Orari apertura</font></string>
     <string name="owner"><font size="18">Titolare attività</font></string>
+    <string name="name"><font size="18">Nome</font></string>
+    <string name="surname"><font size="18">Cognome</font></string>
+    <string name="date"><font size="18">Data</font></string>
+    <string name="time"><font size="18">Orario</font></string>
+    <string name="seats"><font size="18">N° posti</font></string>
     <string name="address"><font size="18">Indirizzo</font></string>
     <string name="email"><font size="18">Email</font></string>
     <string name="pay"><font size="18">Metodo di pagamento</font></string>
@@ -42,4 +47,27 @@
         <item>Bevande</item>
     </string-array>
 
+    <string name="dishes">Piatto</string>
+    <string name="quantity">Quantità</string>
+    <string name="note">Note</string>
+    <string name="status">Stato</string>
+    <string name="new_order">Nuovo ordine</string>
+    <string name="cooking">Preparazione</string>
+    <string name="delivery">In consegna</string>
+    <string name="reject">Rifiutato</string>
+    <string name="button_reservation">Accetta o Rifiuta</string>
+    <string name="button_delivery">E\' pronto</string>
+    <string name="order">ID</string>
+    <string name="order_info">Info consegna</string>
+    <string name="order_deliver">Consegna</string>
+    <string name="tab1">Account</string>
+    <string name="tab2">Prenotazioni</string>
+    <string name="tab3">Menu</string>
+    <string name="title_deliver">Consegna ordine</string>
+    <string name="msg_deliver">E\' tutto pronto? Lo stato della prenotazione passerà su \'In consegna\'</string>
+    <string name="choice_confirm">Conferma</string>
+    <string name="choice_reject">Rifiuta</string>
+    <string name="choice_cancel">Cancella</string>
+    <string name="title_confirm">Conferma ordine</string>
+    <string name="msg_confirm">Vuoi confermare o rifiutare l\'ordine? Se confermi, lo stato della prenotazione passerà su \'Preparazione\'</string>
 </resources>
