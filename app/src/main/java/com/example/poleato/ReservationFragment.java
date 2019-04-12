@@ -25,7 +25,6 @@ import java.util.List;
 public class ReservationFragment extends Fragment {
     private ExpandableListView lv;
     private ReservationExpandableListAdapter listAdapter;
-    private ExpandableListView expListView;
     private List<Reservation> reservations;
     private HashMap<String,List<Dish>> listHash = new HashMap<>();
     private Display display;
@@ -68,8 +67,6 @@ public class ReservationFragment extends Fragment {
                     b.setVisibility(View.VISIBLE);
                 }else
                      b.setVisibility(View.GONE);
-
-
                 return false;
             }
         });
@@ -97,24 +94,18 @@ public class ReservationFragment extends Fragment {
 
         Dish d1_c1= new Dish("Pasta carbonara", 1, "no cipolla");
         Dish d2_c1= new Dish("Pizza margherita", 2, "pizze tagliate");
+
+        c1.addDishtoReservation(d1_c1);
+        c1.addDishtoReservation(d2_c1);
+
         List<Dish> list1= new ArrayList<>();
         list1.add(d1_c1);
         list1.add(d2_c1);
         List<Dish> list2 = new ArrayList<>();
         list2.add(d1_c1);
+        c2.addDishtoReservation(d1_c1);
 
-        listHash.put(c1.getOrder_id(),list1);
-        listHash.put(c2.getOrder_id(),list2);
-    }
-
-    @Override
-    public void onSaveInstanceState(@NonNull Bundle outState) {
-        super.onSaveInstanceState(outState);
-
-    }
-
-    @Override
-    public void onViewStateRestored(@Nullable Bundle savedInstanceState) {
-        super.onViewStateRestored(savedInstanceState);
+        listHash.put(c1.getOrder_id(),c1.getDishes());
+        listHash.put(c2.getOrder_id(),c2.getDishes());
     }
 }

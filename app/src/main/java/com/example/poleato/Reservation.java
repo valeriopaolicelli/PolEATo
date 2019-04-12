@@ -2,6 +2,8 @@ package com.example.poleato;
 
 import android.content.Context;
 
+import java.util.ArrayList;
+
 enum Status{
     REJECTED, ACCEPATANCE, COOKING, DELIVERY
 }
@@ -14,6 +16,8 @@ public class Reservation {
     private Status status;
     private String stat;
     private boolean checked;
+
+    private ArrayList<Dish>dishes = new ArrayList<>();
 
     public String getTime() {
         return time;
@@ -81,5 +85,16 @@ public class Reservation {
 
     public void setChecked(boolean checked) {
         this.checked = checked;
+    }
+
+    public ArrayList<Dish> getDishes() {
+        return dishes;
+    }
+
+    public void setDishes(ArrayList<Dish> dishes) {
+        this.dishes = dishes;
+    }
+    public void addDishtoReservation(Dish d){
+        this.dishes.add(d);
     }
 }
