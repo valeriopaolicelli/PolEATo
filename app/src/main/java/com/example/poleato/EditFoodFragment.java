@@ -235,7 +235,7 @@ public class EditFoodFragment extends DialogFragment {
         handleButton();
         buttonListener();
 
-        imageFood.setImageBitmap(toModify.getImg());
+//        imageFood.setImageBitmap(toModify.getImg());
 
         editTextFields.get("Name").setText(toModify.getName());
         editTextFields.get("Description").setText(toModify.getDescription());
@@ -365,9 +365,9 @@ public class EditFoodFragment extends DialogFragment {
                 setPic(currentPhotoPath);
             }
             else {
-                SharedPreferences fields= getContext().getSharedPreferences("ProfileDataRestaurant", Context.MODE_PRIVATE);
-                image= fields.getString("ProfileImage", encodeTobase64());
-                imageFood.setImageBitmap(decodeBase64(image));
+//                SharedPreferences fields= getContext().getSharedPreferences("ProfileDataRestaurant", Context.MODE_PRIVATE);
+//                image= fields.getString("ProfileImage", encodeTobase64());
+//                imageFood.setImageBitmap(decodeBase64(image));
             }
         }
         if (requestCode == RESULT_LOAD_IMG) {
