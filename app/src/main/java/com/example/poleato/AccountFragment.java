@@ -128,10 +128,10 @@ public class AccountFragment extends Fragment {
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
 
-        final ScrollView mScrollView = getView().findViewById(R.id.mainScrollView);
-        //saving scrollView position when rotate the screen
-        outState.putIntArray("ARTICLE_SCROLL_POSITION",
-                new int[]{ mScrollView.getScrollX(), mScrollView.getScrollY()});
+//        final ScrollView mScrollView = getView().findViewById(R.id.mainScrollView);
+//        //saving scrollView position when rotate the screen
+//        outState.putIntArray("ARTICLE_SCROLL_POSITION",
+//                new int[]{ mScrollView.getScrollX(), mScrollView.getScrollY()});
     }
 
 
