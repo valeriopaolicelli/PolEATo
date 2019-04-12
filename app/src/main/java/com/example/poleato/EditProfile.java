@@ -149,7 +149,7 @@ public class EditProfile extends AppCompatActivity {
             }
             else {
                 SharedPreferences fields= getSharedPreferences("ProfileDataRestaurant", Context.MODE_PRIVATE);
-                image = fields.getString("Background", encodeTobase64());
+                image = fields.getString("BackgroundTmp", encodeTobase64());
                 profileImage.setImageBitmap(decodeBase64(image));
             }
         }
@@ -160,14 +160,17 @@ public class EditProfile extends AppCompatActivity {
                     final InputStream imageStream = getContentResolver().openInputStream(imageUri);
                     final Bitmap selectedImage = BitmapFactory.decodeStream(imageStream);
                     profileImage.setImageBitmap(selectedImage);
+                    SharedPreferences.Editor editor =
+                            this.getSharedPreferences("ProfileDataRestaurant", Context.MODE_PRIVATE).edit();
+                    editor.putString("BackgroundTmp", encodeTobase64());
                 } catch (FileNotFoundException e) {
                     e.printStackTrace();
                     Toast.makeText(this, "Something went wrong", Toast.LENGTH_LONG).show();
                 }
 
             } else {
-                SharedPreferences fields = getSharedPreferences("ProfileDataCustomer", Context.MODE_PRIVATE);
-                image = fields.getString("Background", encodeTobase64());
+                SharedPreferences fields = getSharedPreferences("ProfileDataRestaurant", Context.MODE_PRIVATE);
+                image = fields.getString("BackgroundTmp", encodeTobase64());
                 profileImage.setImageBitmap(decodeBase64(image));
             }
         }
