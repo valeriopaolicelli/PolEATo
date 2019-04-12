@@ -20,8 +20,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-//TODO status persistency
-
 public class ReservationFragment extends Fragment {
     private ExpandableListView lv;
     private ReservationExpandableListAdapter listAdapter;
@@ -32,6 +30,7 @@ public class ReservationFragment extends Fragment {
     private int width;
     private Reservation c1;
     private Reservation c2;
+    private Reservation c3;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -87,10 +86,12 @@ public class ReservationFragment extends Fragment {
         listHash = new HashMap<>();
 
         c1 = new Reservation("A100","Fabio", "Ricciardi", "Corso duca degli abruzzi, 24","04/04/2019", "20.30", getContext());
-        c2 = new Reservation("A101","Michelangelo", "Moncada", "Via rossana, 26", "04/04/2019", "19.20", getContext());
+        c2 = new Reservation("A101","Michelangelo", "Moncada", "Via degli esempi, 404", "04/04/2019", "19.20", getContext());
+        c3 = new Reservation("A102","Valerio", "Paolicelli", "Via delle prove, 101", "04/04/2019", "21.20", getContext());
 
         reservations.add(c1);
         reservations.add(c2);
+        reservations.add(c3);
 
         Dish d1_c1= new Dish("Pasta carbonara", 1, "no cipolla");
         Dish d2_c1= new Dish("Pizza margherita", 2, "pizze tagliate");
@@ -98,14 +99,16 @@ public class ReservationFragment extends Fragment {
         c1.addDishtoReservation(d1_c1);
         c1.addDishtoReservation(d2_c1);
 
-        List<Dish> list1= new ArrayList<>();
-        list1.add(d1_c1);
-        list1.add(d2_c1);
-        List<Dish> list2 = new ArrayList<>();
-        list2.add(d1_c1);
-        c2.addDishtoReservation(d1_c1);
+        Dish d1_c2= new Dish("Pasta carbonara", 1, "no cipolla");
+        c2.addDishtoReservation(d1_c2);
+
+        Dish d1_c3= new Dish("Pasta amatriciana", 1, "no formaggio, tanto guanciale");
+        Dish d2_c3= new Dish("Pizza margherita", 1, "pizze tagliate");
+        c3.addDishtoReservation(d1_c3);
+        c3.addDishtoReservation(d2_c3);
 
         listHash.put(c1.getOrder_id(),c1.getDishes());
         listHash.put(c2.getOrder_id(),c2.getDishes());
+        listHash.put(c3.getOrder_id(),c3.getDishes());
     }
 }

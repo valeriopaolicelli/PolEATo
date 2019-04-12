@@ -21,7 +21,6 @@ import java.util.HashMap;
 import java.util.List;
 
 public class ReservationExpandableListAdapter extends BaseExpandableListAdapter {
-    //TODO change text button when status changes
     private Context context;
     private List<Reservation> reservations;
     private HashMap<String, List<Dish>>listHashMap;
@@ -142,84 +141,83 @@ public class ReservationExpandableListAdapter extends BaseExpandableListAdapter 
 
         if (!flag) {
             holder.button.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
-                            final AlertDialog.Builder builder = new AlertDialog.Builder(v.getContext());
-                            //TODO transfer all strings to file
-                            if (c.getStatus() == Status.DELIVERY) {
-                                builder.setTitle("Deliver details");
-                                String msg = v.getResources().getString(R.string.order) + ": " + c.getOrder_id() + "\n"
-                                        + v.getResources().getString(R.string.date) + ": " + c.getDate() + " "
-                                        + v.getResources().getString(R.string.time) + ": " + c.getTime() + "\n"
-                                        + v.getResources().getString(R.string.surname) + ": " + c.getSurname() + "\n"
-                                        + v.getResources().getString(R.string.address) + ": " + c.getAddress() + "\n";
-                                builder.setMessage(msg);
-                                builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
-                                    @Override
-                                    public void onClick(DialogInterface dialogInterface, int i) {
-                                        dialogInterface.cancel();
-                                    }
-                                });
-                            } else {
-                                //se lo status è COOKING, il ristoratore può scegliere se far partire la consegna
-                                if (c.getStatus() == Status.COOKING) {
-                                    builder.setTitle("Deliver order");
-
-                                    builder.setMessage("Is everything ready? Status will pass to 'on delivery'");
-                                    builder.setPositiveButton("Confirm", new DialogInterface.OnClickListener() {
-                                        @Override
-                                        public void onClick(DialogInterface dialogInterface, int i) {
-                                            c.setStatus(Status.DELIVERY, context);
-                                            holder.button.setText(context.getString(R.string.order_info));
-                                            notifyDataSetChanged();
-                                        }
-                                    });
-                                    builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-                                        @Override
-                                        public void onClick(DialogInterface dialogInterface, int i) {
-                                            dialogInterface.cancel();
-                                        }
-                                    });
-                                } else {
-                                    //Se lo stato è ACCEPTANCE, il ristoratore può accetare o rifiutare l'ordine
-                                    builder.setTitle("Confirm order");
-
-                                    builder.setMessage("Do you want to confirm or reject this order? Status will pass to 'on cooking'");
-
-                                    builder.setPositiveButton("Confirm", new DialogInterface.OnClickListener() {
-                                        @Override
-                                        public void onClick(DialogInterface dialogInterface, int i) {
-                                            // Change button text
-                                            c.setStatus(Status.COOKING, context);
-                                            holder.button.setText("Deliver order");
-                                            notifyDataSetChanged();
-
-                                            //TODO: Aggiornare quantità menù
-                                        }
-                                    });
-                                    builder.setNegativeButton("Reject", new DialogInterface.OnClickListener() {
-                                        @Override
-                                        public void onClick(DialogInterface dialogInterface, int i) {
-                                            c.setStatus(Status.REJECTED, context);
-                                            notifyDataSetChanged();
-                                        }
-                                    });
-                                    builder.setNeutralButton("Cancel", new DialogInterface.OnClickListener() {
-                                        @Override
-                                        public void onClick(DialogInterface dialogInterface, int i) {
-                                            dialogInterface.cancel();
-                                        }
-                                    });
-                                }
+                @Override
+                public void onClick(View v) {
+                    final AlertDialog.Builder builder = new AlertDialog.Builder(v.getContext());
+                    if (c.getStatus() == Status.DELIVERY) {
+                        builder.setTitle("Deliver details");
+                        String msg = v.getResources().getString(R.string.order) + ": " + c.getOrder_id() + "\n"
+                                + v.getResources().getString(R.string.date) + ": " + c.getDate() + " "
+                                + v.getResources().getString(R.string.time) + ": " + c.getTime() + "\n"
+                                + v.getResources().getString(R.string.surname) + ": " + c.getSurname() + "\n"
+                                + v.getResources().getString(R.string.address) + ": " + c.getAddress() + "\n";
+                        builder.setMessage(msg);
+                        builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialogInterface, int i) {
+                                dialogInterface.cancel();
                             }
-                            AlertDialog dialog = builder.create();
-                            dialog.show();
-                        }
-                    });
+                        });
+                    } else {
+                        //se lo status è COOKING, il ristoratore può scegliere se far partire la consegna
+                        if (c.getStatus() == Status.COOKING) {
+                            builder.setTitle("Deliver order");
 
-                } else {
-                    holder.button.setVisibility(View.GONE);
+                            builder.setMessage("Is everything ready? Status will pass to 'on delivery'");
+                            builder.setPositiveButton("Confirm", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialogInterface, int i) {
+                                    c.setStatus(Status.DELIVERY, context);
+                                    holder.button.setText(context.getString(R.string.order_info));
+                                    notifyDataSetChanged();
+                                }
+                            });
+                            builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialogInterface, int i) {
+                                    dialogInterface.cancel();
+                                }
+                            });
+                        } else {
+                            //Se lo stato è ACCEPTANCE, il ristoratore può accetare o rifiutare l'ordine
+                            builder.setTitle("Confirm order");
+
+                            builder.setMessage("Do you want to confirm or reject this order? Status will pass to 'on cooking'");
+
+                            builder.setPositiveButton("Confirm", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialogInterface, int i) {
+                                    // Change button text
+                                    c.setStatus(Status.COOKING, context);
+                                    holder.button.setText("Deliver order");
+                                    notifyDataSetChanged();
+
+                                    //TODO: Aggiornare quantità menù
+                                }
+                            });
+                            builder.setNegativeButton("Reject", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialogInterface, int i) {
+                                    c.setStatus(Status.REJECTED, context);
+                                    notifyDataSetChanged();
+                                }
+                            });
+                            builder.setNeutralButton("Cancel", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialogInterface, int i) {
+                                    dialogInterface.cancel();
+                                }
+                            });
+                        }
+                    }
+                    AlertDialog dialog = builder.create();
+                    dialog.show();
                 }
+            });
+
+        } else {
+            holder.button.setVisibility(View.GONE);
+        }
 
         return view;
     }
@@ -232,7 +230,7 @@ public class ReservationExpandableListAdapter extends BaseExpandableListAdapter 
 
         ExpandableListView listView = (ExpandableListView) viewGroup;
         List<Dish> dishes = listHashMap.get(c.getOrder_id());
-
+        ViewHolder holder;
         boolean buttonflag = false;
 
         //CALCOLO POSIZIONE GRUPPO E RELATIVA VIEW
@@ -241,32 +239,36 @@ public class ReservationExpandableListAdapter extends BaseExpandableListAdapter 
         int first  = listView.getFirstVisiblePosition();
         View group = listView.getChildAt(flatPosition-first);
 
-        Button myButton = (Button) group.findViewById(R.id.myButton);
-
         if(view == null){
+            holder= new ViewHolder();
+
             LayoutInflater inflater = (LayoutInflater)this.context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
             view = inflater.inflate(R.layout.reservation_dishrow_layout,null);
+            holder.tv_dish_name= (TextView) view.findViewById(R.id.tv_dish_name);
+            holder.button= (Button) group.findViewById(R.id.myButton);
+            holder.tv_dish_quantity = (TextView) view.findViewById(R.id.tv_dish_quantity);
+            holder.tv_dish_notes= (TextView) view.findViewById(R.id.tv_dish_note);
+            holder.dish_chechbox= (CheckBox) view.findViewById(R.id.dish_checkbox);
+
+            view.setTag(holder);
         }
+        else
+            holder= (ViewHolder) view.getTag();
 
-        TextView tv_dish_name = (TextView) view.findViewById(R.id.tv_dish_name);
-        TextView tv_dish_quantity = (TextView) view.findViewById(R.id.tv_dish_quantity);
-        TextView tv_dish_notes = (TextView) view.findViewById(R.id.tv_dish_note);
-        CheckBox dish_chechbox = (CheckBox) view.findViewById(R.id.dish_checkbox);
-
-        tv_dish_name.setText(dish.getName());
-        tv_dish_quantity.setText(dish.getQuantity().toString());
-        tv_dish_notes.setText(dish.getNotes());
+        holder.tv_dish_name.setText(dish.getName());
+        holder.tv_dish_quantity.setText(dish.getQuantity().toString());
+        holder.tv_dish_notes.setText(dish.getNotes());
 
 
         if (c.getStatus() == Status.COOKING) {
             //Se lo stato della prenotazione è COOKING, rendo la checkbox visibile
-            dish_chechbox.setVisibility(View.VISIBLE);
+            holder.dish_chechbox.setVisibility(View.VISIBLE);
             // Controllo se la prentazione ha il boolean  check su TRUE
             if (c.isChecked()) {
                 // Se così fosse, allora  la checkbox "select all" è stata spuntata
                 // Controllo se il piatto ha la checkbox spuntata, la spunto se così non fosse
-                if (!dish_chechbox.isChecked()) {
-                    dish_chechbox.setChecked(true);
+                if (!holder.dish_chechbox.isChecked()) {
+                    holder.dish_chechbox.setChecked(true);
                     //Setto lo stato del piatto a pronto => ERRATO: STO MODIFICANDO ANCHE I PIATTI DELLE ALTRE PRENOTAZIONI
                     dish.setChecked(true);
                     notifyDataSetChanged();
@@ -285,14 +287,14 @@ public class ReservationExpandableListAdapter extends BaseExpandableListAdapter 
             }
             //Se tutti i piatti hanno lo stato a checked allora l'ordine può partire e il gruppo è aperto
             if(buttonflag && listView.isGroupExpanded(i))
-                myButton.setVisibility(View.VISIBLE);
+                holder.button.setVisibility(View.VISIBLE);
             else
-                myButton.setVisibility(View.GONE);
+                holder.button.setVisibility(View.GONE);
         }
         else
-            dish_chechbox.setVisibility(View.GONE);
+            holder.dish_chechbox.setVisibility(View.GONE);
 
-        dish_chechbox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+        holder.dish_chechbox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
                 if(dish.isChecked()){
@@ -325,5 +327,6 @@ public class ReservationExpandableListAdapter extends BaseExpandableListAdapter 
         TextView tv_date;
         TextView tv_time;
         TextView tv_status;
+        CheckBox dish_chechbox;
     }
 }
