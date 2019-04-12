@@ -2,11 +2,14 @@ package com.example.poleato;
 
 import android.accounts.Account;
 import android.support.design.widget.TabLayout;
+import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+
+import java.util.List;
 
 public class MainActivity extends AppCompatActivity implements DailyOfferFragment.FragmentShowAddListener,
         DailyOfferFragment.FragmentShowEditListener, AddFoodFragment.FragmentAddListener,
@@ -29,18 +32,68 @@ public class MainActivity extends AppCompatActivity implements DailyOfferFragmen
     private EditFoodFragment editFoodFragment;
 
 
-    private void addFragmentToAdapter() {
-        adapter = new PageAdapter(getSupportFragmentManager());
-        adapter.addFragment(new AccountFragment(), "Account");
-        adapter.addFragment(new ReservationFragment(), "Reservation");
-        adapter.addFragment(new DailyOfferFragment(), "DailyOffer");
-        onViewPager.setAdapter(adapter);
+    /*private void addFragmentToAdapter() {
+        android.support.v4.app.FragmentManager fm = getSupportFragmentManager();
+        adapter = new PageAdapter(fm);
+        List<Fragment> fragmentList = fm.getFragments();
+        if(fragmentList != null && fragmentList.size() > 0){
+            adapter.addFragment(fragmentList.get(0), "Account");
+            adapter.addFragment(fragmentList.get(1), "Reservation");
+            adapter.addFragment(fragmentList.get(2), "DailyOffer");
 
-        // set the local attributes to easily access
-        accountFragment = (AccountFragment) adapter.getItem(0);
-        reservationFragment = (ReservationFragment) adapter.getItem(1);
-        dailyOfferFragment = (DailyOfferFragment) adapter.getItem(2);
+        }
+        else{
+            adapter.addFragment(new AccountFragment(), "Account");
+            adapter.addFragment(new ReservationFragment(), "Reservation");
+            adapter.addFragment(new DailyOfferFragment(), "DailyOffer");
+        }
+        onViewPager.setAdapter(adapter);
+    }*/
+
+
+    private void addFragmentToAdapter(){
+        //init
+        accountFragment = null;
+        reservationFragment = null;
+        dailyOfferFragment = null;
+
+        //get the fragments list
+        android.support.v4.app.FragmentManager fm = getSupportFragmentManager();
+        adapter = new PageAdapter(fm);
+        List<Fragment> fragmentList = fm.getFragments();
+        if(fragmentList != null) {
+
+            for (int idx = 0; idx < fragmentList.size(); idx++) {
+
+                if (fragmentList.get(idx) instanceof AccountFragment)
+                    accountFragment = (AccountFragment) fragmentList.get(idx);
+                if (fragmentList.get(idx) instanceof ReservationFragment)
+                    reservationFragment = (ReservationFragment) fragmentList.get(idx);
+                if (fragmentList.get(idx) instanceof DailyOfferFragment)
+                    dailyOfferFragment = (DailyOfferFragment) fragmentList.get(idx);
+            }
+        }
+
+        if(accountFragment == null){
+            accountFragment = new AccountFragment();
+            Log.d("matte", "AccountFragment not found and recreated");
+        }
+        if(reservationFragment == null){
+            reservationFragment = new ReservationFragment();
+            Log.d("matte", "ReservationFragment not found and recreated");
+        }
+        if(dailyOfferFragment == null){
+            dailyOfferFragment = new DailyOfferFragment();
+            Log.d("matte", "DailyOfferFragment not found and recreated");
+        }
+
+        adapter.addFragment(accountFragment, "Account");
+        adapter.addFragment(reservationFragment, "Reservation");
+        adapter.addFragment(dailyOfferFragment, "DailyOffer");
+
+        onViewPager.setAdapter(adapter);
     }
+
 
 
     /**
