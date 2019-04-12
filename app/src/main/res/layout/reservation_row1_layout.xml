@@ -5,7 +5,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="@drawable/child_style"
+    android:background="@drawable/group_style"
     android:orientation="vertical"
     tools:context=".MainActivity"
     android:padding="10dp">
@@ -18,13 +18,28 @@
             app:layout_constraintTop_toTopOf="parent">
 
             <ImageView
-                android:id="@+id/reservation_icon"
+                android:id="@+id/reservationIcon"
                 android:layout_width="40dp"
                 android:layout_height="40dp"
                 android:layout_marginStart="16dp"
                 android:src="@drawable/reservation_icon"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintEnd_toStartOf="@id/dateLabel"
+                app:layout_constraintVertical_bias="0.478"
+                tools:ignore="ContentDescription" />
+
+            <CheckBox
+                android:id="@+id/selectAllCheckBox"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:layout_marginEnd="8dp"
+                android:focusable="false"
+                android:visibility="invisible"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@id/statusLabel"
                 app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintVertical_bias="0.478"
                 tools:ignore="ContentDescription" />
@@ -41,7 +56,7 @@
                 android:textSize="20sp"
                 app:layout_constraintBottom_toTopOf="@id/tvDateField"
                 app:layout_constraintEnd_toStartOf="@id/timeLabel"
-                app:layout_constraintStart_toEndOf="@id/reservation_icon"
+                app:layout_constraintStart_toEndOf="@id/reservationIcon"
                 app:layout_constraintTop_toTopOf="parent" />
 
             <TextView
@@ -96,7 +111,6 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="8dp"
-                android:layout_marginEnd="16dp"
                 android:layout_marginBottom="8dp"
                 android:maxLength="40"
                 android:singleLine="true"
@@ -104,7 +118,7 @@
                 android:textColor="@color/colorTextField"
                 android:textSize="20sp"
                 app:layout_constraintBottom_toTopOf="@id/tvStatusField"
-                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintEnd_toStartOf="@id/selectAllCheckBox"
                 app:layout_constraintStart_toEndOf="@id/timeLabel"
                 app:layout_constraintTop_toTopOf="parent" />
 
@@ -112,14 +126,13 @@
                 android:id="@+id/tvStatusField"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_marginEnd="16dp"
                 android:layout_marginBottom="8dp"
                 android:maxLength="40"
                 android:singleLine="true"
                 android:textColor="@color/colorTextSubField"
                 android:textSize="15sp"
                 app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintEnd_toStartOf="@id/selectAllCheckBox"
                 app:layout_constraintHorizontal_bias="0.0"
                 app:layout_constraintStart_toStartOf="@id/statusLabel"
                 app:layout_constraintTop_toBottomOf="@id/statusLabel" />
@@ -135,7 +148,7 @@
         android:layout_marginStart="8dp"
         android:layout_marginEnd="8dp"
         android:layout_marginBottom="8dp"
-        android:visibility="gone"
+        android:visibility="visible"
         android:background="@drawable/button_style"
         android:focusable="false"
         android:padding="7dp"

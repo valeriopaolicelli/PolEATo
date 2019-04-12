@@ -6,6 +6,7 @@ public class Dish {
     private String name;
     private Integer quantity;
     private String notes;
+    private boolean checked;
 
     public String getName() {
         return name;
@@ -27,5 +28,14 @@ public class Dish {
         this.name = name;
         this.quantity = quantity;
         this.notes = notes;
+        checked= false;
+    }
+
+    public boolean isChecked() {
+        return checked;
+    }
+
+    public void setChecked(boolean checked) {
+        this.checked = checked;
     }
 }
