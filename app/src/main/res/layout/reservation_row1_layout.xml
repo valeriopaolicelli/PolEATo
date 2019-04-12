@@ -17,16 +17,29 @@
             android:layout_height="match_parent"
             app:layout_constraintTop_toTopOf="parent">
 
-            <CheckBox
-                android:id="@+id/selectAllCheckBox"
-                android:visibility="gone"
+            <ImageView
+                android:id="@+id/reservationIcon"
                 android:layout_width="40dp"
-                android:focusable="false"
                 android:layout_height="40dp"
                 android:layout_marginStart="16dp"
                 android:src="@drawable/reservation_icon"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintEnd_toStartOf="@id/dateLabel"
+                app:layout_constraintVertical_bias="0.478"
+                tools:ignore="ContentDescription" />
+
+            <CheckBox
+                android:id="@+id/selectAllCheckBox"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:layout_marginEnd="8dp"
+                android:focusable="false"
+                android:visibility="invisible"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@id/statusLabel"
                 app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintVertical_bias="0.478"
                 tools:ignore="ContentDescription" />
@@ -43,7 +56,7 @@
                 android:textSize="20sp"
                 app:layout_constraintBottom_toTopOf="@id/tvDateField"
                 app:layout_constraintEnd_toStartOf="@id/timeLabel"
-                app:layout_constraintStart_toEndOf="@id/selectAllCheckBox"
+                app:layout_constraintStart_toEndOf="@id/reservationIcon"
                 app:layout_constraintTop_toTopOf="parent" />
 
             <TextView
@@ -98,7 +111,6 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="8dp"
-                android:layout_marginEnd="16dp"
                 android:layout_marginBottom="8dp"
                 android:maxLength="40"
                 android:singleLine="true"
@@ -106,7 +118,7 @@
                 android:textColor="@color/colorTextField"
                 android:textSize="20sp"
                 app:layout_constraintBottom_toTopOf="@id/tvStatusField"
-                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintEnd_toStartOf="@id/selectAllCheckBox"
                 app:layout_constraintStart_toEndOf="@id/timeLabel"
                 app:layout_constraintTop_toTopOf="parent" />
 
@@ -114,14 +126,13 @@
                 android:id="@+id/tvStatusField"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_marginEnd="16dp"
                 android:layout_marginBottom="8dp"
                 android:maxLength="40"
                 android:singleLine="true"
                 android:textColor="@color/colorTextSubField"
                 android:textSize="15sp"
                 app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintEnd_toStartOf="@id/selectAllCheckBox"
                 app:layout_constraintHorizontal_bias="0.0"
                 app:layout_constraintStart_toStartOf="@id/statusLabel"
                 app:layout_constraintTop_toBottomOf="@id/statusLabel" />

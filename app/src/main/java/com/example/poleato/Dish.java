@@ -28,6 +28,7 @@ public class Dish {
         this.name = name;
         this.quantity = quantity;
         this.notes = notes;
+        checked= false;
     }
 
     public boolean isChecked() {
