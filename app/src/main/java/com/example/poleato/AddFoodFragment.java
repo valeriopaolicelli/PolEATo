@@ -51,7 +51,7 @@ public class AddFoodFragment extends DialogFragment {
     private static final int RESULT_LOAD_IMG = 2;
     private String currentPhotoPath;
 
-    private FragmentEListener fragmentEListener;
+    private FragmentAddListener fragmentAddListener;
     private FloatingActionButton change_im;
     private ImageView imageFood;
     private Spinner spinnerFood;
@@ -176,8 +176,8 @@ public class AddFoodFragment extends DialogFragment {
         }
     }
 
-    public interface  FragmentEListener {
-        void onInputESent(String plateType, Food food);
+    public interface  FragmentAddListener {
+        void onInputAddSent(String plateType, Food food);
     }
 
     @Override
@@ -256,7 +256,7 @@ public class AddFoodFragment extends DialogFragment {
 
                     // I send even plateType to now where insert new food
 
-                    fragmentEListener.onInputESent(plateType, food);
+                    fragmentAddListener.onInputAddSent(plateType, food);
                     dismiss();
                 }
             }
@@ -300,8 +300,8 @@ public class AddFoodFragment extends DialogFragment {
     public void onAttach(Context context) {
         super.onAttach(context);
 
-        if(context instanceof FragmentEListener){
-            fragmentEListener = (FragmentEListener) context;
+        if(context instanceof FragmentAddListener){
+            fragmentAddListener = (FragmentAddListener) context;
         }else {
             throw new RuntimeException(context.toString() + " must implement FragmentListener");
         }
@@ -310,7 +310,7 @@ public class AddFoodFragment extends DialogFragment {
     @Override
     public void onDetach() {
         super.onDetach();
-        fragmentEListener = null;
+        fragmentAddListener = null;
     }
 
     @Override

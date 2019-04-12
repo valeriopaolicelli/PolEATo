@@ -7,8 +7,8 @@ import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 
-public class MainActivity extends AppCompatActivity implements DailyOfferFragment.FragmentDListener,
-        AddFoodFragment.FragmentEListener {
+public class MainActivity extends AppCompatActivity implements DailyOfferFragment.FragmentShowAddListener,
+        AddFoodFragment.FragmentAddListener {
 
     private ViewPager onViewPager;
     private PageAdapter adapter;
@@ -59,23 +59,19 @@ public class MainActivity extends AppCompatActivity implements DailyOfferFragmen
     }
 
     @Override
-    public void onInputDSent(Object o) {
+    public void onInputShowAddSent(Object o) {
 //        getSupportFragmentManager().beginTransaction()
 //                .add(addFoodFragment, "Blank Fragment")
 //                .setTransitionStyle(R.style.FullScreenDialog)
 //                .addToBackStack(null)
 //                .commit();
-        addFoodFragment.show(getSupportFragmentManager(), "tag");
+        addFoodFragment.show(getSupportFragmentManager(), "addFoodFragment");
     }
 
 
     @Override
-    public void onInputESent(String plateType, Food food) {
+    public void onInputAddSent(String plateType, Food food) {
         dailyOfferFragment.addFood(plateType, food);
     }
-
-
-
-
-
+    
 }

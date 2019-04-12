@@ -40,11 +40,11 @@ public class DailyOfferFragment extends Fragment {
     private Point size;
     int width;
     private int lastExpandedPosition = -1;
-    private FragmentDListener fragmentDListener;
+    private FragmentShowAddListener fragmentShowAddListener;
 
 
-    public interface  FragmentDListener {
-        void onInputDSent(Object o);
+    public interface  FragmentShowAddListener {
+        void onInputShowAddSent(Object o);
     }
 
 
@@ -53,8 +53,8 @@ public class DailyOfferFragment extends Fragment {
         super.onAttach(context);
         this.hostActivity = this.getActivity();
 
-        if(context instanceof FragmentDListener){
-            fragmentDListener = (FragmentDListener) context;
+        if(context instanceof FragmentShowAddListener){
+            fragmentShowAddListener = (FragmentShowAddListener) context;
         }else {
             throw new RuntimeException(context.toString() + " must implement FragmentDListener");
         }
@@ -90,7 +90,7 @@ public class DailyOfferFragment extends Fragment {
         floatingActionButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                fragmentDListener.onInputDSent(this);
+                fragmentShowAddListener.onInputShowAddSent(this);
             }
         });
 
@@ -223,7 +223,7 @@ public class DailyOfferFragment extends Fragment {
     @Override
     public void onDetach() {
         super.onDetach();
-        fragmentDListener = null;
+        fragmentShowAddListener = null;
     }
 }
 
