@@ -3,6 +3,7 @@ package com.example.poleato;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Matrix;
@@ -54,6 +55,7 @@ public class AddFoodFragment extends DialogFragment {
 
 
     private FloatingActionButton change_im;
+    private String image;
     private ImageView imageFood;
     private Spinner spinnerFood;
     private String plateType;
@@ -298,7 +300,9 @@ public class AddFoodFragment extends DialogFragment {
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-
+        SharedPreferences fields = getContext().getSharedPreferences("ProfileDataRestaurant", Context.MODE_PRIVATE);
+        image = fields.getString("BackgroundTmpA", encodeTobase64());
+        imageFood.setImageBitmap(decodeBase64(image));
 
     }
 
@@ -344,9 +348,9 @@ public class AddFoodFragment extends DialogFragment {
                 setPic(currentPhotoPath);
             }
             else {
-//                SharedPreferences fields= getContext().getSharedPreferences("ProfileDataRestaurant", Context.MODE_PRIVATE);
-//                image= fields.getString("ProfileImage", encodeTobase64());
-//                profileImage.setImageBitmap(decodeBase64(image));
+                SharedPreferences fields= getContext().getSharedPreferences("ProfileDataRestaurant", Context.MODE_PRIVATE);
+                image= fields.getString("ProfileImage", encodeTobase64());
+                imageFood.setImageBitmap(decodeBase64(image));
             }
         }
         if (requestCode == RESULT_LOAD_IMG) {
@@ -356,15 +360,19 @@ public class AddFoodFragment extends DialogFragment {
                     final InputStream imageStream = getContext().getContentResolver().openInputStream(imageUri);
                     final Bitmap selectedImage = BitmapFactory.decodeStream(imageStream);
                     imageFood.setImageBitmap(selectedImage);
+                    SharedPreferences.Editor editor =
+                            getContext().getSharedPreferences("ProfileDataRestaurant", Context.MODE_PRIVATE).edit();
+                    editor.putString("BackgroundTmpA", encodeTobase64());
+                    editor.apply();
                 } catch (FileNotFoundException e) {
                     e.printStackTrace();
                     Toast.makeText(getContext(), "Something went wrong", Toast.LENGTH_LONG).show();
                 }
 
             } else {
-//                SharedPreferences fields= getContext().getSharedPreferences("ProfileDataCustomer", Context.MODE_PRIVATE);
-//                image= fields.getString("ProfileImage", encodeTobase64());
-//                profileImage.setImageBitmap(decodeBase64(image));
+                SharedPreferences fields = getContext().getSharedPreferences("ProfileDataRestaurant", Context.MODE_PRIVATE);
+                image = fields.getString("BackgroundTmpA", encodeTobase64());
+                imageFood.setImageBitmap(decodeBase64(image));
             }
         }
     }
