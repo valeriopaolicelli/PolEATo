@@ -150,7 +150,7 @@ public class EditProfile extends AppCompatActivity {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == REQUEST_TAKE_PHOTO) {
             if (resultCode == RESULT_OK) {
-                setPic(currentPhotoPath);0
+                setPic(currentPhotoPath);
             } else {
                 SharedPreferences fields = getSharedPreferences("ProfileDataRestaurant", Context.MODE_PRIVATE);
                 image = fields.getString("BackgroundTmp", encodeTobase64());
