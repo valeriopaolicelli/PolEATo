@@ -9,13 +9,15 @@ import android.support.v7.widget.Toolbar;
 import android.util.Log;
 
 public class MainActivity extends AppCompatActivity implements DailyOfferFragment.FragmentShowAddListener,
-        DailyOfferFragment.FragmentShowEditListener, AddFoodFragment.FragmentAddListener, EditFoodFragment.FragmentEditListener {
+        DailyOfferFragment.FragmentShowEditListener, AddFoodFragment.FragmentAddListener,
+        EditFoodFragment.FragmentEditListener {
 
     private ViewPager onViewPager;
     private PageAdapter adapter;
 
 
 
+    
 
     /* ********************************
      ********   FRAGMENTS    **********
@@ -62,6 +64,9 @@ public class MainActivity extends AppCompatActivity implements DailyOfferFragmen
      */
     @Override
     public void onInputShowEditSent(Food foodToModify) {
+        Bundle bundle = new Bundle();
+        bundle.putSerializable("foodToModify", foodToModify);
+        editFoodFragment.setArguments(bundle);
         editFoodFragment.show(getSupportFragmentManager(), "editFoodFragment");
     }
 
@@ -77,6 +82,13 @@ public class MainActivity extends AppCompatActivity implements DailyOfferFragmen
         dailyOfferFragment.addFood(plateType, food);
     }
 
+    /**
+     *
+     */
+    @Override
+    public void onInputEditSent() {
+        dailyOfferFragment.notifyDataChange();
+    }
 
 
     /* ***********************************
@@ -115,8 +127,4 @@ public class MainActivity extends AppCompatActivity implements DailyOfferFragmen
     }
 
 
-    @Override
-    public void onInputEditSent() {
-
-    }
 }
