@@ -26,10 +26,6 @@ public class PageAdapter extends FragmentPagerAdapter {
         return fragmentList.get(i);
     }
 
-    public Fragment getMyItem(int i) {
-        return fragmentList.get(i);
-    }
-
     @Override
     public CharSequence getPageTitle(int i) {
         return fragmentNameList.get(i);

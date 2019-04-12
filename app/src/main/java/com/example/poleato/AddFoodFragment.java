@@ -45,7 +45,7 @@ import java.util.TreeMap;
 
 import static android.app.Activity.RESULT_OK;
 
-public class EditFoodFragment extends DialogFragment {
+public class AddFoodFragment extends DialogFragment {
 
     private static final int REQUEST_TAKE_PHOTO = 1;
     private static final int RESULT_LOAD_IMG = 2;
@@ -54,6 +54,8 @@ public class EditFoodFragment extends DialogFragment {
 
     private FloatingActionButton change_im;
     private ImageView imageFood;
+    private Spinner spinnerFood;
+    private String plateType;
 
     private TreeMap<String, ImageButton> imageButtons= new TreeMap<>();
     private TreeMap<String,EditText> editTextFields= new TreeMap<>();
@@ -63,19 +65,18 @@ public class EditFoodFragment extends DialogFragment {
 
 
 
+
     /* ********************************
-     ********   INTERFACES   ********
+     ********** INTERFACES **********
      ******************************** */
 
     /**
-     *  Interface to communicate the food edit to the ExpandableListView
+     *  Interface to communicate the food adding to the host activity
      */
-    private FragmentEditListener fragmentEditListener;
-    public interface  FragmentEditListener {
-        void onInputEditSent();
+    private FragmentAddListener fragmentAddListener;
+    public interface  FragmentAddListener {
+        void onInputAddSent(String plateType, Food food);
     }
-
-
 
 
 
@@ -197,14 +198,6 @@ public class EditFoodFragment extends DialogFragment {
     }
 
 
-
-
-
-
-    /* ***********************************
-     ********   ANDROID CALLBACKS   ****
-     *********************************** */
-
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -214,8 +207,27 @@ public class EditFoodFragment extends DialogFragment {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
-        View v = inflater.inflate(R.layout.edit_food_fragment, container, false);
+        View v = inflater.inflate(R.layout.add_food_fragment, container, false);
 
+        spinnerFood = (Spinner) v.findViewById(R.id.spinnerFood);
+        // Create an ArrayAdapter using the string array and a default spinner layout
+        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(getContext(),
+                R.array.plates_array, android.R.layout.simple_spinner_item);
+        // Specify the layout to use when the list of choices appears
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        // Apply the adapter to the spinner
+        spinnerFood.setAdapter(adapter);
+        spinnerFood.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                plateType = (String) parent.getItemAtPosition(position).toString();
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+
+            }
+        });
 
         change_im = v.findViewById(R.id.frag_change_im);
         imageFood = v.findViewById(R.id.imageFood);
@@ -262,7 +274,7 @@ public class EditFoodFragment extends DialogFragment {
 
                     // I send even plateType to now where insert new food
 
-                    fragmentEditListener.onInputEditSent();
+                    fragmentAddListener.onInputAddSent(plateType, food);
                     dismiss();
                 }
             }
@@ -306,8 +318,8 @@ public class EditFoodFragment extends DialogFragment {
     public void onAttach(Context context) {
         super.onAttach(context);
 
-        if(context instanceof FragmentEditListener){
-            fragmentEditListener = (FragmentEditListener) context;
+        if(context instanceof FragmentAddListener){
+            fragmentAddListener = (FragmentAddListener) context;
         }else {
             throw new RuntimeException(context.toString() + " must implement FragmentListener");
         }
@@ -316,7 +328,7 @@ public class EditFoodFragment extends DialogFragment {
     @Override
     public void onDetach() {
         super.onDetach();
-        fragmentEditListener = null;
+        fragmentAddListener = null;
     }
 
     @Override

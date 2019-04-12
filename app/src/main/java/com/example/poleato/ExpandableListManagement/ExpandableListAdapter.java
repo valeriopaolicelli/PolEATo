@@ -16,6 +16,7 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.example.poleato.DailyOfferFragment;
 import com.example.poleato.Food;
 import com.example.poleato.R;
 
@@ -30,20 +31,37 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
     private List<String> _listDataGroup; // header titles
     private HashMap<String, List<Food>> _listDataChild; // child data in format of header title, child title
     private Button button_delete;
+    private DailyOfferFragment.FragmentShowEditListener frShow; //to notify to open the EditFoodFragment
 
     public ExpandableListAdapter(Activity host, List<String> listDataHeader,
-                                 HashMap<String, List<Food>> listChildData) {
+                                 HashMap<String, List<Food>> listChildData,
+                                 DailyOfferFragment.FragmentShowEditListener frShow) {
 
         this.host = host;
         inf = LayoutInflater.from(host);
         this._listDataGroup = listDataHeader;
         this._listDataChild = listChildData;
+        this.frShow = frShow;
         Log.d("matte", "[Init]headers:"+_listDataGroup.toString());
         Log.d("matte", "[Init]childs:"+_listDataChild.toString());
     }
 
 
 
+    public void insertChild(final int groupPosition, Food food){
+        this._listDataChild.get(getGroup(groupPosition).toString()).add(food);
+        notifyDataSetChanged();
+    }
+
+    public void insertChild(String groupTag, Food food){
+        this._listDataChild.get(groupTag).add(food);
+        notifyDataSetChanged();
+    }
+
+    public void removeChild(final int groupPosition, final int childPosition){
+        this._listDataChild.get(getGroup(groupPosition).toString()).remove(childPosition);
+        notifyDataSetChanged();
+    }
 
     @Override
     public View getChildView(final int groupPosition, final int childPosition,
@@ -63,14 +81,6 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
             holder.quantity = (TextView) convertView.findViewById(R.id.cardQuantity);
             convertView.setTag(holder);
 
-            /*button_delete = convertView.findViewById(R.id.buttonDelete);
-            button_delete.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    _listDataChild.remove(getChild(groupPosition, childPosition));
-                    notifyDataSetChanged();
-                }
-            });*/
         } else{
             holder = (FoodViewHolder) convertView.getTag();
         }
@@ -88,6 +98,7 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
         String qntStr = "(qty "+getChild(groupPosition, childPosition).getQuantity()+")";
         holder.quantity.setText(qntStr);
 
+        // three dots vertical menu
         ImageButton settingsButton = convertView.findViewById(R.id.cardSettings);
         settingsButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -98,12 +109,17 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
                 inflater.inflate(R.menu.popup_cardview, popup.getMenu());
                 popup.show();
                 Menu itemList = popup.getMenu();
+
+
                 MenuItem modify = itemList.getItem(0);
                 modify.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
                     @Override
                     public boolean onMenuItemClick(MenuItem item) {
 
                         Log.d("matte", item.getTitle().toString());
+
+                        frShow.onInputShowEditSent(getChild(groupPosition, childPosition));
+
                         return false;
                     }
                 });
@@ -114,7 +130,8 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
                     public boolean onMenuItemClick(MenuItem item) {
 
                         Log.d("matte", item.getTitle().toString());
-                        return false;
+                        removeChild(groupPosition, childPosition);
+                        return true;
                     }
                 });
 

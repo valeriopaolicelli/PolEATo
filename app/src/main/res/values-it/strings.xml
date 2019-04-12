@@ -31,7 +31,9 @@
     <string name="dish_type">Tipologia:</string>
     <string name="modify">Modifica</string>
     <string name="remove">Rimuovi</string>
-
+    <string name="empty_field">Tutti i campi devono essere compilati</string>
+    <string name="error_format_price">Il prezzo deve essere un numero</string>
+    <string name="error_format_quantity">La quantità deve essere un numero intero</string>
     <string-array name="plates_array">
         <item>Antipasti</item>
         <item>Primi</item>

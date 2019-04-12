@@ -31,8 +31,9 @@
     <string name="dish_type">Type:</string>
     <string name="modify">Modify</string>
     <string name="remove">Remove</string>
-
-
+    <string name="empty_field">All fields must be filled</string>
+    <string name="error_format_price">Price must be a number</string>
+    <string name="error_format_quantity">Quantity must be a integer number</string>
     <string-array name="plates_array">
         <item>Starters</item>
         <item>Firsts</item>

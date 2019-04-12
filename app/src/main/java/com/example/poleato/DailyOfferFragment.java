@@ -21,6 +21,7 @@ import android.widget.ExpandableListView;
 
 import com.example.poleato.ExpandableListManagement.*;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -39,12 +40,47 @@ public class DailyOfferFragment extends Fragment {
     private Point size;
     int width;
     private int lastExpandedPosition = -1;
-    private FragmentDListener fragmentDListener;
 
 
-    public interface  FragmentDListener {
-        void onInputDSent(Object o);
+
+            /* ********************************
+               ********   INTERFACES   ********
+               ******************************** */
+
+    /**
+     * Interface to communicate to run the AddFoodFragment to the host activity
+     */
+    private FragmentShowAddListener fragmentShowAddListener;
+    public interface  FragmentShowAddListener {
+        void onInputShowAddSent(Object o);
     }
+
+    /**
+     * Interface to communicate to run the EditFoodFragment to the host activity
+     */
+    private FragmentShowEditListener fragmentShowEditListener;
+    public interface  FragmentShowEditListener {
+        void onInputShowEditSent(Food foodToModify);
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
     @Override
@@ -52,10 +88,17 @@ public class DailyOfferFragment extends Fragment {
         super.onAttach(context);
         this.hostActivity = this.getActivity();
 
-        if(context instanceof FragmentDListener){
-            fragmentDListener = (FragmentDListener) context;
+        if(context instanceof FragmentShowAddListener){
+            fragmentShowAddListener = (FragmentShowAddListener) context;
         }else {
-            throw new RuntimeException(context.toString() + " must implement FragmentDListener");
+            throw new RuntimeException(context.toString() + " must implement FragmentShowAddListener");
+        }
+
+
+        if(context instanceof FragmentShowEditListener){
+            fragmentShowEditListener = (FragmentShowEditListener) context;
+        }else {
+            throw new RuntimeException(context.toString() + " must implement FragmentShowEditListener");
         }
     }
 
@@ -73,6 +116,8 @@ public class DailyOfferFragment extends Fragment {
 
         // preparing list data
         prepareListData();
+        //initGroup();
+        //initChild();
     }
 
     @Override
@@ -87,7 +132,7 @@ public class DailyOfferFragment extends Fragment {
         floatingActionButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                fragmentDListener.onInputDSent(this);
+                fragmentShowAddListener.onInputShowAddSent(this);
             }
         });
 
@@ -113,7 +158,7 @@ public class DailyOfferFragment extends Fragment {
         });
 
         // list Adapter of ExpandableList
-        listAdapter = new ExpandableListAdapter(hostActivity, listDataGroup, listDataChild);
+        listAdapter = new ExpandableListAdapter(hostActivity, listDataGroup, listDataChild, fragmentShowEditListener);
 
         // setting list adapter
         expListView.setAdapter(listAdapter);
@@ -139,9 +184,25 @@ public class DailyOfferFragment extends Fragment {
 
     }
 
+    private void initGroup(){
+        listDataGroup = new ArrayList<>();
+        listDataGroup.add(getString(R.string.starters));
+        listDataGroup.add(getString(R.string.firsts));
+        listDataGroup.add(getString(R.string.seconds));
+        listDataGroup.add(getString(R.string.desserts));
+        listDataGroup.add(getString(R.string.drinks));
+    }
+
+    private void initChild(){
+
+        listDataChild = new HashMap<>();
+        for(int idx = 0; idx < listDataGroup.size(); idx ++)
+            listDataChild.put(listDataGroup.get(idx), new ArrayList<Food>());
+
+    }
 
     /*
-     * Preparing the data list
+     * Preparing the data list for DEBUG
      */
     private void prepareListData() {
         listDataGroup = new ArrayList<String>();
@@ -195,11 +256,7 @@ public class DailyOfferFragment extends Fragment {
 
     public void addFood(String category, Food food) {
         try{
-            for(String s : listDataGroup){
-                if(s == category){
-                    listDataChild.get(s).add(food);
-                }
-            }
+            this.listAdapter.insertChild(category, food);
         }catch(RuntimeException e){
             e.getMessage();
         }
@@ -208,7 +265,7 @@ public class DailyOfferFragment extends Fragment {
     @Override
     public void onDetach() {
         super.onDetach();
-        fragmentDListener = null;
+        fragmentShowAddListener = null;
     }
 }
 
