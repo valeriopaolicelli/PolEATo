@@ -80,9 +80,6 @@ public class DailyOfferFragment extends Fragment {
 
 
 
-
-
-
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
@@ -112,12 +109,13 @@ public class DailyOfferFragment extends Fragment {
         width = size.x;
 
 
+
         /* TODO HERE RESUME THE SAVED DATA FROM SHARED PREFERENCES */
 
         // preparing list data
-        prepareListData();
-        //initGroup();
-        //initChild();
+        //prepareListData();
+        initGroup();
+        initChild();
     }
 
     @Override
@@ -170,6 +168,7 @@ public class DailyOfferFragment extends Fragment {
         super.onSaveInstanceState(outState);
 
         outState.putInt("lastExpandedPosition", this.lastExpandedPosition);
+        outState.putSerializable("listDataChild", this.listDataChild);
     }
 
     @Override
@@ -179,9 +178,15 @@ public class DailyOfferFragment extends Fragment {
         if (savedInstanceState != null) {
             // Restore last state for checked position.
             this.lastExpandedPosition = savedInstanceState.getInt("lastExpandedPosition", -1);
+            this.listDataChild = (HashMap<String, List<Food>>) savedInstanceState.getSerializable("listDataChild");
+
+            for(String s : listDataChild.keySet()){
+                for(Food f : listDataChild.get(s)){
+                    this.listAdapter.insertChild(s, f);
+                }
+
+            }
         }
-
-
     }
 
     private void initGroup(){
@@ -195,9 +200,12 @@ public class DailyOfferFragment extends Fragment {
 
     private void initChild(){
 
-        listDataChild = new HashMap<>();
-        for(int idx = 0; idx < listDataGroup.size(); idx ++)
-            listDataChild.put(listDataGroup.get(idx), new ArrayList<Food>());
+        if(listDataChild == null)
+        {
+            listDataChild = new HashMap<>();
+            for(int idx = 0; idx < listDataGroup.size(); idx ++)
+                listDataChild.put(listDataGroup.get(idx), new ArrayList<Food>());
+        }
 
     }
 
