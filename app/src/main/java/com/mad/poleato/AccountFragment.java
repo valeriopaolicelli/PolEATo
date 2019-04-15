@@ -19,6 +19,13 @@ import android.widget.ImageView;
 import android.widget.ScrollView;
 import android.widget.TextView;
 
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.Query;
+import com.google.firebase.database.ValueEventListener;
+
 import java.io.ByteArrayOutputStream;
 
 public class AccountFragment extends Fragment {
@@ -74,7 +81,7 @@ public class AccountFragment extends Fragment {
 
     public void fillFields(){
         // Data persistency: setting initial values if empty file
-        SharedPreferences fields= getActivity().getSharedPreferences("ProfileDataRestaurant", Context.MODE_PRIVATE);
+        /*SharedPreferences fields= getActivity().getSharedPreferences("ProfileDataRestaurant", Context.MODE_PRIVATE);
         if(!fields.contains("Name")) {
             SharedPreferences.Editor editor= getActivity().getSharedPreferences("ProfileDataRestaurant", Context.MODE_PRIVATE).edit();
             editor.putString("Name", "Paninos");
@@ -105,7 +112,45 @@ public class AccountFragment extends Fragment {
         tvAddressField.setText(address);
         tvEmailField.setText(email);
         tvPhoneField.setText(phone);
-        imageBackground.setImageBitmap(decodeBase64(image));
+        imageBackground.setImageBitmap(decodeBase64(image));*/
+
+
+        DatabaseReference reference = FirebaseDatabase.getInstance().getReference();
+        Query query = reference.child("user").orderByChild("ID");
+        reference.child("user").child("Matteo").setValue("[ID, Value]");
+        //reference.child("user").child("Matteo").child("ID").setValue("weee");
+        Log.d("matte", query.toString());
+        query.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                if (dataSnapshot.exists()) {
+                    // dataSnapshot is the "issue" node with all children
+                    for (DataSnapshot issue : dataSnapshot.getChildren()) {
+                        // do something with the individual "issues"
+                    }
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+
+
+
+        /*tvNameField.setText(name);
+        tvTypeField.setText(type);
+        tvInfoField.setText(info);
+        tvOpenField.setText(open);
+        tvAddressField.setText(address);
+        tvEmailField.setText(email);
+        tvPhoneField.setText(phone);
+        imageBackground.setImageBitmap(decodeBase64(image));*/
+
+
+
+
     }
 
     public String encodeTobase64() {

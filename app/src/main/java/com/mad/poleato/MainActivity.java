@@ -32,24 +32,6 @@ public class MainActivity extends AppCompatActivity implements DailyOfferFragmen
     private EditFoodFragment editFoodFragment;
 
 
-    /*private void addFragmentToAdapter() {
-        android.support.v4.app.FragmentManager fm = getSupportFragmentManager();
-        adapter = new PageAdapter(fm);
-        List<Fragment> fragmentList = fm.getFragments();
-        if(fragmentList != null && fragmentList.size() > 0){
-            adapter.addFragment(fragmentList.get(0), "Account");
-            adapter.addFragment(fragmentList.get(1), "Reservation");
-            adapter.addFragment(fragmentList.get(2), "DailyOffer");
-
-        }
-        else{
-            adapter.addFragment(new AccountFragment(), "Account");
-            adapter.addFragment(new ReservationFragment(), "Reservation");
-            adapter.addFragment(new DailyOfferFragment(), "DailyOffer");
-        }
-        onViewPager.setAdapter(adapter);
-    }*/
-
 
     private void addFragmentToAdapter(){
         //init
