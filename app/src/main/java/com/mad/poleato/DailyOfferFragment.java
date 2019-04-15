@@ -1,4 +1,4 @@
-package com.example.poleato;
+package com.mad.poleato;
 
 import android.app.Activity;
 import android.content.Context;
@@ -19,7 +19,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ExpandableListView;
 
-import com.example.poleato.ExpandableListManagement.*;
+import com.mad.poleato.ExpandableListManagement.*;
 
 import java.lang.reflect.Array;
 import java.util.ArrayList;

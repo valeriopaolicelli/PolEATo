@@ -1,4 +1,4 @@
-package com.example.poleato.ExpandableListManagement;
+package com.mad.poleato.ExpandableListManagement;
 
 import android.app.Activity;
 import android.content.res.Resources;
@@ -16,9 +16,9 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.example.poleato.DailyOfferFragment;
-import com.example.poleato.Food;
-import com.example.poleato.R;
+import com.mad.poleato.DailyOfferFragment;
+import com.mad.poleato.Food;
+import com.mad.poleato.R;
 
 import java.text.DecimalFormat;
 import java.util.HashMap;

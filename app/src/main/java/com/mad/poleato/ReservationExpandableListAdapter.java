@@ -1,4 +1,4 @@
-package com.example.poleato;
+package com.mad.poleato;
 
 import android.app.AlertDialog;
 import android.content.Context;

@@ -1,4 +1,4 @@
-package com.example.poleato;
+package com.mad.poleato;
 
 import android.graphics.Bitmap;
 import android.os.Parcelable;

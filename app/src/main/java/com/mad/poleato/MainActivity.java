@@ -1,4 +1,4 @@
-package com.example.poleato;
+package com.mad.poleato;
 
 import android.accounts.Account;
 import android.support.design.widget.TabLayout;

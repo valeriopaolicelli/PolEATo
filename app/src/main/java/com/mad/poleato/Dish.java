@@ -1,4 +1,4 @@
-package com.example.poleato;
+package com.mad.poleato;
 
 public class Dish {
 

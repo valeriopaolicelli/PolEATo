@@ -1,4 +1,4 @@
-package com.example.poleato;
+package com.mad.poleato;
 
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
