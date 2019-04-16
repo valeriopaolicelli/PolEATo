@@ -7,6 +7,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
@@ -18,6 +19,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.ScrollView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -80,93 +82,30 @@ public class AccountFragment extends Fragment {
     }
 
     public void fillFields(){
-        // Data persistency: setting initial values if empty file
-        /*SharedPreferences fields= getActivity().getSharedPreferences("ProfileDataRestaurant", Context.MODE_PRIVATE);
-        if(!fields.contains("Name")) {
-            SharedPreferences.Editor editor= getActivity().getSharedPreferences("ProfileDataRestaurant", Context.MODE_PRIVATE).edit();
-            editor.putString("Name", "Paninos");
-            editor.putString("Type", "Pizza, kebab, panini");
-            editor.putString("Info", "Locale casual, adatto a coppie e famiglie. Menù anche per vegani!");
-            editor.putString("Open", "Lun-Merc 12-24 \nGiovedì chiuso \nDom 12-15 19-24");
-            editor.putString("Address", "Via Barge 4");
-            editor.putString("Email", "peppe.panino@example.com");
-            editor.putString("Phone", "0123456789");
-            editor.putString("Background", encodeTobase64());
-            editor.apply();
-        }
-
-        String name= fields.getString("Name", "Nessun valore trovato");
-        String type= fields.getString("Type", "Nessun valore trovato");
-        String info= fields.getString("Info", "Nessun valore trovato");
-        String open= fields.getString("Open", "Nessun valore trovato");
-        String email= fields.getString("Email", "Nessun valore trovato");
-        String address= fields.getString("Address", "Nessun valore trovato");
-        String phone= fields.getString("Phone", "Nessun valore trovato");
-        String image= fields.getString("Background", encodeTobase64());
-
-        // Setting the textView contents with the values stored into SharedPreferences file
-        tvNameField.setText(name);
-        tvTypeField.setText(type);
-        tvInfoField.setText(info);
-        tvOpenField.setText(open);
-        tvAddressField.setText(address);
-        tvEmailField.setText(email);
-        tvPhoneField.setText(phone);
-        imageBackground.setImageBitmap(decodeBase64(image));*/
-
-
-        DatabaseReference reference = FirebaseDatabase.getInstance().getReference();
-        Query query = reference.child("user").orderByChild("ID");
-        reference.child("user").child("Matteo").setValue("[ID, Value]");
-        //reference.child("user").child("Matteo").child("ID").setValue("weee");
-        Log.d("matte", query.toString());
-        query.addListenerForSingleValueEvent(new ValueEventListener() {
+        DatabaseReference reference = FirebaseDatabase.getInstance().getReference("restaurants");
+        reference.addValueEventListener(new ValueEventListener() {
             @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 if (dataSnapshot.exists()) {
                     // dataSnapshot is the "issue" node with all children
                     for (DataSnapshot issue : dataSnapshot.getChildren()) {
                         // do something with the individual "issues"
+                        tvNameField.setText(issue.child("Name").getValue().toString());
+                        tvAddressField.setText(issue.child("Address").getValue().toString());
+                        tvEmailField.setText(issue.child("Email").getValue().toString());
+                        tvInfoField.setText(issue.child("Description").getValue().toString());
+                        tvOpenField.setText(issue.child("Open").getValue().toString());
+                        tvTypeField.setText(issue.child("Type").getValue().toString());
+                        tvPhoneField.setText(issue.child("Phone").getValue().toString());
                     }
                 }
             }
 
             @Override
-            public void onCancelled(DatabaseError databaseError) {
-
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+                Toast.makeText(getContext(), databaseError.getMessage().toString(), Toast.LENGTH_SHORT);
             }
         });
-
-
-
-        /*tvNameField.setText(name);
-        tvTypeField.setText(type);
-        tvInfoField.setText(info);
-        tvOpenField.setText(open);
-        tvAddressField.setText(address);
-        tvEmailField.setText(email);
-        tvPhoneField.setText(phone);
-        imageBackground.setImageBitmap(decodeBase64(image));*/
-
-
-
-
-    }
-
-    public String encodeTobase64() {
-        Bitmap image = ((BitmapDrawable)imageBackground.getDrawable()).getBitmap();
-        ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        image.compress(Bitmap.CompressFormat.PNG, 100, baos);
-        byte[] b = baos.toByteArray();
-        String imageEncoded = Base64.encodeToString(b, Base64.DEFAULT);
-        Log.d("Image Log:", imageEncoded);
-        return imageEncoded;
-    }
-
-    public Bitmap decodeBase64(String input) {
-        byte[] decodedByte = Base64.decode(input, 0);
-        return BitmapFactory
-                .decodeByteArray(decodedByte, 0, decodedByte.length);
     }
 
     @Override

@@ -4,6 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     package="com.mad.poleato">
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.INTERNET"/>
     <uses-feature android:name="android.hardware.camera"
         android:required="false" />
 
@@ -28,15 +29,6 @@
             android:name=".EditProfile"
             android:windowSoftInputMode="adjustPan|stateHidden">
         </activity>
-        <!--<provider-->
-            <!--android:name="android.support.v4.content.FileProvider"-->
-            <!--android:authorities="com.example.android.fileproviderRestaurant"-->
-            <!--android:exported="false"-->
-            <!--android:grantUriPermissions="true">-->
-            <!--<meta-data-->
-                <!--android:name="android.support.FILE_PROVIDER_PATHS"-->
-                <!--android:resource="@xml/file_photo_paths"/>-->
-        <!--</provider>-->
         <provider
             android:name="android.support.v4.content.FileProvider"
             android:authorities="com.example.android.fileproviderFood"
