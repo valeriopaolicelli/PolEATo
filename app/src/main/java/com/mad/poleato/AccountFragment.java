@@ -83,21 +83,23 @@ public class AccountFragment extends Fragment {
 
     public void fillFields(){
         DatabaseReference reference = FirebaseDatabase.getInstance().getReference("restaurants");
+
         reference.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                DataSnapshot issue= dataSnapshot.child("R00");
+                // it is setted to the first record (restaurant)
+                // when the sign in and log in procedures will be handled, it will be the proper one
+
                 if (dataSnapshot.exists()) {
                     // dataSnapshot is the "issue" node with all children
-                    for (DataSnapshot issue : dataSnapshot.getChildren()) {
-                        // do something with the individual "issues"
-                        tvNameField.setText(issue.child("Name").getValue().toString());
-                        tvAddressField.setText(issue.child("Address").getValue().toString());
-                        tvEmailField.setText(issue.child("Email").getValue().toString());
-                        tvInfoField.setText(issue.child("Description").getValue().toString());
-                        tvOpenField.setText(issue.child("Open").getValue().toString());
-                        tvTypeField.setText(issue.child("Type").getValue().toString());
-                        tvPhoneField.setText(issue.child("Phone").getValue().toString());
-                    }
+                    tvNameField.setText(issue.child("Name").getValue().toString());
+                    tvAddressField.setText(issue.child("Address").getValue().toString());
+                    tvEmailField.setText(issue.child("Email").getValue().toString());
+                    tvInfoField.setText(issue.child("Description").getValue().toString());
+                    tvOpenField.setText(issue.child("Open").getValue().toString());
+                    tvTypeField.setText(issue.child("Type").getValue().toString());
+                    tvPhoneField.setText(issue.child("Phone").getValue().toString());
                 }
             }
 
