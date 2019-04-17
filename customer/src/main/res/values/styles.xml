@@ -1,0 +1,23 @@
+<resources>
+
+    <!-- Base application theme. -->
+    <style name="AppTheme" parent="Theme.AppCompat.Light.DarkActionBar">
+        <!-- Customize your theme here. -->
+        <item name="colorPrimary">@color/colorPanelPrimary</item>
+        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
+        <item name="colorAccent">@color/colorAccent</item>
+    </style>
+    
+    <style name="FloatLabel" parent="Theme.AppCompat.Light.DarkActionBar">
+        <item name="colorPrimary">@color/colorTextField</item>
+        <item name="colorError">@color/colorPanelPrimary</item>
+    </style>
+
+
+    <style name="BackGroundImageView">
+        <item name="android:alpha">0.85</item>
+        <item name="android:scaleType">centerCrop</item>
+        <item name="android:src">@mipmap/food_wallpaper4</item>
+    </style>
+
+</resources>
