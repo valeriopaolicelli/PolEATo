@@ -55,7 +55,7 @@ public class AccountFragment extends Fragment {
         tvAddressField = view.findViewById(R.id.tvAddressField);
         tvEmailField = view.findViewById(R.id.tvEmailField);
         tvPhoneField = view.findViewById(R.id.tvPhoneField);
-        imageBackground = view.findViewById(R.id.ivBackground2);
+        imageBackground = view.findViewById(R.id.ivBackground);
 
         // Button to edit the restaurant details
         buttEdit= view.findViewById(R.id.buttEdit);
@@ -77,10 +77,6 @@ public class AccountFragment extends Fragment {
         fillFields();
     }
 
-    public void collectFields(){
-
-    }
-
     public void fillFields(){
         DatabaseReference reference = FirebaseDatabase.getInstance().getReference("restaurants");
 
@@ -96,7 +92,7 @@ public class AccountFragment extends Fragment {
                     tvNameField.setText(issue.child("Name").getValue().toString());
                     tvAddressField.setText(issue.child("Address").getValue().toString());
                     tvEmailField.setText(issue.child("Email").getValue().toString());
-                    tvInfoField.setText(issue.child("Description").getValue().toString());
+                    tvInfoField.setText(issue.child("Info").getValue().toString());
                     tvOpenField.setText(issue.child("Open").getValue().toString());
                     tvTypeField.setText(issue.child("Type").getValue().toString());
                     tvPhoneField.setText(issue.child("Phone").getValue().toString());

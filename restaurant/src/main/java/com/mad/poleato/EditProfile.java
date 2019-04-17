@@ -12,6 +12,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.content.ContextCompat;
@@ -32,6 +33,12 @@ import android.widget.ScrollView;
 import android.widget.Toast;
 import android.support.v7.widget.Toolbar;
 
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
+
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -47,6 +54,7 @@ public class EditProfile extends AppCompatActivity {
 
     private TreeMap<String,ImageButton> imageButtons= new TreeMap<>();
     private TreeMap<String,EditText> editTextFields= new TreeMap<>();
+    private DatabaseReference reference;
 
     private String image;
     private FloatingActionButton change_im;
@@ -354,27 +362,30 @@ public class EditProfile extends AppCompatActivity {
     }
 
     private void fillFields() {
-        SharedPreferences fields = this.getSharedPreferences("ProfileDataRestaurant", Context.MODE_PRIVATE);
-        String name = fields.getString("Name", "Nessun valore trovato");
-        String type = fields.getString("Type", "Nessun valore trovato");
-        String info = fields.getString("Info", "Nessun valore trovato");
-        String open = fields.getString("Open", "Nessun valore trovato");
-        String email = fields.getString("Email", "Nessun valore trovato");
-        String address = fields.getString("Address", "Nessun valore trovato");
-        String phone = fields.getString("Phone", "Nessun valore trovato");
-        image= fields.getString("Background", "Nessun valore trovato");
+        reference= FirebaseDatabase.getInstance().getReference("restaurants");
+        reference.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                DataSnapshot issue= dataSnapshot.child("R00");
+                // TODO when log in and sign in will be enabled
+                // it is setted to the first record (restaurant)
+                // when the sign in and log in procedures will be handled, it will be the proper one
+                // dataSnapshot is the "issue" node with all children
+                if (dataSnapshot.exists()) {
+                    String[] fieldName = {"Name", "Type", "Info", "Open", "Address", "Email", "Phone"};
+                    for (int i = 0; i < fieldName.length; i++) {
+                        EditText field = editTextFields.get(fieldName[i]);
+                        field.setText(issue.child(fieldName[i]).getValue().toString());
+                    }
+                    //TODO retrieve image from DB
+                }
+            }
 
-        editTextFields.get("Name").setText(name);
-        editTextFields.get("Type").setText(type);
-        editTextFields.get("Info").setText(info);
-        editTextFields.get("Open").setText(open);
-        editTextFields.get("Address").setText(address);
-        editTextFields.get("Email").setText(email);
-        editTextFields.get("Phone").setText(phone);
-        if(image.equals("Nessun valore trovato"))
-            profileImage.setImageResource(R.mipmap.new_york_restaurant);
-        else
-            profileImage.setImageBitmap(decodeBase64(image));
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+                Toast.makeText(getApplicationContext(), databaseError.getMessage().toString(), Toast.LENGTH_SHORT);
+            }
+        });
     }
 
     public void saveChanges(MenuItem item) {
@@ -435,17 +446,11 @@ public class EditProfile extends AppCompatActivity {
         }
 
         if(!wrongField){
-            SharedPreferences.Editor editor = this.getSharedPreferences("ProfileDataRestaurant", Context.MODE_PRIVATE).edit();
-
-            editor.putString("Name", editTextFields.get("Name").getText().toString());
-            editor.putString("Type", editTextFields.get("Type").getText().toString());
-            editor.putString("Info", editTextFields.get("Info").getText().toString());
-            editor.putString("Open", editTextFields.get("Open").getText().toString());
-            editor.putString("Address", editTextFields.get("Address").getText().toString());
-            editor.putString("Email", editTextFields.get("Email").getText().toString());
-            editor.putString("Phone", editTextFields.get("Phone").getText().toString());
-            editor.putString("Background", encodeTobase64());
-            editor.apply();
+            for (int i = 0; i < fieldName.length; i++) {
+                EditText field = editTextFields.get(fieldName[i]);
+                reference.child("R00").child(fieldName[i]).setValue(field.getText().toString()); //TODO when the log in will be enabled,
+            }
+            // TODO save image into DB
             Toast.makeText(this, "Saved", Toast.LENGTH_LONG).show();
 
             finish();
@@ -468,11 +473,11 @@ public class EditProfile extends AppCompatActivity {
         else if(view.getId() == R.id.cancel_phone)
             editTextFields.get("Phone").setText("");
     }
-/*
-    public void removeProfileImage(){
-        profileImage.setImageResource(R.drawable.empty_background);
-    }
-*/
+    /*
+        public void removeProfileImage(){
+            profileImage.setImageResource(R.drawable.empty_background);
+        }
+    */
     public void handleButton(){
         for(ImageButton b : imageButtons.values())
             b.setVisibility(View.INVISIBLE);
@@ -555,4 +560,3 @@ public class EditProfile extends AppCompatActivity {
     }
 
 }
-
