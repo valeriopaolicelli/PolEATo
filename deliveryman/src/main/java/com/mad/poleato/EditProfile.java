@@ -4,11 +4,12 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
-import android.graphics.drawable.BitmapDrawable;
 import android.graphics.BitmapFactory;
 import android.graphics.Matrix;
+import android.graphics.drawable.BitmapDrawable;
 import android.media.ExifInterface;
 import android.net.Uri;
+import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
@@ -17,7 +18,6 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.content.FileProvider;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Base64;
@@ -26,6 +26,7 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.ImageButton;
@@ -41,7 +42,6 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
 import java.io.ByteArrayOutputStream;
-
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -106,16 +106,39 @@ public class EditProfile extends AppCompatActivity {
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
 
+        /*TextView nameField = findViewById(R.id.editTextName),
+                surnameField = findViewById(R.id.editTextSurname),
+                addressField = findViewById(R.id.editTextAddress),
+                emailField = findViewById(R.id.editTextEmail),
+                phoneField = findViewById(R.id.editTextPhone);
+
+        outState.putString("name_field", nameField.getText().toString());
+        outState.putString("surname_field", surnameField.getText().toString());
+        outState.putString("address_field", addressField.getText().toString());
+        outState.putString("email_field", emailField.getText().toString());
+        outState.putString("phone_field", phoneField.getText().toString());*/
+
         final ScrollView mScrollView = findViewById(R.id.editScrollView);
         //saving scrollView position
         outState.putIntArray("ARTICLE_SCROLL_POSITION",
             new int[]{ mScrollView.getScrollX(), mScrollView.getScrollY()});
-
     }
 
     @Override
     protected void onRestoreInstanceState(Bundle savedInstanceState) {
         super.onRestoreInstanceState(savedInstanceState);
+
+        /*TextView nameField = findViewById(R.id.editTextName),
+                surnameField = findViewById(R.id.editTextSurname),
+                addressField = findViewById(R.id.editTextAddress),
+                emailField = findViewById(R.id.editTextEmail),
+                phoneField = findViewById(R.id.editTextPhone);
+
+        nameField.setText(savedInstanceState.getCharSequence("name_field"));
+        surnameField.setText(savedInstanceState.getCharSequence("surname_field"));
+        addressField.setText(savedInstanceState.getCharSequence("address_field"));
+        emailField.setText(savedInstanceState.getCharSequence("email_field"));
+        phoneField.setText(savedInstanceState.getCharSequence("phone_field"));*/
 
         final ScrollView mScrollView = findViewById(R.id.editScrollView);
         //restoring scrollview position
@@ -126,7 +149,6 @@ public class EditProfile extends AppCompatActivity {
                     mScrollView.scrollTo(position[0], position[1]);
                 }
             });
-
     }
 
 
@@ -138,7 +160,7 @@ public class EditProfile extends AppCompatActivity {
                 setPic(currentPhotoPath);
             }
             else {
-                SharedPreferences fields= this.getSharedPreferences("ProfileDataCustomer", Context.MODE_PRIVATE);
+                SharedPreferences fields= this.getSharedPreferences("ProfileDataDeliveryMan", Context.MODE_PRIVATE);
                 image= fields.getString("ProfileImage", encodeTobase64());
                 profileImage.setImageBitmap(decodeBase64(image));
             }
@@ -156,7 +178,7 @@ public class EditProfile extends AppCompatActivity {
                 }
 
             } else {
-                SharedPreferences fields= this.getSharedPreferences("ProfileDataCustomer", Context.MODE_PRIVATE);
+                SharedPreferences fields= this.getSharedPreferences("ProfileDataDeliveryMan", Context.MODE_PRIVATE);
                 image= fields.getString("ProfileImage", encodeTobase64());
                 profileImage.setImageBitmap(decodeBase64(image));
             }
@@ -260,12 +282,12 @@ public class EditProfile extends AppCompatActivity {
     }
 
     private void fillFields() {
-        reference= FirebaseDatabase.getInstance().getReference("customers");
+        reference= FirebaseDatabase.getInstance().getReference("deliveryman");
 
         reference.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                DataSnapshot issue= dataSnapshot.child("C00");
+                DataSnapshot issue= dataSnapshot.child("D00");
                 // TODO when log in and sign in will be enabled
                 // it is fixed to the first record (customer)
                 // when the sign in and log in procedures will be handled, it will be the proper one
@@ -293,6 +315,8 @@ public class EditProfile extends AppCompatActivity {
         });
 
         //TODO retrieve the profile image from DB
+        //image= fields.getString("ProfileImage", "Immagine non trovata");
+        //profileImage.setImageBitmap(decodeBase64(image));
 
         //TODO store password in the DB (how from security pov?!)
         switchPass.setChecked(false);
@@ -321,7 +345,6 @@ public class EditProfile extends AppCompatActivity {
                 return;
         }
 
-
         // REGEX FOR FIELDS VALIDATION BEFORE COMMIT
         String accentedCharacters = new String("àèìòùÀÈÌÒÙáéíóúýÁÉÍÓÚÝâêîôûÂÊÎÔÛãñõÃÑÕäëïöüÿÄËÏÖÜŸçÇßØøÅåÆæœ");
         String accentedString = new String("[a-zA-Z"+accentedCharacters+"]+");
@@ -333,18 +356,6 @@ public class EditProfile extends AppCompatActivity {
         String emailRegex = new String("^.+@[^\\.].*\\.[a-z]{2,}$");
 
         String passRegex = new String("^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9]).{8,}$");
-
-        //TODO check old password on DB
-/*
-        MessageDigest digest = null;
-        try {
-            digest = MessageDigest.getInstance("SHA-256");
-        } catch (NoSuchAlgorithmException e) {
-            e.printStackTrace();
-        }
-        byte[] hash = digest.digest(editTextFields.get("OldPassword").getText().toString().getBytes(StandardCharsets.UTF_8));
-
-*/
 
         if (!editTextFields.get("Name").getText().toString().matches(nameRegex)) {
             wrongField = true;
@@ -380,6 +391,17 @@ public class EditProfile extends AppCompatActivity {
                 editTextFields.get("ReNewPassword").setBackground(ContextCompat.getDrawable(this, R.drawable.border_wrong_field));
             }
 
+            //TODO check old password on DB
+            /*
+                MessageDigest digest = null;
+                try {
+                    digest = MessageDigest.getInstance("SHA-256");
+                } catch (NoSuchAlgorithmException e) {
+                    e.printStackTrace();
+                }
+                byte[] hash = digest.digest(editTextFields.get("OldPassword").getText().toString().getBytes(StandardCharsets.UTF_8));
+            */
+
             if (oldPass.equals("")) {
                 wrongField = true;
                 Toast.makeText(this, "Old password must be filled", Toast.LENGTH_LONG).show();
@@ -400,12 +422,12 @@ public class EditProfile extends AppCompatActivity {
         }
 
         if(!wrongField){
-
             for (int i = 0; i < fieldName.length; i++) {
                 EditText field = editTextFields.get(fieldName[i]);
-                reference.child("C00").child(fieldName[i]).setValue(field.getText().toString()); //TODO when the log in will be enabled,
+                reference.child("D00").child(fieldName[i]).setValue(field.getText().toString()); //TODO when the log in will be enabled,
             }
             // TODO save image into DB
+
             Toast.makeText(this, "Saved", Toast.LENGTH_LONG).show();
             finish();
         }
@@ -459,7 +481,7 @@ public class EditProfile extends AppCompatActivity {
             // Continue only if the File was successfully created
             if (photoFile != null) {
                 photoURI = FileProvider.getUriForFile(this,
-                        "com.example.android.fileprovider",
+                        "com.example.android.fileproviderD",
                         photoFile);
                 takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI);
                 startActivityForResult(takePictureIntent, REQUEST_TAKE_PHOTO);
@@ -591,7 +613,6 @@ public class EditProfile extends AppCompatActivity {
     }
 
     public void handleSwitch(){
-
         if(switchPass.isChecked()){
             editTextFields.get("OldPassword").setEnabled(true);
             editTextFields.get("NewPassword").setEnabled(true);
