@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.design.widget.CoordinatorLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
@@ -9,15 +10,11 @@
         android:id="@+id/mainScrollView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@color/colorBodyPrimary"
-        tools:layout_editor_absoluteX="144dp"
-        tools:layout_editor_absoluteY="112dp">
+        android:background="@color/colorBodyPrimary">
 
         <android.support.constraint.ConstraintLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            tools:context=".MainActivity">
+            android:layout_height="wrap_content">
 
             <ImageView
                 android:id="@+id/ivBackground"
