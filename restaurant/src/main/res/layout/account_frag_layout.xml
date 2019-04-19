@@ -333,8 +333,6 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="@id/phoneLabel"
                 app:layout_constraintTop_toBottomOf="@id/phoneLabel" />
-
-            <!-- Blank view to avoid that scroll view cuts off the last field -->
         </android.support.constraint.ConstraintLayout>
     </ScrollView>
 </android.support.design.widget.CoordinatorLayout>

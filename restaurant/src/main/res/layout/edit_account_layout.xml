@@ -4,7 +4,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
+    android:layout_height="match_parent"
     android:background="@color/colorPanelPrimary"
     android:orientation="vertical"
     tools:context=".EditProfile">
@@ -23,11 +23,10 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_scrollFlags="scroll|enterAlways"/>
 
-
     <ScrollView
         android:id="@+id/editScrollView"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="match_parent"
         android:background="@color/colorBodyPrimary"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
@@ -37,7 +36,7 @@
         <android.support.constraint.ConstraintLayout
             android:id="@+id/ConstraintLayout"
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            android:layout_height="wrap_content">
 
             <ImageView
                 android:id="@+id/ivBackground"
@@ -424,7 +423,7 @@
                 android:contentDescription="@string/phone"
                 android:layout_marginStart="16dp"
                 android:layout_marginTop="8dp"
-                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintBottom_toTopOf="@id/empty_view"
                 app:layout_constraintEnd_toStartOf="@id/input_layout_phone"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/input_layout_email"
@@ -439,7 +438,7 @@
                 app:layout_constraintEnd_toStartOf="@id/cancel_phone"
                 app:layout_constraintStart_toEndOf="@id/phone_icon"
                 app:layout_constraintTop_toBottomOf="@id/input_layout_email"
-                app:layout_constraintBottom_toBottomOf="parent">
+                app:layout_constraintBottom_toTopOf="@id/empty_view">
 
                 <EditText
                     android:id="@+id/editTextPhone"
@@ -468,7 +467,16 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toEndOf="@+id/input_layout_phone"
                 app:layout_constraintTop_toBottomOf="@id/input_layout_email"
-                app:layout_constraintBottom_toBottomOf="parent"/>
+                app:layout_constraintBottom_toTopOf="@id/empty_view"/>
+            <!-- empty view to recover the space used by toolbar (which has a marginTop of 50dp) -->
+            <View
+                android:id="@+id/empty_view"
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                app:layout_constraintTop_toBottomOf="@id/input_layout_phone"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"/>
         </android.support.constraint.ConstraintLayout>
     </ScrollView>
 </android.support.constraint.ConstraintLayout>

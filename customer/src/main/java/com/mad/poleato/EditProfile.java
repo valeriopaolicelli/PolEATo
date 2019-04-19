@@ -539,38 +539,28 @@ public class EditProfile extends AppCompatActivity {
     }
 
     public void buttonListener(){
-        EditText field;
         String[] fieldName= {"Name", "Surname", "Address", "Email", "Phone", "OldPassword", "NewPassword", "ReNewPassword"};
         for (int i=0; i<fieldName.length; i++){
-            field= editTextFields.get(fieldName[i]);
+            final EditText field= editTextFields.get(fieldName[i]);
             final ImageButton button= imageButtons.get(fieldName[i]);
             if(button!=null && field != null) {
                 field.addTextChangedListener(new TextWatcher() {
                     @Override
                     public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-                        if (s.toString().trim().length() == 0) {
-                            button.setVisibility(View.INVISIBLE);
-                        } else {
-                            button.setVisibility(View.VISIBLE);
-                        }
+                        if(field.isFocused())
+                            showButton(field, button);
                     }
 
                     @Override
                     public void onTextChanged(CharSequence s, int start, int before, int count) {
-                        if (s.toString().trim().length() == 0) {
-                            button.setVisibility(View.INVISIBLE);
-                        } else {
-                            button.setVisibility(View.VISIBLE);
-                        }
+                        if(field.isFocused())
+                            showButton(field, button);
                     }
 
                     @Override
                     public void afterTextChanged(Editable s) {
-                        if (s.toString().trim().length() == 0) {
-                            button.setVisibility(View.INVISIBLE);
-                        } else {
-                            button.setVisibility(View.VISIBLE);
-                        }
+                        if(field.isFocused())
+                            showButton(field, button);
                     }
                 });
             }
