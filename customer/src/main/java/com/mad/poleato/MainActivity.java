@@ -5,6 +5,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.drawable.BitmapDrawable;
 import android.support.annotation.NonNull;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Base64;
@@ -42,6 +43,7 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
         tvNameField = findViewById(R.id.tvNameField);
         tvSurnameField= findViewById(R.id.tvSurnameField);
         tvAddressField= findViewById(R.id.tvAddressField);
@@ -55,6 +57,7 @@ public class MainActivity extends AppCompatActivity {
             getSupportActionBar().setTitle(R.string.title_bar);
         }
     }
+
 
     @Override
     protected void onResume() {

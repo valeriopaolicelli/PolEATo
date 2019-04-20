@@ -18,4 +18,6 @@
     <string name="camera">Camera</string>
     <string name="gallery">Gallery</string>
     <string name="edit">Edit Profile</string>
+    <string name="open">Open</string>
+    <string name="close">Closed</string>
 </resources>

@@ -19,4 +19,6 @@
     <string name="camera">Fotocamera</string>
     <string name="gallery">Galleria</string>
     <string name="edit">Modifica profilo</string>
+    <string name="open">Aperto</string>
+    <string name="close">Chiuso</string>
 </resources>
