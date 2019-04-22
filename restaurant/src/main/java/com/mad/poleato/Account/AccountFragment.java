@@ -1,18 +1,11 @@
-package com.mad.poleato;
+package com.mad.poleato.Account;
 
-import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
-import android.util.Base64;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -21,14 +14,16 @@ import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.navigation.Navigation;
+
+import com.google.firebase.FirebaseApp;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
+import com.mad.poleato.R;
 
-import java.io.ByteArrayOutputStream;
 
 public class AccountFragment extends Fragment {
 
@@ -43,8 +38,13 @@ public class AccountFragment extends Fragment {
     private ImageView imageBackground;
 
     @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+    }
+
+    @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.account_frag_layout, container,false);
+        View view = inflater.inflate(R.layout.account_frag_layout, container, false);
 
         // Retrieve all fields (restaurant details) in the xml file
 
@@ -58,13 +58,14 @@ public class AccountFragment extends Fragment {
         imageBackground = view.findViewById(R.id.ivBackground);
 
         // Button to edit the restaurant details
-        buttEdit= view.findViewById(R.id.buttEdit);
+        buttEdit = view.findViewById(R.id.buttEdit);
         buttEdit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                // new activity -> EditProfile
-                Intent i = new Intent(v.getContext(),EditProfile.class);
-                startActivity(i);
+                /**
+                 * GO TO EDIT_PROFILE_FRAGMENT
+                 */
+                Navigation.findNavController(v).navigate(R.id.action_account_id_to_editProfile_id);
             }
         });
         return view;
@@ -77,13 +78,13 @@ public class AccountFragment extends Fragment {
         fillFields();
     }
 
-    public void fillFields(){
+    public void fillFields() {
         DatabaseReference reference = FirebaseDatabase.getInstance().getReference("restaurants");
 
         reference.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                DataSnapshot issue= dataSnapshot.child("R00");
+                DataSnapshot issue = dataSnapshot.child("R00");
                 // it is setted to the first record (restaurant)
                 // when the sign in and log in procedures will be handled, it will be the proper one
 
@@ -133,5 +134,5 @@ public class AccountFragment extends Fragment {
 //        }
 
     }
-
 }
+

@@ -1,12 +1,13 @@
-package com.mad.poleato;
+package com.mad.poleato.Reservation;
 
 import android.content.Context;
 
+import com.mad.poleato.R;
+
 import java.util.ArrayList;
 
-enum Status{
-    REJECTED, ACCEPATANCE, COOKING, DELIVERY
-}
+
+
 public class Reservation {
     private String order_id;
     private String name;

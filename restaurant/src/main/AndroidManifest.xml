@@ -15,22 +15,21 @@
         android:label="@string/app_name"
         android:icon="@mipmap/delivery_icon"
         android:supportsRtl="true"
-        android:theme="@style/MyMaterialTheme"
+        android:theme="@style/AppTheme"
         tools:ignore="GoogleAppIndexingWarning">
-        <activity android:name=".MainActivity">
+        <activity
+            android:name=".MainActivity"
+            android:label="@string/title_activity_main">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
+                <action android:name="android.intent.action.VIEW" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity
-            android:name=".EditProfile"
-            android:windowSoftInputMode="adjustPan|stateHidden">
-        </activity>
         <provider
             android:name="android.support.v4.content.FileProvider"
-            android:authorities="com.example.android.fileproviderFood"
+            android:authorities="com.example.android.fileproviderR"
             android:exported="false"
             android:grantUriPermissions="true">
             <meta-data

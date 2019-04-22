@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <group android:checkableBehavior="single">
+        <item
+            android:id="@+id/reservation_id"
+            android:icon="@drawable/ic_baseline_event_24px"
+            android:title="@string/title_bottombar_reservation" />
+
+        <item
+            android:id="@+id/daily_offer_id"
+            android:icon="@drawable/ic_dashboard_black_24dp"
+            android:title="@string/title_bottombar_dailyoffer" />
+
+        <item
+            android:id="@+id/account_id"
+            android:icon="@drawable/ic_baseline_person_24px"
+            android:title="@string/title_bottombar_account" />
+    </group>
+
+</menu>

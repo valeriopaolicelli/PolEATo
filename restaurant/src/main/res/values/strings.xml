@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">My Restaurant</string>
+    <string name="app_name">Restaurant</string>
     <string name="title_bar"><font size="18">Your account</font></string>
     <string name="restaurant_name"><font size="18">Restaurant name</font></string>
     <string name="type"><font size="18">Restaurant type</font></string>
@@ -27,6 +27,7 @@
     <string name="camera">Camera</string>
     <string name="gallery">Gallery</string>
     <string name="edit">Edit Profile</string>
+
     <string name="starters">Starters</string>
     <string name="firsts">Firsts</string>
     <string name="seconds">Seconds</string>
@@ -39,6 +40,7 @@
     <string name="empty_field">All fields must be filled</string>
     <string name="error_format_price">Price must be a number</string>
     <string name="error_format_quantity">Quantity must be a integer number</string>
+
     <string-array name="plates_array">
         <item>Starters</item>
         <item>Firsts</item>
@@ -46,6 +48,7 @@
         <item>Desserts</item>
         <item>Drinks</item>
     </string-array>
+
     <string name="dishes">Dish</string>
     <string name="quantity">Quantity</string>
     <string name="note">Notes</string>
@@ -59,9 +62,7 @@
     <string name="order">ID</string>
     <string name="order_info">Info deliver</string>
     <string name="order_deliver">Deliver order</string>
-    <string name="tab1">Account</string>
-    <string name="tab2">Reservations</string>
-    <string name="tab3">Menu</string>
+
     <string name="title_deliver">Deliver order</string>
     <string name="msg_deliver">Is everything ready? Status will pass to \'on delivery\'</string>
     <string name="choice_confirm">Confirm</string>
@@ -69,4 +70,21 @@
     <string name="choice_cancel">Cancel</string>
     <string name="title_confirm">Confirm order</string>
     <string name="msg_confirm">Do you want to confirm or reject this order? Status will pass to \'on cooking\'</string>
+
+
+    <string name="title_activity_main">Restaurant</string>
+
+    <string name="title_bottombar_reservation">Reservation</string>
+    <string name="title_actionbar_reservation">Reservation</string>
+
+    <string name="title_bottombar_dailyoffer">Menù</string>
+    <string name="title_actionbar_dailyoffer">Daily Offer</string>
+    <string name="title_actionbar_add_food">Add food</string>
+    <string name="title_actionbar_edit_food">Edit food</string>
+
+    <string name="title_bottombar_account">Account</string>
+    <string name="title_actionbar_account">Account</string>
+    <string name="title_actionbar_edit_account">Edit Account</string>
+
+    <string name="title_notifications">Notifications</string>
 </resources>

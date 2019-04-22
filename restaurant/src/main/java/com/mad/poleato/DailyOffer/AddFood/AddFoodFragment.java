@@ -1,4 +1,4 @@
-package com.mad.poleato;
+package com.mad.poleato.DailyOffer.AddFood;
 
 import android.app.Dialog;
 import android.content.Context;
@@ -37,13 +37,18 @@ import android.widget.ImageView;
 import android.widget.Spinner;
 import android.widget.Toast;
 
+import androidx.navigation.Navigation;
+
+import com.mad.poleato.DailyOffer.Food;
+import com.mad.poleato.R;
+
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
-import java.text.DecimalFormat;
 import java.util.TreeMap;
+
 
 import static android.app.Activity.RESULT_OK;
 
@@ -64,24 +69,6 @@ public class AddFoodFragment extends DialogFragment {
     private TreeMap<String,EditText> editTextFields= new TreeMap<>();
 
     private Button buttonSave;
-
-
-
-
-
-    /* ********************************
-     ********** INTERFACES **********
-     ******************************** */
-
-    /**
-     *  Interface to communicate the food adding to the host activity
-     */
-    private FragmentAddListener fragmentAddListener;
-    public interface  FragmentAddListener {
-        void onInputAddSent(String plateType, Food food);
-    }
-
-
 
 
 
@@ -204,7 +191,7 @@ public class AddFoodFragment extends DialogFragment {
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setStyle(DialogFragment.STYLE_NORMAL, R.style.FullScreenDialog);
+//        setStyle(DialogFragment.STYLE_NORMAL, R.style.FullScreenDialog);
     }
 
     @Override
@@ -281,8 +268,10 @@ public class AddFoodFragment extends DialogFragment {
 
                     // I send even plateType to now where insert new food
 
-                    fragmentAddListener.onInputAddSent(plateType, food);
-                    dismiss();
+                   /**
+                     * GO TO DAILY_OFFER_FRAGMENT
+                     */
+                    Navigation.findNavController(v).navigate(R.id.action_addFoodFragment_to_daily_offer);
                 }
             }
         });
@@ -322,23 +311,23 @@ public class AddFoodFragment extends DialogFragment {
     public void updateEditText (CharSequence charSequence) {
 //        editText.setText(charSequence);
     }
-
-    @Override
-    public void onAttach(Context context) {
-        super.onAttach(context);
-
-        if(context instanceof FragmentAddListener){
-            fragmentAddListener = (FragmentAddListener) context;
-        }else {
-            throw new RuntimeException(context.toString() + " must implement FragmentListener");
-        }
-    }
-
-    @Override
-    public void onDetach() {
-        super.onDetach();
-        fragmentAddListener = null;
-    }
+//
+//    @Override
+//    public void onAttach(Context context) {
+//        super.onAttach(context);
+//
+//        if(context instanceof FragmentAddListener){
+//            fragmentAddListener = (FragmentAddListener) context;
+//        }else {
+//            throw new RuntimeException(context.toString() + " must implement FragmentListener");
+//        }
+//    }
+//
+//    @Override
+//    public void onDetach() {
+//        super.onDetach();
+//        fragmentAddListener = null;
+//    }
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
@@ -425,7 +414,7 @@ public class AddFoodFragment extends DialogFragment {
             // Continue only if the File was successfully created
             if (photoFile != null) {
                 photoURI = FileProvider.getUriForFile(getContext(),
-                        "com.example.android.fileproviderFood",
+                        "com.example.android.fileproviderR",
                         photoFile);
                 takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI);
                 startActivityForResult(takePictureIntent, REQUEST_TAKE_PHOTO);

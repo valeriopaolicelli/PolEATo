@@ -1,10 +1,6 @@
-package com.mad.poleato;
+package com.mad.poleato.DailyOffer;
 
 import android.graphics.Bitmap;
-import android.os.Parcelable;
-import android.widget.ImageView;
-
-import org.w3c.dom.Text;
 
 import java.io.Serializable;
 

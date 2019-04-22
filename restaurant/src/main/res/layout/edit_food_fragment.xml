@@ -9,7 +9,7 @@
     android:descendantFocusability="beforeDescendants"
     android:focusableInTouchMode="true"
     android:orientation="vertical"
-    tools:context=".EditFoodFragment">
+    tools:context=".DailyOffer.EditFood.EditFoodFragment">
 
     <!--android:layout_below="@id/toolbar2"-->
     <!--<android.support.design.widget.AppBarLayout-->
@@ -44,6 +44,7 @@
             android:layout_marginTop="8dp"
             android:layout_marginBottom="8dp"
             android:clickable="true"
+            android:backgroundTint="@color/colorPrimaryDark"
             android:src="@mipmap/baseline_photo_camera_white_24dp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"

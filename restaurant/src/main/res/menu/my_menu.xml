@@ -1,8 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
+
     <item
-        android:id="@+id/applyMod"
-        android:title="@string/save"
+        android:id="@+id/profileEditor"
+        android:icon="@drawable/ic_baseline_edit_24px"
+        android:onClick="editProfile"
+        android:title=""
         app:showAsAction="ifRoom" />
+
 </menu>

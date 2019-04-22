@@ -1,4 +1,4 @@
-package com.mad.poleato;
+package com.mad.poleato.DailyOffer.EditFood;
 
 import android.app.Dialog;
 import android.content.Context;
@@ -37,6 +37,11 @@ import android.widget.ImageView;
 import android.widget.Spinner;
 import android.widget.Toast;
 
+import androidx.navigation.Navigation;
+
+import com.mad.poleato.DailyOffer.Food;
+import com.mad.poleato.R;
+
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -44,6 +49,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.text.DecimalFormat;
 import java.util.TreeMap;
+
+
 
 import static android.app.Activity.RESULT_OK;
 
@@ -65,21 +72,6 @@ public class EditFoodFragment extends DialogFragment {
 
     private Food toModify;
     private Bundle bundle;
-
-
-
-
-    /* ********************************
-     ********   INTERFACES   ********
-     ******************************** */
-
-    /**
-     *  Interface to communicate the food edit to the ExpandableListView
-     */
-    private FragmentEditListener fragmentEditListener;
-    public interface  FragmentEditListener {
-        void onInputEditSent();
-    }
 
 
 
@@ -209,13 +201,12 @@ public class EditFoodFragment extends DialogFragment {
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setStyle(DialogFragment.STYLE_NORMAL, R.style.FullScreenDialog);
 
         Log.d("matte", "Inside EditFoodFragment");
 
-        bundle = getArguments();
-
-        toModify = (Food) bundle.getSerializable("foodToModify");
+//        bundle = getArguments();
+//
+//        toModify = (Food) bundle.getSerializable("foodToModify");
 
 
     }
@@ -239,16 +230,16 @@ public class EditFoodFragment extends DialogFragment {
 
 //        imageFood.setImageBitmap(toModify.getImg());
 
-        editTextFields.get("Name").setText(toModify.getName());
-        editTextFields.get("Description").setText(toModify.getDescription());
+//        editTextFields.get("Name").setText(toModify.getName());
+//        editTextFields.get("Description").setText(toModify.getDescription());
 
 
-        DecimalFormat decimalFormat = new DecimalFormat("#.00"); //two decimal
-        final String priceStr = decimalFormat.format(toModify.getPrice());
-        editTextFields.get("Price").setText(priceStr);
-
-
-        editTextFields.get("Quantity").setText(String.valueOf(toModify.getQuantity()));
+//        DecimalFormat decimalFormat = new DecimalFormat("#.00"); //two decimal
+//        final String priceStr = decimalFormat.format(toModify.getPrice());
+//        editTextFields.get("Price").setText(priceStr);
+//
+//
+//        editTextFields.get("Quantity").setText(String.valueOf(toModify.getQuantity()));
 
 
 
@@ -297,9 +288,10 @@ public class EditFoodFragment extends DialogFragment {
                     toModify.setPrice(Double.valueOf(priceString));
                     toModify.setQuantity(Integer.valueOf(editTextFields.get("Quantity").getText().toString()));
 
-                    //Notify to expandableListView that data have been changed
-                    fragmentEditListener.onInputEditSent();
-                    dismiss();
+                    /**
+                     * GO TO DAILY_OFFER_FRAGMENT
+                     */
+                    Navigation.findNavController(v).navigate(R.id.action_editFoodFragment_id_to_daily_offer_id);
                 }
             }
         });
@@ -335,26 +327,6 @@ public class EditFoodFragment extends DialogFragment {
             dialog.getWindow().setLayout(width, height);
         }
     }
-
-
-    @Override
-    public void onAttach(Context context) {
-        super.onAttach(context);
-
-        if(context instanceof FragmentEditListener){
-            fragmentEditListener = (FragmentEditListener) context;
-        }else {
-            throw new RuntimeException(context.toString() + " must implement FragmentListener");
-        }
-    }
-
-    @Override
-    public void onDetach() {
-        super.onDetach();
-        fragmentEditListener = null;
-        bundle.clear();
-    }
-
 
 
     @Override
@@ -442,7 +414,7 @@ public class EditFoodFragment extends DialogFragment {
             // Continue only if the File was successfully created
             if (photoFile != null) {
                 photoURI = FileProvider.getUriForFile(getContext(),
-                        "com.example.android.fileproviderFood",
+                        "com.example.android.fileproviderR",
                         photoFile);
                 takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI);
                 startActivityForResult(takePictureIntent, REQUEST_TAKE_PHOTO);

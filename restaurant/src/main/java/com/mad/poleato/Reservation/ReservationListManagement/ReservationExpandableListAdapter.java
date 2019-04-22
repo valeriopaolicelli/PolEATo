@@ -1,4 +1,4 @@
-package com.mad.poleato;
+package com.mad.poleato.Reservation.ReservationListManagement;
 
 import android.app.AlertDialog;
 import android.content.Context;
@@ -11,10 +11,18 @@ import android.widget.Button;
 import android.widget.ExpandableListView;
 import android.widget.TextView;
 
+import com.mad.poleato.R;
+import com.mad.poleato.Reservation.Dish;
+import com.mad.poleato.Reservation.Reservation;
+import com.mad.poleato.Reservation.Status;
+
 import java.util.HashMap;
 import java.util.List;
 
+
+
 import static android.view.View.GONE;
+
 
 public class ReservationExpandableListAdapter extends BaseExpandableListAdapter {
     //TODO change text button when status changes
@@ -239,4 +247,6 @@ public class ReservationExpandableListAdapter extends BaseExpandableListAdapter 
         TextView tv_dish_quantity;
         TextView tv_dish_notes;
     }
+
+
 }

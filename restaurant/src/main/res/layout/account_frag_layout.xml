@@ -38,7 +38,7 @@
                 android:layout_height="wrap_content"
                 android:clickable="true"
                 android:focusable="true"
-                android:src="@drawable/edit_icon"
+                android:src="@drawable/ic_baseline_edit_24px"
                 app:backgroundTint="@color/colorPanelPrimary"
                 app:layout_constraintBottom_toBottomOf="@id/ivBackground"
                 app:layout_constraintEnd_toEndOf="@id/ivBackground"

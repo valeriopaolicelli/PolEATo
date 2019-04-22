@@ -1,5 +1,4 @@
-package com.mad.poleato;
-
+package com.mad.poleato.Account;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -38,6 +37,8 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.mad.poleato.LineLimiter;
+import com.mad.poleato.R;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -45,6 +46,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.TreeMap;
+
 
 public class EditProfile extends AppCompatActivity {
 
@@ -65,16 +67,6 @@ public class EditProfile extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.edit_account_layout);
 
-        Toolbar toolbar= findViewById(R.id.toolbar_edit);
-        setSupportActionBar(toolbar);
-        if (getSupportActionBar() != null) {
-            getSupportActionBar().setTitle(R.string.edit);
-            getSupportActionBar().setDisplayShowHomeEnabled(true);
-            getSupportActionBar().setIcon(R.drawable.edit_icon);
-        } else {
-            Log.d("Exit", "getSupportActionBar() is null");
-            finish();
-        }
 
         //  change_im = findViewById(R.id.change_im);
         //fill the maps
@@ -237,7 +229,7 @@ public class EditProfile extends AppCompatActivity {
             // Continue only if the File was successfully created
             if (photoFile != null) {
                 photoURI = FileProvider.getUriForFile(this,
-                        "com.example.android.fileproviderFood",
+                        "com.example.android.fileproviderR",
                         photoFile);
                 takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI);
                 startActivityForResult(takePictureIntent, REQUEST_TAKE_PHOTO);
@@ -560,3 +552,4 @@ public class EditProfile extends AppCompatActivity {
     }
 
 }
+

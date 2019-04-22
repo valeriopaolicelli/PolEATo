@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">Il mio ristorante</string>
+    <string name="app_name">Restaurant</string>
     <string name="title_bar"><font size="18">Il tuo account</font></string>
     <string name="restaurant_name"><font size="18">Nome locale</font></string>
     <string name="type"><font size="18">Tipo di cucina</font></string>
@@ -27,6 +27,7 @@
     <string name="camera">Fotocamera</string>
     <string name="gallery">Galleria</string>
     <string name="edit">Modifica profilo</string>
+
     <string name="starters">Antipasti</string>
     <string name="firsts">Primi</string>
     <string name="seconds">Secondi</string>
@@ -39,6 +40,7 @@
     <string name="empty_field">Tutti i campi devono essere compilati</string>
     <string name="error_format_price">Il prezzo deve essere un numero</string>
     <string name="error_format_quantity">La quantità deve essere un numero intero</string>
+
     <string-array name="plates_array">
         <item>Antipasti</item>
         <item>Primi</item>
@@ -60,9 +62,6 @@
     <string name="order">ID</string>
     <string name="order_info">Info consegna</string>
     <string name="order_deliver">Consegna</string>
-    <string name="tab1">Account</string>
-    <string name="tab2">Prenotazioni</string>
-    <string name="tab3">Menu</string>
     <string name="title_deliver">Consegna ordine</string>
     <string name="msg_deliver">E\' tutto pronto? Lo stato della prenotazione passerà su \'In consegna\'</string>
     <string name="choice_confirm">Conferma</string>
@@ -70,4 +69,20 @@
     <string name="choice_cancel">Cancella</string>
     <string name="title_confirm">Conferma ordine</string>
     <string name="msg_confirm">Vuoi confermare o rifiutare l\'ordine? Se confermi, lo stato della prenotazione passerà su \'Preparazione\'</string>
+
+    <string name="title_activity_main">MainActivity</string>
+
+    <string name="title_bottombar_reservation">Prenotazioni</string>
+    <string name="title_actionbar_reservation">Prenotazioni</string>
+
+    <string name="title_bottombar_dailyoffer">Menù</string>
+    <string name="title_actionbar_dailyoffer">Daily Offer</string>
+    <string name="title_actionbar_add_food">Aggiungi pietanza</string>
+    <string name="title_actionbar_edit_food">Modifica pietanza</string>
+
+    <string name="title_bottombar_account">Account</string>
+    <string name="title_actionbar_account">Account</string>
+    <string name="title_actionbar_edit_account">Modifica Account</string>
+
+    <string name="title_notifications">Notifications</string>
 </resources>

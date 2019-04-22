@@ -1,7 +1,5 @@
-package com.mad.poleato;
+package com.mad.poleato.DailyOffer;
 
-import android.app.Activity;
-import android.content.Context;
 import android.graphics.BitmapFactory;
 import android.graphics.Point;
 import android.os.Bundle;
@@ -9,27 +7,33 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
-import android.support.v7.widget.CardView;
-import android.support.v7.widget.PopupMenu;
-import android.util.Log;
 import android.view.Display;
 import android.view.LayoutInflater;
-import android.view.MenuInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ExpandableListView;
 
-import com.mad.poleato.ExpandableListManagement.*;
+import androidx.navigation.Navigation;
 
-import java.lang.reflect.Array;
+import com.mad.poleato.DailyOffer.ExpandableListManagement.ExpandableListAdapter;
+import com.mad.poleato.R;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
 
+/*
+ * A simple {@link Fragment} subclass.
+ * Use the {@link DailyOfferFragment#newInstance} factory method to
+ * create an instance of this fragment.
+ */
 public class DailyOfferFragment extends Fragment {
+    // TODO: Rename parameter arguments, choose names that match
+    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
+    private static final String ARG_PARAM1 = "param1";
+    private static final String ARG_PARAM2 = "param2";
 
-    private Activity hostActivity;
     private View fragView;
     private ExpandableListAdapter listAdapter;
     private ExpandableListView expListView;
@@ -41,51 +45,43 @@ public class DailyOfferFragment extends Fragment {
     int width;
     private int lastExpandedPosition = -1;
 
+    // TODO: Rename and change types of parameters
+    private String mParam1;
+    private String mParam2;
 
 
-            /* ********************************
-               ********   INTERFACES   ********
-               ******************************** */
-
-    /**
-     * Interface to communicate to run the AddFoodFragment to the host activity
-     */
-    private FragmentShowAddListener fragmentShowAddListener;
-    public interface  FragmentShowAddListener {
-        void onInputShowAddSent(Object o);
+    public DailyOfferFragment() {
+        // Required empty public constructor
     }
 
     /**
-     * Interface to communicate to run the EditFoodFragment to the host activity
+     * Use this factory method to create a new instance of
+     * this fragment using the provided parameters.
+     *
+     * @param param1 Parameter 1.
+     * @param param2 Parameter 2.
+     * @return A new instance of fragment DailyOfferFragment.
      */
-    private FragmentShowEditListener fragmentShowEditListener;
-    public interface  FragmentShowEditListener {
-        void onInputShowEditSent(Food foodToModify);
+    // TODO: Rename and change types and number of parameters
+    public static DailyOfferFragment newInstance(String param1, String param2) {
+        DailyOfferFragment fragment = new DailyOfferFragment();
+        Bundle args = new Bundle();
+        args.putString(ARG_PARAM1, param1);
+        args.putString(ARG_PARAM2, param2);
+        fragment.setArguments(args);
+        return fragment;
     }
 
-    @Override
-    public void onAttach(Context context) {
-        super.onAttach(context);
-        this.hostActivity = this.getActivity();
 
-        if(context instanceof FragmentShowAddListener){
-            fragmentShowAddListener = (FragmentShowAddListener) context;
-        }else {
-            throw new RuntimeException(context.toString() + " must implement FragmentShowAddListener");
-        }
-
-
-        if(context instanceof FragmentShowEditListener){
-            fragmentShowEditListener = (FragmentShowEditListener) context;
-        }else {
-            throw new RuntimeException(context.toString() + " must implement FragmentShowEditListener");
-        }
-    }
 
     @Override
-    public void onCreate(@Nullable Bundle savedInstanceState) {
+    public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        // Calculate position of ExpandableListView indicator.
+        if (getArguments() != null) {
+            mParam1 = getArguments().getString(ARG_PARAM1);
+            mParam2 = getArguments().getString(ARG_PARAM2);
+        }
+        /** Calculate position of ExpandableListView indicator. */
         display = getActivity().getWindowManager().getDefaultDisplay();
         size = new Point();
         display.getSize(size);
@@ -93,44 +89,46 @@ public class DailyOfferFragment extends Fragment {
 
         /* TODO HERE RESUME THE SAVED DATA FROM SHARED PREFERENCES */
 
-        // preparing list data
-        //prepareListData();
-        initGroup();
-        initChild();
+        /** preparing list data */
+        prepareListData();
+//        initGroup();
+//        initChild();
     }
 
+
+
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+                             Bundle savedInstanceState) {
+        /** Inflate layout */
         fragView = inflater.inflate(R.layout.dailyoffer_frag_layout, container, false);
-        // get the listview
+        /** Get the listview */
         expListView = (ExpandableListView) fragView.findViewById(R.id.menuList);
-        // fix position of ExpandableListView indicator.
+        /** fix position of ExpandableListView indicator. */
         expListView.setIndicatorBounds(width-GetDipsFromPixel(35), width-GetDipsFromPixel(5));
 
         floatingActionButton = fragView.findViewById(R.id.floatingButton);
         floatingActionButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                fragmentShowAddListener.onInputShowAddSent(this);
+                /**
+                 * GO TO ADD_FOOD_FRAGMENT
+                 */
+                Navigation.findNavController(v).navigate(R.id.action_daily_offer_to_addFoodFragment);
+                /**
+                 *
+                 */
             }
         });
 
         return fragView;
     }
 
-    public int GetDipsFromPixel(float pixels){
-        // Get the screen's density scale
-        final float scale = getResources().getDisplayMetrics().density;
-        // Convert the dps to pixels, based on density scale
-        return (int) (pixels * scale + 0.5f);
-    }
+
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
-        super.onViewCreated(view, savedInstanceState);
-
-
-        // to collapse all groups except the one tapped
+        /** to collapse all groups except the one tapped */
         expListView.setOnGroupExpandListener(new ExpandableListView.OnGroupExpandListener() {
 
             @Override
@@ -143,39 +141,14 @@ public class DailyOfferFragment extends Fragment {
             }
         });
 
-        // list Adapter of ExpandableList
-        listAdapter = new ExpandableListAdapter(hostActivity, listDataGroup, listDataChild, fragmentShowEditListener);
+        /** list Adapter of ExpandableList */
+        listAdapter = new ExpandableListAdapter(getActivity(), listDataGroup, listDataChild);
 
-        // setting list adapter
+        /** setting list adapter */
         expListView.setAdapter(listAdapter);
-
     }
 
-    @Override
-    public void onSaveInstanceState(@NonNull Bundle outState) {
-        super.onSaveInstanceState(outState);
 
-        outState.putInt("lastExpandedPosition", this.lastExpandedPosition);
-        outState.putSerializable("listDataChild", this.listDataChild);
-    }
-
-    @Override
-    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
-        super.onActivityCreated(savedInstanceState);
-
-        if (savedInstanceState != null) {
-            // Restore last state for checked position.
-            this.lastExpandedPosition = savedInstanceState.getInt("lastExpandedPosition", -1);
-            this.listDataChild = (HashMap<String, List<Food>>) savedInstanceState.getSerializable("listDataChild");
-
-            for(String s : listDataChild.keySet()){
-                for(Food f : listDataChild.get(s)){
-                    this.listAdapter.insertChild(s, f);
-                }
-
-            }
-        }
-    }
 
     private void initGroup(){
         listDataGroup = new ArrayList<>();
@@ -194,21 +167,27 @@ public class DailyOfferFragment extends Fragment {
 
     }
 
-    /*
-     * Preparing the data list for DEBUG
-     */
+    private int GetDipsFromPixel(float pixels){
+        /** Get the screen's density scale */
+        final float scale = getResources().getDisplayMetrics().density;
+        /** Convert the dps to pixels, based on density scale */
+        return (int) (pixels * scale + 0.5f);
+    }
+
+
+
     private void prepareListData() {
         listDataGroup = new ArrayList<String>();
         listDataChild = new HashMap<String, List<Food>>();
 
-        // Adding child data
+        /** Adding child data*/
         listDataGroup.add(getString(R.string.starters));
         listDataGroup.add(getString(R.string.firsts));
         listDataGroup.add(getString(R.string.seconds));
         listDataGroup.add(getString(R.string.desserts));
         listDataGroup.add(getString(R.string.drinks));
 
-        // Adding child data
+        /** Adding child data */
         List<Food> starters = new ArrayList<Food>();
         starters.add(new Food(BitmapFactory.decodeResource(getResources(), R.drawable.caprese),
                 "Caprese", "Pomodori, mozzarella, olio e basilico", 2.50, 10));
@@ -246,23 +225,9 @@ public class DailyOfferFragment extends Fragment {
         listDataChild.put(listDataGroup.get(4), drinks);
 
     }
+//
+//    public void notifyDataChange(){
+//        this.listAdapter.refresh();
+//    }
 
-    public void addFood(String category, Food food) {
-        try{
-            this.listAdapter.insertChild(category, food);
-        }catch(RuntimeException e){
-            e.getMessage();
-        }
-    }
-
-    public void notifyDataChange(){
-        this.listAdapter.refresh();
-    }
-
-    @Override
-    public void onDetach() {
-        super.onDetach();
-        fragmentShowAddListener = null;
-    }
 }
-

@@ -1,30 +1,35 @@
-package com.mad.poleato;
+package com.mad.poleato.Reservation;
 
-import android.app.AlertDialog;
-import android.content.DialogInterface;
-import android.graphics.Point;
 import android.os.Bundle;
-import android.os.Parcelable;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.support.v7.widget.RecyclerView;
-import android.view.Display;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+
+
+import android.graphics.Point;
+import android.view.Display;
 import android.widget.Button;
 import android.widget.ExpandableListView;
 import android.widget.TextView;
-import android.widget.Toast;
+
+import com.mad.poleato.R;
+import com.mad.poleato.Reservation.ReservationListManagement.ReservationExpandableListAdapter;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-//TODO status persistency
-
+/*
+ * A simple {@link Fragment} subclass.
+ * Activities that contain this fragment must implement the
+ * Use the {@link ReservationFragment#newInstance} factory method to
+ * create an instance of this fragment.
+ */
 public class ReservationFragment extends Fragment {
+
     private ExpandableListView lv;
     private ReservationExpandableListAdapter listAdapter;
     private List<Reservation> reservations;
@@ -36,10 +41,47 @@ public class ReservationFragment extends Fragment {
     private Reservation c2;
     private Reservation c3;
 
+    // TODO: Rename parameter arguments, choose names that match
+    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
+    private static final String ARG_PARAM1 = "param1";
+    private static final String ARG_PARAM2 = "param2";
+
+    // TODO: Rename and change types of parameters
+    private String mParam1;
+    private String mParam2;
+
+//    private OnFragmentInteractionListener mListener;
+
+    public ReservationFragment() {
+        // Required empty public constructor
+    }
+
+    /**
+     * Use this factory method to create a new instance of
+     * this fragment using the provided parameters.
+     *
+     * @param param1 Parameter 1.
+     * @param param2 Parameter 2.
+     * @return A new instance of fragment ReservationFragment.
+     */
+    // TODO: Rename and change types and number of parameters
+    public static ReservationFragment newInstance(String param1, String param2) {
+        ReservationFragment fragment = new ReservationFragment();
+        Bundle args = new Bundle();
+        args.putString(ARG_PARAM1, param1);
+        args.putString(ARG_PARAM2, param2);
+        fragment.setArguments(args);
+        return fragment;
+    }
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        // Calculate position of ExpandableListView indicator.
+        if (getArguments() != null) {
+            mParam1 = getArguments().getString(ARG_PARAM1);
+            mParam2 = getArguments().getString(ARG_PARAM2);
+        }
+        /** Calculate position of ExpandableListView indicator. */
         display = getActivity().getWindowManager().getDefaultDisplay();
         size = new Point();
         display.getSize(size);
@@ -47,14 +89,15 @@ public class ReservationFragment extends Fragment {
     }
 
     @Override
-    public View onCreateView(final LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+                             Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.reservation_frag_layout,container,false);
         initData();
 
 
         lv = view.findViewById(R.id.reservationslv);
 
-        //fix expandablelistview arrow position
+        /**fix expandablelistview arrow position */
         lv.setIndicatorBounds(width-GetDipsFromPixel(35), width-GetDipsFromPixel(5));
 
         listAdapter = new ReservationExpandableListAdapter(getActivity(),reservations,listHash);
@@ -69,7 +112,7 @@ public class ReservationFragment extends Fragment {
                 if(!lv.isGroupExpanded(i)){
                     b.setVisibility(View.VISIBLE);
                 }else
-                     b.setVisibility(View.GONE);
+                    b.setVisibility(View.GONE);
 
 
                 return false;
@@ -80,9 +123,9 @@ public class ReservationFragment extends Fragment {
     }
 
     public int GetDipsFromPixel(float pixels){
-        // Get the screen's density scale
+        /** Get the screen's density scale*/
         final float scale = getResources().getDisplayMetrics().density;
-        // Convert the dps to pixels, based on density scale
+        /** Convert the dps to pixels, based on density scale */
         return (int) (pixels * scale + 0.5f);
     }
 
@@ -152,4 +195,5 @@ public class ReservationFragment extends Fragment {
                 }
         }
     }
+
 }

@@ -3,13 +3,13 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
+    android:layout_height="match_parent"
 
     android:background="#ffffff"
     android:descendantFocusability="beforeDescendants"
     android:focusableInTouchMode="true"
     android:orientation="vertical"
-    tools:context=".AddFoodFragment">
+    tools:context=".DailyOffer.AddFood.AddFoodFragment">
 
     <!--android:layout_below="@id/toolbar2"-->
     <!--<android.support.design.widget.AppBarLayout-->
@@ -44,6 +44,8 @@
             android:layout_marginTop="8dp"
             android:layout_marginBottom="8dp"
             android:clickable="true"
+            android:focusable="true"
+            android:backgroundTint="@color/colorPrimaryDark"
             android:src="@mipmap/baseline_photo_camera_white_24dp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
@@ -67,16 +69,16 @@
     </android.support.constraint.ConstraintLayout>
 
     <!--<EditText-->
-        <!--android:id="@+id/nameFood"-->
-        <!--android:layout_width="match_parent"-->
-        <!--android:layout_height="wrap_content"-->
-        <!--android:layout_marginBottom="10dp"-->
-        <!--android:gravity="center"-->
-        <!--android:text="Plate Name"-->
-        <!--android:textColor="#444444"-->
-        <!--android:textSize="24sp"-->
-        <!--app:layout_constraintEnd_toEndOf="parent"-->
-        <!--app:layout_constraintStart_toStartOf="parent" />-->
+    <!--android:id="@+id/nameFood"-->
+    <!--android:layout_width="match_parent"-->
+    <!--android:layout_height="wrap_content"-->
+    <!--android:layout_marginBottom="10dp"-->
+    <!--android:gravity="center"-->
+    <!--android:text="Plate Name"-->
+    <!--android:textColor="#444444"-->
+    <!--android:textSize="24sp"-->
+    <!--app:layout_constraintEnd_toEndOf="parent"-->
+    <!--app:layout_constraintStart_toStartOf="parent" />-->
 
 
     <LinearLayout
@@ -154,10 +156,6 @@
             app:layout_constraintStart_toEndOf="@+id/input_layout_name"
             app:layout_constraintTop_toTopOf="parent" />
     </android.support.constraint.ConstraintLayout>
-
-    <Space
-        android:layout_width="423dp"
-        android:layout_height="10dp" />
 
     <android.support.constraint.ConstraintLayout
         android:id="@+id/constraintLayout"
@@ -333,8 +331,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:visibility="gone"
-            android:text="@string/delete" />
+            android:text="@string/delete"
+            android:visibility="gone" />
 
         <Button
             android:id="@+id/button_frag_save"

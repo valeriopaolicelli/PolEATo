@@ -1,4 +1,4 @@
-package com.mad.poleato;
+package com.mad.poleato.Reservation;
 
 public class Dish {
 

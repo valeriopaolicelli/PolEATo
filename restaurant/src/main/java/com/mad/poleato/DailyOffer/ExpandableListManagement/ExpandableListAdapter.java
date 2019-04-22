@@ -1,7 +1,6 @@
-package com.mad.poleato.ExpandableListManagement;
+package com.mad.poleato.DailyOffer.ExpandableListManagement;
 
 import android.app.Activity;
-import android.content.res.Resources;
 import android.support.v7.widget.PopupMenu;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -16,13 +15,15 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.mad.poleato.DailyOfferFragment;
-import com.mad.poleato.Food;
+import androidx.navigation.Navigation;
+
+import com.mad.poleato.DailyOffer.Food;
 import com.mad.poleato.R;
 
 import java.text.DecimalFormat;
 import java.util.HashMap;
 import java.util.List;
+
 
 public class ExpandableListAdapter extends BaseExpandableListAdapter {
 
@@ -31,17 +32,14 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
     private List<String> _listDataGroup; // header titles
     private HashMap<String, List<Food>> _listDataChild; // child data in format of header title, child title
     private Button button_delete;
-    private DailyOfferFragment.FragmentShowEditListener frShow; //to notify to open the EditFoodFragment
 
     public ExpandableListAdapter(Activity host, List<String> listDataHeader,
-                                 HashMap<String, List<Food>> listChildData,
-                                 DailyOfferFragment.FragmentShowEditListener frShow) {
+                                 HashMap<String, List<Food>> listChildData) {
 
         this.host = host;
         inf = LayoutInflater.from(host);
         this._listDataGroup = listDataHeader;
         this._listDataChild = listChildData;
-        this.frShow = frShow;
         Log.d("matte", "[Init]headers:"+_listDataGroup.toString());
         Log.d("matte", "[Init]childs:"+_listDataChild.toString());
     }
@@ -73,7 +71,7 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
 
         Log.d("matte", "[Child]getview{ group:"+groupPosition+", child:"+childPosition+", view:"+convertView+"}");
 
-        FoodViewHolder holder; //recycler view pattern
+        final FoodViewHolder holder; //recycler view pattern
 
         if (convertView == null){
             convertView = inf.inflate(R.layout.layout_menu_child, parent, false);
@@ -92,18 +90,20 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
         holder.img.setImageBitmap(getChild(groupPosition, childPosition).getImg());
         holder.name.setText(getChild(groupPosition, childPosition).getName());
         holder.description.setText(getChild(groupPosition, childPosition).getDescription());
-        //price and currency
+        /** price and currency */
         DecimalFormat decimalFormat = new DecimalFormat("#.00"); //two decimal
         String priceStr = decimalFormat.format(getChild(groupPosition, childPosition).getPrice());
         String currency = host.getString(R.string.currency);
         priceStr += currency;
         holder.price.setText(priceStr);
-        //quantity
+        /** quantity */
         String qntStr = "(qty "+getChild(groupPosition, childPosition).getQuantity()+")";
         holder.quantity.setText(qntStr);
 
-        // three dots vertical menu
+        /** three dots vertical menu */
         ImageButton settingsButton = convertView.findViewById(R.id.cardSettings);
+
+        final View finalConvertView = convertView;
         settingsButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -123,7 +123,11 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
                         Log.d("matte", item.getTitle().toString());
 
                         Food f = getChild(groupPosition, childPosition);
-                        frShow.onInputShowEditSent(f);
+
+                        /**
+                         * GO TO EDIT_FOOD_FRAGMENT
+                         */
+                        Navigation.findNavController(finalConvertView).navigate(R.id.action_daily_offer_id_to_editFoodFragment_id);
 
                         return false;
                     }
@@ -234,6 +238,3 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
     }
 
 }
-
-
-
