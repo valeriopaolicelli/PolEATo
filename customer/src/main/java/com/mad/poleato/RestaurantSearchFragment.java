@@ -16,6 +16,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ListView;
+import android.widget.SearchView;
 
 
 import com.google.firebase.database.ChildEventListener;
@@ -25,7 +26,9 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 
 
@@ -34,7 +37,8 @@ public class RestaurantSearchFragment extends DialogFragment {
     private Activity hostActivity;
     private View fragView;
     private RestaurantRecyclerViewAdapter recyclerAdapter;
-    RecyclerView.LayoutManager layoutManager;
+    private RecyclerView.LayoutManager layoutManager;
+    private RecyclerView rv;
     private DatabaseReference dbReference;
 
     private HashMap<String, Restaurant> restaurantMap;
@@ -115,7 +119,88 @@ public class RestaurantSearchFragment extends DialogFragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        RecyclerView rv = (RecyclerView)fragView.findViewById(R.id.recyclerView);
+
+        SearchView sv = (SearchView) fragView.findViewById(R.id.searchView);
+        sv.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+
+            List<Restaurant> currList;
+            int previousLen, currLen;
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+
+                Log.d("matte", "queryTextSubmit | QUERY: "+query);
+
+
+                return false;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String newText) {
+                Log.d("matte", "queryTextChange | QUERY: "+newText);
+
+                currLen = newText.length();
+
+                if(currList == null){
+                    previousLen = -1;
+                    //first time
+                    currLen = 0;
+                    currList = new ArrayList<>();
+                    //initialize the currList
+                    for(Restaurant r : restaurantList)
+                        currList.add(r);
+                }
+
+                if(newText.isEmpty()){
+                    //void query
+                    //reset the currList
+                    currList.clear();
+                    for(Restaurant r : restaurantList)
+                        currList.add(r);
+                    //reset the adapter list to show all the original items
+                    recyclerAdapter.setResList(restaurantList);
+                    previousLen = currLen;
+                    return true;
+                }
+
+
+                if(currLen > previousLen)
+                {
+                    //text added to query: search from previous list
+                    Iterator<Restaurant> rIterator = currList.iterator();
+                    while (rIterator.hasNext()) {
+                        Restaurant s = rIterator.next(); // must be called before you can call i.remove()
+                        // Do something
+                        if(!s.getName().toLowerCase().contains(newText.toLowerCase()))
+                            rIterator.remove();
+                    }
+                }
+                else{
+                    //text removed from query: search from the whole list
+                    currList.clear();
+                    for(Restaurant r : restaurantList)
+                        currList.add(r);
+                    Iterator<Restaurant> rIterator = currList.iterator();
+                    while (rIterator.hasNext()) {
+                        Restaurant s = rIterator.next(); // must be called before you can call i.remove()
+                        // Do something
+                        if(!s.getName().toLowerCase().contains(newText.toLowerCase()))
+                            rIterator.remove();
+                    }
+                }
+
+
+                recyclerAdapter.setResList(currList);
+
+                Log.d("matte", "queryTextChange | currList size: "+currList.size());
+                previousLen = currLen;
+                return true;
+
+            }
+        });
+
+
+
+        rv = (RecyclerView)fragView.findViewById(R.id.recyclerView);
         rv.setHasFixedSize(true);
 
         // use a linear layout manager

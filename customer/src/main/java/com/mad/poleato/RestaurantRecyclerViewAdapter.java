@@ -100,6 +100,10 @@ public class RestaurantRecyclerViewAdapter extends RecyclerView.Adapter<Restaura
         return resList.size();
     }
 
+    public void setResList(List<Restaurant> list){
+        this.resList = list;
+        notifyDataSetChanged();
+    }
 
 
 }

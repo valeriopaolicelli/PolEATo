@@ -9,6 +9,8 @@
 
     <SearchView
         android:id="@+id/searchView"
+        android:iconifiedByDefault="false"
+        android:queryHint="@string/query_hint"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"

@@ -20,4 +20,6 @@
     <string name="edit">Edit Profile</string>
     <string name="open">Open</string>
     <string name="close">Closed</string>
+    <string name="query_hint">Search for restaurants</string>
+
 </resources>
