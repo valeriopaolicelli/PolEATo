@@ -417,7 +417,6 @@ public class EditProfile extends AppCompatActivity {
 
         //as above with the addition punctuation
         //String punctuationRegex = new String("[\\.,\\*\\:\\'\\(\\)]");
-        String textRegex = new String("[^=&%\\/\\s]+([^=&%\\/]+)?[^=&%\\/]+");
 
         String emailRegex = new String("^.+@[^\\.].*\\.[a-z]{2,}$");
 
@@ -426,14 +425,19 @@ public class EditProfile extends AppCompatActivity {
             Toast.makeText(this, "The name must start with letters and must end with letters. Space are allowed. Numbers are not allowed", Toast.LENGTH_LONG).show();
             editTextFields.get("Name").setBackground(ContextCompat.getDrawable(this, R.drawable.border_wrong_field));
         }
-        if (!editTextFields.get("Type").getText().toString().matches(textRegex)) {
+        if( editTextFields.get("Type").getText().toString().contentEquals(" ")
+            || editTextFields.get("Type").getText().toString().contentEquals("\n")){
+            /*
+             * field contains only empty lines or spaces -> NOT ALLOWED
+             */
             wrongField = true;
-            Toast.makeText(this, "The restaurant type must start with letters and must end with letters. Space are allowed. Numbers are not allowed", Toast.LENGTH_LONG).show();
+            Toast.makeText(this, "The restaurant type must contain characters. Space and empty line are allowed.", Toast.LENGTH_LONG).show();
             editTextFields.get("Type").setBackground(ContextCompat.getDrawable(this, R.drawable.border_wrong_field));
         }
-        if (!editTextFields.get("Info").getText().toString().matches(textRegex)) {
+        if (editTextFields.get("Info").getText().toString().contentEquals(" ")
+                || editTextFields.get("Info").getText().toString().contentEquals("\n")) {
             wrongField = true;
-            Toast.makeText(this, "The description must start with letters and must end with letters. Space are allowed. Numbers are not allowed", Toast.LENGTH_LONG).show();
+            Toast.makeText(this, "The description must contain characters. Space and empty line are allowed.", Toast.LENGTH_LONG).show();
             editTextFields.get("Info").setBackground(ContextCompat.getDrawable(this, R.drawable.border_wrong_field));
         }
 
