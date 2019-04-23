@@ -66,6 +66,7 @@ public class RestaurantSearchFragment extends DialogFragment {
                 restaurantMap.put(id, resObj);
                 restaurantList.add(resObj);
 
+                listAdapter.add(resObj);
 
             }
 

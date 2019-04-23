@@ -14,12 +14,8 @@
         android:layout_width="match_parent"
         android:layout_height="110dp"
         android:layout_gravity="center"
-
-
         android:layout_marginStart="4dp"
-        android:layout_marginTop="4dp"
         android:layout_marginEnd="4dp"
-        android:layout_marginBottom="8dp"
         app:cardCornerRadius="10dp">
 
 
@@ -57,7 +53,7 @@
 
             <TextView
                 android:id="@+id/restaurantOpen"
-                android:layout_width="36dp"
+                android:layout_width="wrap_content"
                 android:layout_height="19dp"
                 android:layout_marginStart="16dp"
                 android:layout_marginTop="16dp"

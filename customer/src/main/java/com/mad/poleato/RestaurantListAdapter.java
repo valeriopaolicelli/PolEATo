@@ -49,11 +49,11 @@ public class RestaurantListAdapter extends ArrayAdapter<Restaurant> {
         if(r.getIsOpen())
         {
             holder.isOpen.setText(context.getString(R.string.open));
-            holder.isOpen.setTextColor(Color.rgb(200, 0, 0));
+            holder.isOpen.setTextColor(Color.rgb(0, 200, 0));
         }
         else{
             holder.isOpen.setText(context.getString(R.string.close));
-            holder.isOpen.setTextColor(Color.rgb(0, 200, 0));
+            holder.isOpen.setTextColor(Color.rgb(200, 0, 0));
         }
 
         return convertView;
