@@ -417,7 +417,7 @@ public class EditProfile extends AppCompatActivity {
 
         //as above with the addition punctuation
         //String punctuationRegex = new String("[\\.,\\*\\:\\'\\(\\)]");
-        String textRegex = new String("[^=&%\\/\\s]+([^=&%\\/]+)?[^=&%\\/\\s]+");
+        String textRegex = new String("[^=&%\\/\\s]+([^=&%\\/]+)?[^=&%\\/]+");
 
         String emailRegex = new String("^.+@[^\\.].*\\.[a-z]{2,}$");
 
