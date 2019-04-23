@@ -13,3 +13,5 @@
 .externalNativeBuild
 
 \.idea/misc\.xml
+
+\.idea/encodings\.xml
