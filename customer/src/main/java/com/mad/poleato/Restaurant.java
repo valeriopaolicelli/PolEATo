@@ -4,12 +4,14 @@ import android.graphics.Bitmap;
 
 public class Restaurant {
 
+    String id;
     Bitmap image;
     String name;
     String type;
     Boolean isOpen;
 
-    public Restaurant(Bitmap img, String name, String type, Boolean isOpen){
+    public Restaurant(String id, Bitmap img, String name, String type, Boolean isOpen){
+        setId(id);
         setImage(img);
         setIsOpen(isOpen);
         setName(name);
@@ -19,6 +21,10 @@ public class Restaurant {
 
     /** ** SETTER & GETTERS ** **/
 
+
+    public void setId(String id){
+        this.id = id;
+    }
 
     public void setImage(Bitmap image) {
         this.image = image;
@@ -34,6 +40,10 @@ public class Restaurant {
 
     public void setType(String type) {
         this.type = type;
+    }
+
+    public String getId() {
+        return id;
     }
 
     public Bitmap getImage() {

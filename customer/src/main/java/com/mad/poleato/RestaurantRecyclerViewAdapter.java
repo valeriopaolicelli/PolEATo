@@ -1,14 +1,18 @@
 package com.mad.poleato;
 
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Color;
+import android.os.Bundle;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class RestaurantRecyclerViewAdapter extends RecyclerView.Adapter<RestaurantRecyclerViewAdapter.RestaurantViewHolder> {
@@ -25,9 +29,11 @@ public class RestaurantRecyclerViewAdapter extends RecyclerView.Adapter<Restaura
 
         public TextView title, type, open;
         public ImageView img;
+        public View itemView;
 
         public RestaurantViewHolder(View itemView) {
             super(itemView);
+            this.itemView = itemView;
             this.title = (TextView) itemView.findViewById(R.id.textViewTitle);
             this.type = (TextView) itemView.findViewById(R.id.textViewType);
             this.open = (TextView) itemView.findViewById(R.id.textViewOpen);
@@ -47,15 +53,16 @@ public class RestaurantRecyclerViewAdapter extends RecyclerView.Adapter<Restaura
                                                                                  int viewType) {
 
         LayoutInflater layoutInflater = LayoutInflater.from(parent.getContext());
-        View listItem = layoutInflater.inflate(R.layout.restaurant_item, parent, false);
-        RestaurantViewHolder viewHolder = new RestaurantViewHolder(listItem);
+        final View listItem = layoutInflater.inflate(R.layout.restaurant_item, parent, false);
+        final RestaurantViewHolder viewHolder = new RestaurantViewHolder(listItem);
+
         return viewHolder;
 
     }
 
     // Replace the contents of a view (invoked by the layout manager)
     @Override
-    public void onBindViewHolder(RestaurantViewHolder holder, int position) {
+    public void onBindViewHolder(RestaurantViewHolder holder, final int position) {
         // - get element from your dataset at this position
         // - replace the contents of the view with that element
         holder.title.setText(resList.get(position).getName());
@@ -72,6 +79,19 @@ public class RestaurantRecyclerViewAdapter extends RecyclerView.Adapter<Restaura
             holder.open.setTextColor(Color.rgb(200, 0, 0));
         }
 
+        holder.itemView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Log.d("matte", "OnClick | restaurant ID: "+resList.get(position).getId());
+                Bundle bundle = new Bundle();
+                bundle.putString("id", resList.get(position).getId());
+                //Intent menuIntent = new Intent(context, /*TODO FABIO*/);
+                //menuIntent.putExtras(bundle);
+            }
+        });
+
+
+
     }
 
     // Return the size of your dataset (invoked by the layout manager)
@@ -80,10 +100,6 @@ public class RestaurantRecyclerViewAdapter extends RecyclerView.Adapter<Restaura
         return resList.size();
     }
 
-    public void addRestaurant(Restaurant item){
-        resList.add(item);
-        notifyDataSetChanged();
-    }
 
 
 }
