@@ -8,6 +8,8 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.DialogFragment;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -29,7 +31,8 @@ public class RestaurantSearchFragment extends DialogFragment {
 
     private Activity hostActivity;
     private View fragView;
-    private RestaurantListAdapter listAdapter;
+    private RestaurantRecyclerViewAdapter recyclerAdapter;
+    RecyclerView.LayoutManager layoutManager;
     private DatabaseReference dbReference;
 
     private HashMap<String, Restaurant> restaurantMap;
@@ -66,7 +69,7 @@ public class RestaurantSearchFragment extends DialogFragment {
                 restaurantMap.put(id, resObj);
                 restaurantList.add(resObj);
 
-                listAdapter.add(resObj);
+                recyclerAdapter.addRestaurant(resObj);
 
             }
 
@@ -96,7 +99,7 @@ public class RestaurantSearchFragment extends DialogFragment {
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        fragView = inflater.inflate(R.layout.restaurant_search_fragment, container, false);
+        fragView = inflater.inflate(R.layout.restaurant_recyclerview, container, false);
 
         return fragView;
 
@@ -106,16 +109,16 @@ public class RestaurantSearchFragment extends DialogFragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        this.listAdapter = new RestaurantListAdapter(this.hostActivity, 0, this.restaurantList);
+        RecyclerView rv = (RecyclerView)fragView.findViewById(R.id.recyclerView);
+        rv.setHasFixedSize(true);
 
-        ListView listV = (ListView)fragView.findViewById(R.id.restaurantList);
-        listV.setAdapter(listAdapter);
+        // use a linear layout manager
+        layoutManager = new LinearLayoutManager(this.hostActivity);
+        rv.setLayoutManager(layoutManager);
+
+        this.recyclerAdapter = new RestaurantRecyclerViewAdapter(this.hostActivity, this.restaurantList);
+        rv.setAdapter(recyclerAdapter);
 
     }
 
-    private void initRestaurantList(){
-
-
-
-    }
 }
