@@ -21,5 +21,10 @@
     <string name="open">Open</string>
     <string name="close">Closed</string>
     <string name="query_hint">Search for restaurants</string>
+    <string name="price_sort">Sort by price(from the lowest)</string>
+    <string name="name_sort">Sort by name(A-Z)</string>
+    <string name="price_sort_inverse">Sort by price(from the highest)</string>
+    <string name="delivery_sort">Sort by delivery cost(from the lowest)</string>
+
 
 </resources>

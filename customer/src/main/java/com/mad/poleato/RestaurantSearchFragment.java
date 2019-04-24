@@ -13,9 +13,12 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageButton;
 import android.widget.ListView;
+import android.widget.PopupMenu;
 import android.widget.SearchView;
 
 
@@ -39,6 +42,9 @@ public class RestaurantSearchFragment extends DialogFragment {
     private RestaurantRecyclerViewAdapter recyclerAdapter;
     private RecyclerView.LayoutManager layoutManager;
     private RecyclerView rv;
+    private SearchView sv;
+    private ImageButton sortBtn;
+    private ImageButton filterBtn;
     private DatabaseReference dbReference;
 
     private HashMap<String, Restaurant> restaurantMap;
@@ -71,7 +77,10 @@ public class RestaurantSearchFragment extends DialogFragment {
                 String name = dataSnapshot.child("Name").getValue().toString();
                 String type = dataSnapshot.child("Type").getValue().toString();
                 Boolean isOpen = (Boolean)dataSnapshot.child("IsActive").getValue();
-                Restaurant resObj = new Restaurant(id, img, name, type, isOpen);
+                int priceRange = Integer.parseInt(dataSnapshot.child("PriceRange").getValue().toString());
+                double deliveryCost = Double.parseDouble(dataSnapshot.child("DeliveryCost").getValue().toString());
+
+                Restaurant resObj = new Restaurant(id, img, name, type, isOpen, priceRange, deliveryCost);
 
                 restaurantMap.put(id, resObj);
                 restaurantList.add(resObj);
@@ -120,7 +129,7 @@ public class RestaurantSearchFragment extends DialogFragment {
         super.onViewCreated(view, savedInstanceState);
 
 
-        SearchView sv = (SearchView) fragView.findViewById(R.id.searchView);
+        sv = (SearchView) fragView.findViewById(R.id.searchView);
         sv.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
 
             List<Restaurant> currList;
@@ -169,7 +178,6 @@ public class RestaurantSearchFragment extends DialogFragment {
                     Iterator<Restaurant> rIterator = currList.iterator();
                     while (rIterator.hasNext()) {
                         Restaurant s = rIterator.next(); // must be called before you can call i.remove()
-                        // Do something
                         if(!s.getName().toLowerCase().contains(newText.toLowerCase()))
                             rIterator.remove();
                     }
@@ -210,8 +218,57 @@ public class RestaurantSearchFragment extends DialogFragment {
         this.recyclerAdapter = new RestaurantRecyclerViewAdapter(this.hostActivity, this.restaurantList);
         rv.setAdapter(recyclerAdapter);
 
+        //add separator between list items
         DividerItemDecoration itemDecor = new DividerItemDecoration(hostActivity, 1); // 1 means HORIZONTAL
         rv.addItemDecoration(itemDecor);
+
+        sortBtn = (ImageButton) fragView.findViewById(R.id.sortButton);
+        sortBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                PopupMenu popup = new PopupMenu(hostActivity, sortBtn);
+                popup.getMenuInflater().inflate(R.menu.sort_menu, popup.getMenu());
+
+                popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+                    @Override
+                    public boolean onMenuItemClick(MenuItem item) {
+                        String id = fragView.getResources().getResourceName(item.getItemId());
+                        Log.d("matte", "Popup pressed | ID: "+id);
+
+                        String[] itemName = id.split("/");
+                        if(itemName.length > 2) //error
+                            return false;
+                        Log.d("matte", "NAME: "+itemName[1]);
+
+                        if(itemName[1].equals("sortByName")){
+                            Log.d("matte", "SORT: byName");
+
+
+                            return true;
+                        }
+
+                        if(itemName[1].equals("sortByPrice")){
+                            Log.d("matte", "SORT: byPrice");
+
+                            return true;
+                        }
+
+                        if(itemName[1].equals("sortByPriceInverse")){
+                            Log.d("matte", "SORT: byPriceInverse");
+
+                            return true;
+                        }
+
+
+                        return false;
+                    }
+                });
+
+                popup.show();
+
+            }
+        });
+
 
     }
 
