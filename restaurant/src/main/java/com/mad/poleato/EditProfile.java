@@ -434,11 +434,47 @@ public class EditProfile extends AppCompatActivity {
             Toast.makeText(this, "The restaurant type must contain characters. Space and empty line are allowed.", Toast.LENGTH_LONG).show();
             editTextFields.get("Type").setBackground(ContextCompat.getDrawable(this, R.drawable.border_wrong_field));
         }
+        else{
+            /*
+             * valid content, check if there are some spaces or new lines removable
+             * remove all useless spaces
+             * remove all useless blank lines
+             */
+            int firstChar=0;
+            int lastChar=0;
+            String clearedString = editTextFields.get("Type").getText().toString().trim().replaceAll(" +", " ");
+            int lenght= clearedString.length();
+            if(clearedString.startsWith(" ")){
+               firstChar= 1;
+            }
+            if(clearedString.endsWith(" ")){
+                lastChar= lenght-1;
+            }
+            editTextFields.get("Type").setText(clearedString.substring(firstChar,lenght-lastChar));
+        }
         if (editTextFields.get("Info").getText().toString().contentEquals(" ")
                 || editTextFields.get("Info").getText().toString().contentEquals("\n")) {
             wrongField = true;
             Toast.makeText(this, "The description must contain characters. Space and empty line are allowed.", Toast.LENGTH_LONG).show();
             editTextFields.get("Info").setBackground(ContextCompat.getDrawable(this, R.drawable.border_wrong_field));
+        }
+        else{
+            /*
+             * valid content, check if there are some spaces or new lines removable
+             * remove all useless spaces
+             * remove all useless blank lines
+             */
+            int firstChar=0;
+            int lastChar=0;
+            String clearedString = editTextFields.get("Info").getText().toString().trim().replaceAll(" +", " ");
+            int lenght= clearedString.length();
+            if(clearedString.startsWith(" ")){
+                firstChar= 1;
+            }
+            if(clearedString.endsWith(" ")){
+                lastChar= lenght-1;
+            }
+            editTextFields.get("Info").setText(clearedString.substring(firstChar,lenght-lastChar));
         }
 
         /* REGEX FOR OPENING HOURS MISSING BECAUSE THE INSERTION MUST BE GUIDED, THE RESTAURATEUR CANNOT WRITE DIRECTLY IN THIS FIELD */
