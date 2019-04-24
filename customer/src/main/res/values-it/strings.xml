@@ -22,4 +22,10 @@
     <string name="open">Aperto</string>
     <string name="close">Chiuso</string>
     <string name="query_hint">Cerca ristoranti</string>
+    <string name="currency">€</string>
+    <string name="restaurant_name"><font size="18">Nome locale</font></string>
+    <string name="type"><font size="18">Tipo di cucina</font></string>
+    <string name="info"><font size="18">Descrizione</font></string>
+
+
 </resources>

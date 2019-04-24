@@ -85,8 +85,9 @@ public class RestaurantRecyclerViewAdapter extends RecyclerView.Adapter<Restaura
                 Log.d("matte", "OnClick | restaurant ID: "+resList.get(position).getId());
                 Bundle bundle = new Bundle();
                 bundle.putString("id", resList.get(position).getId());
-                //Intent menuIntent = new Intent(context, /*TODO FABIO*/);
-                //menuIntent.putExtras(bundle);
+                Intent menuIntent = new Intent(context, OrderActivity.class);
+                menuIntent.putExtras(bundle);
+                context.startActivity(menuIntent);
             }
         });
 

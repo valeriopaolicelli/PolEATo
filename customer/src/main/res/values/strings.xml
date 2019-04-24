@@ -21,5 +21,11 @@
     <string name="open">Open</string>
     <string name="close">Closed</string>
     <string name="query_hint">Search for restaurants</string>
+    <string name="currency">$</string>
+    <string name="restaurant_name"><font size="18">Restaurant name</font></string>
+    <string name="type"><font size="18">Restaurant type</font></string>
+    <string name="info"><font size="18">Restaurant description</font></string>
+
+
 
 </resources>
