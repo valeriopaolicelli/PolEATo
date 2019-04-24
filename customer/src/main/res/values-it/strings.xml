@@ -26,4 +26,7 @@
     <string name="name_sort">Ordina per nome(A-Z)</string>
     <string name="price_sort_inverse">Ordina per prezzo(dal più alto)</string>
     <string name="delivery_sort">Ordina per costo di consegna</string>
+    <string name="delivery_cost">Consegna</string>
+    <string name="price_range">Prezzo</string>
+    <string name="free_delivery">Gratis</string>
 </resources>

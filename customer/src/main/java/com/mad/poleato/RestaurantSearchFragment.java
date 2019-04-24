@@ -20,6 +20,7 @@ import android.widget.ImageButton;
 import android.widget.ListView;
 import android.widget.PopupMenu;
 import android.widget.SearchView;
+import android.widget.Toast;
 
 
 import com.google.firebase.database.ChildEventListener;
@@ -84,8 +85,8 @@ public class RestaurantSearchFragment extends DialogFragment {
 
                 restaurantMap.put(id, resObj);
                 restaurantList.add(resObj);
-
-                recyclerAdapter.notifyDataSetChanged();
+                //insert the element by keeping the actual order
+                recyclerAdapter.updateLayout();
 
             }
 
@@ -93,12 +94,42 @@ public class RestaurantSearchFragment extends DialogFragment {
             public void onChildChanged(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
                 Log.d("matte", "onChildChanged | PREVIOUS CHILD: "+s);
 
+                String id = dataSnapshot.getKey();
+                Bitmap img = BitmapFactory.decodeResource(getResources(), R.drawable.image_empty); // TODO: make it dynamic
+                String name = dataSnapshot.child("Name").getValue().toString();
+                String type = dataSnapshot.child("Type").getValue().toString();
+                Boolean isOpen = (Boolean)dataSnapshot.child("IsActive").getValue();
+                int priceRange = Integer.parseInt(dataSnapshot.child("PriceRange").getValue().toString());
+                double deliveryCost = Double.parseDouble(dataSnapshot.child("DeliveryCost").getValue().toString());
+
+                Restaurant resObj = restaurantMap.get(id);
+                resObj.setImage(img);
+                resObj.setName(name);
+                resObj.setType(type);
+                resObj.setIsOpen(isOpen);
+                resObj.setPriceRange(priceRange);
+                resObj.setDeliveryCost(deliveryCost);
+                //insert the element by keeping the actual order
+                recyclerAdapter.updateLayout();
 
             }
 
             @Override
             public void onChildRemoved(@NonNull DataSnapshot dataSnapshot) {
                 Log.d("matte", "onChildRemoved");
+
+                String id = dataSnapshot.getKey();
+                restaurantMap.remove(id);
+                //search for the actual position of that item (it can be sorted in any way)
+                int idx;
+                for(idx = 0; idx < restaurantList.size(); idx ++){
+                    if(restaurantList.get(idx).getId().equals(id)){
+                        restaurantList.remove(idx);
+                        break;
+                    }
+                }
+
+                recyclerAdapter.notifyDataSetChanged();
             }
 
             @Override
@@ -242,23 +273,27 @@ public class RestaurantSearchFragment extends DialogFragment {
 
                         if(itemName[1].equals("sortByName")){
                             Log.d("matte", "SORT: byName");
-
-
+                            recyclerAdapter.sortByName();
                             return true;
                         }
 
                         if(itemName[1].equals("sortByPrice")){
                             Log.d("matte", "SORT: byPrice");
-
+                            recyclerAdapter.sortByPrice();
                             return true;
                         }
 
                         if(itemName[1].equals("sortByPriceInverse")){
                             Log.d("matte", "SORT: byPriceInverse");
-
+                            recyclerAdapter.sortByPriceInverse();
                             return true;
                         }
 
+                        if(itemName[1].equals("sortByDelivery")){
+                            Log.d("matte", "SORT: byDelivery");
+                            recyclerAdapter.sortByDelivery();
+                            return true;
+                        }
 
                         return false;
                     }

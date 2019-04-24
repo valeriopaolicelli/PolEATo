@@ -25,6 +25,12 @@
     <string name="name_sort">Sort by name(A-Z)</string>
     <string name="price_sort_inverse">Sort by price(from the highest)</string>
     <string name="delivery_sort">Sort by delivery cost(from the lowest)</string>
+    <string name="delivery_cost">Delivery</string>
+    <string name="price_range">Price</string>
+    <string name="free_delivery">Free</string>
+
+
+
 
 
 </resources>
