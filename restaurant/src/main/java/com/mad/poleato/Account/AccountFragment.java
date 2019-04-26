@@ -4,8 +4,10 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.constraint.solver.widgets.Snapshot;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -24,16 +26,18 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.mad.poleato.R;
 
+import org.w3c.dom.Text;
+
+import java.text.DecimalFormat;
+import java.util.HashMap;
+import java.util.Map;
+
 
 public class AccountFragment extends Fragment {
 
-    private TextView tvNameField;
-    private TextView tvTypeField;
-    private TextView tvInfoField;
-    private TextView tvOpenField;
-    private TextView tvAddressField;
-    private TextView tvEmailField;
-    private TextView tvPhoneField;
+
+    private Map<String, TextView> tvFields;
+
     private FloatingActionButton buttEdit;
     private ImageView imageBackground;
 
@@ -47,14 +51,18 @@ public class AccountFragment extends Fragment {
         View view = inflater.inflate(R.layout.account_frag_layout, container, false);
 
         // Retrieve all fields (restaurant details) in the xml file
+        tvFields = new HashMap<>();
+        tvFields.put("Name", (TextView)view.findViewById(R.id.tvNameField));
+        tvFields.put("Type", (TextView)view.findViewById(R.id.tvTypeField));
+        tvFields.put("Info", (TextView)view.findViewById(R.id.tvInfoField));
+        tvFields.put("Open", (TextView)view.findViewById(R.id.tvOpenField));
+        tvFields.put("Address", (TextView)view.findViewById(R.id.tvAddressField));
+        tvFields.put("Email", (TextView)view.findViewById(R.id.tvEmailField));
+        tvFields.put("Phone", (TextView)view.findViewById(R.id.tvPhoneField));
+        tvFields.put("DeliveryCost", (TextView)view.findViewById(R.id.tvDeliveryCostField));
+        tvFields.put("IsActive", (TextView)view.findViewById(R.id.tvStatusField));
+        tvFields.put("PriceRange", (TextView)view.findViewById(R.id.tvPriceRangeField));
 
-        tvNameField = view.findViewById(R.id.tvNameField);
-        tvTypeField = view.findViewById(R.id.tvTypeField);
-        tvInfoField = view.findViewById(R.id.tvInfoField);
-        tvOpenField = view.findViewById(R.id.tvOpenField);
-        tvAddressField = view.findViewById(R.id.tvAddressField);
-        tvEmailField = view.findViewById(R.id.tvEmailField);
-        tvPhoneField = view.findViewById(R.id.tvPhoneField);
         imageBackground = view.findViewById(R.id.ivBackground);
 
         // Button to edit the restaurant details
@@ -87,21 +95,40 @@ public class AccountFragment extends Fragment {
                 DataSnapshot issue = dataSnapshot.child("R00");
                 // it is setted to the first record (restaurant)
                 // when the sign in and log in procedures will be handled, it will be the proper one
-
                 if (dataSnapshot.exists()) {
                     // dataSnapshot is the "issue" node with all children
-                    tvNameField.setText(issue.child("Name").getValue().toString());
-                    tvAddressField.setText(issue.child("Address").getValue().toString());
-                    tvEmailField.setText(issue.child("Email").getValue().toString());
-                    tvInfoField.setText(issue.child("Info").getValue().toString());
-                    tvOpenField.setText(issue.child("Open").getValue().toString());
-                    tvTypeField.setText(issue.child("Type").getValue().toString());
-                    tvPhoneField.setText(issue.child("Phone").getValue().toString());
+                    for(DataSnapshot snap : issue.getChildren()){
+                        if(tvFields.containsKey(snap.getKey())){
+                            if(snap.getKey().equals("DeliveryCost")){
+                                DecimalFormat decimalFormat = new DecimalFormat("#.00"); //two decimal
+                                String priceStr = decimalFormat.format(Double.parseDouble(snap.getValue().toString()));
+                                tvFields.get(snap.getKey()).setText(priceStr+"€");
+                            }
+                            else if(snap.getKey().equals("IsActive")){
+                                if((Boolean)snap.getValue())
+                                    tvFields.get(snap.getKey()).setText(getContext().getString(R.string.active_status));
+                                else
+                                    tvFields.get(snap.getKey()).setText(getContext().getString(R.string.inactive_status));
+                            }
+                            else if(snap.getKey().equals("PriceRange")){
+                                //translate price range value into a $ string
+                                int count = Integer.parseInt(snap.getValue().toString());
+                                String s = "";
+                                for(int idx = 0; idx < count; idx ++)
+                                    s += "$";
+                                tvFields.get(snap.getKey()).setText(s);
+                            }
+                            else
+                                tvFields.get(snap.getKey()).setText(snap.getValue().toString());
+                        }
+                    } //for end
                 }
             }
 
             @Override
             public void onCancelled(@NonNull DatabaseError databaseError) {
+                Log.d("matte", "onCancelled | ERROR: " + databaseError.getDetails() +
+                        " | MESSAGE: " + databaseError.getMessage());
                 Toast.makeText(getContext(), databaseError.getMessage().toString(), Toast.LENGTH_SHORT);
             }
         });

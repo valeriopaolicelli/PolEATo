@@ -30,7 +30,6 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.ScrollView;
 import android.widget.Toast;
-import android.support.v7.widget.Toolbar;
 
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -59,7 +58,7 @@ public class EditProfile extends AppCompatActivity {
     private DatabaseReference reference;
 
     private String image;
-    private FloatingActionButton change_im;
+    private FloatingActionButton change_img;
     private ImageView profileImage;
 
     @Override
@@ -68,23 +67,18 @@ public class EditProfile extends AppCompatActivity {
         setContentView(R.layout.edit_account_layout);
 
 
-        //  change_im = findViewById(R.id.change_im);
+        //  change_img = findViewById(R.id.change_img);
         //fill the maps
         collectFields();
         //fill the fields
         fillFields();
 
         EditText edOpen = findViewById(R.id.editTextOpen);
-        EditText edType = findViewById(R.id.editTextType);
         EditText edInfo = findViewById(R.id.editTextInfo);
 
         LineLimiter llOpen = new LineLimiter();
         llOpen.setView(edOpen);
         llOpen.setLines(7);
-
-        LineLimiter llType = new LineLimiter();
-        llType.setView(edType);
-        llType.setLines(2);
 
         LineLimiter llInfo = new LineLimiter();
         llInfo.setView(edInfo);
@@ -92,11 +86,10 @@ public class EditProfile extends AppCompatActivity {
 
         // set the line limiter
         edOpen.addTextChangedListener(llOpen);
-        edType.addTextChangedListener(llType);
         edInfo.addTextChangedListener(llInfo);
 
         profileImage = findViewById(R.id.ivBackground);
-        change_im = findViewById(R.id.change_im);
+        change_img = findViewById(R.id.change_im);
 
     }
 
@@ -182,7 +175,7 @@ public class EditProfile extends AppCompatActivity {
     }
 
     public void changeImage(View view) {
-        android.support.v7.widget.PopupMenu popup = new android.support.v7.widget.PopupMenu(this, change_im);
+        android.support.v7.widget.PopupMenu popup = new android.support.v7.widget.PopupMenu(this, change_img);
         popup.getMenuInflater().inflate(
                 R.menu.popup_menu, popup.getMenu());
         popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
@@ -335,7 +328,7 @@ public class EditProfile extends AppCompatActivity {
 
     public void collectFields(){
         editTextFields.put("Name",(EditText)findViewById(R.id.editTextName));
-        editTextFields.put("Type",(EditText)findViewById(R.id.editTextType));
+        //editTextFields.put("Type",(EditText)findViewById(R.id.editTextType));
         editTextFields.put("Info",(EditText)findViewById(R.id.editTextInfo));
         editTextFields.put("Open",(EditText)findViewById(R.id.editTextOpen));
         editTextFields.put("Address",(EditText)findViewById(R.id.editTextAddress));
@@ -343,7 +336,7 @@ public class EditProfile extends AppCompatActivity {
         editTextFields.put("Phone",(EditText)findViewById(R.id.editTextPhone));
 
         imageButtons.put("Name", (ImageButton)findViewById(R.id.cancel_name));
-        imageButtons.put("Type", (ImageButton)findViewById(R.id.cancel_type));
+        //imageButtons.put("Type", (ImageButton)findViewById(R.id.cancel_type));
         imageButtons.put("Info", (ImageButton)findViewById(R.id.cancel_info));
         imageButtons.put("Open", (ImageButton)findViewById(R.id.cancel_open));
         imageButtons.put("Address", (ImageButton)findViewById(R.id.cancel_address));
@@ -452,8 +445,6 @@ public class EditProfile extends AppCompatActivity {
     public void clearText(View view) {
         if (view.getId() == R.id.cancel_name)
             editTextFields.get("Name").setText("");
-        else if(view.getId() == R.id.cancel_type)
-            editTextFields.get("Type").setText("");
         else if(view.getId() == R.id.cancel_info)
             editTextFields.get("Info").setText("");
         else if(view.getId() == R.id.cancel_open)
@@ -474,7 +465,7 @@ public class EditProfile extends AppCompatActivity {
         for(ImageButton b : imageButtons.values())
             b.setVisibility(View.INVISIBLE);
 
-        String[] fieldName= {"Name", "Type", "Info", "Open", "Address", "Email", "Phone"};
+        String[] fieldName= {"Name", "Type", "Open", "Address", "Email", "Phone"};
         for (int i=0; i<fieldName.length; i++){
             final EditText field= editTextFields.get(fieldName[i]);
             final ImageButton button= imageButtons.get(fieldName[i]);
@@ -501,7 +492,7 @@ public class EditProfile extends AppCompatActivity {
 
     public void buttonListener(){
         EditText field;
-        String[] fieldName= {"Name", "Type", "Info", "Open", "Address", "Email", "Phone"};
+        String[] fieldName= {"Name", "Type", "Open", "Address", "Email", "Phone"};
         for (int i=0; i<fieldName.length; i++){
             field= editTextFields.get(fieldName[i]);
             final ImageButton button= imageButtons.get(fieldName[i]);

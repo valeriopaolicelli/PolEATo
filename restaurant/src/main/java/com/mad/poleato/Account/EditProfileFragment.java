@@ -30,6 +30,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
@@ -51,7 +52,8 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.TreeMap;
+import java.util.HashMap;
+import java.util.Map;
 
 import static android.app.Activity.RESULT_OK;
 
@@ -66,15 +68,15 @@ public class EditProfileFragment extends Fragment {
     private static final int RESULT_LOAD_IMG = 2;
     private String currentPhotoPath;
 
-    private TreeMap<String, ImageButton> imageButtons= new TreeMap<>();
-    private TreeMap<String, EditText> editTextFields= new TreeMap<>();
+    private Map<String, ImageButton> imageButtons;
+    private Map<String, EditText> editTextFields;
+    private Map<String, CheckBox> checkBoxes;
     private DatabaseReference reference;
 
     private View v;
     private String image;
     private FloatingActionButton change_im;
     private ImageView profileImage;
-
 
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -119,6 +121,11 @@ public class EditProfileFragment extends Fragment {
             mParam2 = getArguments().getString(ARG_PARAM2);
         }
 
+        editTextFields = new HashMap<>();
+        imageButtons = new HashMap<>();
+        checkBoxes = new HashMap<>();
+        imageButtons = new HashMap<>();
+
     }
 
 
@@ -136,22 +143,50 @@ public class EditProfileFragment extends Fragment {
 //        });
 
         //  change_im = findViewById(R.id.change_im);
-        //fill the maps
-        collectFields();
+
+
+        editTextFields.put("Name",(EditText) v.findViewById(R.id.editTextName));
+        editTextFields.put("Info",(EditText) v.findViewById(R.id.editTextInfo));
+        editTextFields.put("Open",(EditText) v.findViewById(R.id.editTextOpen));
+        editTextFields.put("Address",(EditText) v.findViewById(R.id.editTextAddress));
+        editTextFields.put("Email",(EditText) v.findViewById(R.id.editTextEmail));
+        editTextFields.put("Phone",(EditText) v.findViewById(R.id.editTextPhone));
+        //editTextFields.put("DeliveryCost",(EditText) v.findViewById(R.id.editTextDeliveryCost));
+
+
+        imageButtons.put("Name", (ImageButton) v.findViewById(R.id.cancel_name));
+        imageButtons.put("Info", (ImageButton) v.findViewById(R.id.cancel_info));
+        imageButtons.put("Open", (ImageButton) v.findViewById(R.id.cancel_open));
+        imageButtons.put("Address", (ImageButton) v.findViewById(R.id.cancel_address));
+        imageButtons.put("Email", (ImageButton) v.findViewById(R.id.cancel_email));
+        imageButtons.put("Phone", (ImageButton) v.findViewById(R.id.cancel_phone));
+        //editTextFields.put("DeliveryCost",(EditText) v.findViewById(R.id.cancel_deliveryCost));
+
+
+        checkBoxes.put("italian", (CheckBox)v.findViewById(R.id.italianCheckBox));
+        checkBoxes.put("pizza", (CheckBox)v.findViewById(R.id.pizzaCheckBox));
+        checkBoxes.put("kebab", (CheckBox)v.findViewById(R.id.kebabCheckBox));
+
+        checkBoxes.put("chinese", (CheckBox)v.findViewById(R.id.chineseCheckBox));
+        checkBoxes.put("japanese", (CheckBox)v.findViewById(R.id.japaneseCheckBox));
+        checkBoxes.put("thai", (CheckBox)v.findViewById(R.id.thaiCheckBox));
+
+        checkBoxes.put("hamburger", (CheckBox)v.findViewById(R.id.hamburgerCheckBox));
+        checkBoxes.put("american", (CheckBox)v.findViewById(R.id.americanCheckBox));
+        checkBoxes.put("mexican", (CheckBox)v.findViewById(R.id.mexicanCheckBox));
+
+
+        profileImage = v.findViewById(R.id.ivBackground);
+
         //fill the fields
         fillFields();
 
         EditText edOpen = v.findViewById(R.id.editTextOpen);
-        EditText edType = v.findViewById(R.id.editTextType);
         EditText edInfo = v.findViewById(R.id.editTextInfo);
 
         LineLimiter llOpen = new LineLimiter();
         llOpen.setView(edOpen);
         llOpen.setLines(7);
-
-        LineLimiter llType = new LineLimiter();
-        llType.setView(edType);
-        llType.setLines(2);
 
         LineLimiter llInfo = new LineLimiter();
         llInfo.setView(edInfo);
@@ -159,7 +194,6 @@ public class EditProfileFragment extends Fragment {
 
         // set the line limiter
         edOpen.addTextChangedListener(llOpen);
-        edType.addTextChangedListener(llType);
         edInfo.addTextChangedListener(llInfo);
 
         profileImage = v.findViewById(R.id.ivBackground);
@@ -189,6 +223,57 @@ public class EditProfileFragment extends Fragment {
         handleButton();
         buttonListener();
     }
+
+
+    private void fillFields(){
+        DatabaseReference reference = FirebaseDatabase.getInstance().getReference("restaurants");
+
+        reference.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                DataSnapshot issue = dataSnapshot.child("R00");
+                // it is setted to the first record (restaurant)
+                // when the sign in and log in procedures will be handled, it will be the proper one
+                if (dataSnapshot.exists()) {
+                    // dataSnapshot is the "issue" node with all children
+                    for(DataSnapshot snap : issue.getChildren()){
+                        if(editTextFields.containsKey(snap.getKey())){
+                           /* if(snap.getKey().equals("DeliveryCost")){
+                                DecimalFormat decimalFormat = new DecimalFormat("#.00"); //two decimal
+                                String priceStr = decimalFormat.format(Double.parseDouble(snap.getValue().toString()));
+                                editTextFields.get(snap.getKey()).setText(priceStr+"€");
+                            }
+                            else*/
+                                editTextFields.get(snap.getKey()).setText(snap.getValue().toString());
+                        }
+                        else if(snap.getKey().equals("Type")){
+                            String[] types = snap.getValue().toString().toLowerCase().split(",(\\s)*");
+                            for(String t : types)
+                                checkBoxes.get(t).setChecked(true);
+                        }
+                    } //for end
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+                Log.d("matte", "onCancelled | ERROR: " + databaseError.getDetails() +
+                        " | MESSAGE: " + databaseError.getMessage());
+                Toast.makeText(getContext(), databaseError.getMessage().toString(), Toast.LENGTH_SHORT);
+            }
+        });
+
+
+    }
+
+
+
+
+
+
+
+
+
 
     @Override
     public void onSaveInstanceState(Bundle outState) {
@@ -410,66 +495,21 @@ public class EditProfileFragment extends Fragment {
                 .decodeByteArray(decodedByte, 0, decodedByte.length);
     }
 
-    public void collectFields(){
-        editTextFields.put("Name",(EditText) v.findViewById(R.id.editTextName));
-        editTextFields.put("Type",(EditText) v.findViewById(R.id.editTextType));
-        editTextFields.put("Info",(EditText) v.findViewById(R.id.editTextInfo));
-        editTextFields.put("Open",(EditText) v.findViewById(R.id.editTextOpen));
-        editTextFields.put("Address",(EditText) v.findViewById(R.id.editTextAddress));
-        editTextFields.put("Email",(EditText) v.findViewById(R.id.editTextEmail));
-        editTextFields.put("Phone",(EditText) v.findViewById(R.id.editTextPhone));
-
-        imageButtons.put("Name", (ImageButton) v.findViewById(R.id.cancel_name));
-        imageButtons.put("Type", (ImageButton) v.findViewById(R.id.cancel_type));
-        imageButtons.put("Info", (ImageButton) v.findViewById(R.id.cancel_info));
-        imageButtons.put("Open", (ImageButton) v.findViewById(R.id.cancel_open));
-        imageButtons.put("Address", (ImageButton) v.findViewById(R.id.cancel_address));
-        imageButtons.put("Email", (ImageButton) v.findViewById(R.id.cancel_email));
-        imageButtons.put("Phone", (ImageButton) v.findViewById(R.id.cancel_phone));
-
-        profileImage = v.findViewById(R.id.ivBackground);
-    }
-
-    private void fillFields() {
-        reference= FirebaseDatabase.getInstance().getReference("restaurants");
-        reference.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                DataSnapshot issue= dataSnapshot.child("R00");
-                // TODO when log in and sign in will be enabled
-                // it is setted to the first record (restaurant)
-                // when the sign in and log in procedures will be handled, it will be the proper one
-                // dataSnapshot is the "issue" node with all children
-                if (dataSnapshot.exists()) {
-                    String[] fieldName = {"Name", "Type", "Info", "Open", "Address", "Email", "Phone"};
-                    for (int i = 0; i < fieldName.length; i++) {
-                        EditText field = editTextFields.get(fieldName[i]);
-                        field.setText(issue.child(fieldName[i]).getValue().toString());
-                    }
-                    //TODO retrieve image from DB
-                }
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
-                Toast.makeText(getContext(), databaseError.getMessage().toString(), Toast.LENGTH_SHORT);
-            }
-        });
-    }
 
     public void saveChanges() {
         boolean wrongField = false;
         // fields cannot be empty
-        String[] fieldName = {"Name", "Type", "Info", "Open", "Address", "Email", "Phone"};
-        for (int i = 0; i < fieldName.length; i++) {
-            EditText field = editTextFields.get(fieldName[i]);
-            if(field != null){
-                if (field.getText().toString().equals("")) {
+
+        for(String fieldName : editTextFields.keySet()){
+            EditText ed = editTextFields.get(fieldName);
+            if(ed != null){
+                if(ed.getText().toString().equals("")){
                     Toast.makeText(getContext(), "All fields must be filled", Toast.LENGTH_LONG).show();
-                    field.setBackground(ContextCompat.getDrawable(getContext(), R.drawable.border_wrong_field));
+                    ed.setBackground(ContextCompat.getDrawable(getContext(), R.drawable.border_wrong_field));
                     wrongField = true;
-                } else
-                    field.setBackground(ContextCompat.getDrawable(getContext(), R.drawable.border_right_field));
+                }
+                else
+                    ed.setBackground(ContextCompat.getDrawable(getContext(), R.drawable.border_right_field));
             }
             else
                 return;
@@ -495,11 +535,6 @@ public class EditProfileFragment extends Fragment {
             Toast.makeText(getContext(), "The name must start with letters and must end with letters. Space are allowed. Numbers are not allowed", Toast.LENGTH_LONG).show();
             editTextFields.get("Name").setBackground(ContextCompat.getDrawable(getContext(), R.drawable.border_wrong_field));
         }
-        if (!editTextFields.get("Type").getText().toString().matches(textRegex)) {
-            wrongField = true;
-            Toast.makeText(getContext(), "The restaurant type must start with letters and must end with letters. Space are allowed. Numbers are not allowed", Toast.LENGTH_LONG).show();
-            editTextFields.get("Type").setBackground(ContextCompat.getDrawable(getContext(), R.drawable.border_wrong_field));
-        }
         if (!editTextFields.get("Info").getText().toString().matches(textRegex)) {
             wrongField = true;
             Toast.makeText(getContext(), "The description must start with letters and must end with letters. Space are allowed. Numbers are not allowed", Toast.LENGTH_LONG).show();
@@ -515,9 +550,11 @@ public class EditProfileFragment extends Fragment {
         }
 
         if(!wrongField){
-            for (int i = 0; i < fieldName.length; i++) {
-                EditText field = editTextFields.get(fieldName[i]);
-                reference.child("R00").child(fieldName[i]).setValue(field.getText().toString()); //TODO when the log in will be enabled,
+
+            // TODO here save all the data to the DB
+            for(String fieldName : editTextFields.keySet()){
+                EditText ed = editTextFields.get(fieldName);
+                reference.child("R00").child(fieldName).setValue(ed.getText().toString());
             }
             // TODO save image into DB
             Toast.makeText(getContext(), "Saved", Toast.LENGTH_LONG).show();
@@ -535,8 +572,6 @@ public class EditProfileFragment extends Fragment {
     public void clearText(View view) {
         if (view.getId() == R.id.cancel_name)
             editTextFields.get("Name").setText("");
-        else if(view.getId() == R.id.cancel_type)
-            editTextFields.get("Type").setText("");
         else if(view.getId() == R.id.cancel_info)
             editTextFields.get("Info").setText("");
         else if(view.getId() == R.id.cancel_open)
@@ -557,10 +592,9 @@ public class EditProfileFragment extends Fragment {
         for(ImageButton b : imageButtons.values())
             b.setVisibility(View.INVISIBLE);
 
-        String[] fieldName= {"Name", "Type", "Info", "Open", "Address", "Email", "Phone"};
-        for (int i=0; i<fieldName.length; i++){
-            final EditText field= editTextFields.get(fieldName[i]);
-            final ImageButton button= imageButtons.get(fieldName[i]);
+        for(String fieldName : editTextFields.keySet()){
+            final EditText field= editTextFields.get(fieldName);
+            final ImageButton button= imageButtons.get(fieldName);
             if(field != null && button != null) {
                 field.setOnFocusChangeListener(new View.OnFocusChangeListener() {
                     @Override
@@ -584,10 +618,9 @@ public class EditProfileFragment extends Fragment {
 
     public void buttonListener(){
         EditText field;
-        String[] fieldName= {"Name", "Type", "Info", "Open", "Address", "Email", "Phone"};
-        for (int i=0; i<fieldName.length; i++){
-            field= editTextFields.get(fieldName[i]);
-            final ImageButton button= imageButtons.get(fieldName[i]);
+        for (String fieldName : editTextFields.keySet()){
+            field= editTextFields.get(fieldName);
+            final ImageButton button= imageButtons.get(fieldName);
             if(button!=null && field != null) {
                 field.addTextChangedListener(new TextWatcher() {
                     @Override
