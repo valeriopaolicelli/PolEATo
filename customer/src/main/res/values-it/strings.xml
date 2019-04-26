@@ -29,4 +29,15 @@
     <string name="delivery_cost">Consegna</string>
     <string name="price_range">Prezzo</string>
     <string name="free_delivery">Gratis</string>
+
+
+    <string name="italian_cooking">Italiano</string>
+    <string name="pizza_cooking">Pizza</string>
+    <string name="kebab_cooking">Kebab</string>
+    <string name="chinese_cooking">Cinese</string>
+    <string name="japanese_cooking">Giapponese</string>
+    <string name="thai_cooking">Thai</string>
+    <string name="hamburger_cooking">Hamburger</string>
+    <string name="american_cooking">Americano</string>
+    <string name="mexican_cooking">Messicano</string>
 </resources>

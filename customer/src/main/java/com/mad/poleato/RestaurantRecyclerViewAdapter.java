@@ -1,7 +1,6 @@
 package com.mad.poleato;
 
 import android.content.Context;
-import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v7.widget.RecyclerView;
@@ -12,17 +11,15 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import org.w3c.dom.Text;
 
 import java.text.DecimalFormat;
-import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 
 public class RestaurantRecyclerViewAdapter extends RecyclerView.Adapter<RestaurantRecyclerViewAdapter.RestaurantViewHolder> {
 
 
-    private List<Restaurant> resList;
+    private List<Restaurant> list; //current displayed list
     private Context context;
 
     /**
@@ -68,8 +65,8 @@ public class RestaurantRecyclerViewAdapter extends RecyclerView.Adapter<Restaura
     }
 
     // Provide a suitable constructor (depends on the kind of dataset)
-    public RestaurantRecyclerViewAdapter(Context context, List<Restaurant> resList) {
-        this.resList = resList;
+    public RestaurantRecyclerViewAdapter(Context context, List<Restaurant> list) {
+        this.list = list;
         this.context = context;
         currState = State.INIT;
 
@@ -98,19 +95,19 @@ public class RestaurantRecyclerViewAdapter extends RecyclerView.Adapter<Restaura
     public void onBindViewHolder(RestaurantViewHolder holder, final int position) {
         // - get element from your dataset at this position
         // - replace the contents of the view with that element
-        holder.title.setText(resList.get(position).getName());
-        holder.type.setText(resList.get(position).getType());
-        holder.img.setImageBitmap(resList.get(position).getImage());
+        holder.title.setText(list.get(position).getName());
+        holder.type.setText(list.get(position).getType());
+        holder.img.setImageBitmap(list.get(position).getImage());
         DecimalFormat decimalFormat = new DecimalFormat("#.00"); //two decimal
-        double deliveryCost = resList.get(position).getDeliveryCost();
+        double deliveryCost = list.get(position).getDeliveryCost();
         if(deliveryCost < 0.1)
             holder.delivery.setText(context.getString(R.string.delivery_cost)+":\n"+context.getString(R.string.free_delivery));
         else{
-            String priceStr = decimalFormat.format(resList.get(position).getDeliveryCost());
+            String priceStr = decimalFormat.format(list.get(position).getDeliveryCost());
             holder.delivery.setText(context.getString(R.string.delivery_cost)+":\n"+priceStr+"€");
         }
 
-        int priceR = resList.get(position).getPriceRange();
+        int priceR = list.get(position).getPriceRange();
         String stringR = new String("");
         for(int count = 0; count < priceR; count ++)
             stringR += "$";
@@ -118,7 +115,7 @@ public class RestaurantRecyclerViewAdapter extends RecyclerView.Adapter<Restaura
         holder.priceRange.setText(context.getString(R.string.price_range)+":\n"+stringR);
 
 
-        if(resList.get(position).getIsOpen())
+        if(list.get(position).getIsOpen())
         {
             holder.open.setText(context.getString(R.string.open));
             holder.open.setTextColor(Color.rgb(0, 200, 0));
@@ -131,9 +128,9 @@ public class RestaurantRecyclerViewAdapter extends RecyclerView.Adapter<Restaura
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Log.d("matte", "OnClick | restaurant ID: "+resList.get(position).getId());
+                Log.d("matte", "OnClick | restaurant ID: "+ list.get(position).getId());
                 Bundle bundle = new Bundle();
-                bundle.putString("id", resList.get(position).getId());
+                bundle.putString("id", list.get(position).getId());
                 //Intent menuIntent = new Intent(context, /*TODO FABIO*/);
                 //menuIntent.putExtras(bundle);
             }
@@ -146,36 +143,42 @@ public class RestaurantRecyclerViewAdapter extends RecyclerView.Adapter<Restaura
     // Return the size of your dataset (invoked by the layout manager)
     @Override
     public int getItemCount() {
-        return resList.size();
+        return list.size();
     }
 
 
 
-    public void setResList(List<Restaurant> list){
-        this.resList = list;
+
+    public void display(List<Restaurant> list) {
+        this.list = list;
         notifyDataSetChanged();
     }
 
+            /*  *********************
+                ****** SORTING ******
+                *********************   */
+
+
     public void sortByName(){
-        this.resList.sort(this.nameComparator);
+        this.list.sort(this.nameComparator);
         currState = State.NAME_SORTED;
         notifyDataSetChanged();
     }
 
     public void sortByPrice(){
-        this.resList.sort(this.priceComparator);
+        this.list.sort(this.priceComparator);
         currState = State.PRICE_SORTED;
         notifyDataSetChanged();
     }
 
     public void sortByPriceInverse(){
-        this.resList.sort(this.priceInverseComparator);
+        this.list.sort(this.priceInverseComparator);
         currState = State.PRICE_INVERSE_SORTED;
         notifyDataSetChanged();
     }
 
     public void sortByDelivery(){
-        this.resList.sort(this.deliveryComparator);
+        this.list.sort(this.deliveryComparator);
         currState = State.DELIVERY_SORTED;
         notifyDataSetChanged();
     }
@@ -184,24 +187,20 @@ public class RestaurantRecyclerViewAdapter extends RecyclerView.Adapter<Restaura
     public void updateLayout(){
         if(currState == State.INIT){
             notifyDataSetChanged();
-            return;
         }
-        if(currState == State.NAME_SORTED){
+        else if(currState == State.NAME_SORTED){
             sortByName();
-            return;
         }
-        if(currState == State.PRICE_SORTED){
+        else if(currState == State.PRICE_SORTED){
             sortByPrice();
-            return;
         }
-        if(currState == State.PRICE_INVERSE_SORTED){
+        else if(currState == State.PRICE_INVERSE_SORTED){
             sortByPriceInverse();
-            return;
         }
-        if(currState == State.DELIVERY_SORTED){
+        else if(currState == State.DELIVERY_SORTED){
             sortByDelivery();
-            return;
         }
+
     }
 
 

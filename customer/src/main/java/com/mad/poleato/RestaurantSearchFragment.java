@@ -2,12 +2,15 @@ package com.mad.poleato;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.DialogFragment;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -17,10 +20,8 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
-import android.widget.ListView;
 import android.widget.PopupMenu;
 import android.widget.SearchView;
-import android.widget.Toast;
 
 
 import com.google.firebase.database.ChildEventListener;
@@ -30,10 +31,11 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
 
 
 public class RestaurantSearchFragment extends DialogFragment {
@@ -49,8 +51,12 @@ public class RestaurantSearchFragment extends DialogFragment {
     private DatabaseReference dbReference;
 
     private HashMap<String, Restaurant> restaurantMap;
-    private List<Restaurant> restaurantList;
+    private List<Restaurant> restaurantList; //original list of all restaurants
+    private List<Restaurant> currDisplayedList; //list of filtered elements displayed on the screen
+    private Set<String> typesToFilter;
 
+    //id for the filter fragment
+    public static final int FILTER_FRAGMENT = 26;
 
 
     @Override
@@ -63,42 +69,44 @@ public class RestaurantSearchFragment extends DialogFragment {
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-
         restaurantMap = new HashMap<>();
         restaurantList = new ArrayList<>();
+        typesToFilter = new HashSet<>();
+        currDisplayedList = new ArrayList<>();
 
         dbReference = FirebaseDatabase.getInstance().getReference("restaurants");
         dbReference.addChildEventListener(new ChildEventListener() {
             @Override
             public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
-                Log.d("matte", "onChildAdded | PREVIOUS CHILD: "+s);
+                Log.d("matte", "onChildAdded | PREVIOUS CHILD: " + s);
 
                 String id = dataSnapshot.getKey();
                 Bitmap img = BitmapFactory.decodeResource(getResources(), R.drawable.image_empty); // TODO: make it dynamic
                 String name = dataSnapshot.child("Name").getValue().toString();
                 String type = dataSnapshot.child("Type").getValue().toString();
-                Boolean isOpen = (Boolean)dataSnapshot.child("IsActive").getValue();
+                Boolean isOpen = (Boolean) dataSnapshot.child("IsActive").getValue();
                 int priceRange = Integer.parseInt(dataSnapshot.child("PriceRange").getValue().toString());
                 double deliveryCost = Double.parseDouble(dataSnapshot.child("DeliveryCost").getValue().toString());
 
                 Restaurant resObj = new Restaurant(id, img, name, type, isOpen, priceRange, deliveryCost);
-
+                //add to the original list
                 restaurantMap.put(id, resObj);
                 restaurantList.add(resObj);
-                //insert the element by keeping the actual order
-                recyclerAdapter.updateLayout();
+                //check the filter before display
+                if (isValidToDisplay(resObj))
+                    addToDisplay(resObj);
 
             }
 
             @Override
             public void onChildChanged(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
-                Log.d("matte", "onChildChanged | PREVIOUS CHILD: "+s);
+                Log.d("matte", "onChildChanged | PREVIOUS CHILD: " + s);
 
                 String id = dataSnapshot.getKey();
                 Bitmap img = BitmapFactory.decodeResource(getResources(), R.drawable.image_empty); // TODO: make it dynamic
                 String name = dataSnapshot.child("Name").getValue().toString();
                 String type = dataSnapshot.child("Type").getValue().toString();
-                Boolean isOpen = (Boolean)dataSnapshot.child("IsActive").getValue();
+                Boolean isOpen = (Boolean) dataSnapshot.child("IsActive").getValue();
                 int priceRange = Integer.parseInt(dataSnapshot.child("PriceRange").getValue().toString());
                 double deliveryCost = Double.parseDouble(dataSnapshot.child("DeliveryCost").getValue().toString());
 
@@ -109,8 +117,9 @@ public class RestaurantSearchFragment extends DialogFragment {
                 resObj.setIsOpen(isOpen);
                 resObj.setPriceRange(priceRange);
                 resObj.setDeliveryCost(deliveryCost);
-                //insert the element by keeping the actual order
-                recyclerAdapter.updateLayout();
+                //insert the element by keeping the actual order after checking the filter
+                if (isValidToDisplay(resObj))
+                    recyclerAdapter.updateLayout();
 
             }
 
@@ -119,28 +128,21 @@ public class RestaurantSearchFragment extends DialogFragment {
                 Log.d("matte", "onChildRemoved");
 
                 String id = dataSnapshot.getKey();
+                Restaurant toRemove = restaurantMap.get(id);
                 restaurantMap.remove(id);
-                //search for the actual position of that item (it can be sorted in any way)
-                int idx;
-                for(idx = 0; idx < restaurantList.size(); idx ++){
-                    if(restaurantList.get(idx).getId().equals(id)){
-                        restaurantList.remove(idx);
-                        break;
-                    }
-                }
-
-                recyclerAdapter.notifyDataSetChanged();
+                restaurantList.remove(toRemove);
+                removeFromDisplay(toRemove);
             }
 
             @Override
             public void onChildMoved(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
-                Log.d("matte", "onChildMoved | PREVIOUS CHILD: "+s);
+                Log.d("matte", "onChildMoved | PREVIOUS CHILD: " + s);
             }
 
             @Override
             public void onCancelled(@NonNull DatabaseError databaseError) {
-                Log.d("matte", "onCancelled | ERROR: "+databaseError.getDetails()+
-                            " | MESSAGE: "+databaseError.getMessage());
+                Log.d("matte", "onCancelled | ERROR: " + databaseError.getDetails() +
+                        " | MESSAGE: " + databaseError.getMessage());
             }
         });
 
@@ -163,90 +165,58 @@ public class RestaurantSearchFragment extends DialogFragment {
         sv = (SearchView) fragView.findViewById(R.id.searchView);
         sv.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
 
-            List<Restaurant> currList;
             int previousLen, currLen;
+
             @Override
             public boolean onQueryTextSubmit(String query) {
-
-                Log.d("matte", "queryTextSubmit | QUERY: "+query);
-
-
+                Log.d("matte", "queryTextSubmit | QUERY: " + query);
                 return false;
             }
 
             @Override
             public boolean onQueryTextChange(String newText) {
-                Log.d("matte", "queryTextChange | QUERY: "+newText);
+                Log.d("matte", "queryTextChange | QUERY: " + newText);
 
+                if (newText == null)
+                    return false;
                 currLen = newText.length();
 
-                if(currList == null){
-                    previousLen = -1;
-                    //first time
-                    currLen = 0;
-                    currList = new ArrayList<>();
-                    //initialize the currList
-                    for(Restaurant r : restaurantList)
-                        currList.add(r);
-                }
-
-                if(newText.isEmpty()){
-                    //void query
-                    //reset the currList
-                    currList.clear();
-                    for(Restaurant r : restaurantList)
-                        currList.add(r);
-                    //reset the adapter list to show all the original items
-                    recyclerAdapter.setResList(restaurantList);
-                    previousLen = currLen;
-                    return true;
-                }
-
-
-                if(currLen > previousLen)
-                {
+                //void query: reset the list
+                if (currLen == 0) {
+                    restoreOriginalList();
+                    filterDisplay();
+                } else {
+                    //if text removed from query: search from the whole list
+                    if (currLen < previousLen) {
+                        restoreOriginalList();
+                        filterDisplay();
+                    }
                     //text added to query: search from previous list
-                    Iterator<Restaurant> rIterator = currList.iterator();
+                    Iterator<Restaurant> rIterator = currDisplayedList.iterator();
                     while (rIterator.hasNext()) {
                         Restaurant s = rIterator.next(); // must be called before you can call i.remove()
-                        if(!s.getName().toLowerCase().contains(newText.toLowerCase()))
+                        if (!s.getName().toLowerCase().contains(newText.toLowerCase()))
                             rIterator.remove();
                     }
                 }
-                else{
-                    //text removed from query: search from the whole list
-                    currList.clear();
-                    for(Restaurant r : restaurantList)
-                        currList.add(r);
-                    Iterator<Restaurant> rIterator = currList.iterator();
-                    while (rIterator.hasNext()) {
-                        Restaurant s = rIterator.next(); // must be called before you can call i.remove()
-                        // Do something
-                        if(!s.getName().toLowerCase().contains(newText.toLowerCase()))
-                            rIterator.remove();
-                    }
-                }
+                //display the updated list
+                recyclerAdapter.display(currDisplayedList);
 
-
-                recyclerAdapter.setResList(currList);
-
-                Log.d("matte", "queryTextChange | currList size: "+currList.size());
+                Log.d("matte", "queryTextChange | displayed list size: " + currDisplayedList.size());
                 previousLen = currLen;
                 return true;
-
             }
         });
 
 
-
-        rv = (RecyclerView)fragView.findViewById(R.id.recyclerView);
+        rv = (RecyclerView) fragView.findViewById(R.id.recyclerView);
         rv.setHasFixedSize(true);
 
         // use a linear layout manager
         layoutManager = new LinearLayoutManager(this.hostActivity);
         rv.setLayoutManager(layoutManager);
 
-        this.recyclerAdapter = new RestaurantRecyclerViewAdapter(this.hostActivity, this.restaurantList);
+        this.recyclerAdapter = new RestaurantRecyclerViewAdapter(this.hostActivity, this.currDisplayedList);
         rv.setAdapter(recyclerAdapter);
 
         //add separator between list items
@@ -264,32 +234,32 @@ public class RestaurantSearchFragment extends DialogFragment {
                     @Override
                     public boolean onMenuItemClick(MenuItem item) {
                         String id = fragView.getResources().getResourceName(item.getItemId());
-                        Log.d("matte", "Popup pressed | ID: "+id);
+                        Log.d("matte", "Popup pressed | ID: " + id);
 
                         String[] itemName = id.split("/");
-                        if(itemName.length > 2) //error
+                        if (itemName.length > 2) //error
                             return false;
-                        Log.d("matte", "NAME: "+itemName[1]);
+                        Log.d("matte", "NAME: " + itemName[1]);
 
-                        if(itemName[1].equals("sortByName")){
+                        if (itemName[1].equals("sortByName")) {
                             Log.d("matte", "SORT: byName");
                             recyclerAdapter.sortByName();
                             return true;
                         }
 
-                        if(itemName[1].equals("sortByPrice")){
+                        if (itemName[1].equals("sortByPrice")) {
                             Log.d("matte", "SORT: byPrice");
                             recyclerAdapter.sortByPrice();
                             return true;
                         }
 
-                        if(itemName[1].equals("sortByPriceInverse")){
+                        if (itemName[1].equals("sortByPriceInverse")) {
                             Log.d("matte", "SORT: byPriceInverse");
                             recyclerAdapter.sortByPriceInverse();
                             return true;
                         }
 
-                        if(itemName[1].equals("sortByDelivery")){
+                        if (itemName[1].equals("sortByDelivery")) {
                             Log.d("matte", "SORT: byDelivery");
                             recyclerAdapter.sortByDelivery();
                             return true;
@@ -300,11 +270,112 @@ public class RestaurantSearchFragment extends DialogFragment {
                 });
 
                 popup.show();
-
             }
         });
 
 
+        filterBtn = (ImageButton) fragView.findViewById(R.id.filterButton);
+        final Fragment f = this;
+        filterBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                FragmentTransaction ft = getFragmentManager().beginTransaction();
+                Fragment prev = getFragmentManager().findFragmentByTag("filter_fragment");
+                if (prev != null) {
+                    ft.remove(prev);
+                }
+                ft.addToBackStack(null);
+                FilterFragment filterFrag = new FilterFragment();
+                Bundle bundle = new Bundle();
+                //pass the current checkbox state to the fragment
+                bundle.putSerializable("checkbox_state", (HashSet<String>)typesToFilter);
+                filterFrag.setArguments(bundle);
+                filterFrag.setTargetFragment(f, FILTER_FRAGMENT);
+                filterFrag.show(ft, "filter_fragment");
+            }
+        });
     }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        switch (requestCode) {
+            case FILTER_FRAGMENT:
+                if (resultCode == Activity.RESULT_OK) {
+                    Bundle bundle = data.getExtras();
+                    typesToFilter = (HashSet<String>) bundle.getSerializable("checked_types");
+
+                    restoreOriginalList();
+                    if(!typesToFilter.isEmpty())
+                        filterDisplay();
+
+                    recyclerAdapter.display(currDisplayedList);
+                }
+                break;
+        }
+
+    }
+
+
+    private void restoreOriginalList() {
+        currDisplayedList.clear();
+        for (Restaurant r : restaurantList)
+            currDisplayedList.add(r);
+    }
+
+
+    private void addToDisplay(Restaurant r) {
+        //add new item to the displayed list
+        currDisplayedList.add(r);
+        //notify the adapter to show it by keeping the actual order
+        recyclerAdapter.updateLayout();
+    }
+
+    private void removeFromDisplay(Restaurant r) {
+
+        currDisplayedList.remove(r);
+        // simply update. No order is compromised by removing an item
+        recyclerAdapter.notifyDataSetChanged();
+    }
+
+    private void filterDisplay() {
+        //no filters to apply
+        if (typesToFilter.isEmpty())
+            return;
+
+        Iterator<Restaurant> rIterator = currDisplayedList.iterator();
+        while (rIterator.hasNext()) {
+            Restaurant s = rIterator.next();
+            if (!isValidToDisplay(s))
+                rIterator.remove();
+        }
+
+
+    }
+
+    private boolean isValidToDisplay(Restaurant r) {
+        //no filters to apply -> always valid
+        if (typesToFilter.isEmpty())
+            return true;
+
+        String[] types = r.getType().toLowerCase().split(",(\\s)*");
+        for (String t : types) {
+            if (typesToFilter.contains(t)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private boolean isRemovedFilter(Set<String> newFilters){
+        for(String s : typesToFilter){
+            //if a filter was removed
+            if(!newFilters.contains(s))
+                return true;
+        }
+
+        return false;
+    }
+
 
 }

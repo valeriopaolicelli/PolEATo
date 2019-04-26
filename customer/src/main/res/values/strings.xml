@@ -30,6 +30,17 @@
     <string name="free_delivery">Free</string>
 
 
+    <string name="italian_cooking">Italian</string>
+    <string name="pizza_cooking">Pizza</string>
+    <string name="kebab_cooking">Kebab</string>
+    <string name="chinese_cooking">Chinese</string>
+    <string name="japanese_cooking">Japanese</string>
+    <string name="thai_cooking">Thai</string>
+    <string name="hamburger_cooking">Hamburger</string>
+    <string name="american_cooking">American</string>
+    <string name="mexican_cooking">Mexican</string>
+
+
 
 
 
