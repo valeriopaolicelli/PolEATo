@@ -59,7 +59,7 @@
     </fragment>
     <fragment
         android:id="@+id/editProfile_id"
-        android:name="com.mad.poleato.EditProfileFragment"
+        android:name="com.mad.poleato.Account.EditProfileFragment"
         android:label="@string/title_actionbar_edit_account"
         tools:layout="@layout/edit_account_layout">
         <action

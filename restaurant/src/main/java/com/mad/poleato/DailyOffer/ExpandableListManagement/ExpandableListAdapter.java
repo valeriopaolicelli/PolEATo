@@ -21,6 +21,7 @@ import com.mad.poleato.DailyOffer.Food;
 import com.mad.poleato.R;
 
 import java.text.DecimalFormat;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
@@ -33,36 +34,22 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
     private HashMap<String, List<Food>> _listDataChild; // child data in format of header title, child title
     private Button button_delete;
 
-    public ExpandableListAdapter(Activity host, List<String> listDataHeader,
-                                 HashMap<String, List<Food>> listChildData) {
+    public ExpandableListAdapter(Activity host) {
 
         this.host = host;
         inf = LayoutInflater.from(host);
-        this._listDataGroup = listDataHeader;
-        this._listDataChild = listChildData;
+        this._listDataGroup = new ArrayList<>();
+        this._listDataChild = new HashMap<>();
         Log.d("matte", "[Init]headers:"+_listDataGroup.toString());
         Log.d("matte", "[Init]childs:"+_listDataChild.toString());
     }
 
-
-
-    public void insertChild(final int groupPosition, Food food){
-        this._listDataChild.get(getGroup(groupPosition).toString()).add(food);
-        notifyDataSetChanged();
+    public void setAllGroup(List<String> strings){
+        this._listDataGroup = strings;
     }
 
-    public void insertChild(String groupTag, Food food){
-        this._listDataChild.get(groupTag).add(food);
-        notifyDataSetChanged();
-    }
-
-    public void removeChild(final int groupPosition, final int childPosition){
-        this._listDataChild.get(getGroup(groupPosition).toString()).remove(childPosition);
-        notifyDataSetChanged();
-    }
-
-    public void refresh(){
-        notifyDataSetChanged();
+    public void setAllChild(HashMap<String, List<Food>> strings){
+        this._listDataChild = strings;
     }
 
     @Override
@@ -139,7 +126,7 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
                     public boolean onMenuItemClick(MenuItem item) {
 
                         Log.d("matte", item.getTitle().toString());
-                        removeChild(groupPosition, childPosition);
+//                        removeChild(groupPosition, childPosition);
                         return true;
                     }
                 });

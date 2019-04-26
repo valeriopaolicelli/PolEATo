@@ -18,10 +18,10 @@ import java.util.TreeMap;
 
 public class MyViewModel extends ViewModel {
     private MutableLiveData<List<String>> _listDataGroup = new MutableLiveData<>(); // header titles
-    private final MutableLiveData<TreeMap<String, List<Food>>> _listDataChild = new MutableLiveData(); // child data in format of header title, child title
+    private final MutableLiveData<HashMap<String, List<Food>>> _listDataChild = new MutableLiveData<>(); // child data in format of header title, child title
 
 
-    public LiveData<TreeMap<String, List<Food>>> getListC(){
+    public LiveData<HashMap<String, List<Food>>> getListC(){
         return _listDataChild;
     }
 
@@ -29,16 +29,51 @@ public class MyViewModel extends ViewModel {
         return _listDataGroup;
     }
 
-    public void setData (List<String> listDataGroup, TreeMap<String, List<Food>> listDataChild) {
+    public void setData (List<String> listDataGroup, HashMap<String, List<Food>> listDataChild) {
         _listDataGroup.setValue(listDataGroup);
         _listDataChild.postValue(listDataChild);
     }
 
 
+    public void insertChild(final int groupPosition, Food food){
+        this._listDataChild.getValue().get(getGroup(groupPosition).toString()).add(food);
+    }
+
+    public void insertChild(String groupTag, Food food){
+        this._listDataChild.getValue().get(groupTag).add(food);
+    }
+
+    public void removeChild(final int groupPosition, final int childPosition){
+        this._listDataChild.getValue().get(getGroup(groupPosition).toString()).remove(childPosition);
+    }
+
+    public Object getGroup(int groupPosition) {
+        return this._listDataGroup.getValue().get(groupPosition);
+    }
+
+
+
+//    private void initGroup(){
+//        listDataGroup = new ArrayList<>();
+//        listDataGroup.add(getString(R.string.starters));
+//        listDataGroup.add(getString(R.string.firsts));
+//        listDataGroup.add(getString(R.string.seconds));
+//        listDataGroup.add(getString(R.string.desserts));
+//        listDataGroup.add(getString(R.string.drinks));
+//    }
+
+    private void initChild(){
+
+        _listDataChild.setValue( new HashMap<String, List<Food>>());
+        for(int idx = 0; idx < _listDataGroup.getValue().size(); idx ++)
+            _listDataChild.getValue().put(_listDataGroup.getValue().get(idx), new ArrayList<Food>());
+
+    }
+
     public void prepareListData(Context context) {
 
         List<String> listDataGroup = new ArrayList<String>();
-        TreeMap<String, List<Food>> listDataChild = new TreeMap<String, List<Food>>();
+        HashMap<String, List<Food>> listDataChild = new HashMap<String, List<Food>>();
 
         /** Adding child data*/
         listDataGroup.add(context.getString(R.string.starters));
