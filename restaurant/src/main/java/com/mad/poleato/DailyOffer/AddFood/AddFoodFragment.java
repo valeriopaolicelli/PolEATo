@@ -1,6 +1,7 @@
 package com.mad.poleato.DailyOffer.AddFood;
 
 import android.app.Dialog;
+import android.arch.lifecycle.ViewModelProviders;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -41,6 +42,7 @@ import androidx.navigation.Navigation;
 
 import com.mad.poleato.DailyOffer.Food;
 import com.mad.poleato.R;
+import com.mad.poleato.View.ViewModel.MyViewModel;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -268,9 +270,16 @@ public class AddFoodFragment extends DialogFragment {
 
                     // I send even plateType to now where insert new food
 
-                   /**
-                     * GO TO DAILY_OFFER_FRAGMENT
+                    /**
+                     * SAVE ON MODEL_VIEW
                      */
+
+                    MyViewModel model = ViewModelProviders.of(getActivity()).get(MyViewModel.class);
+                    model.insertChild(plateType, food);
+
+                    /**
+                      * GO TO DAILY_OFFER_FRAGMENT
+                      */
                     Navigation.findNavController(v).navigate(R.id.action_addFoodFragment_to_daily_offer);
                 }
             }

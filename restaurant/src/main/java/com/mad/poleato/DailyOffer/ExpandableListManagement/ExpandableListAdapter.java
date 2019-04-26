@@ -46,10 +46,12 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
 
     public void setAllGroup(List<String> strings){
         this._listDataGroup = strings;
+        notifyDataSetChanged();
     }
 
     public void setAllChild(HashMap<String, List<Food>> strings){
         this._listDataChild = strings;
+        notifyDataSetChanged();
     }
 
     @Override
