@@ -118,11 +118,11 @@ public class RestaurantRecyclerViewAdapter extends RecyclerView.Adapter<Restaura
         if(list.get(position).getIsOpen())
         {
             holder.open.setText(context.getString(R.string.open));
-            holder.open.setTextColor(Color.rgb(0, 200, 0));
+            holder.open.setTextColor(Color.rgb(0, 100, 0));
         }
         else{
             holder.open.setText(context.getString(R.string.close));
-            holder.open.setTextColor(Color.rgb(200, 0, 0));
+            holder.open.setTextColor(Color.rgb(150, 0, 0));
         }
 
         holder.itemView.setOnClickListener(new View.OnClickListener() {
