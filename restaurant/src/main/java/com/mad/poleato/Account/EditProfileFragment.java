@@ -53,6 +53,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.text.DecimalFormat;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -185,6 +186,16 @@ public class EditProfileFragment extends Fragment {
         for(String t : checkBoxes.keySet())
             checkBoxes.get(t).setOnCheckedChangeListener(cl);
 
+        ClearListener clearListener = new ClearListener();
+        for(String s : imageButtons.keySet())
+            imageButtons.get(s).setOnClickListener(clearListener);
+
+        v.findViewById(R.id.change_im).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                changeImage();
+            }
+        });
 
         profileImage = v.findViewById(R.id.ivBackground);
 
@@ -248,12 +259,12 @@ public class EditProfileFragment extends Fragment {
                     // dataSnapshot is the "issue" node with all children
                     for(DataSnapshot snap : issue.getChildren()){
                         if(editTextFields.containsKey(snap.getKey())){
-                           /* if(snap.getKey().equals("DeliveryCost")){
+                            if(snap.getKey().equals("DeliveryCost")){
                                 DecimalFormat decimalFormat = new DecimalFormat("#.00"); //two decimal
                                 String priceStr = decimalFormat.format(Double.parseDouble(snap.getValue().toString()));
                                 editTextFields.get(snap.getKey()).setText(priceStr+"€");
                             }
-                            else*/
+                            else
                                 editTextFields.get(snap.getKey()).setText(snap.getValue().toString());
                         }
                         else if(snap.getKey().equals("Type") && !snap.getValue().toString().isEmpty()){
@@ -550,6 +561,24 @@ public class EditProfileFragment extends Fragment {
             Toast.makeText(getContext(), "The description must start with letters and must end with letters. Space are allowed. Numbers are not allowed", Toast.LENGTH_LONG).show();
             editTextFields.get("Info").setBackground(ContextCompat.getDrawable(getContext(), R.drawable.border_wrong_field));
         }
+        else{
+            /*
+             * valid content, check if there are some spaces or new lines removable
+             * remove all useless spaces
+             * remove all useless blank lines
+             */
+            int firstChar=0;
+            int lastChar=0;
+            String clearedString = editTextFields.get("Info").getText().toString().trim().replaceAll(" +", " ");
+            int lenght= clearedString.length();
+            if(clearedString.startsWith(" ")){
+                firstChar= 1;
+            }
+            if(clearedString.endsWith(" ")){
+                lastChar= lenght-1;
+            }
+            editTextFields.get("Info").setText(clearedString.substring(firstChar,lenght-lastChar));
+        }
 
         /* REGEX FOR OPENING HOURS MISSING BECAUSE THE INSERTION MUST BE GUIDED, THE RESTAURATEUR CANNOT WRITE DIRECTLY IN THIS FIELD */
 
@@ -613,7 +642,7 @@ public class EditProfileFragment extends Fragment {
         for(ImageButton b : imageButtons.values())
             b.setVisibility(View.INVISIBLE);
 
-        for(String fieldName : editTextFields.keySet()){
+        for (String fieldName : editTextFields.keySet()){
             final EditText field= editTextFields.get(fieldName);
             final ImageButton button= imageButtons.get(fieldName);
             if(field != null && button != null) {
@@ -638,37 +667,28 @@ public class EditProfileFragment extends Fragment {
     }
 
     public void buttonListener(){
-        EditText field;
+
         for (String fieldName : editTextFields.keySet()){
-            field= editTextFields.get(fieldName);
+            final EditText field= editTextFields.get(fieldName);
             final ImageButton button= imageButtons.get(fieldName);
             if(button!=null && field != null) {
                 field.addTextChangedListener(new TextWatcher() {
                     @Override
                     public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-                        if (s.toString().trim().length() == 0) {
-                            button.setVisibility(View.INVISIBLE);
-                        } else {
-                            button.setVisibility(View.VISIBLE);
-                        }
+                        if(field.isFocused())
+                            showButton(field, button);
                     }
 
                     @Override
                     public void onTextChanged(CharSequence s, int start, int before, int count) {
-                        if (s.toString().trim().length() == 0) {
-                            button.setVisibility(View.INVISIBLE);
-                        } else {
-                            button.setVisibility(View.VISIBLE);
-                        }
+                        if(field.isFocused())
+                            showButton(field, button);
                     }
 
                     @Override
                     public void afterTextChanged(Editable s) {
-                        if (s.toString().trim().length() == 0) {
-                            button.setVisibility(View.INVISIBLE);
-                        } else {
-                            button.setVisibility(View.VISIBLE);
-                        }
+                        if(field.isFocused())
+                            showButton(field, button);
                     }
                 });
             }
@@ -689,6 +709,41 @@ public class EditProfileFragment extends Fragment {
     }
 
 
+
+
+    public void changeImage(View view) {
+        android.support.v7.widget.PopupMenu popup = new android.support.v7.widget.PopupMenu(view.getContext(), change_im);
+        popup.getMenuInflater().inflate(
+                R.menu.popup_menu, popup.getMenu());
+        popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+            // implement click listener.
+            @Override
+            public boolean onMenuItemClick(MenuItem item) {
+                switch (item.getItemId()) {
+                    case R.id.camera:
+                        // create Intent with photoFile
+                        dispatchTakePictureIntent();
+                        return true;
+                    case R.id.gallery:
+                        Intent photoPickerIntent = new Intent(Intent.ACTION_PICK);
+                        photoPickerIntent.setType("image/*");
+                        startActivityForResult(photoPickerIntent, RESULT_LOAD_IMG);
+                        return true;
+                    case R.id.removeImage:
+                        removeProfileImage();
+                        return true;
+
+                    default:
+                        return false;
+                }
+            }
+        });
+        popup.show();
+    }
+
+
+
+
     //listener for all the checkbox
     private class CheckListener implements CompoundButton.OnCheckedChangeListener {
 
@@ -702,4 +757,13 @@ public class EditProfileFragment extends Fragment {
                 checkedTypes.remove(thisFoodType);
         }
     }
+
+    private class ClearListener implements View.OnClickListener{
+
+        @Override
+        public void onClick(View v) {
+            clearText(v);
+        }
+    }
+
 }

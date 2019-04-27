@@ -7,7 +7,7 @@
     android:layout_height="match_parent"
     android:background="@color/colorPanelPrimary"
     android:orientation="vertical"
-    tools:context=".Account.EditProfile">
+    tools:context=".MainActivity">
 
 
     <ScrollView
@@ -18,7 +18,7 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/toolbar_edit">
+        app:layout_constraintTop_toBottomOf="parent">
 
         <android.support.constraint.ConstraintLayout
             android:id="@+id/ConstraintLayout"
@@ -52,12 +52,12 @@
                 app:layout_constraintBottom_toBottomOf="@id/ivBackground"
                 app:layout_constraintEnd_toEndOf="@id/ivBackground"
                 app:layout_constraintHorizontal_bias="0.976"
-                app:layout_constraintStart_toStartOf="@+id/ivBackground"
-                app:layout_constraintTop_toTopOf="@+id/ivBackground"
-                app:layout_constraintVertical_bias="0.96"
-                android:onClick="changeImage"/>
+                app:layout_constraintStart_toStartOf="@id/ivBackground"
+                app:layout_constraintTop_toTopOf="@id/ivBackground"
+                app:layout_constraintVertical_bias="0.96" />
 
-                <!-- Restaurant name -->
+
+            <!-- Restaurant name -->
             <ImageView
                 android:id="@+id/name_icon"
                 android:layout_width="wrap_content"
@@ -66,112 +66,157 @@
                 android:layout_marginTop="8dp"
                 android:contentDescription="@string/restaurant_name"
                 android:src="@drawable/reservation_icon"
-                app:layout_constraintBottom_toTopOf="@id/input_layout_type"
+                app:layout_constraintBottom_toTopOf="@id/typeLabel"
                 app:layout_constraintEnd_toStartOf="@id/input_layout_name"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/ivBackground" />
 
-                    <android.support.design.widget.TextInputLayout
-                        android:id="@+id/input_layout_name"
-                        android:layout_width="0dp"
-                        android:layout_height="56dp"
-                        android:theme="@style/FloatLabel"
-                        android:layout_marginTop="8dp"
-                        app:layout_constraintBottom_toTopOf="@id/input_layout_type"
-                        app:layout_constraintEnd_toStartOf="@id/cancel_name"
-                        app:layout_constraintStart_toEndOf="@id/name_icon"
-                        app:layout_constraintTop_toBottomOf="@id/ivBackground">
+            <android.support.design.widget.TextInputLayout
+                android:id="@+id/input_layout_name"
+                android:layout_width="0dp"
+                android:layout_height="56dp"
+                android:theme="@style/FloatLabel"
+                android:layout_marginTop="8dp"
+                app:layout_constraintBottom_toTopOf="@id/typeLabel"
+                app:layout_constraintEnd_toStartOf="@id/cancel_name"
+                app:layout_constraintStart_toEndOf="@id/name_icon"
+                app:layout_constraintTop_toBottomOf="@id/ivBackground">
 
-                        <EditText
-                            android:id="@+id/editTextName"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:layout_marginStart="5dp"
-                            android:hint="@string/restaurant_name"
-                            android:imeOptions="actionNext"
-                            android:inputType="text"
-                            android:maxLength="40"
-                            android:singleLine="true"
-                            android:textColor="@color/colorTextSubField"
-                            tools:ignore="Autofill" />
-                    </android.support.design.widget.TextInputLayout>
+                <EditText
+                    android:id="@+id/editTextName"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="5dp"
+                    android:hint="@string/restaurant_name"
+                    android:imeOptions="actionNext"
+                    android:inputType="text"
+                    android:maxLength="40"
+                    android:singleLine="true"
+                    android:textColor="@color/colorTextSubField"
+                    tools:ignore="Autofill" />
+            </android.support.design.widget.TextInputLayout>
 
-                    <ImageButton
-                        android:id="@+id/cancel_name"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="8dp"
-                        android:layout_marginBottom="8dp"
-                        android:background="@android:color/transparent"
-                        android:contentDescription="@string/delete"
-                        android:onClick="clearText"
-                        android:src="@drawable/clear"
-                        app:layout_constraintBottom_toTopOf="@id/input_layout_type"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintStart_toEndOf="@+id/input_layout_name"
-                        app:layout_constraintTop_toBottomOf="@id/ivBackground" />
+            <ImageButton
+                android:id="@+id/cancel_name"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:layout_marginBottom="8dp"
+                android:background="@android:color/transparent"
+                android:contentDescription="@string/delete"
+                android:src="@drawable/clear"
+                app:layout_constraintBottom_toTopOf="@id/typeLabel"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@id/input_layout_name"
+                app:layout_constraintTop_toBottomOf="@id/ivBackground" />
 
             <!-- Restaurant type -->
+
             <ImageView
                 android:id="@+id/type_icon"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="16dp"
                 android:layout_marginTop="8dp"
-                android:contentDescription="@string/type"
+                android:contentDescription="@string/restaurant_name"
                 android:src="@drawable/type_icon"
-                app:layout_constraintBottom_toTopOf="@id/input_layout_info"
-                app:layout_constraintEnd_toStartOf="@id/input_layout_type"
+                app:layout_constraintBottom_toTopOf="@id/typeGridLayout"
+                app:layout_constraintEnd_toStartOf="@id/typeLabel"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/input_layout_name" />
 
-                    <android.support.design.widget.TextInputLayout
-                        android:id="@+id/input_layout_type"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="8dp"
-                        android:theme="@style/FloatLabel"
-                        app:layout_constraintBottom_toTopOf="@id/input_layout_info"
-                        app:layout_constraintEnd_toStartOf="@id/cancel_type"
-                        app:layout_constraintStart_toEndOf="@id/type_icon"
-                        app:layout_constraintTop_toBottomOf="@id/input_layout_name">
+            <TextView
+                android:id="@+id/typeLabel"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:layout_marginStart="8dp"
+                android:text="@string/type"
+                android:textStyle="bold"
+                app:layout_constraintStart_toEndOf="@id/type_icon"
+                app:layout_constraintTop_toBottomOf="@id/input_layout_name"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintBottom_toTopOf="@id/typeGridLayout"/>
 
-                        <EditText
-                            android:id="@+id/editTextType"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:layout_marginStart="5dp"
-                            tools:ignore="Autofill"
-                            android:gravity="start"
-                            android:hint="@string/type"
 
-                            android:imeOptions="actionNext"
-                            android:inputType="textMultiLine"
-                            android:lines="2"
+            <android.support.v7.widget.GridLayout
+                android:id="@+id/typeGridLayout"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                app:columnCount="3"
+                app:rowCount="3"
+                app:layout_constraintStart_toStartOf="@id/typeLabel"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/typeLabel"
+                app:layout_constraintBottom_toTopOf="@id/input_layout_info">
 
-                            android:overScrollMode="always"
-                            android:scrollbarStyle="insideInset"
-                            android:scrollbars="vertical"
+                <CheckBox
+                    android:id="@+id/italianCheckBox"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:buttonTint="@color/colorPanelPrimary"
+                    android:text="@string/italian_cooking" />
 
-                            android:textColor="@color/colorTextSubField" />
-                    </android.support.design.widget.TextInputLayout>
+                <CheckBox
+                    android:id="@+id/pizzaCheckBox"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:buttonTint="@color/colorPanelPrimary"
+                    android:text="@string/pizza_cooking" />
 
-                    <ImageButton
-                        android:id="@+id/cancel_type"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="8dp"
-                        android:layout_marginBottom="8dp"
-                        android:background="@android:color/transparent"
-                        android:contentDescription="@string/delete"
-                        android:onClick="clearText"
-                        android:src="@drawable/clear"
-                        app:layout_constraintBottom_toTopOf="@id/input_layout_info"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintStart_toEndOf="@id/input_layout_type"
-                        app:layout_constraintTop_toBottomOf="@id/input_layout_name" />
+                <CheckBox
+                    android:id="@+id/kebabCheckBox"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:buttonTint="@color/colorPanelPrimary"
+                    android:text="@string/kebab_cooking" />
 
-                <!-- Info -->
+
+                <CheckBox
+                    android:id="@+id/chineseCheckBox"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:buttonTint="@color/colorPanelPrimary"
+                    android:text="@string/chinese_cooking" />
+
+                <CheckBox
+                    android:id="@+id/japaneseCheckBox"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:buttonTint="@color/colorPanelPrimary"
+                    android:text="@string/japanese_cooking" />
+
+                <CheckBox
+                    android:id="@+id/thaiCheckBox"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:buttonTint="@color/colorPanelPrimary"
+                    android:text="@string/thai_cooking" />
+
+                <CheckBox
+                    android:id="@+id/hamburgerCheckBox"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:buttonTint="@color/colorPanelPrimary"
+                    android:text="@string/hamburger_cooking" />
+
+                <CheckBox
+                    android:id="@+id/americanCheckBox"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:buttonTint="@color/colorPanelPrimary"
+                    android:text="@string/american_cooking" />
+
+                <CheckBox
+                    android:id="@+id/mexicanCheckBox"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:buttonTint="@color/colorPanelPrimary"
+                    android:text="@string/mexican_cooking" />
+
+            </android.support.v7.widget.GridLayout>
+
+            <!-- Info -->
             <ImageView
                 android:id="@+id/info_icon"
                 android:layout_width="wrap_content"
@@ -183,161 +228,56 @@
                 app:layout_constraintBottom_toTopOf="@id/input_layout_open"
                 app:layout_constraintEnd_toStartOf="@id/input_layout_info"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/input_layout_type" />
+                app:layout_constraintTop_toBottomOf="@id/typeGridLayout" />
 
-                    <android.support.design.widget.TextInputLayout
-                        android:id="@+id/input_layout_info"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="8dp"
-                        android:theme="@style/FloatLabel"
-                        app:layout_constraintTop_toBottomOf="@id/input_layout_type"
-                        app:layout_constraintBottom_toTopOf="@id/input_layout_open"
-                        app:layout_constraintEnd_toStartOf="@id/cancel_info"
-                        app:layout_constraintStart_toEndOf="@id/info_icon">
+            <android.support.design.widget.TextInputLayout
+                android:id="@+id/input_layout_info"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:theme="@style/FloatLabel"
+                app:layout_constraintTop_toBottomOf="@id/typeGridLayout"
+                app:layout_constraintBottom_toTopOf="@id/input_layout_open"
+                app:layout_constraintEnd_toStartOf="@id/cancel_info"
+                app:layout_constraintStart_toEndOf="@id/info_icon">
 
-                        <EditText
-                            android:id="@+id/editTextInfo"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:layout_marginStart="5dp"
-                            android:gravity="start"
-                            tools:ignore="Autofill"
-                            android:hint="@string/info"
-
-                            android:imeOptions="actionNext"
-                            android:inputType="textMultiLine"
-                            android:lines="3"
-
-                            android:maxLength="240"
-                            android:overScrollMode="always"
-                            android:scrollbarStyle="insideInset"
-
-                            android:scrollbars="vertical"
-                            android:textColor="@color/colorTextSubField" />
-                    </android.support.design.widget.TextInputLayout>
-
-                    <ImageButton
-                        android:id="@+id/cancel_info"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="8dp"
-                        android:layout_marginBottom="8dp"
-                        android:background="@android:color/transparent"
-                        android:contentDescription="@string/delete"
-                        android:onClick="clearText"
-                        android:src="@drawable/clear"
-                        app:layout_constraintTop_toBottomOf="@id/input_layout_type"
-                        app:layout_constraintBottom_toTopOf="@id/input_layout_open"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintStart_toEndOf="@id/input_layout_info"/>
-
-                <Space
-                    android:layout_width="423dp"
-                    android:layout_height="10dp" />
-
-                <LinearLayout
+                <EditText
+                    android:id="@+id/editTextInfo"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:orientation="vertical">
+                    android:layout_marginStart="5dp"
+                    android:gravity="start"
+                    tools:ignore="Autofill"
+                    android:hint="@string/info"
 
-                    <TextView
-                        android:id="@+id/textView"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginStart="8dp"
-                        android:layout_marginTop="8dp"
-                        android:layout_marginEnd="8dp"
-                        android:layout_marginBottom="8dp"
-                        android:text="@string/type"
-                        android:textStyle="bold"
-                        android:layout_gravity="center" />
+                    android:imeOptions="actionNext"
+                    android:inputType="textMultiLine"
+                    android:lines="3"
 
-                    <android.support.v7.widget.GridLayout
-                        android:id="@+id/typeGridLayout"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        app:columnCount="3"
-                        app:rowCount="3"
-                        android:layout_gravity="center"
-                        android:layout_marginStart="16dp"
-                        android:layout_marginEnd="8dp">
+                    android:maxLength="240"
+                    android:overScrollMode="always"
+                    android:scrollbarStyle="insideInset"
 
-                        <CheckBox
-                            android:id="@+id/italianCheckBox"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:buttonTint="@color/colorPanelPrimary"
-                            android:text="@string/italian_cooking" />
+                    android:scrollbars="vertical"
+                    android:textColor="@color/colorTextSubField" />
+            </android.support.design.widget.TextInputLayout>
 
-                        <CheckBox
-                            android:id="@+id/pizzaCheckBox"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:buttonTint="@color/colorPanelPrimary"
-                            android:text="@string/pizza_cooking" />
-
-                        <CheckBox
-                            android:id="@+id/kebabCheckBox"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:buttonTint="@color/colorPanelPrimary"
-                            android:text="@string/kebab_cooking" />
+            <ImageButton
+                android:id="@+id/cancel_info"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:layout_marginBottom="8dp"
+                android:background="@android:color/transparent"
+                android:contentDescription="@string/delete"
+                android:src="@drawable/clear"
+                app:layout_constraintTop_toBottomOf="@id/typeGridLayout"
+                app:layout_constraintBottom_toTopOf="@id/input_layout_open"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@id/input_layout_info"/>
 
 
-                        <CheckBox
-                            android:id="@+id/chineseCheckBox"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:buttonTint="@color/colorPanelPrimary"
-                            android:text="@string/chinese_cooking" />
-
-                        <CheckBox
-                            android:id="@+id/japaneseCheckBox"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:buttonTint="@color/colorPanelPrimary"
-                            android:text="@string/japanese_cooking" />
-
-                        <CheckBox
-                            android:id="@+id/thaiCheckBox"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:buttonTint="@color/colorPanelPrimary"
-                            android:text="@string/thai_cooking" />
-
-                        <CheckBox
-                            android:id="@+id/hamburgerCheckBox"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:buttonTint="@color/colorPanelPrimary"
-                            android:text="@string/hamburger_cooking" />
-
-                        <CheckBox
-                            android:id="@+id/americanCheckBox"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:buttonTint="@color/colorPanelPrimary"
-                            android:text="@string/american_cooking" />
-
-                        <CheckBox
-                            android:id="@+id/mexicanCheckBox"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:buttonTint="@color/colorPanelPrimary"
-                            android:text="@string/mexican_cooking" />
-
-                    </android.support.v7.widget.GridLayout>
-
-                </LinearLayout>
-
-
-                <Space
-                    android:layout_width="423dp"
-                    android:layout_height="10dp" />
-
-
-                <!-- Opening hours -->
+            <!-- Opening hours -->
             <ImageView
                 android:id="@+id/open_icon"
                 android:layout_width="wrap_content"
@@ -352,52 +292,51 @@
                 app:layout_constraintTop_toBottomOf="@id/input_layout_info" />
 
 
-                    <android.support.design.widget.TextInputLayout
-                        android:id="@+id/input_layout_open"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="8dp"
-                        android:theme="@style/FloatLabel"
-                        app:layout_constraintEnd_toStartOf="@id/cancel_open"
-                        app:layout_constraintStart_toEndOf="@id/open_icon"
-                        app:layout_constraintTop_toBottomOf="@id/input_layout_info"
-                        app:layout_constraintBottom_toTopOf="@id/input_layout_address">
+            <android.support.design.widget.TextInputLayout
+                android:id="@+id/input_layout_open"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:theme="@style/FloatLabel"
+                app:layout_constraintEnd_toStartOf="@id/cancel_open"
+                app:layout_constraintStart_toEndOf="@id/open_icon"
+                app:layout_constraintTop_toBottomOf="@id/input_layout_info"
+                app:layout_constraintBottom_toTopOf="@id/input_layout_address">
 
-                        <EditText
-                            android:id="@+id/editTextOpen"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:layout_marginStart="5dp"
-                            android:gravity="start"
-                            android:hint="@string/open"
-                            tools:ignore="Autofill"
-                            android:imeOptions="actionNext"
-                            android:inputType="textMultiLine"
-                            android:lines="3"
+                <EditText
+                    android:id="@+id/editTextOpen"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="5dp"
+                    android:gravity="start"
+                    android:hint="@string/open"
+                    tools:ignore="Autofill"
+                    android:imeOptions="actionNext"
+                    android:inputType="textMultiLine"
+                    android:lines="3"
 
-                            android:maxLength="90"
-                            android:overScrollMode="always"
-                            android:scrollbarStyle="insideInset"
+                    android:maxLength="90"
+                    android:overScrollMode="always"
+                    android:scrollbarStyle="insideInset"
 
-                            android:scrollbars="vertical"
-                            android:textColor="@color/colorTextSubField" />
-                    </android.support.design.widget.TextInputLayout>
+                    android:scrollbars="vertical"
+                    android:textColor="@color/colorTextSubField" />
+            </android.support.design.widget.TextInputLayout>
 
 
-                    <ImageButton
-                        android:id="@+id/cancel_open"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="8dp"
-                        android:layout_marginBottom="8dp"
-                        android:background="@android:color/transparent"
-                        android:contentDescription="@string/delete"
-                        android:onClick="clearText"
-                        android:src="@drawable/clear"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintStart_toEndOf="@id/input_layout_open"
-                        app:layout_constraintTop_toBottomOf="@id/input_layout_info"
-                        app:layout_constraintBottom_toTopOf="@id/input_layout_address" />
+            <ImageButton
+                android:id="@+id/cancel_open"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:layout_marginBottom="8dp"
+                android:background="@android:color/transparent"
+                android:contentDescription="@string/delete"
+                android:src="@drawable/clear"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@id/input_layout_open"
+                app:layout_constraintTop_toBottomOf="@id/input_layout_info"
+                app:layout_constraintBottom_toTopOf="@id/input_layout_address" />
 
                 <!-- Address -->
             <ImageView
@@ -413,45 +352,44 @@
                 app:layout_constraintTop_toBottomOf="@id/input_layout_open"
                 app:srcCompat="@drawable/address_icon" />
 
-                    <android.support.design.widget.TextInputLayout
-                        android:id="@+id/input_layout_address"
-                        android:layout_width="0dp"
-                        android:layout_height="56dp"
-                        android:layout_marginTop="8dp"
-                        android:theme="@style/FloatLabel"
-                        app:layout_constraintEnd_toStartOf="@id/cancel_address"
-                        app:layout_constraintStart_toEndOf="@id/address_icon"
-                        app:layout_constraintTop_toBottomOf="@id/input_layout_open"
-                        app:layout_constraintBottom_toTopOf="@id/input_layout_email">
+            <android.support.design.widget.TextInputLayout
+                android:id="@+id/input_layout_address"
+                android:layout_width="0dp"
+                android:layout_height="56dp"
+                android:layout_marginTop="8dp"
+                android:theme="@style/FloatLabel"
+                app:layout_constraintEnd_toStartOf="@id/cancel_address"
+                app:layout_constraintStart_toEndOf="@id/address_icon"
+                app:layout_constraintTop_toBottomOf="@id/input_layout_open"
+                app:layout_constraintBottom_toTopOf="@id/input_layout_email">
 
-                        <EditText
-                            android:id="@+id/editTextAddress"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:layout_marginStart="5dp"
-                            android:hint="@string/address"
-                            android:imeOptions="actionNext"
-                            android:inputType="text"
-                            android:maxLength="25"
-                            android:singleLine="true"
-                            tools:ignore="Autofill"
-                            android:textColor="@color/colorTextSubField" />
-                    </android.support.design.widget.TextInputLayout>
+                <EditText
+                    android:id="@+id/editTextAddress"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="5dp"
+                    android:hint="@string/address"
+                    android:imeOptions="actionNext"
+                    android:inputType="text"
+                    android:maxLength="25"
+                    android:singleLine="true"
+                    tools:ignore="Autofill"
+                    android:textColor="@color/colorTextSubField" />
+            </android.support.design.widget.TextInputLayout>
 
-                    <ImageButton
-                        android:id="@+id/cancel_address"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="8dp"
-                        android:layout_marginBottom="8dp"
-                        android:background="@android:color/transparent"
-                        android:contentDescription="@string/delete"
-                        android:onClick="clearText"
-                        android:src="@drawable/clear"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintStart_toEndOf="@+id/input_layout_address"
-                        app:layout_constraintTop_toBottomOf="@id/input_layout_open"
-                        app:layout_constraintBottom_toTopOf="@id/input_layout_email"/>
+            <ImageButton
+                android:id="@+id/cancel_address"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:layout_marginBottom="8dp"
+                android:background="@android:color/transparent"
+                android:contentDescription="@string/delete"
+                android:src="@drawable/clear"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@id/input_layout_address"
+                app:layout_constraintTop_toBottomOf="@id/input_layout_open"
+                app:layout_constraintBottom_toTopOf="@id/input_layout_email"/>
 
                 <!-- Email -->
             <ImageView
@@ -500,10 +438,9 @@
                 android:layout_marginBottom="8dp"
                 android:background="@android:color/transparent"
                 android:contentDescription="@string/delete"
-                android:onClick="clearText"
                 android:src="@drawable/clear"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toEndOf="@+id/input_layout_email"
+                app:layout_constraintStart_toEndOf="@id/input_layout_email"
                 app:layout_constraintTop_toBottomOf="@id/input_layout_address"
                 app:layout_constraintBottom_toTopOf="@id/input_layout_phone"/>
 
@@ -526,6 +463,7 @@
                 android:layout_width="0dp"
                 android:layout_height="56dp"
                 android:layout_marginTop="8dp"
+                android:layout_marginBottom="8dp"
                 android:theme="@style/FloatLabel"
                 app:layout_constraintEnd_toStartOf="@id/cancel_phone"
                 app:layout_constraintStart_toEndOf="@id/phone_icon"
@@ -554,7 +492,6 @@
                 android:layout_marginBottom="8dp"
                 android:background="@android:color/transparent"
                 android:contentDescription="@string/delete"
-                android:onClick="clearText"
                 android:src="@drawable/clear"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toEndOf="@+id/input_layout_phone"
