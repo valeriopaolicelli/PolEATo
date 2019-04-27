@@ -19,10 +19,41 @@
             android:adjustViewBounds="true"
             app:layout_constraintBottom_toTopOf="@id/name_icon"
             app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintVertical_bias="0.0"
             tools:ignore="ContentDescription" />
+
+        <RelativeLayout
+            android:id="@+id/flImage"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintBottom_toBottomOf="@id/ivBackground"
+            app:layout_constraintEnd_toEndOf="@id/ivBackground"
+            app:layout_constraintStart_toStartOf="@id/ivBackground"
+            app:layout_constraintTop_toTopOf="@id/ivBackground">
+
+            <de.hdodenhof.circleimageview.CircleImageView
+                android:id="@+id/profile_image"
+                android:layout_width="170dp"
+                android:layout_height="170dp"
+                android:layout_gravity="center_vertical|center_horizontal"
+                android:src="@drawable/image_empty"
+                app:civ_border_color="@color/colorBodyPrimary"
+                app:civ_border_width="2dp" />
+
+            <android.support.design.widget.FloatingActionButton
+                android:layout_width="151dp"
+                android:layout_height="wrap_content"
+                android:layout_alignEnd="@id/profile_image"
+                android:layout_alignBottom="@id/profile_image"
+                android:backgroundTint="@color/colorPanelPrimary"
+                android:clickable="true"
+                android:focusable="true"
+                android:onClick="changeImage"
+                android:src="@mipmap/baseline_photo_camera_white_24dp" />
+        </RelativeLayout>
 
         <ImageView
             android:id="@+id/name_icon"
@@ -42,7 +73,7 @@
             android:id="@+id/input_layout_name"
             android:layout_width="0dp"
             android:layout_height="56dp"
-            android:layout_marginTop="8dp"
+            android:layout_marginBottom="8dp"
             android:theme="@style/FloatLabel"
             app:layout_constraintBottom_toTopOf="@id/input_layout_surname"
             app:layout_constraintEnd_toStartOf="@id/cancel_name"
