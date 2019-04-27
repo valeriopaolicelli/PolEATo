@@ -31,6 +31,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
@@ -53,7 +54,9 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 import static android.app.Activity.RESULT_OK;
 
@@ -71,6 +74,7 @@ public class EditProfileFragment extends Fragment {
     private Map<String, ImageButton> imageButtons;
     private Map<String, EditText> editTextFields;
     private Map<String, CheckBox> checkBoxes;
+    private Set<String> checkedTypes;
     private DatabaseReference reference;
 
     private View v;
@@ -124,6 +128,7 @@ public class EditProfileFragment extends Fragment {
         editTextFields = new HashMap<>();
         imageButtons = new HashMap<>();
         checkBoxes = new HashMap<>();
+        checkedTypes = new HashSet<>();
         imageButtons = new HashMap<>();
 
     }
@@ -163,17 +168,22 @@ public class EditProfileFragment extends Fragment {
         //editTextFields.put("DeliveryCost",(EditText) v.findViewById(R.id.cancel_deliveryCost));
 
 
-        checkBoxes.put("italian", (CheckBox)v.findViewById(R.id.italianCheckBox));
-        checkBoxes.put("pizza", (CheckBox)v.findViewById(R.id.pizzaCheckBox));
-        checkBoxes.put("kebab", (CheckBox)v.findViewById(R.id.kebabCheckBox));
+        checkBoxes.put(getString(R.string.italian_cooking).toLowerCase(), (CheckBox)v.findViewById(R.id.italianCheckBox));
+        checkBoxes.put(getString(R.string.pizza_cooking).toLowerCase(), (CheckBox)v.findViewById(R.id.pizzaCheckBox));
+        checkBoxes.put(getString(R.string.kebab_cooking).toLowerCase(), (CheckBox)v.findViewById(R.id.kebabCheckBox));
 
-        checkBoxes.put("chinese", (CheckBox)v.findViewById(R.id.chineseCheckBox));
-        checkBoxes.put("japanese", (CheckBox)v.findViewById(R.id.japaneseCheckBox));
-        checkBoxes.put("thai", (CheckBox)v.findViewById(R.id.thaiCheckBox));
+        checkBoxes.put(getString(R.string.chinese_cooking).toLowerCase(), (CheckBox)v.findViewById(R.id.chineseCheckBox));
+        checkBoxes.put(getString(R.string.japanese_cooking).toLowerCase(), (CheckBox)v.findViewById(R.id.japaneseCheckBox));
+        checkBoxes.put(getString(R.string.thai_cooking).toLowerCase(), (CheckBox)v.findViewById(R.id.thaiCheckBox));
 
-        checkBoxes.put("hamburger", (CheckBox)v.findViewById(R.id.hamburgerCheckBox));
-        checkBoxes.put("american", (CheckBox)v.findViewById(R.id.americanCheckBox));
-        checkBoxes.put("mexican", (CheckBox)v.findViewById(R.id.mexicanCheckBox));
+        checkBoxes.put(getString(R.string.hamburger_cooking).toLowerCase(), (CheckBox)v.findViewById(R.id.hamburgerCheckBox));
+        checkBoxes.put(getString(R.string.american_cooking).toLowerCase(), (CheckBox)v.findViewById(R.id.americanCheckBox));
+        checkBoxes.put(getString(R.string.mexican_cooking).toLowerCase(), (CheckBox)v.findViewById(R.id.mexicanCheckBox));
+
+        //set the listener for all the checkbox
+        CheckListener cl = new CheckListener();
+        for(String t : checkBoxes.keySet())
+            checkBoxes.get(t).setOnCheckedChangeListener(cl);
 
 
         profileImage = v.findViewById(R.id.ivBackground);
@@ -226,7 +236,7 @@ public class EditProfileFragment extends Fragment {
 
 
     private void fillFields(){
-        DatabaseReference reference = FirebaseDatabase.getInstance().getReference("restaurants");
+        reference = FirebaseDatabase.getInstance().getReference("restaurants");
 
         reference.addValueEventListener(new ValueEventListener() {
             @Override
@@ -246,7 +256,7 @@ public class EditProfileFragment extends Fragment {
                             else*/
                                 editTextFields.get(snap.getKey()).setText(snap.getValue().toString());
                         }
-                        else if(snap.getKey().equals("Type")){
+                        else if(snap.getKey().equals("Type") && !snap.getValue().toString().isEmpty()){
                             String[] types = snap.getValue().toString().toLowerCase().split(",(\\s)*");
                             for(String t : types)
                                 checkBoxes.get(t).setChecked(true);
@@ -552,6 +562,17 @@ public class EditProfileFragment extends Fragment {
         if(!wrongField){
 
             // TODO here save all the data to the DB
+            String types = "";
+            if(!checkedTypes.isEmpty()){
+                //create the type string
+                for(String t : checkedTypes){
+                    types += t+", ";
+                }
+                //remove the last comma
+                types = types.substring(0, types.length()-2);
+            }
+            reference.child("R00").child("Type").setValue(types);
+
             for(String fieldName : editTextFields.keySet()){
                 EditText ed = editTextFields.get(fieldName);
                 reference.child("R00").child(fieldName).setValue(ed.getText().toString());
@@ -665,5 +686,20 @@ public class EditProfileFragment extends Fragment {
 
     public void hideButton(ImageButton button){
         button.setVisibility(View.INVISIBLE);
+    }
+
+
+    //listener for all the checkbox
+    private class CheckListener implements CompoundButton.OnCheckedChangeListener {
+
+        @Override
+        public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+            String thisFoodType = buttonView.getText().toString().toLowerCase();
+
+            if(isChecked)
+                checkedTypes.add(thisFoodType);
+            else
+                checkedTypes.remove(thisFoodType);
+        }
     }
 }

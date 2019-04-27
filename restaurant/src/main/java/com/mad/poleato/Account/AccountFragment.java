@@ -1,5 +1,6 @@
 package com.mad.poleato.Account;
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -44,6 +45,14 @@ public class AccountFragment extends Fragment {
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+    }
+
+    Context context;
+
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        this.context = context;
     }
 
     @Override
@@ -104,11 +113,11 @@ public class AccountFragment extends Fragment {
                                 String priceStr = decimalFormat.format(Double.parseDouble(snap.getValue().toString()));
                                 tvFields.get(snap.getKey()).setText(priceStr+"€");
                             }
-                            else if(snap.getKey().equals("IsActive")){
+                            else if(snap.getKey().equals("IsActive") && getActivity() != null){
                                 if((Boolean)snap.getValue())
-                                    tvFields.get(snap.getKey()).setText(getContext().getString(R.string.active_status));
+                                    tvFields.get(snap.getKey()).setText(getString(R.string.active_status));
                                 else
-                                    tvFields.get(snap.getKey()).setText(getContext().getString(R.string.inactive_status));
+                                    tvFields.get(snap.getKey()).setText(getString(R.string.inactive_status));
                             }
                             else if(snap.getKey().equals("PriceRange")){
                                 //translate price range value into a $ string
