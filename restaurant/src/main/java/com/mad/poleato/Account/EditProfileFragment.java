@@ -1,7 +1,9 @@
 package com.mad.poleato.Account;
 
 
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
@@ -36,6 +38,7 @@ import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.ScrollView;
+import android.widget.Switch;
 import android.widget.Toast;
 
 import androidx.navigation.Navigation;
@@ -82,6 +85,7 @@ public class EditProfileFragment extends Fragment {
     private String image;
     private FloatingActionButton change_im;
     private ImageView profileImage;
+    private Switch statusSwitch;
 
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -181,21 +185,29 @@ public class EditProfileFragment extends Fragment {
         checkBoxes.put(getString(R.string.american_cooking).toLowerCase(), (CheckBox)v.findViewById(R.id.americanCheckBox));
         checkBoxes.put(getString(R.string.mexican_cooking).toLowerCase(), (CheckBox)v.findViewById(R.id.mexicanCheckBox));
 
-        //set the listener for all the checkbox
-        CheckListener cl = new CheckListener();
-        for(String t : checkBoxes.keySet())
-            checkBoxes.get(t).setOnCheckedChangeListener(cl);
+        statusSwitch = (Switch) v.findViewById(R.id.switchStatus);
 
+        //set the listener for all the checkbox
+        CheckListener checkListener = new CheckListener();
+        for(String t : checkBoxes.keySet())
+            checkBoxes.get(t).setOnCheckedChangeListener(checkListener);
+
+        //set listener for all the X button to clear the text
         ClearListener clearListener = new ClearListener();
         for(String s : imageButtons.keySet())
             imageButtons.get(s).setOnClickListener(clearListener);
 
+        //set listener to change the photo
         v.findViewById(R.id.change_im).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 changeImage();
             }
         });
+
+        //set listener to handle the switch tapping
+        SwitchListener switchListener = new SwitchListener();
+        statusSwitch.setOnClickListener(switchListener);
 
         profileImage = v.findViewById(R.id.ivBackground);
 
@@ -272,6 +284,8 @@ public class EditProfileFragment extends Fragment {
                             for(String t : types)
                                 checkBoxes.get(t).setChecked(true);
                         }
+                        else if(snap.getKey().equals("IsActive"))
+                            statusSwitch.setChecked((Boolean) snap.getValue());
                     } //for end
                 }
             }
@@ -602,6 +616,8 @@ public class EditProfileFragment extends Fragment {
             }
             reference.child("R00").child("Type").setValue(types);
 
+            reference.child("R00").child("IsActive").setValue(statusSwitch.isChecked());
+
             for(String fieldName : editTextFields.keySet()){
                 EditText ed = editTextFields.get(fieldName);
                 reference.child("R00").child(fieldName).setValue(ed.getText().toString());
@@ -763,6 +779,37 @@ public class EditProfileFragment extends Fragment {
         @Override
         public void onClick(View v) {
             clearText(v);
+        }
+    }
+
+
+    private class SwitchListener implements View.OnClickListener {
+
+        @Override
+        public void onClick(View v) {
+
+            if(getActivity() == null){
+                Log.d("matte", "NULL context in OnClick of the Switch");
+                return;
+            }
+            final Boolean isChecked = statusSwitch.isChecked();
+            String msg = "";
+            //restore previous value to block the change before AlertDialog
+            statusSwitch.setChecked(!isChecked);
+            if(isChecked)
+                msg += getString(R.string.go_active_message);
+            else
+                msg += getString(R.string.go_inactive_message);
+
+            new AlertDialog.Builder(getActivity()).setMessage(msg)
+                    .setPositiveButton(getString(R.string.yes), new DialogInterface.OnClickListener()
+                    {
+                        public void onClick(DialogInterface paramAnonymousDialogInterface, int paramAnonymousInt) {
+                            statusSwitch.setChecked(isChecked);
+                        }
+                    })
+                    .setNegativeButton(getString(R.string.no), null)
+                    .show();
         }
     }
 
