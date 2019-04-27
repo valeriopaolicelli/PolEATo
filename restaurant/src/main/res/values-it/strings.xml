@@ -18,6 +18,18 @@
     <string name="other"><font size="18">Altro campo</font></string>
     <string name="save"><font size="18">Salva</font></string>
     <string name="phone"><font size="18">Numero di telefono</font></string>
+    <string name="delivery_cost"><font size="18">Costo di consegna</font></string>
+    <string name="current_status"><font size="18">Il tuo stato</font></string>
+    <string name="price_range"><font size="18">Fascia di prezzo</font></string>
+
+    <string name="active_status"><font size="18">Attivo</font></string>
+    <string name="inactive_status"><font size="18">Inattivo</font></string>
+
+
+
+
+
+
     <string name="ch_pass"><font size="18">Cambia Password(max 12 char)</font></string>
     <string name="old_pass"><font size="18">Inserisci la vecchia password</font></string>
     <string name="new_pass"><font size="18">Inserisci la nuova password</font></string>
@@ -85,4 +97,20 @@
     <string name="title_actionbar_edit_account">Modifica Account</string>
 
     <string name="title_notifications">Notifications</string>
+
+
+
+    <string name="italian_cooking">Italiano</string>
+    <string name="pizza_cooking">Pizza</string>
+    <string name="kebab_cooking">Kebab</string>
+    <string name="chinese_cooking">Cinese</string>
+    <string name="japanese_cooking">Giapponese</string>
+    <string name="thai_cooking">Thai</string>
+    <string name="hamburger_cooking">Hamburger</string>
+    <string name="american_cooking">Americano</string>
+    <string name="mexican_cooking">Messicano</string>
+
+
+
+
 </resources>
