@@ -27,14 +27,15 @@
 
             <ImageView
                 android:id="@+id/ivBackground"
-                android:src="@mipmap/new_york_restaurant"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:adjustViewBounds="true"
+                android:src="@mipmap/new_york_restaurant"
                 app:layout_constraintBottom_toTopOf="@id/input_layout_name"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintVertical_bias="0.0"
                 tools:ignore="ContentDescription" />
 
             <android.support.design.widget.FloatingActionButton
@@ -57,6 +58,33 @@
                 app:layout_constraintVertical_bias="0.96" />
 
 
+            <!-- Status -->
+            <ImageView
+                android:id="@+id/status_icon"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/ic_baseline_notification_important_24px"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="8dp"
+                app:layout_constraintBottom_toTopOf="@id/input_layout_name"
+                app:layout_constraintEnd_toStartOf="@id/switchStatus"
+                app:layout_constraintTop_toBottomOf="@id/ivBackground"
+                app:layout_constraintStart_toStartOf="parent"/>
+
+            <Switch
+                android:id="@+id/switchStatus"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:layout_marginStart="8dp"
+                android:layout_marginEnd="8dp"
+                android:text="@string/current_status"
+                app:layout_constraintBottom_toTopOf="@id/input_layout_name"
+                app:layout_constraintStart_toEndOf="@id/status_icon"
+                app:layout_constraintTop_toBottomOf="@id/ivBackground"
+                app:layout_constraintEnd_toEndOf="parent" />
+
+
             <!-- Restaurant name -->
             <ImageView
                 android:id="@+id/name_icon"
@@ -68,8 +96,9 @@
                 android:src="@drawable/reservation_icon"
                 app:layout_constraintBottom_toTopOf="@id/typeLabel"
                 app:layout_constraintEnd_toStartOf="@id/input_layout_name"
+                app:layout_constraintTop_toBottomOf="@id/switchStatus"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/ivBackground" />
+ />
 
             <android.support.design.widget.TextInputLayout
                 android:id="@+id/input_layout_name"
@@ -80,7 +109,7 @@
                 app:layout_constraintBottom_toTopOf="@id/typeLabel"
                 app:layout_constraintEnd_toStartOf="@id/cancel_name"
                 app:layout_constraintStart_toEndOf="@id/name_icon"
-                app:layout_constraintTop_toBottomOf="@id/ivBackground">
+                app:layout_constraintTop_toBottomOf="@id/switchStatus">
 
                 <EditText
                     android:id="@+id/editTextName"
@@ -102,13 +131,14 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
                 android:layout_marginBottom="8dp"
+                android:layout_marginEnd="8dp"
                 android:background="@android:color/transparent"
                 android:contentDescription="@string/delete"
                 android:src="@drawable/clear"
                 app:layout_constraintBottom_toTopOf="@id/typeLabel"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toEndOf="@id/input_layout_name"
-                app:layout_constraintTop_toBottomOf="@id/ivBackground" />
+                app:layout_constraintTop_toBottomOf="@id/switchStatus" />
 
             <!-- Restaurant type -->
 
@@ -268,6 +298,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
                 android:layout_marginBottom="8dp"
+                android:layout_marginEnd="8dp"
                 android:background="@android:color/transparent"
                 android:contentDescription="@string/delete"
                 android:src="@drawable/clear"
@@ -330,6 +361,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
                 android:layout_marginBottom="8dp"
+                android:layout_marginEnd="8dp"
                 android:background="@android:color/transparent"
                 android:contentDescription="@string/delete"
                 android:src="@drawable/clear"
@@ -383,6 +415,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
                 android:layout_marginBottom="8dp"
+                android:layout_marginEnd="8dp"
                 android:background="@android:color/transparent"
                 android:contentDescription="@string/delete"
                 android:src="@drawable/clear"
@@ -436,6 +469,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
                 android:layout_marginBottom="8dp"
+                android:layout_marginEnd="8dp"
                 android:background="@android:color/transparent"
                 android:contentDescription="@string/delete"
                 android:src="@drawable/clear"
@@ -490,6 +524,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
                 android:layout_marginBottom="8dp"
+                android:layout_marginEnd="8dp"
                 android:background="@android:color/transparent"
                 android:contentDescription="@string/delete"
                 android:src="@drawable/clear"
