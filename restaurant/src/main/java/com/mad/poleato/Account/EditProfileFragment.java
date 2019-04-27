@@ -2,6 +2,7 @@ package com.mad.poleato.Account;
 
 
 import android.app.AlertDialog;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -14,6 +15,8 @@ import android.media.ExifInterface;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
+import android.os.Handler;
+import android.os.Message;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -37,17 +40,23 @@ import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.ScrollView;
 import android.widget.Switch;
 import android.widget.Toast;
 
 import androidx.navigation.Navigation;
 
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
+import com.google.firebase.storage.UploadTask;
 import com.mad.poleato.LineLimiter;
 import com.mad.poleato.R;
 
@@ -86,6 +95,18 @@ public class EditProfileFragment extends Fragment {
     private FloatingActionButton change_im;
     private ImageView profileImage;
     private Switch statusSwitch;
+
+    private ProgressDialog progressDialog;
+    Handler handler = new Handler() {
+        @Override
+        public void handleMessage(Message msg) {
+            progressDialog.dismiss();
+        }
+    };
+
+
+    String loggedID;
+
 
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -135,6 +156,8 @@ public class EditProfileFragment extends Fragment {
         checkBoxes = new HashMap<>();
         checkedTypes = new HashSet<>();
         imageButtons = new HashMap<>();
+
+        loggedID = "R05";
 
     }
 
@@ -255,56 +278,92 @@ public class EditProfileFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
         handleButton();
         buttonListener();
+
     }
 
 
     private void fillFields(){
-        reference = FirebaseDatabase.getInstance().getReference("restaurants");
 
-        reference.addValueEventListener(new ValueEventListener() {
+        if(getActivity() != null)
+            progressDialog = ProgressDialog.show(getActivity(), "", getString(R.string.loading));
+        //start a new thread to process job
+        new Thread(new Runnable() {
             @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                DataSnapshot issue = dataSnapshot.child("R00");
-                // it is setted to the first record (restaurant)
-                // when the sign in and log in procedures will be handled, it will be the proper one
-                if (dataSnapshot.exists()) {
-                    // dataSnapshot is the "issue" node with all children
-                    for(DataSnapshot snap : issue.getChildren()){
-                        if(editTextFields.containsKey(snap.getKey())){
-                            if(snap.getKey().equals("DeliveryCost")){
-                                DecimalFormat decimalFormat = new DecimalFormat("#.00"); //two decimal
-                                String priceStr = decimalFormat.format(Double.parseDouble(snap.getValue().toString()));
-                                editTextFields.get(snap.getKey()).setText(priceStr+"€");
-                            }
-                            else
-                                editTextFields.get(snap.getKey()).setText(snap.getValue().toString());
-                        }
-                        else if(snap.getKey().equals("Type") && !snap.getValue().toString().isEmpty()){
-                            String[] types = snap.getValue().toString().toLowerCase().split(",(\\s)*");
-                            for(String t : types)
-                                checkBoxes.get(t).setChecked(true);
-                        }
-                        else if(snap.getKey().equals("IsActive"))
-                            statusSwitch.setChecked((Boolean) snap.getValue());
-                    } //for end
-                }
-            }
+            public void run() {
 
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
-                Log.d("matte", "onCancelled | ERROR: " + databaseError.getDetails() +
-                        " | MESSAGE: " + databaseError.getMessage());
-                Toast.makeText(getContext(), databaseError.getMessage().toString(), Toast.LENGTH_SHORT);
+                reference = FirebaseDatabase.getInstance().getReference("restaurants");
+
+                reference.addValueEventListener(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                        DataSnapshot issue = dataSnapshot.child(loggedID);
+                        // it is setted to the first record (restaurant)
+                        // when the sign in and log in procedures will be handled, it will be the proper one
+                        if (dataSnapshot.exists()) {
+                            // dataSnapshot is the "issue" node with all children
+                            for(DataSnapshot snap : issue.getChildren()){
+                                if(editTextFields.containsKey(snap.getKey())){
+                                    if(snap.getKey().equals("DeliveryCost")){
+                                        DecimalFormat decimalFormat = new DecimalFormat("#.00"); //two decimal
+                                        String priceStr = decimalFormat.format(Double.parseDouble(snap.getValue().toString()));
+                                        editTextFields.get(snap.getKey()).setText(priceStr+"€");
+                                    }
+                                    else
+                                        editTextFields.get(snap.getKey()).setText(snap.getValue().toString());
+                                }
+                                else if(snap.getKey().equals("Type") && !snap.getValue().toString().isEmpty()){
+                                    String[] types = snap.getValue().toString().toLowerCase().split(",(\\s)*");
+                                    for(String t : types)
+                                        checkBoxes.get(t).setChecked(true);
+                                }
+                                else if(snap.getKey().equals("IsActive"))
+                                    statusSwitch.setChecked((Boolean) snap.getValue());
+                            } //for end
+                        }
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError databaseError) {
+                        Log.d("matte", "onCancelled | ERROR: " + databaseError.getDetails() +
+                                " | MESSAGE: " + databaseError.getMessage());
+                        Toast.makeText(getContext(), databaseError.getMessage().toString(), Toast.LENGTH_SHORT);
+                    }
+                });
+
+
+                //Download the profile pic
+                StorageReference storageReference = FirebaseStorage.getInstance().getReference();
+                StorageReference photoReference= storageReference.child(loggedID+"/ProfileImage/img.jpg");
+
+                final long ONE_MEGABYTE = 1024 * 1024;
+                photoReference.getBytes(ONE_MEGABYTE).addOnSuccessListener(new OnSuccessListener<byte[]>() {
+                    @Override
+                    public void onSuccess(byte[] bytes) {
+                        Bitmap bmp = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
+                        profileImage.setImageBitmap(bmp);
+                        //send message to main thread
+                        handler.sendEmptyMessage(0);
+
+                    }
+                }).addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception exception) {
+                        if(getActivity() != null)
+                            Toast.makeText(getActivity(), "No Such file or Path found!!", Toast.LENGTH_LONG).show();
+                        else
+                            Log.d("matte", "null context and profilePic download failed");
+                        //set predefined image
+                        profileImage.setImageResource(R.drawable.plate_fork);
+                        //send message to main thread
+                        handler.sendEmptyMessage(0);
+                    }
+                });
+
             }
-        });
+        }).start();
 
 
     }
-
-
-
-
-
 
 
 
@@ -334,11 +393,6 @@ public class EditProfileFragment extends Fragment {
 //                    mScrollView.scrollTo(position[0], position[1]);
 //                }
 //            });
-
-        SharedPreferences fields = getActivity().getSharedPreferences("ProfileDataRestaurant", Context.MODE_PRIVATE);
-        image = fields.getString("BackgroundTmp", encodeTobase64());
-        profileImage.setImageBitmap(decodeBase64(image));
-
     }
 
     @Override
@@ -348,11 +402,8 @@ public class EditProfileFragment extends Fragment {
         if (requestCode == REQUEST_TAKE_PHOTO) {
             if (resultCode == RESULT_OK) {
                 setPic(currentPhotoPath);
-            } else {
-                SharedPreferences fields = getActivity().getSharedPreferences("ProfileDataRestaurant", Context.MODE_PRIVATE);
-                image = fields.getString("BackgroundTmp", encodeTobase64());
+            } else
                 profileImage.setImageBitmap(decodeBase64(image));
-            }
         }
         if (requestCode == RESULT_LOAD_IMG) {
             if (resultCode == RESULT_OK) {
@@ -361,20 +412,13 @@ public class EditProfileFragment extends Fragment {
                     final InputStream imageStream = getActivity().getContentResolver().openInputStream(imageUri);
                     final Bitmap selectedImage = BitmapFactory.decodeStream(imageStream);
                     profileImage.setImageBitmap(selectedImage);
-                    SharedPreferences.Editor editor =
-                            getActivity().getSharedPreferences("ProfileDataRestaurant", Context.MODE_PRIVATE).edit();
-                    editor.putString("BackgroundTmp", encodeTobase64());
-                    editor.apply();
                 } catch (FileNotFoundException e) {
                     e.printStackTrace();
                     Toast.makeText(getContext(), "Something went wrong", Toast.LENGTH_LONG).show();
                 }
 
-            } else {
-                SharedPreferences fields = getActivity().getSharedPreferences("ProfileDataRestaurant", Context.MODE_PRIVATE);
-                image = fields.getString("BackgroundTmp", encodeTobase64());
+            } else
                 profileImage.setImageBitmap(decodeBase64(image));
-            }
         }
     }
 
@@ -453,7 +497,7 @@ public class EditProfileFragment extends Fragment {
         return image;
     }
     public void removeProfileImage(){
-        profileImage.setImageResource(R.drawable.food_default);
+        profileImage.setImageResource(R.drawable.plate_fork);
     }
 
     private void setPic(String currentPhotoPath) {
@@ -614,15 +658,26 @@ public class EditProfileFragment extends Fragment {
                 //remove the last comma
                 types = types.substring(0, types.length()-2);
             }
-            reference.child("R00").child("Type").setValue(types);
+            reference.child(loggedID).child("Type").setValue(types);
 
-            reference.child("R00").child("IsActive").setValue(statusSwitch.isChecked());
+            reference.child(loggedID).child("IsActive").setValue(statusSwitch.isChecked());
 
             for(String fieldName : editTextFields.keySet()){
                 EditText ed = editTextFields.get(fieldName);
-                reference.child("R00").child(fieldName).setValue(ed.getText().toString());
+                reference.child(loggedID).child(fieldName).setValue(ed.getText().toString());
             }
-            // TODO save image into DB
+
+            // Save profile pic to the DB
+            Bitmap img = ((BitmapDrawable) profileImage.getDrawable()).getBitmap();
+            uploadFile(img);
+
+            //wait 2secs before come back to the AccountFragment. The image must be loaded totally to FireBase
+            try {
+                Thread.sleep(2000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+
             Toast.makeText(getContext(), "Saved", Toast.LENGTH_LONG).show();
 
             /**
@@ -633,6 +688,33 @@ public class EditProfileFragment extends Fragment {
              *
              */
         }
+    }
+
+
+
+    private void uploadFile(Bitmap bitmap) {
+        StorageReference storageReference = FirebaseStorage.getInstance().getReference();
+
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        bitmap.compress(Bitmap.CompressFormat.JPEG, 20, baos);
+        byte[] data = baos.toByteArray();
+
+        UploadTask uploadTask = storageReference.child(loggedID+"/ProfileImage/img.jpg").putBytes(data);
+        uploadTask.addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception exception) {
+                // Handle unsuccessful uploads
+                Log.d("matte", "Upload failed");
+            }
+        }).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+            @Override
+            public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                // taskSnapshot.getMetadata() contains file metadata such as size, content-type, and download URL.
+                Uri downloadUrl = taskSnapshot.getUploadSessionUri();
+                Log.d("matte", "downloadUrl-->" + downloadUrl);
+            }
+        });
+
     }
 
     public void clearText(View view) {

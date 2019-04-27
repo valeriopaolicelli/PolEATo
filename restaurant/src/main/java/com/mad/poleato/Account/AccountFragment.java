@@ -1,11 +1,14 @@
 package com.mad.poleato.Account;
 
+import android.app.ProgressDialog;
 import android.content.Context;
-import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.constraint.solver.widgets.Snapshot;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.util.Log;
@@ -19,15 +22,16 @@ import android.widget.Toast;
 
 import androidx.navigation.Navigation;
 
-import com.google.firebase.FirebaseApp;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
 import com.mad.poleato.R;
-
-import org.w3c.dom.Text;
 
 import java.text.DecimalFormat;
 import java.util.HashMap;
@@ -40,11 +44,23 @@ public class AccountFragment extends Fragment {
     private Map<String, TextView> tvFields;
 
     private FloatingActionButton buttEdit;
-    private ImageView imageBackground;
+    private ImageView profileImage;
+
+    private ProgressDialog progressDialog;
+    Handler handler = new Handler() {
+        @Override
+        public void handleMessage(Message msg) {
+            progressDialog.dismiss();
+        }
+    };
+
+    String loggedID;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        loggedID = "R05";
     }
 
     Context context;
@@ -72,7 +88,7 @@ public class AccountFragment extends Fragment {
         tvFields.put("IsActive", (TextView)view.findViewById(R.id.tvStatusField));
         tvFields.put("PriceRange", (TextView)view.findViewById(R.id.tvPriceRangeField));
 
-        imageBackground = view.findViewById(R.id.ivBackground);
+        profileImage = view.findViewById(R.id.ivBackground);
 
         // Button to edit the restaurant details
         buttEdit = view.findViewById(R.id.buttEdit);
@@ -96,52 +112,94 @@ public class AccountFragment extends Fragment {
     }
 
     public void fillFields() {
-        DatabaseReference reference = FirebaseDatabase.getInstance().getReference("restaurants");
 
-        reference.addValueEventListener(new ValueEventListener() {
+        if(getActivity() != null)
+            progressDialog = ProgressDialog.show(getActivity(), "", getString(R.string.loading));
+
+        //start a new thread to process job
+        new Thread(new Runnable() {
             @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                DataSnapshot issue = dataSnapshot.child("R00");
-                // it is setted to the first record (restaurant)
-                // when the sign in and log in procedures will be handled, it will be the proper one
-                if (dataSnapshot.exists()) {
-                    // dataSnapshot is the "issue" node with all children
-                    for(DataSnapshot snap : issue.getChildren()){
-                        if(tvFields.containsKey(snap.getKey())){
-                            if(snap.getKey().equals("DeliveryCost")){
-                                DecimalFormat decimalFormat = new DecimalFormat("#.00"); //two decimal
-                                String priceStr = decimalFormat.format(Double.parseDouble(snap.getValue().toString()));
-                                tvFields.get(snap.getKey()).setText(priceStr+"€");
-                            }
-                            else if(snap.getKey().equals("IsActive") && getActivity() != null){
-                                if((Boolean)snap.getValue())
-                                    tvFields.get(snap.getKey()).setText(getString(R.string.active_status));
-                                else
-                                    tvFields.get(snap.getKey()).setText(getString(R.string.inactive_status));
-                            }
-                            else if(snap.getKey().equals("PriceRange")){
-                                //translate price range value into a $ string
-                                int count = Integer.parseInt(snap.getValue().toString());
-                                String s = "";
-                                for(int idx = 0; idx < count; idx ++)
-                                    s += "$";
-                                tvFields.get(snap.getKey()).setText(s);
-                            }
-                            else
-                                tvFields.get(snap.getKey()).setText(snap.getValue().toString());
+            public void run() {
+                DatabaseReference reference = FirebaseDatabase.getInstance().getReference("restaurants");
+
+                reference.addValueEventListener(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                        DataSnapshot issue = dataSnapshot.child(loggedID);
+                        // it is setted to the first record (restaurant)
+                        // when the sign in and log in procedures will be handled, it will be the proper one
+                        if (dataSnapshot.exists()) {
+                            // dataSnapshot is the "issue" node with all children
+                            for(DataSnapshot snap : issue.getChildren()){
+                                if(tvFields.containsKey(snap.getKey())){
+                                    if(snap.getKey().equals("DeliveryCost")){
+                                        DecimalFormat decimalFormat = new DecimalFormat("#.00"); //two decimal
+                                        String priceStr = decimalFormat.format(Double.parseDouble(snap.getValue().toString()));
+                                        tvFields.get(snap.getKey()).setText(priceStr+"€");
+                                    }
+                                    else if(snap.getKey().equals("IsActive") && getActivity() != null){
+                                        if((Boolean)snap.getValue())
+                                            tvFields.get(snap.getKey()).setText(getString(R.string.active_status));
+                                        else
+                                            tvFields.get(snap.getKey()).setText(getString(R.string.inactive_status));
+                                    }
+                                    else if(snap.getKey().equals("PriceRange")){
+                                        //translate price range value into a $ string
+                                        int count = Integer.parseInt(snap.getValue().toString());
+                                        String s = "";
+                                        for(int idx = 0; idx < count; idx ++)
+                                            s += "$";
+                                        tvFields.get(snap.getKey()).setText(s);
+                                    }
+                                    else
+                                        tvFields.get(snap.getKey()).setText(snap.getValue().toString());
+                                }
+                            } //for end
                         }
-                    } //for end
-                }
-            }
+                    }
 
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
-                Log.d("matte", "onCancelled | ERROR: " + databaseError.getDetails() +
-                        " | MESSAGE: " + databaseError.getMessage());
-                Toast.makeText(getContext(), databaseError.getMessage().toString(), Toast.LENGTH_SHORT);
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError databaseError) {
+                        Log.d("matte", "onCancelled | ERROR: " + databaseError.getDetails() +
+                                " | MESSAGE: " + databaseError.getMessage());
+                        Toast.makeText(getContext(), databaseError.getMessage().toString(), Toast.LENGTH_SHORT);
+                    }
+                });
+
+                //Download the profile pic
+                StorageReference storageReference = FirebaseStorage.getInstance().getReference();
+                StorageReference photoReference= storageReference.child(loggedID+"/ProfileImage/img.jpg");
+
+                final long ONE_MEGABYTE = 1024 * 1024;
+                photoReference.getBytes(ONE_MEGABYTE).addOnSuccessListener(new OnSuccessListener<byte[]>() {
+                    @Override
+                    public void onSuccess(byte[] bytes) {
+                        Bitmap bmp = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
+                        profileImage.setImageBitmap(bmp);
+                        //send message to main thread
+                        handler.sendEmptyMessage(0);
+                    }
+                }).addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception exception) {
+                        if(getActivity() != null)
+                            Toast.makeText(getActivity(), "No Such file or Path found!!", Toast.LENGTH_LONG).show();
+                        else
+                            Log.d("matte", "null context and profilePic download failed");
+                        //set predefined image
+                        profileImage.setImageResource(R.drawable.plate_fork);
+                        //send message to main thread
+                        handler.sendEmptyMessage(0);
+                    }
+                });
+
             }
-        });
+        }).start();
+
+
+
     }
+
 
     @Override
     public void onSaveInstanceState(Bundle outState) {
