@@ -173,7 +173,7 @@ public class EditProfileFragment extends Fragment {
         checkedTypes = new HashSet<>();
         imageButtons = new HashMap<>();
 
-        loggedID = "R00";
+        loggedID = "R03";
 
 
     }
@@ -201,7 +201,7 @@ public class EditProfileFragment extends Fragment {
         editTextFields.put("Address",(EditText) v.findViewById(R.id.editTextAddress));
         editTextFields.put("Email",(EditText) v.findViewById(R.id.editTextEmail));
         editTextFields.put("Phone",(EditText) v.findViewById(R.id.editTextPhone));
-        //editTextFields.put("DeliveryCost",(EditText) v.findViewById(R.id.editTextDeliveryCost));
+        editTextFields.put("DeliveryCost",(EditText) v.findViewById(R.id.editTextDelivery));
 
 
         imageButtons.put("Name", (ImageButton) v.findViewById(R.id.cancel_name));
@@ -210,7 +210,7 @@ public class EditProfileFragment extends Fragment {
         imageButtons.put("Address", (ImageButton) v.findViewById(R.id.cancel_address));
         imageButtons.put("Email", (ImageButton) v.findViewById(R.id.cancel_email));
         imageButtons.put("Phone", (ImageButton) v.findViewById(R.id.cancel_phone));
-        //editTextFields.put("DeliveryCost",(EditText) v.findViewById(R.id.cancel_deliveryCost));
+        imageButtons.put("DeliveryCost",(ImageButton) v.findViewById(R.id.cancel_delivery));
 
 
         checkBoxes.put(getString(R.string.italian_cooking).toLowerCase(), (CheckBox)v.findViewById(R.id.italianCheckBox));
@@ -326,9 +326,7 @@ public class EditProfileFragment extends Fragment {
                     for(DataSnapshot snap : issue.getChildren()){
                         if(editTextFields.containsKey(snap.getKey())){
                             if(snap.getKey().equals("DeliveryCost")){
-                                DecimalFormat decimalFormat = new DecimalFormat("#.00"); //two decimal
-                                String priceStr = decimalFormat.format(Double.parseDouble(snap.getValue().toString()));
-                                editTextFields.get(snap.getKey()).setText(priceStr+"€");
+                                editTextFields.get(snap.getKey()).setText(snap.getValue().toString());
                             }
                             else
                                 editTextFields.get(snap.getKey()).setText(snap.getValue().toString());
@@ -642,6 +640,9 @@ public class EditProfileFragment extends Fragment {
 
         String emailRegex = new String("^.+@[^\\.].*\\.[a-z]{2,}$");
 
+        String priceRegex = new String("[0-9]+([\\.,][0-9][0.9])?");
+
+
         if (!editTextFields.get("Name").getText().toString().matches(nameRegex)) {
             wrongField = true;
             Toast.makeText(getContext(), "The name must start with letters and must end with letters. Space are allowed. Numbers are not allowed", Toast.LENGTH_LONG).show();
@@ -677,6 +678,11 @@ public class EditProfileFragment extends Fragment {
             wrongField = true;
             Toast.makeText(getContext(), "Invalid Email", Toast.LENGTH_LONG).show();
             editTextFields.get("Email").setBackground(ContextCompat.getDrawable(getContext(), R.drawable.border_wrong_field));
+        }
+        if (!editTextFields.get("DeliveryCost").getText().toString().matches(priceRegex)) {
+            wrongField = true;
+            Toast.makeText(getContext(), "Invalid Price", Toast.LENGTH_LONG).show();
+            editTextFields.get("Price").setBackground(ContextCompat.getDrawable(getContext(), R.drawable.border_wrong_field));
         }
 
 
@@ -715,10 +721,16 @@ public class EditProfileFragment extends Fragment {
 
 
             reference.child(loggedID).child("IsActive").setValue(statusSwitch.isChecked());
-
+            EditText ed;
             for(String fieldName : editTextFields.keySet()){
-                EditText ed = editTextFields.get(fieldName);
-                reference.child(loggedID).child(fieldName).setValue(ed.getText().toString());
+                ed = editTextFields.get(fieldName);
+                if(fieldName.equals("DeliveryCost")){
+                    DecimalFormat decimalFormat = new DecimalFormat("#0.00"); //two decimal
+                    String priceStr = decimalFormat.format(Double.parseDouble(ed.getText().toString()));
+                    reference.child(loggedID).child(fieldName).setValue(priceStr);
+                }
+                else
+                    reference.child(loggedID).child(fieldName).setValue(ed.getText().toString());
             }
 
             // Save profile pic to the DB
@@ -781,6 +793,7 @@ public class EditProfileFragment extends Fragment {
 
     }
 
+
     public void clearText(View view) {
         if (view.getId() == R.id.cancel_name)
             editTextFields.get("Name").setText("");
@@ -794,6 +807,8 @@ public class EditProfileFragment extends Fragment {
             editTextFields.get("Email").setText("");
         else if(view.getId() == R.id.cancel_phone)
             editTextFields.get("Phone").setText("");
+        else if(view.getId() == R.id.cancel_delivery)
+            editTextFields.get("DeliveryCost").setText("");
     }
     /*
         public void removeProfileImage(){

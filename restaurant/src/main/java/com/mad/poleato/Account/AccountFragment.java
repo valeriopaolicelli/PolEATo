@@ -74,7 +74,7 @@ public class AccountFragment extends Fragment {
         localeShort = locale.substring(0, 2);
 
 
-        loggedID = "R00";
+        loggedID = "R03";
     }
 
     @Override
@@ -146,9 +146,9 @@ public class AccountFragment extends Fragment {
                     for(DataSnapshot snap : issue.getChildren()){
                         if(tvFields.containsKey(snap.getKey())){
                             if(snap.getKey().equals("DeliveryCost")){
-                                DecimalFormat decimalFormat = new DecimalFormat("#.00"); //two decimal
-                                String priceStr = decimalFormat.format(Double.parseDouble(snap.getValue().toString()));
-                                tvFields.get(snap.getKey()).setText(priceStr+"€");
+                                //DecimalFormat decimalFormat = new DecimalFormat("#0.00"); //two decimal
+                                //String priceStr = decimalFormat.format(Double.parseDouble(snap.getValue().toString()));
+                                tvFields.get(snap.getKey()).setText(snap.getValue().toString()+"€");
                             }
                             else if(snap.getKey().equals("IsActive") && getActivity() != null){
                                 if((Boolean)snap.getValue())
