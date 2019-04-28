@@ -20,6 +20,7 @@ import android.os.Message;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.constraint.ConstraintLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
@@ -600,6 +601,11 @@ public class EditProfileFragment extends Fragment {
 
         // TODO HERE MAKE UI NON RESPONSIVE
 
+        /*ConstraintLayout layout = (ConstraintLayout) v.findViewById(R.id.mainEdit);
+        for (int i = 0; i < layout.getChildCount(); i++) {
+            View child = layout.getChildAt(i);
+            child.setEnabled(false);
+        }*/
 
         boolean wrongField = false;
         if(getActivity() != null){
@@ -725,8 +731,10 @@ public class EditProfileFragment extends Fragment {
             for(String fieldName : editTextFields.keySet()){
                 ed = editTextFields.get(fieldName);
                 if(fieldName.equals("DeliveryCost")){
-                    DecimalFormat decimalFormat = new DecimalFormat("#0.00"); //two decimal
-                    String priceStr = decimalFormat.format(Double.parseDouble(ed.getText().toString()));
+                    DecimalFormat decimalFormat = new DecimalFormat("#.00"); //two decimal
+                    String s = ed.getText().toString().replace(",", ".");
+                    double d = Double.parseDouble(s);
+                    String priceStr = decimalFormat.format(d);
                     reference.child(loggedID).child(fieldName).setValue(priceStr);
                 }
                 else
