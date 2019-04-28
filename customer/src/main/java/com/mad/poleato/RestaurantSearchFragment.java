@@ -1,11 +1,14 @@
 package com.mad.poleato;
 
 import android.app.Activity;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.DialogFragment;
@@ -24,11 +27,14 @@ import android.widget.PopupMenu;
 import android.widget.SearchView;
 
 
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -54,6 +60,7 @@ public class RestaurantSearchFragment extends DialogFragment {
     private List<Restaurant> restaurantList; //original list of all restaurants
     private List<Restaurant> currDisplayedList; //list of filtered elements displayed on the screen
     private Set<String> typesToFilter;
+
 
     //id for the filter fragment
     public static final int FILTER_FRAGMENT = 26;
@@ -145,6 +152,35 @@ public class RestaurantSearchFragment extends DialogFragment {
                         " | MESSAGE: " + databaseError.getMessage());
             }
         });
+
+
+        //Download the profile pic
+        StorageReference storageReference = FirebaseStorage.getInstance().getReference();
+        StorageReference photoReference= storageReference.child(loggedID+"/ProfileImage/img.jpg");
+
+        final long ONE_MEGABYTE = 1024 * 1024;
+        photoReference.getBytes(ONE_MEGABYTE).addOnSuccessListener(new OnSuccessListener<byte[]>() {
+            @Override
+            public void onSuccess(byte[] bytes) {
+                Bitmap bmp = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
+                profileImage.setImageBitmap(bmp);
+                //send message to main thread
+                handler.sendEmptyMessage(0);
+            }
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception exception) {
+                if(getActivity() != null)
+                    Toast.makeText(getActivity(), "No Such file or Path found!!", Toast.LENGTH_LONG).show();
+                else
+                    Log.d("matte", "null context and profilePic download failed");
+                //set predefined image
+                profileImage.setImageResource(R.drawable.plate_fork);
+                //send message to main thread
+                handler.sendEmptyMessage(0);
+            }
+        });
+
 
     }
 
