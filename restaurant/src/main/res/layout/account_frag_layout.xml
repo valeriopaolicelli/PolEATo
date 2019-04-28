@@ -125,7 +125,7 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginEnd="16dp"
-            android:maxLength="70"
+            android:maxLength="100"
             android:maxLines="2"
             android:textColor="@color/colorTextSubField"
             app:layout_constraintBottom_toTopOf="@id/infoLabel"

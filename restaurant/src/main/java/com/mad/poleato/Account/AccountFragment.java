@@ -4,6 +4,7 @@ import android.app.ProgressDialog;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -35,11 +36,13 @@ import com.mad.poleato.R;
 
 import java.text.DecimalFormat;
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
 
 
 public class AccountFragment extends Fragment {
 
+    private Toast myToast;
 
     private Map<String, TextView> tvFields;
 
@@ -54,21 +57,30 @@ public class AccountFragment extends Fragment {
         }
     };
 
+
+    String localeShort;
+
     String loggedID;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        if(getActivity() != null)
+        myToast = Toast.makeText(getActivity(), "", Toast.LENGTH_LONG);
 
-        loggedID = "R00";
+        //download Type base on the current active Locale
+        String locale = Locale.getDefault().toString();
+        Log.d("matte", "LOCALE: "+locale);
+        localeShort = locale.substring(0, 2);
+
+
+        loggedID = "R03";
     }
-
-    Context context;
 
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
-        this.context = context;
+
     }
 
     @Override
@@ -127,16 +139,16 @@ public class AccountFragment extends Fragment {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 DataSnapshot issue = dataSnapshot.child(loggedID);
-                // it is setted to the first record (restaurant)
+                // it is set to the first record (restaurant)
                 // when the sign in and log in procedures will be handled, it will be the proper one
                 if (dataSnapshot.exists()) {
                     // dataSnapshot is the "issue" node with all children
                     for(DataSnapshot snap : issue.getChildren()){
                         if(tvFields.containsKey(snap.getKey())){
                             if(snap.getKey().equals("DeliveryCost")){
-                                DecimalFormat decimalFormat = new DecimalFormat("#.00"); //two decimal
-                                String priceStr = decimalFormat.format(Double.parseDouble(snap.getValue().toString()));
-                                tvFields.get(snap.getKey()).setText(priceStr+"€");
+                                //DecimalFormat decimalFormat = new DecimalFormat("#0.00"); //two decimal
+                                //String priceStr = decimalFormat.format(Double.parseDouble(snap.getValue().toString()));
+                                tvFields.get(snap.getKey()).setText(snap.getValue().toString()+"€");
                             }
                             else if(snap.getKey().equals("IsActive") && getActivity() != null){
                                 if((Boolean)snap.getValue())
@@ -152,6 +164,8 @@ public class AccountFragment extends Fragment {
                                     s += "$";
                                 tvFields.get(snap.getKey()).setText(s);
                             }
+                            else if(snap.getKey().equals("Type"))
+                                tvFields.get(snap.getKey()).setText(snap.child(localeShort).getValue().toString());
                             else
                                 tvFields.get(snap.getKey()).setText(snap.getValue().toString());
                         }
@@ -163,7 +177,8 @@ public class AccountFragment extends Fragment {
             public void onCancelled(@NonNull DatabaseError databaseError) {
                 Log.d("matte", "onCancelled | ERROR: " + databaseError.getDetails() +
                         " | MESSAGE: " + databaseError.getMessage());
-                Toast.makeText(getContext(), databaseError.getMessage().toString(), Toast.LENGTH_SHORT);
+                myToast.setText(databaseError.getMessage().toString());
+                myToast.show();
             }
         });
 
@@ -183,10 +198,7 @@ public class AccountFragment extends Fragment {
         }).addOnFailureListener(new OnFailureListener() {
             @Override
             public void onFailure(@NonNull Exception exception) {
-                if(getActivity() != null)
-                    Toast.makeText(getActivity(), "No Such file or Path found!!", Toast.LENGTH_LONG).show();
-                else
-                    Log.d("matte", "null context and profilePic download failed");
+                Log.d("matte", "No image found. Default img setting");
                 //set predefined image
                 profileImage.setImageResource(R.drawable.plate_fork);
                 //send message to main thread
@@ -224,5 +236,7 @@ public class AccountFragment extends Fragment {
 //        }
 
     }
+
+
 }
 
