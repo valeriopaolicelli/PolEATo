@@ -4,6 +4,7 @@ import android.app.ProgressDialog;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -222,6 +223,60 @@ public class AccountFragment extends Fragment {
 //                }
 //            });
 //        }
+
+    }
+
+
+
+
+
+
+    public class AsyncProfileDownload extends AsyncTask {
+
+
+        @Override
+        protected void onPreExecute() {
+            //here shows the progressDialog
+            super.onPreExecute();
+            progressDialog = new ProgressDialog(context);
+            progressDialog.setMessage("Please wait...It is downloading");
+            progressDialog.setIndeterminate(false);
+            progressDialog.setCancelable(false);
+            progressDialog.show();
+        }
+
+        @Override
+        protected Object doInBackground(Object[] objects) {
+            //here do not touch mainThread UI
+
+            //Download the profile pic
+            StorageReference storageReference = FirebaseStorage.getInstance().getReference();
+            StorageReference photoReference= storageReference.child(loggedID+"/ProfileImage/img.jpg");
+
+            final long ONE_MEGABYTE = 1024 * 1024;
+            photoReference.getBytes(ONE_MEGABYTE).addOnSuccessListener(new OnSuccessListener<byte[]>() {
+                @Override
+                public void onSuccess(byte[] bytes) {
+                    Bitmap bmp = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
+                    profileImage.setImageBitmap(bmp);
+                }
+            }).addOnFailureListener(new OnFailureListener() {
+                @Override
+                public void onFailure(@NonNull Exception exception) {
+                    if(getActivity() != null)
+                        Toast.makeText(getActivity(), "No Such file or Path found!!", Toast.LENGTH_LONG).show();
+                    else
+                        Log.d("matte", "null context and profilePic download failed");
+                    //set predefined image
+                    profileImage.setImageResource(R.drawable.plate_fork);
+                    //send message to main thread
+                    handler.sendEmptyMessage(0);
+                }
+            });
+
+            return null;
+        }
+
 
     }
 }

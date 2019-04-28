@@ -83,6 +83,7 @@ public class EditProfileFragment extends Fragment {
     private static final int REQUEST_TAKE_PHOTO = 1;
     private static final int RESULT_LOAD_IMG = 2;
     private String currentPhotoPath;
+    Toast myToast;
 
     private Map<String, ImageButton> imageButtons;
     private Map<String, EditText> editTextFields;
@@ -152,6 +153,8 @@ public class EditProfileFragment extends Fragment {
             mParam1 = getArguments().getString(ARG_PARAM1);
             mParam2 = getArguments().getString(ARG_PARAM2);
         }
+        myToast = Toast.makeText(getActivity(), "", Toast.LENGTH_SHORT);
+
 
         editTextFields = new HashMap<>();
         imageButtons = new HashMap<>();
@@ -331,7 +334,8 @@ public class EditProfileFragment extends Fragment {
             public void onCancelled(@NonNull DatabaseError databaseError) {
                 Log.d("matte", "onCancelled | ERROR: " + databaseError.getDetails() +
                         " | MESSAGE: " + databaseError.getMessage());
-                Toast.makeText(getContext(), databaseError.getMessage().toString(), Toast.LENGTH_SHORT);
+                myToast.setText(databaseError.getMessage().toString());
+                myToast.show();
             }
         });
 
@@ -353,8 +357,11 @@ public class EditProfileFragment extends Fragment {
         }).addOnFailureListener(new OnFailureListener() {
             @Override
             public void onFailure(@NonNull Exception exception) {
-                if(getActivity() != null)
-                    Toast.makeText(getActivity(), "No Such file or Path found!!", Toast.LENGTH_LONG).show();
+                if(getActivity() != null){
+                    myToast.setText("No Such file or Path found!!");
+                    myToast.show();
+                }
+
                 else
                     Log.d("matte", "null context and profilePic download failed");
                 //set predefined image
@@ -415,7 +422,8 @@ public class EditProfileFragment extends Fragment {
                     profileImage.setImageBitmap(selectedImage);
                 } catch (FileNotFoundException e) {
                     e.printStackTrace();
-                    Toast.makeText(getContext(), "Something went wrong", Toast.LENGTH_LONG).show();
+                    myToast.setText("Something went wrong");
+                    myToast.show();
                 }
 
             } else
@@ -579,7 +587,8 @@ public class EditProfileFragment extends Fragment {
     public void saveChanges() {
 
         boolean wrongField = false;
-        Toast.makeText(getContext(), "Saving_changes", Toast.LENGTH_LONG).show();
+        myToast.setText("Saving changes ...");
+        myToast.show();
 
 
 
@@ -677,26 +686,11 @@ public class EditProfileFragment extends Fragment {
 
             // Save profile pic to the DB
             Bitmap img = ((BitmapDrawable) profileImage.getDrawable()).getBitmap();
+            /*Navigation controller is moved inside this method. The image must be loaded totally to FireBase
+                before come back to the AccountFragment. This is due to the fact that the image download is async */
             uploadFile(img);
 
 
-            //wait 2secs before come back to the AccountFragment. The image must be loaded totally to FireBase
-            try {
-                Thread.sleep(2000);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-
-
-            Toast.makeText(getContext(), "Saved", Toast.LENGTH_LONG).show();
-
-            /**
-             * GO TO ACCOUNT_FRAGMENT
-             */
-            Navigation.findNavController(v).navigate(R.id.action_editProfile_id_to_account_id);
-            /**
-             *
-             */
         }
     }
 
@@ -715,6 +709,15 @@ public class EditProfileFragment extends Fragment {
             public void onFailure(@NonNull Exception exception) {
                 // Handle unsuccessful uploads
                 Log.d("matte", "Upload failed");
+                myToast.setText("Something goes wrong");
+                myToast.show();
+                /**
+                 * GO TO ACCOUNT_FRAGMENT
+                 */
+                Navigation.findNavController(v).navigate(R.id.action_editProfile_id_to_account_id);
+                /**
+                 *
+                 */
             }
         }).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
             @Override
@@ -722,6 +725,16 @@ public class EditProfileFragment extends Fragment {
                 // taskSnapshot.getMetadata() contains file metadata such as size, content-type, and download URL.
                 Uri downloadUrl = taskSnapshot.getUploadSessionUri();
                 Log.d("matte", "downloadUrl-->" + downloadUrl);
+                myToast.setText("Saved");
+                myToast.show();
+
+                /**
+                 * GO TO ACCOUNT_FRAGMENT
+                 */
+                Navigation.findNavController(v).navigate(R.id.action_editProfile_id_to_account_id);
+                /**
+                 *
+                 */
             }
         });
 
