@@ -36,11 +36,13 @@ import com.mad.poleato.R;
 
 import java.text.DecimalFormat;
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
 
 
 public class AccountFragment extends Fragment {
 
+    private Toast myToast;
 
     private Map<String, TextView> tvFields;
 
@@ -55,21 +57,30 @@ public class AccountFragment extends Fragment {
         }
     };
 
+
+    String localeShort;
+
     String loggedID;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        if(getActivity() != null)
+        myToast = Toast.makeText(getActivity(), "", Toast.LENGTH_LONG);
+
+        //download Type base on the current active Locale
+        String locale = Locale.getDefault().toString();
+        Log.d("matte", "LOCALE: "+locale);
+        localeShort = locale.substring(0, 2);
+
 
         loggedID = "R00";
     }
 
-    Context context;
-
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
-        this.context = context;
+
     }
 
     @Override
@@ -128,7 +139,7 @@ public class AccountFragment extends Fragment {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 DataSnapshot issue = dataSnapshot.child(loggedID);
-                // it is setted to the first record (restaurant)
+                // it is set to the first record (restaurant)
                 // when the sign in and log in procedures will be handled, it will be the proper one
                 if (dataSnapshot.exists()) {
                     // dataSnapshot is the "issue" node with all children
@@ -153,6 +164,8 @@ public class AccountFragment extends Fragment {
                                     s += "$";
                                 tvFields.get(snap.getKey()).setText(s);
                             }
+                            else if(snap.getKey().equals("Type"))
+                                tvFields.get(snap.getKey()).setText(snap.child(localeShort).getValue().toString());
                             else
                                 tvFields.get(snap.getKey()).setText(snap.getValue().toString());
                         }
@@ -164,7 +177,8 @@ public class AccountFragment extends Fragment {
             public void onCancelled(@NonNull DatabaseError databaseError) {
                 Log.d("matte", "onCancelled | ERROR: " + databaseError.getDetails() +
                         " | MESSAGE: " + databaseError.getMessage());
-                Toast.makeText(getContext(), databaseError.getMessage().toString(), Toast.LENGTH_SHORT);
+                myToast.setText(databaseError.getMessage().toString());
+                myToast.show();
             }
         });
 
@@ -184,10 +198,7 @@ public class AccountFragment extends Fragment {
         }).addOnFailureListener(new OnFailureListener() {
             @Override
             public void onFailure(@NonNull Exception exception) {
-                if(getActivity() != null)
-                    Toast.makeText(getActivity(), "No Such file or Path found!!", Toast.LENGTH_LONG).show();
-                else
-                    Log.d("matte", "null context and profilePic download failed");
+                Log.d("matte", "No image found. Default img setting");
                 //set predefined image
                 profileImage.setImageResource(R.drawable.plate_fork);
                 //send message to main thread
@@ -227,57 +238,5 @@ public class AccountFragment extends Fragment {
     }
 
 
-
-
-
-
-    public class AsyncProfileDownload extends AsyncTask {
-
-
-        @Override
-        protected void onPreExecute() {
-            //here shows the progressDialog
-            super.onPreExecute();
-            progressDialog = new ProgressDialog(context);
-            progressDialog.setMessage("Please wait...It is downloading");
-            progressDialog.setIndeterminate(false);
-            progressDialog.setCancelable(false);
-            progressDialog.show();
-        }
-
-        @Override
-        protected Object doInBackground(Object[] objects) {
-            //here do not touch mainThread UI
-
-            //Download the profile pic
-            StorageReference storageReference = FirebaseStorage.getInstance().getReference();
-            StorageReference photoReference= storageReference.child(loggedID+"/ProfileImage/img.jpg");
-
-            final long ONE_MEGABYTE = 1024 * 1024;
-            photoReference.getBytes(ONE_MEGABYTE).addOnSuccessListener(new OnSuccessListener<byte[]>() {
-                @Override
-                public void onSuccess(byte[] bytes) {
-                    Bitmap bmp = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
-                    profileImage.setImageBitmap(bmp);
-                }
-            }).addOnFailureListener(new OnFailureListener() {
-                @Override
-                public void onFailure(@NonNull Exception exception) {
-                    if(getActivity() != null)
-                        Toast.makeText(getActivity(), "No Such file or Path found!!", Toast.LENGTH_LONG).show();
-                    else
-                        Log.d("matte", "null context and profilePic download failed");
-                    //set predefined image
-                    profileImage.setImageResource(R.drawable.plate_fork);
-                    //send message to main thread
-                    handler.sendEmptyMessage(0);
-                }
-            });
-
-            return null;
-        }
-
-
-    }
 }
 
