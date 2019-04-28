@@ -95,6 +95,8 @@ public class EditProfileFragment extends Fragment {
     private FloatingActionButton change_im;
     private ImageView profileImage;
     private Switch statusSwitch;
+    //if the switch is not switched by user set it to true (default=false)
+    private boolean isSwitchedByApp;
 
     private ProgressDialog progressDialog;
     Handler handler = new Handler() {
@@ -157,7 +159,7 @@ public class EditProfileFragment extends Fragment {
         checkedTypes = new HashSet<>();
         imageButtons = new HashMap<>();
 
-        loggedID = "R05";
+        loggedID = "R00";
 
     }
 
@@ -234,9 +236,18 @@ public class EditProfileFragment extends Fragment {
 
         profileImage = v.findViewById(R.id.ivBackground);
 
-        //fill the fields
-        fillFields();
+        //fill the fields with initial values (uses FireBase)
+        if(getActivity() != null)
+            progressDialog = ProgressDialog.show(getActivity(), "", getString(R.string.loading));
+        //start a new thread to process job
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                fillFields();
+            }
+        }).start();
 
+        // set the line limiter
         EditText edOpen = v.findViewById(R.id.editTextOpen);
         EditText edInfo = v.findViewById(R.id.editTextInfo);
 
@@ -248,7 +259,7 @@ public class EditProfileFragment extends Fragment {
         llInfo.setView(edInfo);
         llInfo.setLines(2);
 
-        // set the line limiter
+
         edOpen.addTextChangedListener(llOpen);
         edInfo.addTextChangedListener(llInfo);
 
@@ -284,84 +295,74 @@ public class EditProfileFragment extends Fragment {
 
     private void fillFields(){
 
-        if(getActivity() != null)
-            progressDialog = ProgressDialog.show(getActivity(), "", getString(R.string.loading));
-        //start a new thread to process job
-        new Thread(new Runnable() {
+        //Download text infos
+        reference = FirebaseDatabase.getInstance().getReference("restaurants");
+
+        reference.addValueEventListener(new ValueEventListener() {
             @Override
-            public void run() {
-
-                reference = FirebaseDatabase.getInstance().getReference("restaurants");
-
-                reference.addValueEventListener(new ValueEventListener() {
-                    @Override
-                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                        DataSnapshot issue = dataSnapshot.child(loggedID);
-                        // it is setted to the first record (restaurant)
-                        // when the sign in and log in procedures will be handled, it will be the proper one
-                        if (dataSnapshot.exists()) {
-                            // dataSnapshot is the "issue" node with all children
-                            for(DataSnapshot snap : issue.getChildren()){
-                                if(editTextFields.containsKey(snap.getKey())){
-                                    if(snap.getKey().equals("DeliveryCost")){
-                                        DecimalFormat decimalFormat = new DecimalFormat("#.00"); //two decimal
-                                        String priceStr = decimalFormat.format(Double.parseDouble(snap.getValue().toString()));
-                                        editTextFields.get(snap.getKey()).setText(priceStr+"€");
-                                    }
-                                    else
-                                        editTextFields.get(snap.getKey()).setText(snap.getValue().toString());
-                                }
-                                else if(snap.getKey().equals("Type") && !snap.getValue().toString().isEmpty()){
-                                    String[] types = snap.getValue().toString().toLowerCase().split(",(\\s)*");
-                                    for(String t : types)
-                                        checkBoxes.get(t).setChecked(true);
-                                }
-                                else if(snap.getKey().equals("IsActive"))
-                                    statusSwitch.setChecked((Boolean) snap.getValue());
-                            } //for end
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                DataSnapshot issue = dataSnapshot.child(loggedID);
+                // it is setted to the first record (restaurant)
+                // when the sign in and log in procedures will be handled, it will be the proper one
+                if (dataSnapshot.exists()) {
+                    // dataSnapshot is the "issue" node with all children
+                    for(DataSnapshot snap : issue.getChildren()){
+                        if(editTextFields.containsKey(snap.getKey())){
+                            if(snap.getKey().equals("DeliveryCost")){
+                                DecimalFormat decimalFormat = new DecimalFormat("#.00"); //two decimal
+                                String priceStr = decimalFormat.format(Double.parseDouble(snap.getValue().toString()));
+                                editTextFields.get(snap.getKey()).setText(priceStr+"€");
+                            }
+                            else
+                                editTextFields.get(snap.getKey()).setText(snap.getValue().toString());
                         }
-                    }
+                        else if(snap.getKey().equals("Type") && !snap.getValue().toString().isEmpty()){
+                            String[] types = snap.getValue().toString().toLowerCase().split(",(\\s)*");
+                            for(String t : types)
+                                checkBoxes.get(t).setChecked(true);
+                        }
+                        else if(snap.getKey().equals("IsActive"))
+                            statusSwitch.setChecked((Boolean) snap.getValue());
+                    } //for end
+                }
+            }
 
-                    @Override
-                    public void onCancelled(@NonNull DatabaseError databaseError) {
-                        Log.d("matte", "onCancelled | ERROR: " + databaseError.getDetails() +
-                                " | MESSAGE: " + databaseError.getMessage());
-                        Toast.makeText(getContext(), databaseError.getMessage().toString(), Toast.LENGTH_SHORT);
-                    }
-                });
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+                Log.d("matte", "onCancelled | ERROR: " + databaseError.getDetails() +
+                        " | MESSAGE: " + databaseError.getMessage());
+                Toast.makeText(getContext(), databaseError.getMessage().toString(), Toast.LENGTH_SHORT);
+            }
+        });
 
 
-                //Download the profile pic
-                StorageReference storageReference = FirebaseStorage.getInstance().getReference();
-                StorageReference photoReference= storageReference.child(loggedID+"/ProfileImage/img.jpg");
+        //Download the profile pic
+        StorageReference storageReference = FirebaseStorage.getInstance().getReference();
+        StorageReference photoReference= storageReference.child(loggedID+"/ProfileImage/img.jpg");
 
-                final long ONE_MEGABYTE = 1024 * 1024;
-                photoReference.getBytes(ONE_MEGABYTE).addOnSuccessListener(new OnSuccessListener<byte[]>() {
-                    @Override
-                    public void onSuccess(byte[] bytes) {
-                        Bitmap bmp = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
-                        profileImage.setImageBitmap(bmp);
-                        //send message to main thread
-                        handler.sendEmptyMessage(0);
-
-                    }
-                }).addOnFailureListener(new OnFailureListener() {
-                    @Override
-                    public void onFailure(@NonNull Exception exception) {
-                        if(getActivity() != null)
-                            Toast.makeText(getActivity(), "No Such file or Path found!!", Toast.LENGTH_LONG).show();
-                        else
-                            Log.d("matte", "null context and profilePic download failed");
-                        //set predefined image
-                        profileImage.setImageResource(R.drawable.plate_fork);
-                        //send message to main thread
-                        handler.sendEmptyMessage(0);
-                    }
-                });
+        final long ONE_MEGABYTE = 1024 * 1024;
+        photoReference.getBytes(ONE_MEGABYTE).addOnSuccessListener(new OnSuccessListener<byte[]>() {
+            @Override
+            public void onSuccess(byte[] bytes) {
+                Bitmap bmp = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
+                profileImage.setImageBitmap(bmp);
+                //send message to main thread
+                handler.sendEmptyMessage(0);
 
             }
-        }).start();
-
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception exception) {
+                if(getActivity() != null)
+                    Toast.makeText(getActivity(), "No Such file or Path found!!", Toast.LENGTH_LONG).show();
+                else
+                    Log.d("matte", "null context and profilePic download failed");
+                //set predefined image
+                profileImage.setImageResource(R.drawable.plate_fork);
+                //send message to main thread
+                handler.sendEmptyMessage(0);
+            }
+        });
 
     }
 
@@ -576,7 +577,13 @@ public class EditProfileFragment extends Fragment {
 
 
     public void saveChanges() {
+
         boolean wrongField = false;
+        Toast.makeText(getContext(), "Saving_changes", Toast.LENGTH_LONG).show();
+
+
+
+
         // fields cannot be empty
 
         for(String fieldName : editTextFields.keySet()){
@@ -590,8 +597,9 @@ public class EditProfileFragment extends Fragment {
                 else
                     ed.setBackground(ContextCompat.getDrawable(getContext(), R.drawable.border_right_field));
             }
-            else
+            else {
                 return;
+            }
         }
 
 
@@ -671,12 +679,14 @@ public class EditProfileFragment extends Fragment {
             Bitmap img = ((BitmapDrawable) profileImage.getDrawable()).getBitmap();
             uploadFile(img);
 
+
             //wait 2secs before come back to the AccountFragment. The image must be loaded totally to FireBase
             try {
                 Thread.sleep(2000);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
+
 
             Toast.makeText(getContext(), "Saved", Toast.LENGTH_LONG).show();
 

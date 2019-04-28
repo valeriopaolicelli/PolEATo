@@ -60,7 +60,7 @@ public class AccountFragment extends Fragment {
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        loggedID = "R05";
+        loggedID = "R00";
     }
 
     Context context;
@@ -108,95 +108,91 @@ public class AccountFragment extends Fragment {
     public void onResume() {
         super.onResume();
         //fill the views fields
-        fillFields();
+        if(getActivity() != null)
+            progressDialog = ProgressDialog.show(getActivity(), "", getString(R.string.loading));
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                //start a new thread to process job
+                fillFields();
+            }
+        }).start();
     }
 
     public void fillFields() {
 
-        if(getActivity() != null)
-            progressDialog = ProgressDialog.show(getActivity(), "", getString(R.string.loading));
+        DatabaseReference reference = FirebaseDatabase.getInstance().getReference("restaurants");
 
-        //start a new thread to process job
-        new Thread(new Runnable() {
+        reference.addValueEventListener(new ValueEventListener() {
             @Override
-            public void run() {
-                DatabaseReference reference = FirebaseDatabase.getInstance().getReference("restaurants");
-
-                reference.addValueEventListener(new ValueEventListener() {
-                    @Override
-                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                        DataSnapshot issue = dataSnapshot.child(loggedID);
-                        // it is setted to the first record (restaurant)
-                        // when the sign in and log in procedures will be handled, it will be the proper one
-                        if (dataSnapshot.exists()) {
-                            // dataSnapshot is the "issue" node with all children
-                            for(DataSnapshot snap : issue.getChildren()){
-                                if(tvFields.containsKey(snap.getKey())){
-                                    if(snap.getKey().equals("DeliveryCost")){
-                                        DecimalFormat decimalFormat = new DecimalFormat("#.00"); //two decimal
-                                        String priceStr = decimalFormat.format(Double.parseDouble(snap.getValue().toString()));
-                                        tvFields.get(snap.getKey()).setText(priceStr+"€");
-                                    }
-                                    else if(snap.getKey().equals("IsActive") && getActivity() != null){
-                                        if((Boolean)snap.getValue())
-                                            tvFields.get(snap.getKey()).setText(getString(R.string.active_status));
-                                        else
-                                            tvFields.get(snap.getKey()).setText(getString(R.string.inactive_status));
-                                    }
-                                    else if(snap.getKey().equals("PriceRange")){
-                                        //translate price range value into a $ string
-                                        int count = Integer.parseInt(snap.getValue().toString());
-                                        String s = "";
-                                        for(int idx = 0; idx < count; idx ++)
-                                            s += "$";
-                                        tvFields.get(snap.getKey()).setText(s);
-                                    }
-                                    else
-                                        tvFields.get(snap.getKey()).setText(snap.getValue().toString());
-                                }
-                            } //for end
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                DataSnapshot issue = dataSnapshot.child(loggedID);
+                // it is setted to the first record (restaurant)
+                // when the sign in and log in procedures will be handled, it will be the proper one
+                if (dataSnapshot.exists()) {
+                    // dataSnapshot is the "issue" node with all children
+                    for(DataSnapshot snap : issue.getChildren()){
+                        if(tvFields.containsKey(snap.getKey())){
+                            if(snap.getKey().equals("DeliveryCost")){
+                                DecimalFormat decimalFormat = new DecimalFormat("#.00"); //two decimal
+                                String priceStr = decimalFormat.format(Double.parseDouble(snap.getValue().toString()));
+                                tvFields.get(snap.getKey()).setText(priceStr+"€");
+                            }
+                            else if(snap.getKey().equals("IsActive") && getActivity() != null){
+                                if((Boolean)snap.getValue())
+                                    tvFields.get(snap.getKey()).setText(getString(R.string.active_status));
+                                else
+                                    tvFields.get(snap.getKey()).setText(getString(R.string.inactive_status));
+                            }
+                            else if(snap.getKey().equals("PriceRange")){
+                                //translate price range value into a $ string
+                                int count = Integer.parseInt(snap.getValue().toString());
+                                String s = "";
+                                for(int idx = 0; idx < count; idx ++)
+                                    s += "$";
+                                tvFields.get(snap.getKey()).setText(s);
+                            }
+                            else
+                                tvFields.get(snap.getKey()).setText(snap.getValue().toString());
                         }
-                    }
-
-                    @Override
-                    public void onCancelled(@NonNull DatabaseError databaseError) {
-                        Log.d("matte", "onCancelled | ERROR: " + databaseError.getDetails() +
-                                " | MESSAGE: " + databaseError.getMessage());
-                        Toast.makeText(getContext(), databaseError.getMessage().toString(), Toast.LENGTH_SHORT);
-                    }
-                });
-
-                //Download the profile pic
-                StorageReference storageReference = FirebaseStorage.getInstance().getReference();
-                StorageReference photoReference= storageReference.child(loggedID+"/ProfileImage/img.jpg");
-
-                final long ONE_MEGABYTE = 1024 * 1024;
-                photoReference.getBytes(ONE_MEGABYTE).addOnSuccessListener(new OnSuccessListener<byte[]>() {
-                    @Override
-                    public void onSuccess(byte[] bytes) {
-                        Bitmap bmp = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
-                        profileImage.setImageBitmap(bmp);
-                        //send message to main thread
-                        handler.sendEmptyMessage(0);
-                    }
-                }).addOnFailureListener(new OnFailureListener() {
-                    @Override
-                    public void onFailure(@NonNull Exception exception) {
-                        if(getActivity() != null)
-                            Toast.makeText(getActivity(), "No Such file or Path found!!", Toast.LENGTH_LONG).show();
-                        else
-                            Log.d("matte", "null context and profilePic download failed");
-                        //set predefined image
-                        profileImage.setImageResource(R.drawable.plate_fork);
-                        //send message to main thread
-                        handler.sendEmptyMessage(0);
-                    }
-                });
-
+                    } //for end
+                }
             }
-        }).start();
 
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+                Log.d("matte", "onCancelled | ERROR: " + databaseError.getDetails() +
+                        " | MESSAGE: " + databaseError.getMessage());
+                Toast.makeText(getContext(), databaseError.getMessage().toString(), Toast.LENGTH_SHORT);
+            }
+        });
 
+        //Download the profile pic
+        StorageReference storageReference = FirebaseStorage.getInstance().getReference();
+        StorageReference photoReference= storageReference.child(loggedID+"/ProfileImage/img.jpg");
+
+        final long ONE_MEGABYTE = 1024 * 1024;
+        photoReference.getBytes(ONE_MEGABYTE).addOnSuccessListener(new OnSuccessListener<byte[]>() {
+            @Override
+            public void onSuccess(byte[] bytes) {
+                Bitmap bmp = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
+                profileImage.setImageBitmap(bmp);
+                //send message to main thread
+                handler.sendEmptyMessage(0);
+            }
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception exception) {
+                if(getActivity() != null)
+                    Toast.makeText(getActivity(), "No Such file or Path found!!", Toast.LENGTH_LONG).show();
+                else
+                    Log.d("matte", "null context and profilePic download failed");
+                //set predefined image
+                profileImage.setImageResource(R.drawable.plate_fork);
+                //send message to main thread
+                handler.sendEmptyMessage(0);
+            }
+        });
 
     }
 
