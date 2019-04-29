@@ -41,6 +41,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Locale;
 import java.util.Set;
 
 
@@ -81,6 +82,10 @@ public class RestaurantSearchFragment extends DialogFragment {
         typesToFilter = new HashSet<>();
         currDisplayedList = new ArrayList<>();
 
+        Locale locale = Locale.getDefault();
+        // get "en" or "it"
+        final String localeShort = locale.toString().substring(0, 2);
+
         dbReference = FirebaseDatabase.getInstance().getReference("restaurants");
         dbReference.addChildEventListener(new ChildEventListener() {
             @Override
@@ -90,10 +95,10 @@ public class RestaurantSearchFragment extends DialogFragment {
                 String id = dataSnapshot.getKey();
                 Bitmap img = BitmapFactory.decodeResource(getResources(), R.drawable.image_empty); // TODO: make it dynamic
                 String name = dataSnapshot.child("Name").getValue().toString();
-                String type = dataSnapshot.child("Type").getValue().toString();
+                String type = dataSnapshot.child("Type").child(localeShort).getValue().toString();
                 Boolean isOpen = (Boolean) dataSnapshot.child("IsActive").getValue();
                 int priceRange = Integer.parseInt(dataSnapshot.child("PriceRange").getValue().toString());
-                double deliveryCost = Double.parseDouble(dataSnapshot.child("DeliveryCost").getValue().toString());
+                double deliveryCost = Double.parseDouble(dataSnapshot.child("DeliveryCost").getValue().toString().replace(",", "."));
 
                 Restaurant resObj = new Restaurant(id, img, name, type, isOpen, priceRange, deliveryCost);
                 //add to the original list
@@ -155,7 +160,7 @@ public class RestaurantSearchFragment extends DialogFragment {
 
 
         //Download the profile pic
-        StorageReference storageReference = FirebaseStorage.getInstance().getReference();
+        /*StorageReference storageReference = FirebaseStorage.getInstance().getReference();
         StorageReference photoReference= storageReference.child(loggedID+"/ProfileImage/img.jpg");
 
         final long ONE_MEGABYTE = 1024 * 1024;
@@ -179,7 +184,7 @@ public class RestaurantSearchFragment extends DialogFragment {
                 //send message to main thread
                 handler.sendEmptyMessage(0);
             }
-        });
+        });*/
 
 
     }
