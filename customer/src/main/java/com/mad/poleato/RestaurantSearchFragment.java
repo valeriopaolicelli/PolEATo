@@ -117,7 +117,7 @@ public class RestaurantSearchFragment extends DialogFragment {
                 String id = dataSnapshot.getKey();
                 Bitmap img = BitmapFactory.decodeResource(getResources(), R.drawable.image_empty); // TODO: make it dynamic
                 String name = dataSnapshot.child("Name").getValue().toString();
-                String type = dataSnapshot.child("Type").getValue().toString();
+                String type = dataSnapshot.child("Type").child(localeShort).getValue().toString();
                 Boolean isOpen = (Boolean) dataSnapshot.child("IsActive").getValue();
                 int priceRange = Integer.parseInt(dataSnapshot.child("PriceRange").getValue().toString());
                 double deliveryCost = Double.parseDouble(dataSnapshot.child("DeliveryCost").getValue().toString().replace(",","."));
