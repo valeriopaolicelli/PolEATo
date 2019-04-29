@@ -9,13 +9,17 @@ public class Restaurant {
     String name;
     String type;
     Boolean isOpen;
+    int priceRange;
+    double deliveryCost;
 
-    public Restaurant(String id, Bitmap img, String name, String type, Boolean isOpen){
+    public Restaurant(String id, Bitmap img, String name, String type, Boolean isOpen, int priceRange, double deliveryCost){
         setId(id);
         setImage(img);
         setIsOpen(isOpen);
         setName(name);
         setType(type);
+        setPriceRange(priceRange);
+        setDeliveryCost(deliveryCost);
 
     }
 
@@ -42,6 +46,14 @@ public class Restaurant {
         this.type = type;
     }
 
+    public void setPriceRange(int priceRange) {
+        this.priceRange = priceRange;
+    }
+
+    public void setDeliveryCost(double deliveryCost) {
+        this.deliveryCost = deliveryCost;
+    }
+
     public String getId() {
         return id;
     }
@@ -60,5 +72,13 @@ public class Restaurant {
 
     public String getType() {
         return type;
+    }
+
+    public int getPriceRange() {
+        return priceRange;
+    }
+
+    public double getDeliveryCost() {
+        return deliveryCost;
     }
 }

@@ -21,14 +21,36 @@
     <string name="open">Open</string>
     <string name="close">Closed</string>
     <string name="query_hint">Search for restaurants</string>
+    <string name="price_sort">Sort by price(from the lowest)</string>
+    <string name="name_sort">Sort by name(A-Z)</string>
+    <string name="price_sort_inverse">Sort by price(from the highest)</string>
+    <string name="delivery_sort">Sort by delivery cost(from the lowest)</string>
+    <string name="delivery_cost">Delivery</string>
+    <string name="price_range">Price</string>
+    <string name="free_delivery">Free</string>
+
+
+    <string name="italian_cooking">Italian</string>
+    <string name="pizza_cooking">Pizza</string>
+    <string name="kebab_cooking">Kebab</string>
+    <string name="chinese_cooking">Chinese</string>
+    <string name="japanese_cooking">Japanese</string>
+    <string name="thai_cooking">Thai</string>
+    <string name="hamburger_cooking">Hamburger</string>
+    <string name="american_cooking">American</string>
+    <string name="mexican_cooking">Mexican</string>
+
     <string name="currency">$</string>
     <string name="restaurant_name"><font size="18">Restaurant name</font></string>
-    <string name="type"><font size="18">Restaurant type</font></string>
-    <string name="info"><font size="18">Restaurant description</font></string>
-    <string name="chart"><font size="18">Chart</font></string>
+    <string name="type"><font size="18">Type of cooking</font></string>
+    <string name="info"><font size="18">Description</font></string>
+    <string name="cart"><font size="18">Cart</font></string>
     <string name="plus">+</string>
     <string name="minum">-</string>
     <string name="slash">/</string>
     <string name="price">Price: </string>
+
+
+
 
 </resources>
