@@ -36,11 +36,14 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.AlphaAnimation;
+import android.view.animation.Animation;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ScrollView;
 import android.widget.Switch;
 import android.widget.Toast;
@@ -65,7 +68,6 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
-import java.lang.reflect.Type;
 import java.text.DecimalFormat;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -111,6 +113,7 @@ public class EditProfileFragment extends Fragment {
 
 
     String localeShort;
+    View transparentView;
 
     String loggedID;
 
@@ -177,6 +180,8 @@ public class EditProfileFragment extends Fragment {
         loggedID = "R03";
 
 
+
+
     }
 
 
@@ -194,6 +199,18 @@ public class EditProfileFragment extends Fragment {
 //        });
 
         //  change_im = findViewById(R.id.change_im);
+     //   transparentView = v.findViewById(R.id.transparentView);
+      //  transparentView.setVisibility(View.INVISIBLE);
+        //transparentView.setEnabled(true);
+
+        /*Animation animation = new AlphaAnimation(0.0f, 1.0f);
+        animation.setFillAfter(true);
+        v.startAnimation(animation);*/
+    /*} else {
+        Animation animation = new AlphaAnimation(0.0f, 1.0f);
+        animation.setFillAfter(true);
+        v.startAnimation(animation);
+    }*/
 
 
         editTextFields.put("Name",(EditText) v.findViewById(R.id.editTextName));

@@ -21,6 +21,13 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="parent">
 
+
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+
+
         <android.support.constraint.ConstraintLayout
             android:id="@+id/ConstraintLayout"
             android:layout_width="match_parent"
@@ -597,5 +604,17 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"/>
         </android.support.constraint.ConstraintLayout>
+
+
+            <ImageView
+                android:id="@+id/transparentView"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:visibility="gone"
+                android:alpha="0.4"
+                android:background="#cccccc">
+            </ImageView>
+
+        </FrameLayout>
     </ScrollView>
 </android.support.constraint.ConstraintLayout>
