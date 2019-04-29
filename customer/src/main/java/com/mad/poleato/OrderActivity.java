@@ -1,6 +1,10 @@
 package com.mad.poleato;
 
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -12,7 +16,15 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 
+import com.google.firebase.database.ChildEventListener;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
+
 import java.util.List;
+import java.util.Locale;
 
 
 public class OrderActivity extends AppCompatActivity implements Interface {
@@ -20,6 +32,7 @@ public class OrderActivity extends AppCompatActivity implements Interface {
     private ViewPager onViewPager;
     private PageAdapter adapter;
     private Order order;
+    private DatabaseReference dbReferece;
 
     /* *************************
     ********* FRAGMENTS ********
@@ -66,7 +79,34 @@ public class OrderActivity extends AppCompatActivity implements Interface {
         order = new Order();
         //gettin id of restaurant selected by user
         Bundle bundle = getIntent().getExtras();
+
+        Locale locale = Locale.getDefault();
+        // get "en" or "it"
+        final String localeShort = locale.toString().substring(0, 2);
+
         order.setRestaurantID(bundle.getString("id"));
+        dbReferece = FirebaseDatabase.getInstance().getReference("restaurants").child(order.getRestaurantID());
+        dbReferece.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                String id = dataSnapshot.getKey();
+                Bitmap img = BitmapFactory.decodeResource(getResources(), R.drawable.image_empty); // TODO: make it dynamic
+                String name = dataSnapshot.child("Name").getValue().toString();
+                String type = dataSnapshot.child("Type").child(localeShort).getValue().toString();
+                Boolean isOpen = (Boolean) dataSnapshot.child("IsActive").getValue();
+                int priceRange = Integer.parseInt(dataSnapshot.child("PriceRange").getValue().toString());
+                double deliveryCost = Double.parseDouble(dataSnapshot.child("DeliveryCost").getValue().toString().replace(",", "."));
+
+                Restaurant resObj = new Restaurant(id, img, name, type, isOpen, priceRange, deliveryCost);
+
+                order.setR(resObj);
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
         android.support.v7.widget.Toolbar toolbar = findViewById(R.id.toolbar_order);
         TabLayout tabLayout = findViewById(R.id.tabs);
 
@@ -91,7 +131,7 @@ public class OrderActivity extends AppCompatActivity implements Interface {
         return super.onCreateOptionsMenu(menu);
     }
 
-    public void goToChart(MenuItem item) {
+    public void goToCart(MenuItem item) {
         Intent intent = new Intent(this,CartActivity.class);
         intent.putExtra("order",order);
         startActivity(intent);

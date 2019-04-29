@@ -70,7 +70,7 @@ public class Food implements Serializable {
     public void setSelectedQuantity(int selectedQuantity) {
         this.selectedQuantity = selectedQuantity;
     }
-    public void increseSelectedQuantity(){
+    public void increaseSelectedQuantity(){
         this.selectedQuantity += 1;
     }
     public void decreaseSelectedQuantity(){

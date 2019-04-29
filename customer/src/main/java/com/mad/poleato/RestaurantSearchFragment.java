@@ -120,7 +120,7 @@ public class RestaurantSearchFragment extends DialogFragment {
                 String type = dataSnapshot.child("Type").getValue().toString();
                 Boolean isOpen = (Boolean) dataSnapshot.child("IsActive").getValue();
                 int priceRange = Integer.parseInt(dataSnapshot.child("PriceRange").getValue().toString());
-                double deliveryCost = Double.parseDouble(dataSnapshot.child("DeliveryCost").getValue().toString());
+                double deliveryCost = Double.parseDouble(dataSnapshot.child("DeliveryCost").getValue().toString().replace(",","."));
 
                 Restaurant resObj = restaurantMap.get(id);
                 resObj.setImage(img);

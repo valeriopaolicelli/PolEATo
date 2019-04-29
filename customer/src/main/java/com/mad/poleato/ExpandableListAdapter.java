@@ -103,7 +103,7 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
                 int selectedQuantity = getChild(groupPosition,childPosition).getSelectedQuantity();
                 //check if restaurant has enough quantity requested
                 if(selectedQuantity<quantity) {
-                    getChild(groupPosition, childPosition).increseSelectedQuantity();
+                    getChild(groupPosition, childPosition).increaseSelectedQuantity();
                     if(!order.getSelectedFoods().contains(getChild(groupPosition,childPosition))) {
                         order.addFoodToOrder(getChild(groupPosition, childPosition));
                     }

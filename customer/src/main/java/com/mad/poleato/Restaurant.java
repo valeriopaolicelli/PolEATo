@@ -2,15 +2,17 @@ package com.mad.poleato;
 
 import android.graphics.Bitmap;
 
-public class Restaurant {
+import java.io.Serializable;
+
+public class Restaurant implements Serializable {
 
     String id;
-    Bitmap image;
+    SerialBitmap image;
     String name;
     String type;
     Boolean isOpen;
-    int priceRange;
-    double deliveryCost;
+    Integer priceRange;
+    Double deliveryCost;
 
     public Restaurant(String id, Bitmap img, String name, String type, Boolean isOpen, int priceRange, double deliveryCost){
         setId(id);
@@ -31,7 +33,7 @@ public class Restaurant {
     }
 
     public void setImage(Bitmap image) {
-        this.image = image;
+        this.image = new SerialBitmap(image);
     }
 
     public void setName(String name) {
@@ -59,7 +61,7 @@ public class Restaurant {
     }
 
     public Bitmap getImage() {
-        return image;
+        return image.getBitmap();
     }
 
     public Boolean getIsOpen() {
