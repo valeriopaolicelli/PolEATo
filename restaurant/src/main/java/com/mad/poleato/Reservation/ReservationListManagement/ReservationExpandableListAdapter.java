@@ -10,17 +10,13 @@ import android.view.ViewGroup;
 import android.widget.BaseExpandableListAdapter;
 import android.widget.Button;
 import android.widget.CheckBox;
-import android.widget.CompoundButton;
-import android.widget.ExpandableListView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.mad.poleato.R;
 import com.mad.poleato.Reservation.Dish;
 import com.mad.poleato.Reservation.Reservation;
 import com.mad.poleato.Reservation.Status;
 
-import java.sql.BatchUpdateException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -110,7 +106,7 @@ public class ReservationExpandableListAdapter extends BaseExpandableListAdapter 
         if( view ==  null){
             holder = new ViewHolder();
             LayoutInflater inflater = (LayoutInflater)this.context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-            view = inflater.inflate(R.layout.reservation_row1_layout,null);
+            view = inflater.inflate(R.layout.layout_reservation_group,null);
 
             holder.tv_date = (TextView)view.findViewById(R.id.tvDateField);
             holder.tv_time = (TextView) view.findViewById(R.id.tvTimeField);
@@ -283,7 +279,7 @@ public class ReservationExpandableListAdapter extends BaseExpandableListAdapter 
             holder= new ChildHolder();
 
             LayoutInflater inflater = (LayoutInflater)this.context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-            view = inflater.inflate(R.layout.reservation_dishrow_layout,null);
+            view = inflater.inflate(R.layout.layout_reservation_child,null);
             holder.tv_dish_name= (TextView) view.findViewById(R.id.tv_dish_name);
             holder.tv_dish_quantity = (TextView) view.findViewById(R.id.tv_dish_quantity);
             holder.tv_dish_notes= (TextView) view.findViewById(R.id.tv_dish_note);
