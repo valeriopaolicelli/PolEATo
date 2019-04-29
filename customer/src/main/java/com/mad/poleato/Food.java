@@ -2,26 +2,30 @@ package com.mad.poleato;
 
 import android.graphics.Bitmap;
 
+
 import java.io.Serializable;
+
 
 public class Food implements Serializable {
 
-    private Bitmap img;
+    private SerialBitmap img;
     private String name;
     private String description;
     private Double price;
-    private int quantity;
+    private Integer quantity;
+    private Integer selectedQuantity;
 
-    public Food(Bitmap img, String name, String description, Double price, int quantity){
+    Food(SerialBitmap img, String name, String description, Double price, int quantity){
 
         this.img = img;
         this.name = name;
         this.description = description;
         this.price = price;
         this.quantity = quantity;
+        this.selectedQuantity = 0;
     }
 
-    public Bitmap getImg() {
+    public SerialBitmap getImg() {
         return img;
     }
 
@@ -39,7 +43,7 @@ public class Food implements Serializable {
 
     public int getQuantity() { return quantity; }
 
-    public void setImg(Bitmap img){ this.img = img; }
+    public void setImg(SerialBitmap img){ this.img = img; }
 
     public void setName(String name){ this.name = name; }
 
@@ -58,4 +62,20 @@ public class Food implements Serializable {
             return false;
         }
     }
+
+    public int getSelectedQuantity() {
+        return selectedQuantity;
+    }
+
+    public void setSelectedQuantity(int selectedQuantity) {
+        this.selectedQuantity = selectedQuantity;
+    }
+    public void increseSelectedQuantity(){
+        this.selectedQuantity += 1;
+    }
+    public void decreaseSelectedQuantity(){
+        this.selectedQuantity -=1;
+    }
+
+
 }

@@ -2,6 +2,7 @@ package com.mad.poleato;
 
 import android.app.Activity;
 import android.content.Context;
+import android.graphics.BitmapFactory;
 import android.graphics.Point;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -36,12 +37,19 @@ public class MenuFragment extends Fragment {
     int width;
     private int lastExpandedPosition = -1;
     private String restaurantID;
-    private FirebaseDatabase database;
+    private Order order;
+    private Interface listener;
 
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
         this.hostActivity = this.getActivity();
+        try {
+            listener = (Interface) context;
+            order = listener.getOrder();
+        } catch (ClassCastException castException) {
+            /** The activity does not implement the listener. */
+        }
     }
 
     @Override
@@ -52,8 +60,6 @@ public class MenuFragment extends Fragment {
         size = new Point();
         display.getSize(size);
         width = size.x;
-
-
     }
 
     @Nullable
@@ -98,7 +104,7 @@ public class MenuFragment extends Fragment {
         });
 
         // list Adapter of ExpandableList
-        listAdapter = new ExpandableListAdapter(hostActivity, listDataGroup, listDataChild);
+        listAdapter = new ExpandableListAdapter(hostActivity, listDataGroup, listDataChild, order);
 
         // setting list adapter
         expListView.setAdapter(listAdapter);
@@ -145,7 +151,9 @@ public class MenuFragment extends Fragment {
 
                 for(DataSnapshot ds : dataSnapshot.getChildren()){
                     String foodName = (String)ds.getKey();
-                    Food f = new Food(null, foodName,ds.child("Ingredienti").getValue().toString(),Double.parseDouble(ds.child("Prezzo").getValue().toString()),Integer.parseInt(ds.child("Quantità").getValue().toString()));
+                    // TODO: Make it dynamic with image
+                    SerialBitmap img = new SerialBitmap(BitmapFactory.decodeResource(getResources(),R.drawable.image_empty));
+                    Food f = new Food(img, foodName,ds.child("Ingredienti").getValue().toString(),Double.parseDouble(ds.child("Prezzo").getValue().toString()),Integer.parseInt(ds.child("Quantità").getValue().toString()));
                     childItem.add(f);
                 }
             listDataChild.put(listDataGroup.get(counter), childItem);
@@ -174,10 +182,6 @@ public class MenuFragment extends Fragment {
 
             }
         });
-
-    }
-
-    public void initChild(){
 
     }
 

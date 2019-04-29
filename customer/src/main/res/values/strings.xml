@@ -25,7 +25,10 @@
     <string name="restaurant_name"><font size="18">Restaurant name</font></string>
     <string name="type"><font size="18">Restaurant type</font></string>
     <string name="info"><font size="18">Restaurant description</font></string>
-
-
+    <string name="chart"><font size="18">Chart</font></string>
+    <string name="plus">+</string>
+    <string name="minum">-</string>
+    <string name="slash">/</string>
+    <string name="price">Price: </string>
 
 </resources>

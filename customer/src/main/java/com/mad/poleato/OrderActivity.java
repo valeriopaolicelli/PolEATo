@@ -1,21 +1,25 @@
 package com.mad.poleato;
 
+import android.content.Intent;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
-import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
-import android.widget.Toolbar;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 
 import java.util.List;
 
-public class OrderActivity extends AppCompatActivity {
+
+public class OrderActivity extends AppCompatActivity implements Interface {
 
     private ViewPager onViewPager;
     private PageAdapter adapter;
+    private Order order;
 
     /* *************************
     ********* FRAGMENTS ********
@@ -59,15 +63,17 @@ public class OrderActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_order_layout);
 
+        order = new Order();
         //gettin id of restaurant selected by user
         Bundle bundle = getIntent().getExtras();
-
+        order.setRestaurantID(bundle.getString("id"));
         android.support.v7.widget.Toolbar toolbar = findViewById(R.id.toolbar_order);
         TabLayout tabLayout = findViewById(R.id.tabs);
 
         setSupportActionBar(toolbar);
         if (getSupportActionBar() != null) {
-            getSupportActionBar().setDisplayHomeAsUpEnabled(false);
+            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+            getSupportActionBar().setTitle("");
         } else {
             Log.d("Error", "getSupportActionBar is null");
             finish();
@@ -76,5 +82,28 @@ public class OrderActivity extends AppCompatActivity {
         addFragmentToAdapter(bundle);
 
         tabLayout.setupWithViewPager(onViewPager);
+    }
+
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu items for use in the action bar
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.cart_menu, menu);
+        return super.onCreateOptionsMenu(menu);
+    }
+
+    public void goToChart(MenuItem item) {
+        Intent intent = new Intent(this,CartActivity.class);
+        intent.putExtra("order",order);
+        startActivity(intent);
+    }
+
+
+    public void setOrder(Order order){
+        this.order=order;
+    }
+
+    @Override
+    public Order getOrder() {
+        return order;
     }
 }

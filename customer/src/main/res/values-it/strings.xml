@@ -26,6 +26,10 @@
     <string name="restaurant_name"><font size="18">Nome locale</font></string>
     <string name="type"><font size="18">Tipo di cucina</font></string>
     <string name="info"><font size="18">Descrizione</font></string>
-
+    <string name="chart"><font size="18">Carrello</font></string>
+    <string name="plus">+</string>
+    <string name="minum">-</string>
+    <string name="slash">/</string>
+    <string name="price">Prezzo: </string>
 
 </resources>

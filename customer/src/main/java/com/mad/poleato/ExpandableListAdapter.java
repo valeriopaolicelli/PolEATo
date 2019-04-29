@@ -1,19 +1,16 @@
 package com.mad.poleato;
 
 import android.app.Activity;
-import android.support.v7.widget.PopupMenu;
+import android.graphics.Bitmap;
 import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseExpandableListAdapter;
 import android.widget.Button;
-import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.text.DecimalFormat;
 import java.util.HashMap;
@@ -25,14 +22,16 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
     private final LayoutInflater inf;
     private List<String> _listDataGroup; // header titles
     private HashMap<String, List<Food>> _listDataChild; // child data in format of header title, child title
+    private Order order;
 
     public ExpandableListAdapter(Activity host, List<String> listDataHeader,
-                                 HashMap<String, List<Food>> listChildData) {
+                                 HashMap<String, List<Food>> listChildData, Order order) {
 
         this.host = host;
         inf = LayoutInflater.from(host);
         this._listDataGroup = listDataHeader;
         this._listDataChild = listChildData;
+        this.order = order;
         Log.d("matte", "[Init]headers:"+_listDataGroup.toString());
         Log.d("matte", "[Init]childs:"+_listDataChild.toString());
     }
@@ -73,14 +72,16 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
             holder.name = (TextView) convertView.findViewById(R.id.cardName);
             holder.description = (TextView) convertView.findViewById(R.id.cardDescription);
             holder.price = (TextView) convertView.findViewById(R.id.cardPrice);
-            holder.quantity = (TextView) convertView.findViewById(R.id.cardQuantity);
+            holder.increase = (Button) convertView.findViewById(R.id.increaseBtn);
+            holder.decrease = (Button) convertView.findViewById(R.id.decreaseBtn);
+            holder.selectedQuantity = (TextView) convertView.findViewById(R.id.quantity);
             convertView.setTag(holder);
 
         } else{
             holder = (FoodViewHolder) convertView.getTag();
         }
 
-        holder.img.setImageBitmap(getChild(groupPosition, childPosition).getImg());
+        holder.img.setImageBitmap(getChild(groupPosition, childPosition).getImg().getBitmap());
         holder.name.setText(getChild(groupPosition, childPosition).getName());
         holder.description.setText(getChild(groupPosition, childPosition).getDescription());
         //price and currency
@@ -90,11 +91,52 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
         priceStr += currency;
         holder.price.setText(priceStr);
         //quantity
-        String qntStr = "(qty "+getChild(groupPosition, childPosition).getQuantity()+")";
-        holder.quantity.setText(qntStr);
+        if(getChild(groupPosition,childPosition).getSelectedQuantity()==0)
+            holder.selectedQuantity.setText(host.getResources().getString(R.string.slash));
+        else
+            holder.selectedQuantity.setText(Integer.toString(getChild(groupPosition,childPosition).getSelectedQuantity()));
+        //buttons for handling increase and decrease of quantity
+        holder.increase.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                int quantity = getChild(groupPosition,childPosition).getQuantity();
+                int selectedQuantity = getChild(groupPosition,childPosition).getSelectedQuantity();
+                //check if restaurant has enough quantity requested
+                if(selectedQuantity<quantity) {
+                    getChild(groupPosition, childPosition).increseSelectedQuantity();
+                    if(!order.getSelectedFoods().contains(getChild(groupPosition,childPosition))) {
+                        order.addFoodToOrder(getChild(groupPosition, childPosition));
+                    }
+                    order.updateTotalPrice();
+                    //((OrderActivity)host).setOrder(order); //works but it's bad programming => better use interfaces
+                    Log.d("fabio", "new total price: "+ order.getTotalPrice());
+                    Toast.makeText(host,"Added to cart",Toast.LENGTH_LONG ).show();
+                    notifyDataSetChanged();
+                }
+                else
+                    Toast.makeText(host,"Max quantity reached",Toast.LENGTH_SHORT ).show();
+            }
+        });
 
-        return convertView;
-    }
+        holder.decrease.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                int selectedQuantity = getChild(groupPosition,childPosition).getSelectedQuantity();
+                if(selectedQuantity>0){
+                    getChild(groupPosition, childPosition).decreaseSelectedQuantity();
+                    if(getChild(groupPosition,childPosition).getSelectedQuantity()==0){
+                        order.removeFoodFromOrder(getChild(groupPosition,childPosition));
+                    }
+                    order.updateTotalPrice();
+                    Log.d("fabio", "new total price: "+ order.getTotalPrice());
+                    // ((OrderActivity)host).setOrder(order);
+                    Toast.makeText(host,"Removed from cart",Toast.LENGTH_SHORT).show();
+                    notifyDataSetChanged();
+                }
+            }
+        });
+
+        return convertView; }
 
     @Override
     public void onGroupExpanded(int groupPosition) {
@@ -170,13 +212,18 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
         return true;
     }
 
+    public Order getOrder(){
+        return order;
+    }
 
     private class FoodViewHolder {
         ImageView img;
         TextView name;
         TextView description;
         TextView price;
-        TextView quantity;
+        TextView selectedQuantity;
+        Button decrease;
+        Button increase;
     }
 
     private class ViewHolder{
