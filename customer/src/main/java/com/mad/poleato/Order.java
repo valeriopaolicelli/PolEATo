@@ -18,7 +18,7 @@ public class Order implements Serializable {
     public Order() {
         this.totalPrice=0.0;
         selectedFoods=new ArrayList<>();
-        
+
     }
 
     public void updateTotalPrice(){
