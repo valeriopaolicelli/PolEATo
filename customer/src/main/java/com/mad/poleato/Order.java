@@ -48,6 +48,11 @@ public class Order implements Serializable {
         this.selectedFoods.remove(f);
     }
 
+    /**
+     * The Annotation @Exclude must be keep to stop the FireBase interpreter that in new version of Android
+     * seems to returns arrays (which are not Serializable) instead of Lists
+     * @return List of food
+     */
     @Exclude
     public List<Food> getSelectedFoods(){
         return selectedFoods;

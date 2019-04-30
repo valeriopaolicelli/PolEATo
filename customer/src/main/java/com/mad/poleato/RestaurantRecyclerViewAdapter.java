@@ -14,6 +14,8 @@ import android.widget.TextView;
 
 
 import java.text.DecimalFormat;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
@@ -160,27 +162,33 @@ public class RestaurantRecyclerViewAdapter extends RecyclerView.Adapter<Restaura
                 ****** SORTING ******
                 *********************   */
 
+    //Use the static method `Collectios.sort()` instead of list.sort() which is not supported in API < 24
+
 
     public void sortByName(){
-        this.list.sort(this.nameComparator);
+        Collections.sort(this.list, this.nameComparator);
+        //this.list.sort(this.nameComparator);
         currState = State.NAME_SORTED;
         notifyDataSetChanged();
     }
 
     public void sortByPrice(){
-        this.list.sort(this.priceComparator);
+        Collections.sort(this.list, this.priceComparator);
+        //this.list.sort(this.priceComparator);
         currState = State.PRICE_SORTED;
         notifyDataSetChanged();
     }
 
     public void sortByPriceInverse(){
-        this.list.sort(this.priceInverseComparator);
+        Collections.sort(this.list, this.priceInverseComparator);
+        //this.list.sort(this.priceInverseComparator);
         currState = State.PRICE_INVERSE_SORTED;
         notifyDataSetChanged();
     }
 
     public void sortByDelivery(){
-        this.list.sort(this.deliveryComparator);
+        Collections.sort(this.list, this.deliveryComparator);
+        //this.list.sort(deliveryComparator);
         currState = State.DELIVERY_SORTED;
         notifyDataSetChanged();
     }
