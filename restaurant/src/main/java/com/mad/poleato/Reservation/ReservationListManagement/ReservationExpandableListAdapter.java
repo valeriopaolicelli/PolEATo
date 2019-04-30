@@ -12,6 +12,7 @@ import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.TextView;
 
+import com.google.firebase.database.FirebaseDatabase;
 import com.mad.poleato.R;
 import com.mad.poleato.Reservation.Dish;
 import com.mad.poleato.Reservation.Reservation;
@@ -118,11 +119,6 @@ public class ReservationExpandableListAdapter extends BaseExpandableListAdapter 
             view.setTag(holder);
         }else{
             holder = (ViewHolder) view.getTag();
-//            holder.tv_date = (TextView)view.findViewById(R.id.tvDateField);
-//            holder.tv_time = (TextView) view.findViewById(R.id.tvTimeField);
-//            holder.tv_status = (TextView) view.findViewById(R.id.tvStatusField);
-//            holder.button = (Button) view.findViewById(R.id.myButton);
-//            holder.selectAllCheckBox = (CheckBox) view.findViewById(R.id.selectAllCheckBox);
         }
         holder.tv_date.setText(c.getDate());
         holder.tv_time.setText(c.getTime());
@@ -193,7 +189,8 @@ public class ReservationExpandableListAdapter extends BaseExpandableListAdapter 
                                 + v.getResources().getString(R.string.date) + ": " + c.getDate() + " "
                                 + v.getResources().getString(R.string.time) + ": " + c.getTime() + "\n"
                                 + v.getResources().getString(R.string.surname) + ": " + c.getSurname() + "\n"
-                                + v.getResources().getString(R.string.address) + ": " + c.getAddress() + "\n";
+                                + v.getResources().getString(R.string.address) + ": " + c.getAddress() + "\n"
+                                + v.getResources().getString(R.string.phone) + ": " + c.getPhone() + "\n";
                         builder.setMessage(msg);
                         builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
                             @Override
@@ -210,7 +207,11 @@ public class ReservationExpandableListAdapter extends BaseExpandableListAdapter 
                             builder.setPositiveButton(context.getString(R.string.choice_confirm), new DialogInterface.OnClickListener() {
                                 @Override
                                 public void onClick(DialogInterface dialogInterface, int i) {
+
+                                    //TODO when log in will be enabled, change the R00 child, with the proper one
+                                    FirebaseDatabase.getInstance().getReference("restaurants").child("R00").child("reservations").child(c.getOrder_id()).child("status").setValue("Delivering");
                                     c.setStatus(Status.DELIVERY, context);
+
                                     holder.button.setText(context.getString(R.string.order_info));
                                     c.setButtonText(context.getString(R.string.order_info));
                                     notifyDataSetChanged();
@@ -233,6 +234,7 @@ public class ReservationExpandableListAdapter extends BaseExpandableListAdapter 
                                 public void onClick(DialogInterface dialogInterface, int i) {
                                     // Change button text
                                     c.setStatus(Status.COOKING, context);
+                                    FirebaseDatabase.getInstance().getReference("restaurants").child("R00").child("reservations").child(c.getOrder_id()).child("status").setValue("Cooking");
                                     holder.button.setText(context.getString(R.string.title_deliver));
                                     c.setButtonText(context.getString(R.string.title_deliver));
                                     notifyDataSetChanged();
@@ -244,6 +246,7 @@ public class ReservationExpandableListAdapter extends BaseExpandableListAdapter 
                                 @Override
                                 public void onClick(DialogInterface dialogInterface, int i) {
                                     c.setStatus(Status.REJECTED, context);
+                                    FirebaseDatabase.getInstance().getReference("restaurants").child("R00").child("reservations").child(c.getOrder_id()).child("status").setValue("Rejected");
                                     notifyDataSetChanged();
                                 }
                             });
