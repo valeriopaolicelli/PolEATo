@@ -14,7 +14,6 @@ public class Order implements Serializable {
    private List<Food> selectedFoods;
    private Double totalPrice;
    private String customerID; //TODO: must be implemented with login phase
-   private String notes;
    private Date date;
    private String status;
    private String restaurantID;

@@ -11,6 +11,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 
 import java.text.DecimalFormat;
@@ -131,12 +132,18 @@ public class RestaurantRecyclerViewAdapter extends RecyclerView.Adapter<Restaura
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Log.d("matte", "OnClick | restaurant ID: "+ list.get(position).getId());
-                Bundle bundle = new Bundle();
-                bundle.putString("id", list.get(position).getId());
-                Intent menuIntent = new Intent(context, OrderActivity.class);
-                menuIntent.putExtras(bundle);
-                context.startActivity(menuIntent);
+                if(list.get(position).getIsOpen()) {
+                    Log.d("matte", "OnClick | restaurant ID: " + list.get(position).getId());
+                    Bundle bundle = new Bundle();
+                    bundle.putString("id", list.get(position).getId());
+                    Intent menuIntent = new Intent(context, OrderActivity.class);
+                    menuIntent.putExtras(bundle);
+                    context.startActivity(menuIntent);
+                }
+                else
+                {
+                    Toast.makeText(context, "Restaurant is closed at the moment", Toast.LENGTH_SHORT).show();
+                }
             }
         });
 

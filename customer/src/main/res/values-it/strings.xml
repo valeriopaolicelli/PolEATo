@@ -42,6 +42,8 @@
     <string name="empty_cart">Il carrello è vuoto</string>
     <string name="total">Totale: </string>
     <string name="confirm_order">Conferma Ordine</string>
+    <string name="X">X</string>
+    <string name="notes">Inserisci qui le note(max 30 caratteri)</string>
 
 
 

@@ -3,10 +3,13 @@ package com.mad.poleato;
 import android.content.Context;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -22,6 +25,7 @@ public class CartRecyclerViewAdapter extends RecyclerView.Adapter<CartRecyclerVi
     public static class CartViewHolder extends RecyclerView.ViewHolder{
         public ImageView img;
         public TextView name,price,quantity;
+        public EditText notes;
         public Button minum,plus,delete;
 
         public CartViewHolder(@NonNull View itemView) {
@@ -30,6 +34,7 @@ public class CartRecyclerViewAdapter extends RecyclerView.Adapter<CartRecyclerVi
             this.name = (TextView) itemView.findViewById(R.id.cardName);
             this.price = (TextView) itemView.findViewById(R.id.cardPrice);
             this.quantity = (TextView) itemView.findViewById(R.id.quantity);
+            this.notes = (EditText) itemView.findViewById(R.id.notesEditText);
             this.minum = (Button) itemView.findViewById(R.id.decreaseBtn);
             this.plus = (Button) itemView.findViewById(R.id.increaseBtn);
             this.delete = (Button) itemView.findViewById(R.id.deleteBtn);
@@ -61,6 +66,25 @@ public class CartRecyclerViewAdapter extends RecyclerView.Adapter<CartRecyclerVi
         String priceStr = decimalFormat.format(p).toString()+"€";
         cartViewHolder.price.setText(priceStr);
         cartViewHolder.quantity.setText(Integer.toString(foodList.get(i).getSelectedQuantity()));
+        cartViewHolder.notes.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence charSequence, int start, int before, int count) {
+            }
+
+            @Override
+            public void afterTextChanged(Editable editable) {
+                foodList.get(i).setCustomerNotes(editable.toString());
+
+            }
+        });
+
+
+        foodList.get(i).setCustomerNotes(cartViewHolder.notes.getText().toString());
 
         cartViewHolder.minum.setOnClickListener(new View.OnClickListener() {
             @Override

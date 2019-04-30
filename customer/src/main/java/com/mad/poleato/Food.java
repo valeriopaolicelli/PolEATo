@@ -14,6 +14,8 @@ public class Food implements Serializable {
     private Double price;
     private Integer quantity;
     private Integer selectedQuantity;
+    private String customerNotes;
+
 
     Food(SerialBitmap img, String name, String description, Double price, int quantity){
 
@@ -68,4 +70,11 @@ public class Food implements Serializable {
     }
 
 
+    public String getCustomerNotes() {
+        return customerNotes;
+    }
+
+    public void setCustomerNotes(String customerNotes) {
+        this.customerNotes = customerNotes;
+    }
 }

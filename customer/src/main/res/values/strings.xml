@@ -52,7 +52,8 @@
     <string name="empty_cart">Cart is empty</string>
     <string name="total">Total: </string>
     <string name="confirm_order">Confirm Order</string>
-
+    <string name="X">X</string>
+    <string name="notes">Insert notes here(max 30 chars)</string>
 
 
 
