@@ -39,6 +39,11 @@
     <string name="delivery_cost">Consegna</string>
     <string name="price_range">Prezzo</string>
     <string name="free_delivery">Gratis</string>
+    <string name="empty_cart">Il carrello è vuoto</string>
+    <string name="total">Totale: </string>
+    <string name="confirm_order">Conferma Ordine</string>
+
+
 
 
     <string name="italian_cooking">Italiano</string>

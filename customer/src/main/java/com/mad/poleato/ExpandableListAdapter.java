@@ -53,6 +53,10 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
         notifyDataSetChanged();
     }
 
+    public void setOrder(Order order){
+        this.order=order;
+    }
+
     public void refresh(){
         notifyDataSetChanged();
     }
@@ -81,31 +85,33 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
             holder = (FoodViewHolder) convertView.getTag();
         }
 
-        holder.img.setImageBitmap(getChild(groupPosition, childPosition).getImg().getBitmap());
-        holder.name.setText(getChild(groupPosition, childPosition).getName());
-        holder.description.setText(getChild(groupPosition, childPosition).getDescription());
+        final Food  food = getChild(groupPosition,childPosition);
+
+        holder.img.setImageBitmap(food.getImg().getBitmap());
+        holder.name.setText(food.getName());
+        holder.description.setText(food.getDescription());
         //price and currency
         DecimalFormat decimalFormat = new DecimalFormat("#.00"); //two decimal
-        String priceStr = decimalFormat.format(getChild(groupPosition, childPosition).getPrice());
+        String priceStr = decimalFormat.format(food.getPrice());
         String currency = host.getString(R.string.currency);
         priceStr += currency;
         holder.price.setText(priceStr);
         //quantity
-        if(getChild(groupPosition,childPosition).getSelectedQuantity()==0)
+        if(food.getSelectedQuantity()==0)
             holder.selectedQuantity.setText(host.getResources().getString(R.string.slash));
         else
-            holder.selectedQuantity.setText(Integer.toString(getChild(groupPosition,childPosition).getSelectedQuantity()));
+            holder.selectedQuantity.setText(Integer.toString(food.getSelectedQuantity()));
         //buttons for handling increase and decrease of quantity
         holder.increase.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                int quantity = getChild(groupPosition,childPosition).getQuantity();
-                int selectedQuantity = getChild(groupPosition,childPosition).getSelectedQuantity();
+                int quantity = food.getQuantity();
+                int selectedQuantity = food.getSelectedQuantity();
                 //check if restaurant has enough quantity requested
                 if(selectedQuantity<quantity) {
-                    getChild(groupPosition, childPosition).increaseSelectedQuantity();
-                    if(!order.getSelectedFoods().contains(getChild(groupPosition,childPosition))) {
-                        order.addFoodToOrder(getChild(groupPosition, childPosition));
+                    food.increaseSelectedQuantity();
+                    if(!order.getSelectedFoods().contains(food)) {
+                        order.addFoodToOrder(food);
                     }
                     order.updateTotalPrice();
                     //((OrderActivity)host).setOrder(order); //works but it's bad programming => better use interfaces
@@ -121,11 +127,11 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
         holder.decrease.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                int selectedQuantity = getChild(groupPosition,childPosition).getSelectedQuantity();
+                int selectedQuantity = food.getSelectedQuantity();
                 if(selectedQuantity>0){
-                    getChild(groupPosition, childPosition).decreaseSelectedQuantity();
-                    if(getChild(groupPosition,childPosition).getSelectedQuantity()==0){
-                        order.removeFoodFromOrder(getChild(groupPosition,childPosition));
+                   food.decreaseSelectedQuantity();
+                    if(food.getSelectedQuantity()==0){
+                        order.removeFoodFromOrder(food);
                     }
                     order.updateTotalPrice();
                     Log.d("fabio", "new total price: "+ order.getTotalPrice());

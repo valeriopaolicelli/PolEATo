@@ -1,6 +1,8 @@
 package com.mad.poleato;
 
+import android.app.Activity;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -22,13 +24,14 @@ import java.util.List;
 public class CartActivity extends AppCompatActivity implements Interface {
 
     private Order order;
-    private TextView tvTotal;
-    private TextView tvEmptyCart;
+    private boolean flag=false;
+    private static TextView tvTotal;
+    private static TextView tvEmptyCart;
     private DatabaseReference dbReference;
     private CartRecyclerViewAdapter recyclerAdapter;
     private Button orderBtn;
     private RecyclerView.LayoutManager layoutManager;
-    private RecyclerView rv;
+    private static RecyclerView rv;
     private List<Food> foodList;
 
     @Override
@@ -43,13 +46,9 @@ public class CartActivity extends AppCompatActivity implements Interface {
         tvTotal = (TextView) findViewById(R.id.tv_total);
         tvEmptyCart = (TextView) findViewById(R.id.empty_cart);
 
-        DecimalFormat decimalFormat = new DecimalFormat("#.00");
-        String priceStr = decimalFormat.format(order.getTotalPrice()).toString()+"€";
 
-        tvTotal.setText(priceStr);
         orderBtn = (Button) findViewById(R.id.btn_placeorder);
         rv = (RecyclerView) findViewById(R.id.recycler_cart);
-        // Dall'ordine devo riprendere il food dal DB
         rv.setHasFixedSize(true);
 
         layoutManager = new LinearLayoutManager(this);
@@ -71,7 +70,7 @@ public class CartActivity extends AppCompatActivity implements Interface {
 
         }
 
-
+        computeTotal(order.getTotalPrice());
         orderBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -86,6 +85,9 @@ public class CartActivity extends AppCompatActivity implements Interface {
                         @Override
                         public void onClick(DialogInterface dialogInterface, int i) {
                             dbReference.child(order.getRestaurantID()).child("reservations").push().setValue(order);
+                            Intent returnIntent = new Intent();
+                            setResult(Activity.RESULT_OK,returnIntent);
+                            flag=true;
                             finish();
                         }
                     });
@@ -106,9 +108,39 @@ public class CartActivity extends AppCompatActivity implements Interface {
     }
 
 
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+    }
+
+    @Override
+    public void onBackPressed() {
+        if(!flag){
+            Intent resultIntent= new Intent();
+            resultIntent.putExtra("old_order", order);
+            setResult(Activity.RESULT_CANCELED,resultIntent);
+        }
+        super.onBackPressed();
+
+    }
 
     @Override
     public Order getOrder() {
         return order;
+    }
+
+    public static void computeTotal(Double price){
+        DecimalFormat decimalFormat = new DecimalFormat("#.00");
+        String priceStr = decimalFormat.format(price).toString()+"€";
+        tvTotal.setText(priceStr);
+
+        if(price==0){
+            rv.setVisibility(View.GONE);
+            tvEmptyCart.setVisibility(View.VISIBLE);
+        }
+        else{
+            rv.setVisibility(View.VISIBLE);
+            tvEmptyCart.setVisibility(View.GONE);
+        }
     }
 }

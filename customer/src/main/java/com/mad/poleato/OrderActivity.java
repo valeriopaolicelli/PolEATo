@@ -1,5 +1,6 @@
 package com.mad.poleato;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -124,6 +125,8 @@ public class OrderActivity extends AppCompatActivity implements Interface {
         tabLayout.setupWithViewPager(onViewPager);
     }
 
+
+
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu items for use in the action bar
         MenuInflater inflater = getMenuInflater();
@@ -134,9 +137,21 @@ public class OrderActivity extends AppCompatActivity implements Interface {
     public void goToCart(MenuItem item) {
         Intent intent = new Intent(this,CartActivity.class);
         intent.putExtra("order",order);
-        startActivity(intent);
+
+        startActivityForResult(intent,1);
     }
 
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode,  Intent data) {
+        if(requestCode ==1){
+            if(resultCode == Activity.RESULT_OK)
+                finish();
+            else if(resultCode == Activity.RESULT_CANCELED){
+                order = (Order) data.getExtras().getSerializable("old_order");
+            }
+        }
+    }
 
     public void setOrder(Order order){
         this.order=order;

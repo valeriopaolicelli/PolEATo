@@ -74,7 +74,6 @@ public class MenuFragment extends Fragment {
         expListView.setIndicatorBounds(width-GetDipsFromPixel(35), width-GetDipsFromPixel(5));
 
         restaurantID = getArguments().getString("id");
-        setList();
 
         return fragView;
     }
@@ -102,7 +101,7 @@ public class MenuFragment extends Fragment {
                 lastExpandedPosition = groupPosition;
             }
         });
-
+        setList();
         // list Adapter of ExpandableList
         listAdapter = new ExpandableListAdapter(hostActivity, listDataGroup, listDataChild, order);
 
@@ -135,6 +134,19 @@ public class MenuFragment extends Fragment {
 
             }
         }
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        try {
+            order = listener.getOrder();
+            listAdapter.setOrder(order);
+        } catch (ClassCastException castException) {
+            /** The activity does not implement the listener. */
+        }
+        listAdapter.notifyDataSetChanged();
+        expListView.setAdapter(listAdapter);
     }
 
     public void setList(){

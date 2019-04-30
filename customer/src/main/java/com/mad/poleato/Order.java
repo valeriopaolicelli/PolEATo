@@ -1,5 +1,7 @@
 package com.mad.poleato;
 
+import com.google.firebase.database.Exclude;
+
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
@@ -23,10 +25,12 @@ public class Order implements Serializable {
 
     public void updateTotalPrice(){
        totalPrice = 0.0;
-       for(Food f:selectedFoods){
-           totalPrice+=f.getPrice();
-       }
+       if(!selectedFoods.isEmpty()){
+         for(Food f:selectedFoods){
+           totalPrice+=f.getPrice()*f.getSelectedQuantity();
+        }
        totalPrice += r.getDeliveryCost();
+       }
    }
 
     public String getCustomerID() {
@@ -44,6 +48,7 @@ public class Order implements Serializable {
         this.selectedFoods.remove(f);
     }
 
+    @Exclude
     public List<Food> getSelectedFoods(){
         return selectedFoods;
     }

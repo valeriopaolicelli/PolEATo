@@ -12,8 +12,8 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:layout_width="match_parent"
-            android:text="Total : "
-            android:textSize="20dp">
+            android:text="@string/total"
+            android:textSize="20sp">
         </TextView>
 
         <TextView
@@ -21,17 +21,16 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:layout_width="match_parent"
-            android:text="0"
-            android:textSize="20dp">
+            android:textSize="20sp">
         </TextView>
     </LinearLayout>
 
     <TextView
         android:id="@+id/empty_cart"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Cart empty"
-        android:gravity="center"/>
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:gravity="center"
+        android:text="@string/empty_cart" />
 
     <android.support.v7.widget.RecyclerView
         android:id="@+id/recycler_cart"
@@ -48,8 +47,7 @@
         android:layout_alignParentBottom="true"
         android:layout_height="60dp"
         android:layout_width="match_parent"
-        android:onClick="insertOrder"
-        android:text="Place Order"
+        android:text="@string/confirm_order"
         android:background="@android:color/holo_red_dark"
         android:textColor="@android:color/white"
         android:theme="@style/Theme.MaterialButton">

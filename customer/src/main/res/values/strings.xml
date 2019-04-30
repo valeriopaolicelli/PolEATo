@@ -49,6 +49,9 @@
     <string name="minum">-</string>
     <string name="slash">/</string>
     <string name="price">Price: </string>
+    <string name="empty_cart">Cart is empty</string>
+    <string name="total">Total: </string>
+    <string name="confirm_order">Confirm Order</string>
 
 
 

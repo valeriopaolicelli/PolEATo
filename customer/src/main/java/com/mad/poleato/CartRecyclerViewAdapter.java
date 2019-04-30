@@ -65,7 +65,6 @@ public class CartRecyclerViewAdapter extends RecyclerView.Adapter<CartRecyclerVi
         cartViewHolder.minum.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                int quantity = foodList.get(i).getQuantity();
                 int selectedQuantity = foodList.get(i).getSelectedQuantity();
                 if(selectedQuantity>0){
                     foodList.get(i).decreaseSelectedQuantity();
@@ -74,6 +73,7 @@ public class CartRecyclerViewAdapter extends RecyclerView.Adapter<CartRecyclerVi
                     order.updateTotalPrice();
                     notifyDataSetChanged();
                 }
+                CartActivity.computeTotal(order.getTotalPrice());
             }
         });
 
@@ -86,8 +86,9 @@ public class CartRecyclerViewAdapter extends RecyclerView.Adapter<CartRecyclerVi
                     foodList.get(i).increaseSelectedQuantity();
                     order.updateTotalPrice();
                     notifyDataSetChanged();
-
                 }
+                CartActivity.computeTotal(order.getTotalPrice());
+
             }
         });
 
@@ -96,7 +97,9 @@ public class CartRecyclerViewAdapter extends RecyclerView.Adapter<CartRecyclerVi
             public void onClick(View view) {
                 foodList.get(i).setSelectedQuantity(0);
                 order.removeFoodFromOrder(foodList.get(i));
+                order.updateTotalPrice();
                 notifyDataSetChanged();
+                CartActivity.computeTotal(order.getTotalPrice());
             }
         });
     }
