@@ -27,15 +27,15 @@ public class Reservation {
 
     private String time;
 
-    public Reservation(String order_id, String name, String surname, String address, String date, String time, Context context) {
+    public Reservation(String order_id, String name, String surname, String address, String date, String time, String status, Context context) {
         this.order_id = order_id;
         this.name = name;
         this.surname = surname;
         this.address= address;
         this.date = date;
         this.time= time;
-        this.status = Status.ACCEPATANCE;
-        this.stat = context.getString(R.string.new_order);
+        this.stat = status;
+        setStat(status, context);
         this.buttonText= context.getString(R.string.button_reservation);
     }
     public String getName() {

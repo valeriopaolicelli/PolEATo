@@ -1,9 +1,13 @@
 package com.mad.poleato.Reservation;
 
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Bundle;
+import android.provider.ContactsContract;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,13 +18,25 @@ import android.view.Display;
 import android.widget.Button;
 import android.widget.ExpandableListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
 import com.mad.poleato.R;
 import com.mad.poleato.Reservation.ReservationListManagement.ReservationExpandableListAdapter;
 
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /*
  * A simple {@link Fragment} subclass.
@@ -37,9 +53,7 @@ public class ReservationFragment extends Fragment {
     private Display display;
     private Point size;
     private int width;
-    private Reservation c1;
-    private Reservation c2;
-    private Reservation c3;
+    String loggedID;
 
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -86,6 +100,7 @@ public class ReservationFragment extends Fragment {
         size = new Point();
         display.getSize(size);
         width = size.x;
+        loggedID = "R00";
     }
 
     @Override
@@ -94,31 +109,22 @@ public class ReservationFragment extends Fragment {
         View view = inflater.inflate(R.layout.reservation_frag_layout,container,false);
         initData();
 
-
         lv = view.findViewById(R.id.reservationslv);
-
         /**fix expandablelistview arrow position */
         lv.setIndicatorBounds(width-GetDipsFromPixel(35), width-GetDipsFromPixel(5));
-
-        listAdapter = new ReservationExpandableListAdapter(getActivity(),reservations,listHash);
-
+        listAdapter = new ReservationExpandableListAdapter(getActivity(), reservations, listHash);
         lv.setAdapter(listAdapter);
-
         lv.setOnGroupClickListener(new ExpandableListView.OnGroupClickListener() {
             @Override
             public boolean onGroupClick(ExpandableListView expandableListView, View view, int i, long l) {
                 Button b = (Button) view.findViewById(R.id.myButton);
-
                 if(!lv.isGroupExpanded(i)){
                     b.setVisibility(View.VISIBLE);
                 }else
                     b.setVisibility(View.GONE);
-
-
                 return false;
             }
         });
-
         return view;
     }
 
@@ -130,36 +136,69 @@ public class ReservationFragment extends Fragment {
     }
 
     private void initData(){
-
         reservations = new ArrayList<>();
         listHash = new HashMap<>();
 
-        c1 = new Reservation("A100","Fabio", "Ricciardi", "Corso duca degli abruzzi, 24","04/04/2019", "20.30", getContext());
-        c2 = new Reservation("A101","Michelangelo", "Moncada", "Via degli esempi, 404", "04/04/2019", "19.20", getContext());
-        c3 = new Reservation("A102","Valerio", "Paolicelli", "Via delle prove, 101", "04/04/2019", "21.20", getContext());
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                DatabaseReference reference = FirebaseDatabase.getInstance().getReference("restaurants");
 
-        reservations.add(c1);
-        reservations.add(c2);
-        reservations.add(c3);
+                reference.addValueEventListener(new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                    Log.d("Valerio", "OnDataChange method");
+                    DataSnapshot issue = dataSnapshot.child(loggedID).child("Reservation");
+                    // it is setted to the first record (restaurant)
+                    // when the sign in and log in procedures will be handled, it will be the proper one
+                    if (dataSnapshot.exists()) {
+                        // dataSnapshot is the "issue" node with all children
+                        Reservation r;
+                        String id, name, surname, date, time, address, status;
 
-        Dish d1_c1= new Dish("Pasta carbonara", 1, "no cipolla");
-        Dish d2_c1= new Dish("Pizza margherita", 2, "pizze tagliate");
+                        //for each reservation in the table of logged restaurant
+                        for(DataSnapshot snap : issue.getChildren()){
+                            //retrieve the customer (reservation) details
+                            DataSnapshot detailsOfReservation= snap.child("Details");
+                            id= snap.getKey();
+                            name= detailsOfReservation.child("Name").getValue().toString();
+                            surname= detailsOfReservation.child("Surname").getValue().toString();
+                            date= detailsOfReservation.child("Date").getValue().toString();
+                            time= detailsOfReservation.child("Time").getValue().toString();
+                            address= detailsOfReservation.child("Address").getValue().toString();
+                            status= snap.child("Status").getValue().toString();
+                            r= new Reservation(id, name, surname, address, date, time, status, getContext());
+                            reservations.add(r);
+                            //and for each customer (reservation) retrieve the list of dishes
+                            DataSnapshot dishesOfReservation= snap.child("Dish");
+                            String nameDish, note;
+                            Integer quantity;
+                            Dish d;
+                            for(DataSnapshot dish: dishesOfReservation.getChildren()) {
+                                nameDish= dish.child("Name").getValue().toString();
+                                quantity= Integer.parseInt(dish.child("Quantity").getValue().toString());
+                                note= dish.child("Note").getValue().toString();
+                                d= new Dish(nameDish, quantity, note);
+                                r.addDishtoReservation(d);
+                            }
+                            listHash.put(r.getOrder_id(), r.getDishes());
+                            Log.d("Valerio", snap.getKey().toString());
+                        }//for end
+                        Log.d("Valerio", reservations.toString());
+                    }
+                }
 
-        c1.addDishtoReservation(d1_c1);
-        c1.addDishtoReservation(d2_c1);
-
-        Dish d1_c2= new Dish("Pasta carbonara", 1, "no cipolla");
-        c2.addDishtoReservation(d1_c2);
-
-        Dish d1_c3= new Dish("Pasta amatriciana", 1, "no formaggio, tanto guanciale");
-        Dish d2_c3= new Dish("Pizza margherita", 1, "pizze tagliate");
-        c3.addDishtoReservation(d1_c3);
-        c3.addDishtoReservation(d2_c3);
-
-        listHash.put(c1.getOrder_id(),c1.getDishes());
-        listHash.put(c2.getOrder_id(),c2.getDishes());
-        listHash.put(c3.getOrder_id(),c3.getDishes());
+                @Override
+                public void onCancelled(@NonNull DatabaseError databaseError) {
+                    Log.d("matte", "onCancelled | ERROR: " + databaseError.getDetails() +
+                            " | MESSAGE: " + databaseError.getMessage());
+                    Toast.makeText(getContext(), databaseError.getMessage().toString(), Toast.LENGTH_SHORT);
+                }
+            });
+        }
+        }).start();
     }
+
 
     @Override
     public void onSaveInstanceState(@NonNull Bundle outState) {
