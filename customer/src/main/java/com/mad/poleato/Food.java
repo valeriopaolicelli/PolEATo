@@ -53,16 +53,6 @@ public class Food implements Serializable {
 
     public void setQuantity(int quantity){ this.quantity = quantity; }
 
-
-
-    public boolean validation() {
-        if(img != null && name.length() > 0 && description.length() > 0 && price > 0 && quantity > 0){
-            return true;
-        }else{
-            return false;
-        }
-    }
-
     public int getSelectedQuantity() {
         return selectedQuantity;
     }

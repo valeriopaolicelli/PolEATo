@@ -84,7 +84,11 @@ public class CartActivity extends AppCompatActivity implements Interface {
                     builder.setPositiveButton("Confirm", new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialogInterface, int i) {
-                            dbReference.child(order.getRestaurantID()).child("reservations").push().setValue(order);
+//                            DatabaseReference reservation =  dbReference.child(order.getRestaurantID()).child("reservations").push();
+//                            reservation.setValue(order);
+//                            String dbkey = reservation.getKey();
+//                            dbReference.child(order.getRestaurantID()).child("reservations").child(dbkey).child("dishes").setValue(order.getSelectedFoods());
+                            order.uploadOrder();
                             Intent returnIntent = new Intent();
                             setResult(Activity.RESULT_OK,returnIntent);
                             flag=true;

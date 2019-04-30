@@ -1,6 +1,8 @@
 package com.mad.poleato;
 
+import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.Exclude;
+import com.google.firebase.database.FirebaseDatabase;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -14,13 +16,15 @@ public class Order implements Serializable {
    private String customerID; //TODO: must be implemented with login phase
    private String notes;
    private Date date;
+   private String status;
    private String restaurantID;
    private Restaurant r;
 
     public Order() {
         this.totalPrice=0.0;
         selectedFoods=new ArrayList<>();
-
+        status = "New Order";
+        customerID = "C00"; // TODO; Must be restrieved from database
     }
 
     public void updateTotalPrice(){
@@ -48,11 +52,6 @@ public class Order implements Serializable {
         this.selectedFoods.remove(f);
     }
 
-    /**
-     * The Annotation @Exclude must be keep to stop the FireBase interpreter that in new version of Android
-     * seems to returns arrays (which are not Serializable) instead of Lists
-     * @return List of food
-     */
     @Exclude
     public List<Food> getSelectedFoods(){
         return selectedFoods;
@@ -69,4 +68,22 @@ public class Order implements Serializable {
     public void setR(Restaurant r) {
         this.r = r;
     }
+
+
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
+    }
+
+    public void uploadOrder() {
+        DatabaseReference dbReference = FirebaseDatabase.getInstance().getReference("restaurants");
+        DatabaseReference reservation =  dbReference.child(this.getRestaurantID()).child("reservations").push();
+        reservation.setValue(this);
+        String dbkey = reservation.getKey();
+        dbReference.child(this.getRestaurantID()).child("reservations").child(dbkey).child("dishes").setValue(this.getSelectedFoods());
+    }
+
 }
