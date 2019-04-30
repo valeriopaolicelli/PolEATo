@@ -6,7 +6,7 @@ import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.SharedPreferences;
+
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Matrix;
@@ -20,6 +20,7 @@ import android.os.Message;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.constraint.ConstraintLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
@@ -40,7 +41,6 @@ import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
-import android.widget.ProgressBar;
 import android.widget.ScrollView;
 import android.widget.Switch;
 import android.widget.Toast;
@@ -65,9 +65,11 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.lang.reflect.Type;
 import java.text.DecimalFormat;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 
@@ -83,6 +85,7 @@ public class EditProfileFragment extends Fragment {
     private static final int REQUEST_TAKE_PHOTO = 1;
     private static final int RESULT_LOAD_IMG = 2;
     private String currentPhotoPath;
+    Toast myToast;
 
     private Map<String, ImageButton> imageButtons;
     private Map<String, EditText> editTextFields;
@@ -95,6 +98,8 @@ public class EditProfileFragment extends Fragment {
     private FloatingActionButton change_im;
     private ImageView profileImage;
     private Switch statusSwitch;
+    //if the switch is not switched by user set it to true (default=false)
+    private boolean isSwitchedByApp;
 
     private ProgressDialog progressDialog;
     Handler handler = new Handler() {
@@ -104,6 +109,8 @@ public class EditProfileFragment extends Fragment {
         }
     };
 
+
+    String localeShort;
 
     String loggedID;
 
@@ -151,13 +158,24 @@ public class EditProfileFragment extends Fragment {
             mParam2 = getArguments().getString(ARG_PARAM2);
         }
 
+        //download Type base on the current active Locale
+        String locale = Locale.getDefault().toString();
+        Log.d("matte", "LOCALE: "+locale);
+        localeShort = locale.substring(0, 2);
+
+        //init
+        isSwitchedByApp = false;
+        myToast = Toast.makeText(getActivity(), "", Toast.LENGTH_SHORT);
+
+
         editTextFields = new HashMap<>();
         imageButtons = new HashMap<>();
         checkBoxes = new HashMap<>();
         checkedTypes = new HashSet<>();
         imageButtons = new HashMap<>();
 
-        loggedID = "R05";
+        loggedID = "R03";
+
 
     }
 
@@ -184,7 +202,7 @@ public class EditProfileFragment extends Fragment {
         editTextFields.put("Address",(EditText) v.findViewById(R.id.editTextAddress));
         editTextFields.put("Email",(EditText) v.findViewById(R.id.editTextEmail));
         editTextFields.put("Phone",(EditText) v.findViewById(R.id.editTextPhone));
-        //editTextFields.put("DeliveryCost",(EditText) v.findViewById(R.id.editTextDeliveryCost));
+        editTextFields.put("DeliveryCost",(EditText) v.findViewById(R.id.editTextDelivery));
 
 
         imageButtons.put("Name", (ImageButton) v.findViewById(R.id.cancel_name));
@@ -193,7 +211,7 @@ public class EditProfileFragment extends Fragment {
         imageButtons.put("Address", (ImageButton) v.findViewById(R.id.cancel_address));
         imageButtons.put("Email", (ImageButton) v.findViewById(R.id.cancel_email));
         imageButtons.put("Phone", (ImageButton) v.findViewById(R.id.cancel_phone));
-        //editTextFields.put("DeliveryCost",(EditText) v.findViewById(R.id.cancel_deliveryCost));
+        imageButtons.put("DeliveryCost",(ImageButton) v.findViewById(R.id.cancel_delivery));
 
 
         checkBoxes.put(getString(R.string.italian_cooking).toLowerCase(), (CheckBox)v.findViewById(R.id.italianCheckBox));
@@ -229,14 +247,23 @@ public class EditProfileFragment extends Fragment {
         });
 
         //set listener to handle the switch tapping
-        SwitchListener switchListener = new SwitchListener();
-        statusSwitch.setOnClickListener(switchListener);
+        SwitchListener switchListener = new SwitchListener(getActivity());
+        statusSwitch.setOnTouchListener(switchListener);
 
         profileImage = v.findViewById(R.id.ivBackground);
 
-        //fill the fields
-        fillFields();
+        //fill the fields with initial values (uses FireBase)
+        if(getActivity() != null)
+            progressDialog = ProgressDialog.show(getActivity(), "", getString(R.string.loading));
+        //start a new thread to process job
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                fillFields();
+            }
+        }).start();
 
+        // set the line limiter
         EditText edOpen = v.findViewById(R.id.editTextOpen);
         EditText edInfo = v.findViewById(R.id.editTextInfo);
 
@@ -248,12 +275,13 @@ public class EditProfileFragment extends Fragment {
         llInfo.setView(edInfo);
         llInfo.setLines(2);
 
-        // set the line limiter
+
         edOpen.addTextChangedListener(llOpen);
         edInfo.addTextChangedListener(llInfo);
 
         profileImage = v.findViewById(R.id.ivBackground);
         change_im = v.findViewById(R.id.change_im);
+
         return v;
     }
 
@@ -284,84 +312,75 @@ public class EditProfileFragment extends Fragment {
 
     private void fillFields(){
 
-        if(getActivity() != null)
-            progressDialog = ProgressDialog.show(getActivity(), "", getString(R.string.loading));
-        //start a new thread to process job
-        new Thread(new Runnable() {
+        //Download text infos
+        reference = FirebaseDatabase.getInstance().getReference("restaurants");
+
+        reference.addValueEventListener(new ValueEventListener() {
             @Override
-            public void run() {
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
 
-                reference = FirebaseDatabase.getInstance().getReference("restaurants");
-
-                reference.addValueEventListener(new ValueEventListener() {
-                    @Override
-                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                        DataSnapshot issue = dataSnapshot.child(loggedID);
-                        // it is setted to the first record (restaurant)
-                        // when the sign in and log in procedures will be handled, it will be the proper one
-                        if (dataSnapshot.exists()) {
-                            // dataSnapshot is the "issue" node with all children
-                            for(DataSnapshot snap : issue.getChildren()){
-                                if(editTextFields.containsKey(snap.getKey())){
-                                    if(snap.getKey().equals("DeliveryCost")){
-                                        DecimalFormat decimalFormat = new DecimalFormat("#.00"); //two decimal
-                                        String priceStr = decimalFormat.format(Double.parseDouble(snap.getValue().toString()));
-                                        editTextFields.get(snap.getKey()).setText(priceStr+"€");
-                                    }
-                                    else
-                                        editTextFields.get(snap.getKey()).setText(snap.getValue().toString());
-                                }
-                                else if(snap.getKey().equals("Type") && !snap.getValue().toString().isEmpty()){
-                                    String[] types = snap.getValue().toString().toLowerCase().split(",(\\s)*");
-                                    for(String t : types)
-                                        checkBoxes.get(t).setChecked(true);
-                                }
-                                else if(snap.getKey().equals("IsActive"))
-                                    statusSwitch.setChecked((Boolean) snap.getValue());
-                            } //for end
+                DataSnapshot issue = dataSnapshot.child(loggedID);
+                // it is setted to the first record (restaurant)
+                // when the sign in and log in procedures will be handled, it will be the proper one
+                if (dataSnapshot.exists()) {
+                    // dataSnapshot is the "issue" node with all children
+                    for(DataSnapshot snap : issue.getChildren()){
+                        if(editTextFields.containsKey(snap.getKey())){
+                            if(snap.getKey().equals("DeliveryCost")){
+                                editTextFields.get(snap.getKey()).setText(snap.getValue().toString());
+                            }
+                            else
+                                editTextFields.get(snap.getKey()).setText(snap.getValue().toString());
                         }
-                    }
+                        else if(snap.getKey().equals("Type") && !snap.child(localeShort).getValue().toString().isEmpty()){
 
-                    @Override
-                    public void onCancelled(@NonNull DatabaseError databaseError) {
-                        Log.d("matte", "onCancelled | ERROR: " + databaseError.getDetails() +
-                                " | MESSAGE: " + databaseError.getMessage());
-                        Toast.makeText(getContext(), databaseError.getMessage().toString(), Toast.LENGTH_SHORT);
-                    }
-                });
+                            String[] types = snap.child(localeShort).getValue().toString().toLowerCase().split(",(\\s)*");
+                            for(String t : types)
+                                checkBoxes.get(t).setChecked(true);
+                        }
+                        else if(snap.getKey().equals("IsActive")){
+                            //communicate that this change is not done by the user before doing it
+                            //isSwitchedByApp = true;
+                            statusSwitch.setChecked((Boolean) snap.getValue());
+                        }
+                    } //for end
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+                Log.d("matte", "onCancelled | ERROR: " + databaseError.getDetails() +
+                        " | MESSAGE: " + databaseError.getMessage());
+                myToast.setText(databaseError.getMessage().toString());
+                myToast.show();
+            }
+        });
 
 
-                //Download the profile pic
-                StorageReference storageReference = FirebaseStorage.getInstance().getReference();
-                StorageReference photoReference= storageReference.child(loggedID+"/ProfileImage/img.jpg");
+        //Download the profile pic
+        StorageReference storageReference = FirebaseStorage.getInstance().getReference();
+        StorageReference photoReference= storageReference.child(loggedID+"/ProfileImage/img.jpg");
 
-                final long ONE_MEGABYTE = 1024 * 1024;
-                photoReference.getBytes(ONE_MEGABYTE).addOnSuccessListener(new OnSuccessListener<byte[]>() {
-                    @Override
-                    public void onSuccess(byte[] bytes) {
-                        Bitmap bmp = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
-                        profileImage.setImageBitmap(bmp);
-                        //send message to main thread
-                        handler.sendEmptyMessage(0);
-
-                    }
-                }).addOnFailureListener(new OnFailureListener() {
-                    @Override
-                    public void onFailure(@NonNull Exception exception) {
-                        if(getActivity() != null)
-                            Toast.makeText(getActivity(), "No Such file or Path found!!", Toast.LENGTH_LONG).show();
-                        else
-                            Log.d("matte", "null context and profilePic download failed");
-                        //set predefined image
-                        profileImage.setImageResource(R.drawable.plate_fork);
-                        //send message to main thread
-                        handler.sendEmptyMessage(0);
-                    }
-                });
+        final long ONE_MEGABYTE = 1024 * 1024;
+        photoReference.getBytes(ONE_MEGABYTE).addOnSuccessListener(new OnSuccessListener<byte[]>() {
+            @Override
+            public void onSuccess(byte[] bytes) {
+                Bitmap bmp = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
+                profileImage.setImageBitmap(bmp);
+                //send message to main thread
+                handler.sendEmptyMessage(0);
 
             }
-        }).start();
-
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception exception) {
+                Log.d("matte", "No image found. Default img setting");
+                //set default image if no image was set
+                profileImage.setImageResource(R.drawable.plate_fork);
+                //send message to main thread
+                handler.sendEmptyMessage(0);
+            }
+        });
 
     }
 
@@ -414,7 +433,10 @@ public class EditProfileFragment extends Fragment {
                     profileImage.setImageBitmap(selectedImage);
                 } catch (FileNotFoundException e) {
                     e.printStackTrace();
-                    Toast.makeText(getContext(), "Something went wrong", Toast.LENGTH_LONG).show();
+                    if(getActivity() != null){
+                        myToast.setText(getString(R.string.failure));
+                        myToast.show();
+                    }
                 }
 
             } else
@@ -576,7 +598,21 @@ public class EditProfileFragment extends Fragment {
 
 
     public void saveChanges() {
+
+        // TODO HERE MAKE UI NON RESPONSIVE
+
+        /*ConstraintLayout layout = (ConstraintLayout) v.findViewById(R.id.mainEdit);
+        for (int i = 0; i < layout.getChildCount(); i++) {
+            View child = layout.getChildAt(i);
+            child.setEnabled(false);
+        }*/
+
         boolean wrongField = false;
+        if(getActivity() != null){
+            myToast.setText(getString(R.string.saving));
+            myToast.show();
+        }
+
         // fields cannot be empty
 
         for(String fieldName : editTextFields.keySet()){
@@ -590,8 +626,9 @@ public class EditProfileFragment extends Fragment {
                 else
                     ed.setBackground(ContextCompat.getDrawable(getContext(), R.drawable.border_right_field));
             }
-            else
+            else {
                 return;
+            }
         }
 
 
@@ -608,6 +645,9 @@ public class EditProfileFragment extends Fragment {
         String textRegex = new String("[^=&%\\/\\s]+([^=&%\\/]+)?[^=&%\\/\\s]+");
 
         String emailRegex = new String("^.+@[^\\.].*\\.[a-z]{2,}$");
+
+        String priceRegex = new String("[0-9]+([\\.,][0-9][0.9])?");
+
 
         if (!editTextFields.get("Name").getText().toString().matches(nameRegex)) {
             wrongField = true;
@@ -645,48 +685,69 @@ public class EditProfileFragment extends Fragment {
             Toast.makeText(getContext(), "Invalid Email", Toast.LENGTH_LONG).show();
             editTextFields.get("Email").setBackground(ContextCompat.getDrawable(getContext(), R.drawable.border_wrong_field));
         }
+        if (!editTextFields.get("DeliveryCost").getText().toString().matches(priceRegex)) {
+            wrongField = true;
+            Toast.makeText(getContext(), "Invalid Price", Toast.LENGTH_LONG).show();
+            editTextFields.get("Price").setBackground(ContextCompat.getDrawable(getContext(), R.drawable.border_wrong_field));
+        }
 
+
+
+        /* --------------- SAVING TO FIREBASE --------------- */
         if(!wrongField){
-
             // TODO here save all the data to the DB
-            String types = "";
+
+            String otherLocale = "";
+
+            if(localeShort.equals("it"))
+                otherLocale = "en";
+            else
+                otherLocale = "it";
+
+
+            TypeTranslator translator = new TypeTranslator();
+            String types = "",
+            translatedTypes = "";
+
             if(!checkedTypes.isEmpty()){
                 //create the type string
                 for(String t : checkedTypes){
                     types += t+", ";
+                    translatedTypes += translator.translate(t)+", ";
                 }
                 //remove the last comma
                 types = types.substring(0, types.length()-2);
+                translatedTypes = translatedTypes.substring(0, translatedTypes.length()-2);
+
             }
-            reference.child(loggedID).child("Type").setValue(types);
+            //insert both it and en
+            reference.child(loggedID).child("Type").child(localeShort).setValue(types);
+            reference.child(loggedID).child("Type").child(otherLocale).setValue(translatedTypes);
+
+
 
             reference.child(loggedID).child("IsActive").setValue(statusSwitch.isChecked());
-
+            EditText ed;
             for(String fieldName : editTextFields.keySet()){
-                EditText ed = editTextFields.get(fieldName);
-                reference.child(loggedID).child(fieldName).setValue(ed.getText().toString());
+                ed = editTextFields.get(fieldName);
+                if(fieldName.equals("DeliveryCost")){
+                    DecimalFormat decimalFormat = new DecimalFormat("#.00"); //two decimal
+                    String s = ed.getText().toString().replace(",", ".");
+                    double d = Double.parseDouble(s);
+                    String priceStr = decimalFormat.format(d);
+                    reference.child(loggedID).child(fieldName).setValue(priceStr);
+                }
+                else
+                    reference.child(loggedID).child(fieldName).setValue(ed.getText().toString());
             }
 
             // Save profile pic to the DB
             Bitmap img = ((BitmapDrawable) profileImage.getDrawable()).getBitmap();
+            /*Navigation controller is moved inside this method. The image must be loaded totally to FireBase
+                before come back to the AccountFragment. This is due to the fact that the image download is async */
             uploadFile(img);
 
-            //wait 2secs before come back to the AccountFragment. The image must be loaded totally to FireBase
-            try {
-                Thread.sleep(2000);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
 
-            Toast.makeText(getContext(), "Saved", Toast.LENGTH_LONG).show();
-
-            /**
-             * GO TO ACCOUNT_FRAGMENT
-             */
-            Navigation.findNavController(v).navigate(R.id.action_editProfile_id_to_account_id);
-            /**
-             *
-             */
         }
     }
 
@@ -705,6 +766,17 @@ public class EditProfileFragment extends Fragment {
             public void onFailure(@NonNull Exception exception) {
                 // Handle unsuccessful uploads
                 Log.d("matte", "Upload failed");
+                if(getActivity() != null){
+                    myToast.setText(getString(R.string.failure));
+                    myToast.show();
+                }
+                /**
+                 * GO TO ACCOUNT_FRAGMENT
+                 */
+                Navigation.findNavController(v).navigate(R.id.action_editProfile_id_to_account_id);
+                /**
+                 *
+                 */
             }
         }).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
             @Override
@@ -712,10 +784,23 @@ public class EditProfileFragment extends Fragment {
                 // taskSnapshot.getMetadata() contains file metadata such as size, content-type, and download URL.
                 Uri downloadUrl = taskSnapshot.getUploadSessionUri();
                 Log.d("matte", "downloadUrl-->" + downloadUrl);
+                if(getActivity() != null){
+                    myToast.setText(getString(R.string.saved));
+                    myToast.show();
+                }
+
+                /**
+                 * GO TO ACCOUNT_FRAGMENT
+                 */
+                Navigation.findNavController(v).navigate(R.id.action_editProfile_id_to_account_id);
+                /**
+                 *
+                 */
             }
         });
 
     }
+
 
     public void clearText(View view) {
         if (view.getId() == R.id.cancel_name)
@@ -730,6 +815,8 @@ public class EditProfileFragment extends Fragment {
             editTextFields.get("Email").setText("");
         else if(view.getId() == R.id.cancel_phone)
             editTextFields.get("Phone").setText("");
+        else if(view.getId() == R.id.cancel_delivery)
+            editTextFields.get("DeliveryCost").setText("");
     }
     /*
         public void removeProfileImage(){
@@ -865,7 +952,7 @@ public class EditProfileFragment extends Fragment {
     }
 
 
-    private class SwitchListener implements View.OnClickListener {
+    /*private class SwitchListener implements View.OnClickListener {
 
         @Override
         public void onClick(View v) {
@@ -874,9 +961,11 @@ public class EditProfileFragment extends Fragment {
                 Log.d("matte", "NULL context in OnClick of the Switch");
                 return;
             }
-            final Boolean isChecked = statusSwitch.isChecked();
+
+            //get the lock before making changes to the switch (in order to not trigger an infinite loop)
             String msg = "";
             //restore previous value to block the change before AlertDialog
+            final boolean isChecked = statusSwitch.isChecked();
             statusSwitch.setChecked(!isChecked);
             if(isChecked)
                 msg += getString(R.string.go_active_message);
@@ -888,9 +977,77 @@ public class EditProfileFragment extends Fragment {
                     {
                         public void onClick(DialogInterface paramAnonymousDialogInterface, int paramAnonymousInt) {
                             statusSwitch.setChecked(isChecked);
+                            //release the lock after the last switch change
+                            //statusSwitch.setClickable(false);
                         }
                     })
-                    .setNegativeButton(getString(R.string.no), null)
+                    .setNegativeButton(getString(R.string.no), new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            //release the lock after the last switch change
+                            //statusSwitch.setClickable(false);
+                        }
+                    })
+                    .show();
+        }
+
+    }*/
+
+    private class SwitchListener extends OnSwipeTouchListener{
+
+        public SwitchListener(Context c) {
+            super(c);
+        }
+
+        @Override
+        public void onClick() {
+            super.onClick();
+            Log.d("matte", "Switch :: OnClick");
+            showDialog();
+        }
+
+
+        @Override
+        public void onSwipeLeft() {
+            super.onSwipeLeft();
+            Log.d("matte", "Switch :: OnSwipeLeft");
+            showDialog();
+        }
+
+        @Override
+        public void onSwipeRight() {
+            super.onSwipeRight();
+            Log.d("matte", "Switch :: OnSwipeRight");
+            showDialog();
+        }
+
+
+        private void showDialog(){
+            String msg = "";
+            //restore previous value to block the change before AlertDialog
+            final boolean isChecked = statusSwitch.isChecked();
+
+            if(!isChecked)
+                msg += getString(R.string.go_active_message);
+            else
+                msg += getString(R.string.go_inactive_message);
+
+            new AlertDialog.Builder(getActivity()).setMessage(msg)
+                    .setPositiveButton(getString(R.string.yes), new DialogInterface.OnClickListener()
+                    {
+                        public void onClick(DialogInterface paramAnonymousDialogInterface, int paramAnonymousInt) {
+                            statusSwitch.setChecked(!isChecked);
+                            //release the lock after the last switch change
+                            //statusSwitch.setClickable(false);
+                        }
+                    })
+                    .setNegativeButton(getString(R.string.no), new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            //release the lock after the last switch change
+                            //statusSwitch.setClickable(false);
+                        }
+                    })
                     .show();
         }
     }
