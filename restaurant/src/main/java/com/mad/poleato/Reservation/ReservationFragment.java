@@ -22,6 +22,7 @@ import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -138,27 +139,87 @@ public class ReservationFragment extends Fragment {
     private void initData(){
         reservations = new ArrayList<>();
         listHash = new HashMap<>();
+            DatabaseReference reference = FirebaseDatabase.getInstance().getReference("restaurants").child(loggedID).child("Reservation");
 
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                DatabaseReference reference = FirebaseDatabase.getInstance().getReference("restaurants");
+            reference.addChildEventListener(new ChildEventListener() {
+                @Override
+                public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+                    Log.d("Valerio", dataSnapshot.getKey());
+                    //retrieve the customer (reservation) details
+                    Reservation r;
+                    String id, name, surname, date, time, address, status;
+                    DataSnapshot detailsOfReservation= dataSnapshot.child("Details");
 
-                reference.addValueEventListener(new ValueEventListener() {
+                    id= dataSnapshot.getKey();
+                    name= detailsOfReservation.child("Name").getValue().toString();
+                    surname= detailsOfReservation.child("Surname").getValue().toString();
+                    date= detailsOfReservation.child("Date").getValue().toString();
+                    time= detailsOfReservation.child("Time").getValue().toString();
+                    address= detailsOfReservation.child("Address").getValue().toString();
+                    status= dataSnapshot.child("Status").getValue().toString();
+                    r= new Reservation(id, name, surname, address, date, time, status, getContext());
+                    reservations.add(r);
+
+                    //and for each customer (reservation) retrieve the list of dishes
+                    DataSnapshot dishesOfReservation= dataSnapshot.child("Dish");
+                    String nameDish, note;
+                    Integer quantity;
+                    Dish d;
+
+                    for(DataSnapshot dish: dishesOfReservation.getChildren()) {
+                        nameDish= dish.child("Name").getValue().toString();
+                        quantity= Integer.parseInt(dish.child("Quantity").getValue().toString());
+                        note= dish.child("Note").getValue().toString();
+                        d= new Dish(nameDish, quantity, note);
+                        r.addDishtoReservation(d);
+                    }
+                    listHash.put(r.getOrder_id(), r.getDishes());
+                    listAdapter.notifyDataSetChanged();
+                }
+
+                @Override
+                public void onChildChanged(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+                    Log.d("Valerio", dataSnapshot.getKey());
+                }
+
+                @Override
+                public void onChildRemoved(@NonNull DataSnapshot dataSnapshot) {
+                    Log.d("Valerio", dataSnapshot.getKey());
+                }
+
+                @Override
+                public void onChildMoved(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+                    Log.d("Valerio", dataSnapshot.getKey());
+                }
+
+                @Override
+                public void onCancelled(@NonNull DatabaseError databaseError) {
+                    Log.d("matte", "onCancelled | ERROR: " + databaseError.getDetails() +
+                            " | MESSAGE: " + databaseError.getMessage());
+                    Toast.makeText(getContext(), databaseError.getMessage().toString(), Toast.LENGTH_SHORT);
+                }
+            });
+
+            /*
+            reference.addValueEventListener(new ValueEventListener() {
                 @Override
                 public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                     Log.d("Valerio", "OnDataChange method");
-                    DataSnapshot issue = dataSnapshot.child(loggedID).child("Reservation");
                     // it is setted to the first record (restaurant)
                     // when the sign in and log in procedures will be handled, it will be the proper one
                     if (dataSnapshot.exists()) {
+                        DataSnapshot issue = dataSnapshot.child(loggedID).child("Reservation");
                         // dataSnapshot is the "issue" node with all children
                         Reservation r;
                         String id, name, surname, date, time, address, status;
+                        Long lenght= issue.getChildrenCount();
+                        Log.d("Valerio", issue.getKey() + " #childs: " + lenght.toString());
 
                         //for each reservation in the table of logged restaurant
                         for(DataSnapshot snap : issue.getChildren()){
                             //retrieve the customer (reservation) details
+                            lenght= snap.getChildrenCount();
+                            Log.d("Valerio", issue.getKey() + " ->" + snap.getKey() + " #childs: " + lenght.toString());
                             DataSnapshot detailsOfReservation= snap.child("Details");
                             id= snap.getKey();
                             name= detailsOfReservation.child("Name").getValue().toString();
@@ -171,10 +232,15 @@ public class ReservationFragment extends Fragment {
                             reservations.add(r);
                             //and for each customer (reservation) retrieve the list of dishes
                             DataSnapshot dishesOfReservation= snap.child("Dish");
+
+                            lenght= dishesOfReservation.getChildrenCount();
+                            Log.d("Valerio", issue.getKey() + " ->" + snap.getKey() + " ->" + dishesOfReservation.getKey() + " #childs: " + lenght.toString());
                             String nameDish, note;
                             Integer quantity;
                             Dish d;
                             for(DataSnapshot dish: dishesOfReservation.getChildren()) {
+                                lenght= dish.getChildrenCount();
+                                Log.d("Valerio", issue.getKey() + " ->" + snap.getKey() + " ->" + dishesOfReservation.getKey() + " ->" + dish.getKey() + " #childs: " + lenght.toString());
                                 nameDish= dish.child("Name").getValue().toString();
                                 quantity= Integer.parseInt(dish.child("Quantity").getValue().toString());
                                 note= dish.child("Note").getValue().toString();
@@ -182,10 +248,9 @@ public class ReservationFragment extends Fragment {
                                 r.addDishtoReservation(d);
                             }
                             listHash.put(r.getOrder_id(), r.getDishes());
-                            Log.d("Valerio", snap.getKey().toString());
                         }//for end
-                        Log.d("Valerio", reservations.toString());
                     }
+                    listAdapter.notifyDataSetChanged();
                 }
 
                 @Override
@@ -195,8 +260,7 @@ public class ReservationFragment extends Fragment {
                     Toast.makeText(getContext(), databaseError.getMessage().toString(), Toast.LENGTH_SHORT);
                 }
             });
-        }
-        }).start();
+            */
     }
 
 
