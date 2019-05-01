@@ -92,6 +92,7 @@ public class DailyOfferFragment extends Fragment {
         display.getSize(size);
         width = size.x;
 
+        /** Listeners to update UI Expandable list from VIEW_MODEL list group and child*/
         model = ViewModelProviders.of(getActivity()).get(MyViewModel.class);
         model.getListG().observe(this, new Observer<List<String>>() {
             @Override
@@ -161,6 +162,7 @@ public class DailyOfferFragment extends Fragment {
             }
         });
 
+        /** PREPARE ELEMENT LIST OF EXPANDABLE LIST (da modificare per avere la lista vuota)*/
         model.prepareListData(getContext());
 
     }

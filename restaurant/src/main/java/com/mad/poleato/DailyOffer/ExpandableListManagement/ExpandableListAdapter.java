@@ -1,6 +1,8 @@
 package com.mad.poleato.DailyOffer.ExpandableListManagement;
 
 import android.app.Activity;
+import android.arch.lifecycle.ViewModelProviders;
+import android.support.v4.app.FragmentActivity;
 import android.support.v7.widget.PopupMenu;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -19,6 +21,7 @@ import androidx.navigation.Navigation;
 
 import com.mad.poleato.DailyOffer.Food;
 import com.mad.poleato.R;
+import com.mad.poleato.View.ViewModel.MyViewModel;
 
 import java.text.DecimalFormat;
 import java.util.ArrayList;
@@ -40,16 +43,16 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
         inf = LayoutInflater.from(host);
         this._listDataGroup = new ArrayList<>();
         this._listDataChild = new HashMap<>();
-        Log.d("matte", "[Init]headers:"+_listDataGroup.toString());
-        Log.d("matte", "[Init]childs:"+_listDataChild.toString());
+        Log.d("matte", "[Init]headers:" + _listDataGroup.toString());
+        Log.d("matte", "[Init]childs:" + _listDataChild.toString());
     }
 
-    public void setAllGroup(List<String> strings){
+    public void setAllGroup(List<String> strings) {
         this._listDataGroup = strings;
         notifyDataSetChanged();
     }
 
-    public void setAllChild(HashMap<String, List<Food>> strings){
+    public void setAllChild(HashMap<String, List<Food>> strings) {
         this._listDataChild = strings;
         notifyDataSetChanged();
     }
@@ -58,11 +61,11 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
     public View getChildView(final int groupPosition, final int childPosition,
                              boolean isLastChild, View convertView, ViewGroup parent) {
 
-        Log.d("matte", "[Child]getview{ group:"+groupPosition+", child:"+childPosition+", view:"+convertView+"}");
+        Log.d("matte", "[Child]getview{ group:" + groupPosition + ", child:" + childPosition + ", view:" + convertView + "}");
 
         final FoodViewHolder holder; //recycler view pattern
 
-        if (convertView == null){
+        if (convertView == null) {
             convertView = inf.inflate(R.layout.layout_menu_child, parent, false);
             holder = new FoodViewHolder();
             holder.img = (ImageView) convertView.findViewById(R.id.cardImage);
@@ -72,7 +75,7 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
             holder.quantity = (TextView) convertView.findViewById(R.id.cardQuantity);
             convertView.setTag(holder);
 
-        } else{
+        } else {
             holder = (FoodViewHolder) convertView.getTag();
         }
 
@@ -86,7 +89,7 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
         priceStr += currency;
         holder.price.setText(priceStr);
         /** quantity */
-        String qntStr = "(qty "+getChild(groupPosition, childPosition).getQuantity()+")";
+        String qntStr = "(qty " + getChild(groupPosition, childPosition).getQuantity() + ")";
         holder.quantity.setText(qntStr);
 
         /** three dots vertical menu */
@@ -128,7 +131,9 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
                     public boolean onMenuItemClick(MenuItem item) {
 
                         Log.d("matte", item.getTitle().toString());
-//                        removeChild(groupPosition, childPosition);
+                        MyViewModel model = ViewModelProviders.of((FragmentActivity) host).get(MyViewModel.class);
+                        model.removeChild(groupPosition, childPosition);
+                        notifyDataSetChanged();
                         return true;
                     }
                 });
@@ -149,17 +154,17 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
     public View getGroupView(int groupPosition, boolean isExpanded,
                              View convertView, ViewGroup parent) {
 
-        Log.d("matte", "[Group]getview{ group:"+groupPosition+", view:"+convertView+", name:"+getGroup(groupPosition).toString()+"}");
+        Log.d("matte", "[Group]getview{ group:" + groupPosition + ", view:" + convertView + ", name:" + getGroup(groupPosition).toString() + "}");
         ViewHolder holder; //recycler view pattern
 
         String groupTitle = (String) getGroup(groupPosition);
 
-        if (convertView == null){
+        if (convertView == null) {
             convertView = inf.inflate(R.layout.layout_menu_group, parent, false);
             holder = new ViewHolder();
             holder.text = convertView.findViewById(R.id.groupView);
             convertView.setTag(holder);
-        } else{
+        } else {
             holder = (ViewHolder) convertView.getTag();
         }
 
@@ -167,8 +172,6 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
 
         return convertView;
     }
-
-
 
 
     @Override
@@ -222,7 +225,7 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
         TextView quantity;
     }
 
-    private class ViewHolder{
+    private class ViewHolder {
         TextView text;
     }
 
