@@ -209,7 +209,8 @@ public class ReservationExpandableListAdapter extends BaseExpandableListAdapter 
                                 public void onClick(DialogInterface dialogInterface, int i) {
 
                                     //TODO when log in will be enabled, change the R00 child, with the proper one
-                                    FirebaseDatabase.getInstance().getReference("restaurants").child("R00").child("reservations").child(c.getOrder_id()).child("status").setValue("Delivering");
+                                    FirebaseDatabase.getInstance().getReference("restaurants").child("R00").child("reservations").child(c.getOrder_id()).child("status").child("en").setValue("Delivering");
+                                    FirebaseDatabase.getInstance().getReference("restaurants").child("R00").child("reservations").child(c.getOrder_id()).child("status").child("it").setValue("In consegna");
                                     c.setStatus(Status.DELIVERY, context);
 
                                     holder.button.setText(context.getString(R.string.order_info));
@@ -234,7 +235,8 @@ public class ReservationExpandableListAdapter extends BaseExpandableListAdapter 
                                 public void onClick(DialogInterface dialogInterface, int i) {
                                     // Change button text
                                     c.setStatus(Status.COOKING, context);
-                                    FirebaseDatabase.getInstance().getReference("restaurants").child("R00").child("reservations").child(c.getOrder_id()).child("status").setValue("Cooking");
+                                    FirebaseDatabase.getInstance().getReference("restaurants").child("R00").child("reservations").child(c.getOrder_id()).child("status").child("en").setValue("Cooking");
+                                    FirebaseDatabase.getInstance().getReference("restaurants").child("R00").child("reservations").child(c.getOrder_id()).child("status").child("it").setValue("Preparazione");
                                     holder.button.setText(context.getString(R.string.title_deliver));
                                     c.setButtonText(context.getString(R.string.title_deliver));
                                     notifyDataSetChanged();
@@ -246,7 +248,8 @@ public class ReservationExpandableListAdapter extends BaseExpandableListAdapter 
                                 @Override
                                 public void onClick(DialogInterface dialogInterface, int i) {
                                     c.setStatus(Status.REJECTED, context);
-                                    FirebaseDatabase.getInstance().getReference("restaurants").child("R00").child("reservations").child(c.getOrder_id()).child("status").setValue("Rejected");
+                                    FirebaseDatabase.getInstance().getReference("restaurants").child("R00").child("reservations").child(c.getOrder_id()).child("status").child("en").setValue("Rejected");
+                                    FirebaseDatabase.getInstance().getReference("restaurants").child("R00").child("reservations").child(c.getOrder_id()).child("status").child("it").setValue("Rifiutato");
                                     notifyDataSetChanged();
                                 }
                             });

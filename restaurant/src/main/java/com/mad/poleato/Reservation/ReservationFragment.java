@@ -181,6 +181,7 @@ public class ReservationFragment extends Fragment {
                     }
                 });
 
+                // fields setted to null only because they will be setted later in the call back of FB
                 r = new Reservation(order_id, null, null, null, null, null, status, null, getContext());
                 reservations.add(r);
 
@@ -193,6 +194,7 @@ public class ReservationFragment extends Fragment {
                 for (DataSnapshot dish : dishesOfReservation.getChildren()) {
                     nameDish = dish.child("name").getValue().toString();
                     quantity = Integer.parseInt(dish.child("selectedQuantity").getValue().toString());
+                    note= dish.child("customerNotes").getValue().toString();
                     d = new Dish(nameDish, quantity, note);
                     r.addDishtoReservation(d);
                 }
