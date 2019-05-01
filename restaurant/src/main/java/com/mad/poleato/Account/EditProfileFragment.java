@@ -769,54 +769,76 @@ public class EditProfileFragment extends Fragment {
     }
 
 
+    private Uri getImageUri(Context inContext, Bitmap inImage) {
+        ByteArrayOutputStream bytes = new ByteArrayOutputStream();
+        inImage.compress(Bitmap.CompressFormat.JPEG, 100, bytes);
+        String path = MediaStore.Images.Media.insertImage(inContext.getContentResolver(), inImage, "Title", null);
+        return Uri.parse(path);
+    }
+
+
 
     private void uploadFile(Bitmap bitmap) {
-        StorageReference storageReference = FirebaseStorage.getInstance().getReference();
+        final StorageReference storageReference = FirebaseStorage
+                .getInstance()
+                .getReference()
+                .child(loggedID+"/ProfileImage/img.jpg");
 
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         bitmap.compress(Bitmap.CompressFormat.JPEG, 20, baos);
         byte[] data = baos.toByteArray();
 
-        UploadTask uploadTask = storageReference.child(loggedID+"/ProfileImage/img.jpg").putBytes(data);
-        uploadTask.addOnFailureListener(new OnFailureListener() {
-            @Override
-            public void onFailure(@NonNull Exception exception) {
-                // Handle unsuccessful uploads
-                Log.d("matte", "Upload failed");
-                if(getActivity() != null){
-                    myToast.setText(getString(R.string.failure));
-                    myToast.show();
-                }
-                /**
-                 * GO TO ACCOUNT_FRAGMENT
-                 */
-                Navigation.findNavController(v).navigate(R.id.action_editProfile_id_to_account_id);
-                /**
-                 *
-                 */
-            }
-        }).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
-            @Override
-            public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                // taskSnapshot.getMetadata() contains file metadata such as size, content-type, and download URL.
-                Uri downloadUrl = taskSnapshot.getUploadSessionUri();
-                Log.d("matte", "downloadUrl-->" + downloadUrl);
-                if(getActivity() != null){
-                    myToast.setText(getString(R.string.saved));
-                    myToast.show();
-                }
+        UploadTask uploadTask = storageReference.putBytes(data);
+        uploadTask
+                .addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                    @Override
+                    public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                        storageReference.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+                            @Override
+                            public void onSuccess(Uri uri) {
+                                final String downloadUrl =
+                                        uri.toString();
+                                FirebaseDatabase.getInstance()
+                                        .getReference("restaurants")
+                                        .child(loggedID+"/photoUrl")
+                                        .setValue(downloadUrl);
+                            }
+                        });
+                        // taskSnapshot.getMetadata() contains file metadata such as size, content-type, and download URL.
+                        Uri downloadUrl = taskSnapshot.getUploadSessionUri();
+                        String s = taskSnapshot.getMetadata().getReference().getDownloadUrl().toString();
+                        Log.d("matte", "downloadUrl-->" + downloadUrl);
+                        if(getActivity() != null){
+                            myToast.setText(getString(R.string.saved));
+                            myToast.show();
+                        }
 
-                /**
-                 * GO TO ACCOUNT_FRAGMENT
-                 */
-                Navigation.findNavController(v).navigate(R.id.action_editProfile_id_to_account_id);
-                /**
-                 *
-                 */
-
-                /* Upload uri on FB */
-                FirebaseDatabase.getInstance().getReference("restaurants").child(loggedID).child("photoUrl").setValue(downloadUrl.toString());
-            }
+                        /**
+                         * GO TO ACCOUNT_FRAGMENT
+                         */
+                        Navigation.findNavController(v).navigate(R.id.action_editProfile_id_to_account_id);
+                        /**
+                         *
+                         */
+                    }
+                })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception exception) {
+                        // Handle unsuccessful uploads
+                        Log.d("matte", "Upload failed");
+                        if(getActivity() != null){
+                            myToast.setText(getString(R.string.failure));
+                            myToast.show();
+                        }
+                        /**
+                         * GO TO ACCOUNT_FRAGMENT
+                         */
+                        Navigation.findNavController(v).navigate(R.id.action_editProfile_id_to_account_id);
+                        /**
+                         *
+                         */
+                    }
         });
 
     }
