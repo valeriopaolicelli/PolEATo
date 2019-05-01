@@ -105,6 +105,7 @@ public class CartActivity extends AppCompatActivity implements Interface {
                             //                            reservation.setValue(order);
                             //                            String dbkey = reservation.getKey();
                             //                            dbReference.child(order.getRestaurantID()).child("reservations").child(dbkey).child("dishes").setValue(order.getSelectedFoods());
+
                             order.setDate(date.getText().toString());
                             order.setTime(time.getText().toString());
 
