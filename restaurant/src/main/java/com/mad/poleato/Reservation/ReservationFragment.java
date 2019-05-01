@@ -154,27 +154,7 @@ public class ReservationFragment extends Fragment {
                 customer_id = dataSnapshot.child("customerID").getValue().toString();
                 final String date= dataSnapshot.child("date").getValue().toString();
                 final String time= dataSnapshot.child("time").getValue().toString();
-                String status= "";
-                if(dataSnapshot.child("status").child(localeShort).getValue() == null) {
-                    if(localeShort.equals("it")) {
-                        if(dataSnapshot.child("status").getValue().toString().equals("New order"))
-                            status= "Nuovo ordine";
-                        else if(dataSnapshot.child("status").getValue().toString().equals("Cooking"))
-                            status= "Preparazione";
-                        else if(dataSnapshot.child("status").getValue().toString().equals("Delivering"))
-                            status= "In consegna";
-                    }
-                    else{
-                        if(dataSnapshot.child("status").getValue().toString().equals("Nuovo ordine"))
-                            status= "New order";
-                        else if(dataSnapshot.child("status").getValue().toString().equals("Preparazione"))
-                            status= "Cooking";
-                        else if(dataSnapshot.child("status").getValue().toString().equals("In consegna"))
-                            status= "Delivering";
-                    }
-                }
-                else
-                    status= dataSnapshot.child("status").child(localeShort).getValue().toString();
+                String status= dataSnapshot.child("status").child(localeShort).getValue().toString();
                 //TODO update with proper date, time and notes
 
                 //Retrieve through customerID the details of the customer
