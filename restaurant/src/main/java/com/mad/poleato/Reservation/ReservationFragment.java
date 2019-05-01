@@ -205,7 +205,7 @@ public class ReservationFragment extends Fragment {
             @Override
             public void onChildChanged(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
                 Log.d("Valerio", dataSnapshot.getKey());
-                final String status= dataSnapshot.child("status").getValue().toString();
+                final String status = dataSnapshot.child("status").child(localeShort).getValue().toString();
                 final String order_id= dataSnapshot.getKey();
                 final String customer_id= dataSnapshot.child("customerID").getValue().toString();
                 final String date= dataSnapshot.child("date").getValue().toString();
