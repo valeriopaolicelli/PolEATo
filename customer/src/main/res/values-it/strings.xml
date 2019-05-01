@@ -47,9 +47,10 @@
     <string name="confirm_order">Conferma Ordine</string>
     <string name="X">X</string>
     <string name="notes">Inserisci qui le note(max 30 caratteri)</string>
-
-
-
+    <string name="new_order">Nuovo ordine</string>
+    <string name="cooking">Preparazione</string>
+    <string name="delivery">In consegna</string>
+    <string name="reject">Rifiutato</string>
 
     <string name="italian_cooking">Italiano</string>
     <string name="pizza_cooking">Pizza</string>
