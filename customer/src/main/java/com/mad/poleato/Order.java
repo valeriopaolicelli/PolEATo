@@ -23,7 +23,6 @@ public class Order implements Serializable {
     public Order() {
         this.totalPrice=0.0;
         selectedFoods=new ArrayList<>();
-        status = "New Order";
         customerID = "C00"; // TODO; Must be restrieved from database
     }
 
