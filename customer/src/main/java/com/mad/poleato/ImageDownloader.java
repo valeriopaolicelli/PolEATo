@@ -34,7 +34,10 @@ public class ImageDownloader implements Runnable {
     @Override
     public void run() {
         //StorageReference photoReference = FirebaseStorage.getInstance().getReferenceFromUrl(url);
-        StorageReference photoReference = FirebaseStorage.getInstance().getReference().child("R00/ProfileImage/img.jpg");
+        //StorageReference photoReference = FirebaseStorage.getInstance().getReference().child("R00/ProfileImage/img.jpg");
+
+        StorageReference storageReference = FirebaseStorage.getInstance().getReference();
+        StorageReference photoReference= storageReference.child("R00"+"/ProfileImage/img.jpg");
 
         final long ONE_MEGABYTE = 1024 * 1024;
         photoReference.getBytes(ONE_MEGABYTE).addOnSuccessListener(new OnSuccessListener<byte[]>() {

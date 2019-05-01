@@ -161,13 +161,13 @@ public class RestaurantSearchFragment extends DialogFragment {
                 String imageUrl = dataSnapshot.child("photoUrl").getValue().toString();
 
                 Bitmap img = null;
-                ImageDownloader imgDownloader = new ImageDownloader(imageUrl);
+                /*ImageDownloader imgDownloader = new ImageDownloader(imageUrl);
                 imgDownloader.run();
                 try {
                     img = imgDownloader.getValue();
                 } catch (InterruptedException e) {
                     e.printStackTrace();
-                }
+                }*/
                 /*Thread downloadThread = new Thread(imgDownloader);
                 downloadThread.start();
                 try {
@@ -176,6 +176,34 @@ public class RestaurantSearchFragment extends DialogFragment {
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }*/
+
+
+
+                StorageReference storageReference = FirebaseStorage.getInstance().getReference();
+                StorageReference photoReference= storageReference.child("R00"+"/ProfileImage/img.jpg");
+
+                final long ONE_MEGABYTE = 1024 * 1024;
+                photoReference.getBytes(ONE_MEGABYTE).addOnSuccessListener(new OnSuccessListener<byte[]>() {
+                    @Override
+                    public void onSuccess(byte[] bytes) {
+                        Bitmap bmp = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
+                        // set the downloaded image
+                        //img = bmp;
+                        //downloadFinished.open();
+                    }
+                }).addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception exception) {
+                        //set predefined image
+                        Log.d("matte", "onFailure() called in ImageDownloader");
+                       // img = null;
+                        //downloadFinished.open();
+                    }
+                });
+
+
+
+
 
                 //Here image is still
                 if(img == null)
