@@ -17,6 +17,7 @@ public class Order implements Serializable {
    private String date;
    private String status_it;
    private String status_en;
+   private String status;
    private String restaurantID;
    private Restaurant r;
    private String time;
@@ -27,6 +28,7 @@ public class Order implements Serializable {
         customerID = "C00"; // TODO; Must be restrieved from database
         status_it= "New order";
         status_en= "Nuovo ordine";
+        status= "New order";
     }
 
     public void setStatusItEn(){
