@@ -69,7 +69,7 @@ public class Order implements Serializable {
         this.r = r;
     }
 
-    public String getData(){
+    public String getDate(){
         return date;
     }
 
@@ -99,7 +99,7 @@ public class Order implements Serializable {
         reservation.setValue(this);
         String dbkey = reservation.getKey();
         dbReference.child(this.getRestaurantID()).child("reservations").child(dbkey).child("dishes").setValue(this.getSelectedFoods());
-        dbReference.child(this.getRestaurantID()).child("reservations").child(dbkey).child("data").setValue(this.getData());
+        dbReference.child(this.getRestaurantID()).child("reservations").child(dbkey).child("date").setValue(this.getDate());
         dbReference.child(this.getRestaurantID()).child("reservations").child(dbkey).child("time").setValue(this.getTime());
         dbReference.child(this.getRestaurantID()).child("reservations").child(dbkey).child("status").child("it").setValue("Nuovo ordine");
         dbReference.child(this.getRestaurantID()).child("reservations").child(dbkey).child("status").child("en").setValue("New order");
