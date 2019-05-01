@@ -97,6 +97,7 @@ public class RestaurantRecyclerViewAdapter extends RecyclerView.Adapter<Restaura
 
         return viewHolder;
 
+        
     }
 
     // Replace the contents of a view (invoked by the layout manager)

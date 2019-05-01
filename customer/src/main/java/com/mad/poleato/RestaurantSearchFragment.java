@@ -99,15 +99,17 @@ public class RestaurantSearchFragment extends DialogFragment {
         typesToFilter = new HashSet<>();
         currDisplayedList = new ArrayList<>();
 
+        if(getActivity() != null)
+            progressDialog = ProgressDialog.show(getActivity(), "", getString(R.string.loading));
+
+        fillFields();
+
     }
 
     @Override
     public void onResume() {
         super.onResume();
-        if(getActivity() != null)
-            progressDialog = ProgressDialog.show(getActivity(), "", getString(R.string.loading));
 
-        fillFields();
     }
 
     @Nullable
@@ -137,7 +139,6 @@ public class RestaurantSearchFragment extends DialogFragment {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 handler.sendEmptyMessage(0);
-
             }
 
             @Override
@@ -151,63 +152,34 @@ public class RestaurantSearchFragment extends DialogFragment {
             public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
                 Log.d("matte", "onChildAdded | PREVIOUS CHILD: " + s);
 
-
-                String id = dataSnapshot.getKey();
+                Bitmap img = BitmapFactory.decodeResource(getResources(), R.drawable.plate_fork); // TODO: make it dynamic
+                final String id = dataSnapshot.getKey();
                 String name = dataSnapshot.child("Name").getValue().toString();
                 String type = dataSnapshot.child("Type").child(localeShort).getValue().toString();
                 Boolean isOpen = (Boolean) dataSnapshot.child("IsActive").getValue();
                 int priceRange = Integer.parseInt(dataSnapshot.child("PriceRange").getValue().toString());
                 double deliveryCost = Double.parseDouble(dataSnapshot.child("DeliveryCost").getValue().toString().replace(",", "."));
-                String imageUrl = dataSnapshot.child("photoUrl").getValue().toString();
+                final String imageUrl = dataSnapshot.child("photoUrl").getValue().toString();
 
-                Bitmap img = null;
-                /*ImageDownloader imgDownloader = new ImageDownloader(imageUrl);
-                imgDownloader.run();
-                try {
-                    img = imgDownloader.getValue();
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }*/
-                /*Thread downloadThread = new Thread(imgDownloader);
-                downloadThread.start();
-                try {
-                    downloadThread.join();
-                    img = imgDownloader.getValue();
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }*/
-
-
-
-                StorageReference storageReference = FirebaseStorage.getInstance().getReference();
-                StorageReference photoReference= storageReference.child("R00"+"/ProfileImage/img.jpg");
-
+                StorageReference photoReference = FirebaseStorage.getInstance().getReferenceFromUrl(imageUrl);
                 final long ONE_MEGABYTE = 1024 * 1024;
                 photoReference.getBytes(ONE_MEGABYTE).addOnSuccessListener(new OnSuccessListener<byte[]>() {
                     @Override
                     public void onSuccess(byte[] bytes) {
+                        String s = imageUrl;
+                        Log.d("matte", "onSuccess | restaurantID: "+id);
                         Bitmap bmp = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
-                        // set the downloaded image
-                        //img = bmp;
-                        //downloadFinished.open();
+                        restaurantMap.get(id).setImage(bmp);
+                        recyclerAdapter.notifyDataSetChanged();
                     }
                 }).addOnFailureListener(new OnFailureListener() {
                     @Override
                     public void onFailure(@NonNull Exception exception) {
-                        //set predefined image
-                        Log.d("matte", "onFailure() called in ImageDownloader");
-                       // img = null;
-                        //downloadFinished.open();
+                        String s = imageUrl;
+                        Log.d("matte", "onFailure() : excp -> "+exception.getMessage()
+                        +"| restaurantID: "+id);
                     }
                 });
-
-
-
-
-
-                //Here image is still
-                if(img == null)
-                    img = BitmapFactory.decodeResource(getResources(), R.drawable.plate_fork); // TODO: make it dynamic
 
                 Restaurant resObj = new Restaurant(id, img, name, type, isOpen, priceRange, deliveryCost);
                 //add to the original list
@@ -224,16 +196,15 @@ public class RestaurantSearchFragment extends DialogFragment {
             public void onChildChanged(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
                 Log.d("matte", "onChildChanged | PREVIOUS CHILD: " + s);
 
-                String id = dataSnapshot.getKey();
-                Bitmap img = BitmapFactory.decodeResource(getResources(), R.drawable.image_empty); // TODO: make it dynamic
+                final String id = dataSnapshot.getKey();
                 String name = dataSnapshot.child("Name").getValue().toString();
                 String type = dataSnapshot.child("Type").child(localeShort).getValue().toString();
                 Boolean isOpen = (Boolean) dataSnapshot.child("IsActive").getValue();
                 int priceRange = Integer.parseInt(dataSnapshot.child("PriceRange").getValue().toString());
                 double deliveryCost = Double.parseDouble(dataSnapshot.child("DeliveryCost").getValue().toString().replace(",", "."));
+                String imageUrl = dataSnapshot.child("photoUrl").getValue().toString();
 
                 Restaurant resObj = restaurantMap.get(id);
-                resObj.setImage(img);
                 resObj.setName(name);
                 resObj.setType(type);
                 resObj.setIsOpen(isOpen);
@@ -242,6 +213,24 @@ public class RestaurantSearchFragment extends DialogFragment {
                 //insert the element by keeping the actual order after checking the filter
                 if (isValidToDisplay(resObj))
                     recyclerAdapter.updateLayout();
+
+                //check the new image
+                StorageReference photoReference = FirebaseStorage.getInstance().getReferenceFromUrl(imageUrl);
+                final long ONE_MEGABYTE = 10*1024 * 1024;
+                photoReference.getBytes(ONE_MEGABYTE).addOnSuccessListener(new OnSuccessListener<byte[]>() {
+                    @Override
+                    public void onSuccess(byte[] bytes) {
+                        Log.d("matte", "onSuccess");
+                        Bitmap bmp = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
+                        restaurantMap.get(id).setImage(bmp);
+                        recyclerAdapter.notifyDataSetChanged();
+                    }
+                }).addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception exception) {
+                        Log.d("matte", "onFailure() : excp -> "+exception.getMessage());
+                    }
+                });
 
             }
 
@@ -478,16 +467,6 @@ public class RestaurantSearchFragment extends DialogFragment {
                 return true;
             }
         }
-        return false;
-    }
-
-    private boolean isRemovedFilter(Set<String> newFilters){
-        for(String s : typesToFilter){
-            //if a filter was removed
-            if(!newFilters.contains(s))
-                return true;
-        }
-
         return false;
     }
 
