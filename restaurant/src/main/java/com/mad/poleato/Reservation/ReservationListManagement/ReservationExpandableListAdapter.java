@@ -1,5 +1,6 @@
 package com.mad.poleato.Reservation.ReservationListManagement;
 
+import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -32,7 +33,9 @@ public class ReservationExpandableListAdapter extends BaseExpandableListAdapter 
     private List<Reservation> reservations;
     private HashMap<String, List<Dish>>listHashMap;
     private ArrayList<Boolean>groupChecked = new ArrayList<>();
+    @SuppressLint("UseSparseArrays")
     private HashMap<Integer, ArrayList<Boolean>>childsChecked = new HashMap<>();
+    @SuppressLint("UseSparseArrays")
     private HashMap<Integer, CheckBox> groupCheckBoxes = new HashMap<>();
 
     public ReservationExpandableListAdapter(Context context, List<Reservation> reservations, HashMap<String, List<Dish>> listHashMap) {
