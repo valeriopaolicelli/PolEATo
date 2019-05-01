@@ -136,12 +136,14 @@ public class RestaurantSearchFragment extends DialogFragment {
 
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                handler.sendEmptyMessage(0);
 
             }
 
             @Override
             public void onCancelled(@NonNull DatabaseError databaseError) {
-
+                Log.d("matte", "ValueEventiListener : OnCancelled() invoked");
+                handler.sendEmptyMessage(0);
             }
         });
         dbReference.addChildEventListener(new ChildEventListener() {
@@ -156,19 +158,28 @@ public class RestaurantSearchFragment extends DialogFragment {
                 Boolean isOpen = (Boolean) dataSnapshot.child("IsActive").getValue();
                 int priceRange = Integer.parseInt(dataSnapshot.child("PriceRange").getValue().toString());
                 double deliveryCost = Double.parseDouble(dataSnapshot.child("DeliveryCost").getValue().toString().replace(",", "."));
+                String imageUrl = dataSnapshot.child("photoUrl").getValue().toString();
 
+                Bitmap img = null;
+                ImageDownloader imgDownloader = new ImageDownloader(imageUrl);
+                Thread downloadThread = new Thread(imgDownloader);
+                downloadThread.start();
+                try {
+                    downloadThread.join();
+                    img = imgDownloader.getValue();
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
 
-
-
-
-                Bitmap img = BitmapFactory.decodeResource(getResources(), R.drawable.image_empty); // TODO: make it dynamic
-
-
+                //Here image is still
+                if(img == null)
+                    img = BitmapFactory.decodeResource(getResources(), R.drawable.plate_fork); // TODO: make it dynamic
 
                 Restaurant resObj = new Restaurant(id, img, name, type, isOpen, priceRange, deliveryCost);
                 //add to the original list
                 restaurantMap.put(id, resObj);
                 restaurantList.add(resObj);
+
                 //check the filter before display
                 if (isValidToDisplay(resObj))
                     addToDisplay(resObj);
@@ -225,39 +236,6 @@ public class RestaurantSearchFragment extends DialogFragment {
 
     }
 
-    public void downloadImages(String url){
-
-
-        //Download the profile pic
-        StorageReference storageReference = FirebaseStorage.getInstance().getReference();
-        StorageReference photoReference= storageReference.;
-
-      final long ONE_MEGABYTE = 1024 * 1024;
-        photoReference.getBytes(ONE_MEGABYTE).addOnSuccessListener(new OnSuccessListener<byte[]>() {
-            @Override
-            public void onSuccess(byte[] bytes) {
-                Bitmap bmp = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
-                profileImage.setImageBitmap(bmp);
-                //send message to main thread
-                handler.sendEmptyMessage(0);
-            }
-        }).addOnFailureListener(new OnFailureListener() {
-            @Override
-            public void onFailure(@NonNull Exception exception) {
-                if(getActivity() != null){
-                    myToast.setText("No Such file or Path found!!");
-                    myToast.show();
-                }
-                else
-                    Log.d("matte", "null context and profilePic download failed");
-                //set predefined image
-                profileImage.setImageResource(R.drawable.plate_fork);
-                //send message to main thread
-                handler.sendEmptyMessage(0);
-            }
-        });
-
-    }
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
