@@ -6,8 +6,16 @@ import android.arch.lifecycle.MutableLiveData;
 import android.arch.lifecycle.ViewModel;
 import android.content.Context;
 import android.content.res.Resources;
+import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 
+import com.google.firebase.database.ChildEventListener;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 import com.mad.poleato.R;
 import com.mad.poleato.DailyOffer.Food;
 
@@ -20,6 +28,8 @@ public class MyViewModel extends ViewModel {
     private MutableLiveData<List<String>> _listDataGroup = new MutableLiveData<>(); // header titles
     private MutableLiveData<HashMap<String, List<Food>>> _listDataChild = new MutableLiveData<>(); // child data in format of header title, child title
     private boolean flag = false;
+
+    private String loggedID = "R00";
 
     public LiveData<HashMap<String, List<Food>>> getListC() {
         return _listDataChild;
@@ -52,20 +62,131 @@ public class MyViewModel extends ViewModel {
     }
 
 
-//    private void initGroup(){
-//        listDataGroup = new ArrayList<>();
-//        listDataGroup.add(getString(R.string.starters));
-//        listDataGroup.add(getString(R.string.firsts));
-//        listDataGroup.add(getString(R.string.seconds));
-//        listDataGroup.add(getString(R.string.desserts));
-//        listDataGroup.add(getString(R.string.drinks));
-//    }
+    private void initGroup(Context context){
+        List<String> l = new ArrayList<>();
+        l.add(context.getString(R.string.starters));
+        l.add(context.getString(R.string.firsts));
+        l.add(context.getString(R.string.seconds));
+        l.add(context.getString(R.string.desserts));
+        l.add(context.getString(R.string.drinks));
+
+        _listDataGroup.setValue(l);
+    }
 
     private void initChild() {
 
         _listDataChild.setValue(new HashMap<String, List<Food>>());
-        for (int idx = 0; idx < _listDataGroup.getValue().size(); idx++)
-            _listDataChild.getValue().put(_listDataGroup.getValue().get(idx), new ArrayList<Food>());
+        for (String s : _listDataGroup.getValue())
+            _listDataChild.getValue().put(s, new ArrayList<Food>());
+
+    }
+
+
+    public void downloadMenu(final Context context){
+
+        initGroup(context);
+        initChild();
+
+        DatabaseReference reference = FirebaseDatabase.getInstance().getReference("restaurants/"+loggedID+"/Menu");
+
+        reference.addChildEventListener(new ChildEventListener() {
+            @Override
+            public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+
+                List<Food> l = new ArrayList<>();
+                for(DataSnapshot snap : dataSnapshot.getChildren()){
+                    String name = snap.getKey();
+                    String ingredients = snap.child("Description").getValue().toString();
+                    double price = Double.parseDouble(snap.child("Price")
+                            .getValue()
+                            .toString()
+                            .replace(",", "."));
+                    int quantity = Integer.parseInt(snap.child("Quantity").getValue().toString());
+                    //TODO make image dynamic
+                    Bitmap img = BitmapFactory.decodeResource(context.getResources(), R.drawable.plate_fork);
+                    l.add(new Food(img, name, ingredients, price, quantity));
+                }
+
+                if(dataSnapshot.getKey().equals("Drinks"))
+                    _listDataChild.getValue().put(context.getString(R.string.drinks), l);
+                else if(dataSnapshot.getKey().equals("Firsts"))
+                    _listDataChild.getValue().put(context.getString(R.string.firsts), l);
+                else if(dataSnapshot.getKey().equals("Seconds"))
+                    _listDataChild.getValue().put(context.getString(R.string.seconds), l);
+                else if(dataSnapshot.getKey().equals("Starters"))
+                    _listDataChild.getValue().put(context.getString(R.string.starters), l);
+
+            }
+
+            @Override
+            public void onChildChanged(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+                List<Food> l = new ArrayList<>();
+                for(DataSnapshot snap : dataSnapshot.getChildren()){
+                    String name = snap.getKey();
+                    String ingredients = snap.child("Description").getValue().toString();
+                    double price = Double.parseDouble(snap.child("Price")
+                            .getValue()
+                            .toString()
+                            .replace(",", "."));
+                    int quantity = Integer.parseInt(snap.child("Quantity").getValue().toString());
+                    //TODO make image dynamic
+                    Bitmap img = BitmapFactory.decodeResource(context.getResources(), R.drawable.plate_fork);
+                    l.add(new Food(img, name, ingredients, price, quantity));
+                }
+
+                if(dataSnapshot.getKey().equals("Drinks"))
+                    _listDataChild.getValue().put(context.getString(R.string.drinks), l);
+                else if(dataSnapshot.getKey().equals("Firsts"))
+                    _listDataChild.getValue().put(context.getString(R.string.firsts), l);
+                else if(dataSnapshot.getKey().equals("Seconds"))
+                    _listDataChild.getValue().put(context.getString(R.string.seconds), l);
+                else if(dataSnapshot.getKey().equals("Starters"))
+                    _listDataChild.getValue().put(context.getString(R.string.starters), l);
+
+            }
+
+            @Override
+            public void onChildRemoved(@NonNull DataSnapshot dataSnapshot) {
+
+                List<Food> l = new ArrayList<>();
+                for(DataSnapshot snap : dataSnapshot.getChildren()){
+                    String name = snap.getKey();
+                    String ingredients = snap.child("Description").getValue().toString();
+                    double price = Double.parseDouble(snap.child("Price")
+                            .getValue()
+                            .toString()
+                            .replace(",", "."));
+                    int quantity = Integer.parseInt(snap.child("Quantity").getValue().toString());
+                    //TODO make image dynamic
+                    Bitmap img = BitmapFactory.decodeResource(context.getResources(), R.drawable.plate_fork);
+                    l.add(new Food(img, name, ingredients, price, quantity));
+                }
+
+                if(dataSnapshot.getKey().equals("Drinks"))
+                    _listDataChild.getValue().put(context.getString(R.string.drinks), l);
+                else if(dataSnapshot.getKey().equals("Firsts"))
+                    _listDataChild.getValue().put(context.getString(R.string.firsts), l);
+                else if(dataSnapshot.getKey().equals("Seconds"))
+                    _listDataChild.getValue().put(context.getString(R.string.seconds), l);
+                else if(dataSnapshot.getKey().equals("Starters"))
+                    _listDataChild.getValue().put(context.getString(R.string.starters), l);
+
+            }
+
+            @Override
+            public void onChildMoved(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+
+
+
+
 
     }
 

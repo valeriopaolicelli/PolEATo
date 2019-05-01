@@ -177,7 +177,7 @@ public class EditProfileFragment extends Fragment {
         checkedTypes = new HashSet<>();
         imageButtons = new HashMap<>();
 
-        loggedID = "R02";
+        loggedID = "R05";
 
 
 
@@ -457,7 +457,7 @@ public class EditProfileFragment extends Fragment {
                 }
 
             } else
-                profileImage.setImageBitmap(decodeBase64(image));
+                profileImage.setImageBitmap(decodeBase64(image)); //TODO back pressed on gallery
         }
     }
 
@@ -659,7 +659,7 @@ public class EditProfileFragment extends Fragment {
 
         //as above with the addition punctuation
         //String punctuationRegex = new String("[\\.,\\*\\:\\'\\(\\)]");
-        String textRegex = new String("[^=&%\\/\\s]+([^=&%\\/]+)?[^=&%\\/\\s]+");
+        String textRegex = new String("[^=&\\/\\s]+([^=&\\/]+)?[^=&\\/\\s]+");
 
         String emailRegex = new String("^.+@[^\\.].*\\.[a-z]{2,}$");
 

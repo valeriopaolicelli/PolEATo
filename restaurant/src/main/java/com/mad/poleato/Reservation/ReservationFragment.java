@@ -98,7 +98,7 @@ public class ReservationFragment extends Fragment {
         size = new Point();
         display.getSize(size);
         width = size.x;
-        loggedID = "R00";
+        loggedID = "R05";
     }
 
     @Override
