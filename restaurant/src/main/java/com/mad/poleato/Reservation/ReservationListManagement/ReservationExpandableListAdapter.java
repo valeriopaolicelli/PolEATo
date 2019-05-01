@@ -1,5 +1,6 @@
 package com.mad.poleato.Reservation.ReservationListManagement;
 
+import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -10,17 +11,14 @@ import android.view.ViewGroup;
 import android.widget.BaseExpandableListAdapter;
 import android.widget.Button;
 import android.widget.CheckBox;
-import android.widget.CompoundButton;
-import android.widget.ExpandableListView;
 import android.widget.TextView;
-import android.widget.Toast;
 
+import com.google.firebase.database.FirebaseDatabase;
 import com.mad.poleato.R;
 import com.mad.poleato.Reservation.Dish;
 import com.mad.poleato.Reservation.Reservation;
 import com.mad.poleato.Reservation.Status;
 
-import java.sql.BatchUpdateException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -35,7 +33,9 @@ public class ReservationExpandableListAdapter extends BaseExpandableListAdapter 
     private List<Reservation> reservations;
     private HashMap<String, List<Dish>>listHashMap;
     private ArrayList<Boolean>groupChecked = new ArrayList<>();
+    @SuppressLint("UseSparseArrays")
     private HashMap<Integer, ArrayList<Boolean>>childsChecked = new HashMap<>();
+    @SuppressLint("UseSparseArrays")
     private HashMap<Integer, CheckBox> groupCheckBoxes = new HashMap<>();
 
     public ReservationExpandableListAdapter(Context context, List<Reservation> reservations, HashMap<String, List<Dish>> listHashMap) {
@@ -110,7 +110,7 @@ public class ReservationExpandableListAdapter extends BaseExpandableListAdapter 
         if( view ==  null){
             holder = new ViewHolder();
             LayoutInflater inflater = (LayoutInflater)this.context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-            view = inflater.inflate(R.layout.reservation_row1_layout,null);
+            view = inflater.inflate(R.layout.layout_reservation_group,null);
 
             holder.tv_date = (TextView)view.findViewById(R.id.tvDateField);
             holder.tv_time = (TextView) view.findViewById(R.id.tvTimeField);
@@ -122,11 +122,6 @@ public class ReservationExpandableListAdapter extends BaseExpandableListAdapter 
             view.setTag(holder);
         }else{
             holder = (ViewHolder) view.getTag();
-//            holder.tv_date = (TextView)view.findViewById(R.id.tvDateField);
-//            holder.tv_time = (TextView) view.findViewById(R.id.tvTimeField);
-//            holder.tv_status = (TextView) view.findViewById(R.id.tvStatusField);
-//            holder.button = (Button) view.findViewById(R.id.myButton);
-//            holder.selectAllCheckBox = (CheckBox) view.findViewById(R.id.selectAllCheckBox);
         }
         holder.tv_date.setText(c.getDate());
         holder.tv_time.setText(c.getTime());
@@ -197,7 +192,8 @@ public class ReservationExpandableListAdapter extends BaseExpandableListAdapter 
                                 + v.getResources().getString(R.string.date) + ": " + c.getDate() + " "
                                 + v.getResources().getString(R.string.time) + ": " + c.getTime() + "\n"
                                 + v.getResources().getString(R.string.surname) + ": " + c.getSurname() + "\n"
-                                + v.getResources().getString(R.string.address) + ": " + c.getAddress() + "\n";
+                                + v.getResources().getString(R.string.address) + ": " + c.getAddress() + "\n"
+                                + v.getResources().getString(R.string.phone) + ": " + c.getPhone() + "\n";
                         builder.setMessage(msg);
                         builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
                             @Override
@@ -214,7 +210,12 @@ public class ReservationExpandableListAdapter extends BaseExpandableListAdapter 
                             builder.setPositiveButton(context.getString(R.string.choice_confirm), new DialogInterface.OnClickListener() {
                                 @Override
                                 public void onClick(DialogInterface dialogInterface, int i) {
+
+                                    //TODO when log in will be enabled, change the R00 child, with the proper one
+                                    FirebaseDatabase.getInstance().getReference("restaurants").child("R00").child("reservations").child(c.getOrder_id()).child("status").child("en").setValue("Delivering");
+                                    FirebaseDatabase.getInstance().getReference("restaurants").child("R00").child("reservations").child(c.getOrder_id()).child("status").child("it").setValue("In consegna");
                                     c.setStatus(Status.DELIVERY, context);
+
                                     holder.button.setText(context.getString(R.string.order_info));
                                     c.setButtonText(context.getString(R.string.order_info));
                                     notifyDataSetChanged();
@@ -237,6 +238,8 @@ public class ReservationExpandableListAdapter extends BaseExpandableListAdapter 
                                 public void onClick(DialogInterface dialogInterface, int i) {
                                     // Change button text
                                     c.setStatus(Status.COOKING, context);
+                                    FirebaseDatabase.getInstance().getReference("restaurants").child("R00").child("reservations").child(c.getOrder_id()).child("status").child("en").setValue("Cooking");
+                                    FirebaseDatabase.getInstance().getReference("restaurants").child("R00").child("reservations").child(c.getOrder_id()).child("status").child("it").setValue("Preparazione");
                                     holder.button.setText(context.getString(R.string.title_deliver));
                                     c.setButtonText(context.getString(R.string.title_deliver));
                                     notifyDataSetChanged();
@@ -248,6 +251,8 @@ public class ReservationExpandableListAdapter extends BaseExpandableListAdapter 
                                 @Override
                                 public void onClick(DialogInterface dialogInterface, int i) {
                                     c.setStatus(Status.REJECTED, context);
+                                    FirebaseDatabase.getInstance().getReference("restaurants").child("R00").child("reservations").child(c.getOrder_id()).child("status").child("en").setValue("Rejected");
+                                    FirebaseDatabase.getInstance().getReference("restaurants").child("R00").child("reservations").child(c.getOrder_id()).child("status").child("it").setValue("Rifiutato");
                                     notifyDataSetChanged();
                                 }
                             });
@@ -283,7 +288,7 @@ public class ReservationExpandableListAdapter extends BaseExpandableListAdapter 
             holder= new ChildHolder();
 
             LayoutInflater inflater = (LayoutInflater)this.context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-            view = inflater.inflate(R.layout.reservation_dishrow_layout,null);
+            view = inflater.inflate(R.layout.layout_reservation_child,null);
             holder.tv_dish_name= (TextView) view.findViewById(R.id.tv_dish_name);
             holder.tv_dish_quantity = (TextView) view.findViewById(R.id.tv_dish_quantity);
             holder.tv_dish_notes= (TextView) view.findViewById(R.id.tv_dish_note);

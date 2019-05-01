@@ -177,7 +177,7 @@ public class EditProfileFragment extends Fragment {
         checkedTypes = new HashSet<>();
         imageButtons = new HashMap<>();
 
-        loggedID = "R03";
+        loggedID = "R00";
 
 
 
@@ -813,6 +813,9 @@ public class EditProfileFragment extends Fragment {
                 /**
                  *
                  */
+
+                /* Upload uri on FB */
+                FirebaseDatabase.getInstance().getReference("restaurants").child(loggedID).child("photoUrl").setValue(downloadUrl.toString());
             }
         });
 

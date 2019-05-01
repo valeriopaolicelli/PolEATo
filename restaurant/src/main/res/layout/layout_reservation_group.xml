@@ -5,11 +5,9 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="@drawable/group_style"
+    android:padding="16dp"
     android:orientation="vertical"
-    tools:context=".MainActivity"
-    android:padding="10dp">
-
+    tools:context=".MainActivity">
 
     <!-- Name and surname client -->
     <android.support.constraint.ConstraintLayout
@@ -67,7 +65,7 @@
             android:layout_marginBottom="8dp"
             android:maxLength="40"
             android:singleLine="true"
-            android:textColor="@color/colorTextSubField"
+            android:textColor="@color/colorTextTitle"
             android:textSize="15sp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toStartOf="@id/tvTimeField"
@@ -98,7 +96,7 @@
             android:layout_marginBottom="8dp"
             android:maxLength="40"
             android:singleLine="true"
-            android:textColor="@color/colorTextSubField"
+            android:textColor="@color/colorTextTitle"
             android:textSize="15sp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toStartOf="@id/tvStatusField"
@@ -129,7 +127,7 @@
             android:layout_marginBottom="8dp"
             android:maxLength="40"
             android:singleLine="true"
-            android:textColor="@color/colorTextSubField"
+            android:textColor="@color/colorTextTitle"
             android:textSize="15sp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toStartOf="@id/selectAllCheckBox"

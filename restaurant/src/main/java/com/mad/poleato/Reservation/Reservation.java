@@ -1,6 +1,7 @@
 package com.mad.poleato.Reservation;
 
 import android.content.Context;
+import android.util.Log;
 
 import com.mad.poleato.R;
 
@@ -17,6 +18,7 @@ public class Reservation {
     private Status status;
     private String stat;
     private String buttonText;
+    private String phone;
     private boolean checked;
 
     private ArrayList<Dish>dishes = new ArrayList<>();
@@ -27,16 +29,17 @@ public class Reservation {
 
     private String time;
 
-    public Reservation(String order_id, String name, String surname, String address, String date, String time, Context context) {
+    public Reservation(String order_id, String name, String surname, String address, String date, String time, String status, String phone, Context context) {
         this.order_id = order_id;
         this.name = name;
         this.surname = surname;
         this.address= address;
         this.date = date;
         this.time= time;
-        this.status = Status.ACCEPATANCE;
-        this.stat = context.getString(R.string.new_order);
+        this.stat = status;
+        setStat(status, context);
         this.buttonText= context.getString(R.string.button_reservation);
+        this.phone= phone;
     }
     public String getName() {
         return name;
@@ -50,11 +53,19 @@ public class Reservation {
         return surname;
     }
 
+    public void setSurname(String surname) {
+        this.surname = surname;
+    }
+
+    public String getPhone(){return phone;}
+
+    public void setPhone(String phone) {
+        this.phone = phone;
+    }
 
     public String getDate() {
         return date;
     }
-
 
     public Status getStatus() {
         return status;
@@ -83,7 +94,7 @@ public class Reservation {
         if(stat.equals(context.getString(R.string.delivery)))
             this.status= Status.DELIVERY;
         if(stat.equals(context.getString(R.string.cooking)))
-            this.status= Status.COOKING;
+            this.status = Status.COOKING;
         if(stat.equals(context.getString(R.string.reject)))
             this.status= Status.REJECTED;
     }
@@ -93,6 +104,18 @@ public class Reservation {
     }
 
     public String getAddress(){ return address;}
+
+    public void setAddress(String address) {
+        this.address = address;
+    }
+
+    public void setDate(String date) {
+        this.date = date;
+    }
+
+    public void setTime(String time) {
+        this.time = time;
+    }
 
     public boolean isChecked() {
         return checked;
@@ -120,4 +143,5 @@ public class Reservation {
     public void setButtonText(String text){
         this.buttonText= text;
     }
+
 }

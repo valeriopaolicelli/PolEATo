@@ -40,10 +40,6 @@
 
 
 
-
-
-
-
     <string name="ch_pass"><font size="18">Cambia Password(max 12 char)</font></string>
     <string name="old_pass"><font size="18">Inserisci la vecchia password</font></string>
     <string name="new_pass"><font size="18">Inserisci la nuova password</font></string>
