@@ -28,7 +28,8 @@
     <string name="delivery_cost">Delivery</string>
     <string name="price_range">Price</string>
     <string name="free_delivery">Free</string>
-
+    <string name="date">Date</string>
+    <string name="time">Time</string>
 
     <string name="italian_cooking">Italian</string>
     <string name="pizza_cooking">Pizza</string>

@@ -14,10 +14,11 @@ public class Order implements Serializable {
    private List<Food> selectedFoods;
    private Double totalPrice;
    private String customerID; //TODO: must be implemented with login phase
-   private Date date;
+   private String date;
    private String status;
    private String restaurantID;
    private Restaurant r;
+   private String time;
 
     public Order() {
         this.totalPrice=0.0;
@@ -68,6 +69,21 @@ public class Order implements Serializable {
         this.r = r;
     }
 
+    public String getData(){
+        return date;
+    }
+
+    public void setDate(String date) {
+        this.date = date;
+    }
+
+    public String getTime(){
+        return time;
+    }
+
+    public void setTime(String time) {
+        this.time = time;
+    }
 
     public String getStatus() {
         return status;
@@ -83,6 +99,8 @@ public class Order implements Serializable {
         reservation.setValue(this);
         String dbkey = reservation.getKey();
         dbReference.child(this.getRestaurantID()).child("reservations").child(dbkey).child("dishes").setValue(this.getSelectedFoods());
+        dbReference.child(this.getRestaurantID()).child("reservations").child(dbkey).child("data").setValue(this.getData());
+        dbReference.child(this.getRestaurantID()).child("reservations").child(dbkey).child("time").setValue(this.getTime());
     }
 
 }

@@ -3,6 +3,7 @@ package com.mad.poleato;
 import android.app.Activity;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -11,6 +12,7 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -33,6 +35,7 @@ public class CartActivity extends AppCompatActivity implements Interface {
     private RecyclerView.LayoutManager layoutManager;
     private static RecyclerView rv;
     private List<Food> foodList;
+    private EditText time, date;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -46,6 +49,8 @@ public class CartActivity extends AppCompatActivity implements Interface {
         tvTotal = (TextView) findViewById(R.id.tv_total);
         tvEmptyCart = (TextView) findViewById(R.id.empty_cart);
 
+        time= findViewById(R.id.input_time);
+        date= findViewById(R.id.input_date);
 
         orderBtn = (Button) findViewById(R.id.btn_placeorder);
         rv = (RecyclerView) findViewById(R.id.recycler_cart);
@@ -56,7 +61,6 @@ public class CartActivity extends AppCompatActivity implements Interface {
 
         this.recyclerAdapter = new CartRecyclerViewAdapter(getApplicationContext(), foodList, order);
         rv.setAdapter(recyclerAdapter);
-
 
         DividerItemDecoration itemDecoration = new DividerItemDecoration(getApplicationContext(), 1 );
         rv.addItemDecoration(itemDecoration);
@@ -74,24 +78,40 @@ public class CartActivity extends AppCompatActivity implements Interface {
         orderBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                boolean wrongField= false;
                 if(order.getSelectedFoods().isEmpty()){
+                    wrongField= true;
                     Toast.makeText(getApplicationContext(),"Cart is Empty", Toast.LENGTH_SHORT).show();
                 }
-                else{
+
+                if(time.getText().toString().equals("")) {
+                    wrongField=true;
+                    Toast.makeText(getApplicationContext(), "Specify the time to receive the order", Toast.LENGTH_LONG).show();
+                    time.setBackground(ContextCompat.getDrawable(getApplicationContext(), R.drawable.border_wrong_field));
+                }
+                if(date.getText().toString().equals("")){
+                    wrongField= true;
+                    Toast.makeText(getApplicationContext(), "Specify the date to receive the order", Toast.LENGTH_LONG).show();
+                    date.setBackground(ContextCompat.getDrawable(getApplicationContext(), R.drawable.border_wrong_field));
+                }
+                if(!wrongField){
                     AlertDialog.Builder builder = new AlertDialog.Builder(CartActivity.this);
                     builder.setTitle("Confirm order");
                     builder.setMessage("Proceed with order request?");
                     builder.setPositiveButton("Confirm", new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialogInterface, int i) {
-//                            DatabaseReference reservation =  dbReference.child(order.getRestaurantID()).child("reservations").push();
-//                            reservation.setValue(order);
-//                            String dbkey = reservation.getKey();
-//                            dbReference.child(order.getRestaurantID()).child("reservations").child(dbkey).child("dishes").setValue(order.getSelectedFoods());
+                            //                            DatabaseReference reservation =  dbReference.child(order.getRestaurantID()).child("reservations").push();
+                            //                            reservation.setValue(order);
+                            //                            String dbkey = reservation.getKey();
+                            //                            dbReference.child(order.getRestaurantID()).child("reservations").child(dbkey).child("dishes").setValue(order.getSelectedFoods());
+                            order.setDate(date.getText().toString());
+                            order.setTime(time.getText().toString());
+
                             order.uploadOrder();
                             Intent returnIntent = new Intent();
-                            setResult(Activity.RESULT_OK,returnIntent);
-                            flag=true;
+                            setResult(Activity.RESULT_OK, returnIntent);
+                            flag = true;
                             finish();
                         }
                     });
@@ -105,7 +125,6 @@ public class CartActivity extends AppCompatActivity implements Interface {
 
                     AlertDialog alertDialog = builder.create();
                     alertDialog.show();
-
                 }
             }
         });
