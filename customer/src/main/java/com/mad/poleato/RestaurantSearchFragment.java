@@ -162,14 +162,20 @@ public class RestaurantSearchFragment extends DialogFragment {
 
                 Bitmap img = null;
                 ImageDownloader imgDownloader = new ImageDownloader(imageUrl);
-                Thread downloadThread = new Thread(imgDownloader);
+                imgDownloader.run();
+                try {
+                    img = imgDownloader.getValue();
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+                /*Thread downloadThread = new Thread(imgDownloader);
                 downloadThread.start();
                 try {
                     downloadThread.join();
                     img = imgDownloader.getValue();
                 } catch (InterruptedException e) {
                     e.printStackTrace();
-                }
+                }*/
 
                 //Here image is still
                 if(img == null)
