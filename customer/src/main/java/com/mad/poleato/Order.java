@@ -101,6 +101,8 @@ public class Order implements Serializable {
         dbReference.child(this.getRestaurantID()).child("reservations").child(dbkey).child("dishes").setValue(this.getSelectedFoods());
         dbReference.child(this.getRestaurantID()).child("reservations").child(dbkey).child("data").setValue(this.getData());
         dbReference.child(this.getRestaurantID()).child("reservations").child(dbkey).child("time").setValue(this.getTime());
+        dbReference.child(this.getRestaurantID()).child("reservations").child(dbkey).child("status").child("it").setValue("Nuovo ordine");
+        dbReference.child(this.getRestaurantID()).child("reservations").child(dbkey).child("status").child("en").setValue("New order");
     }
 
 }

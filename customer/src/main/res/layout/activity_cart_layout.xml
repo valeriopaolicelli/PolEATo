@@ -47,6 +47,7 @@
             android:layout_width="100dp"
             android:layout_height="wrap_content"
             android:inputType="date"
+            android:imeOptions="actionNext"
             android:maxLength="10"
             tools:ignore="Autofill,LabelFor,TextFields"
             android:textSize="20sp"/>
@@ -67,6 +68,7 @@
             android:layout_width="80dp"
             android:layout_height="wrap_content"
             android:inputType="time"
+            android:imeOptions="actionDone"
             android:maxLength="6"
             tools:ignore="Autofill,LabelFor,TextFields"
             android:textSize="20sp"
