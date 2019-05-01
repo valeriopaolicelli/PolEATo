@@ -37,7 +37,7 @@ public class Reservation {
         this.date = date;
         this.time= time;
         this.stat = status;
-        if(stat!=null)
+        if(stat!=null && (!stat.equals("")))
             setStat(status, context);
         this.buttonText= context.getString(R.string.button_reservation);
         this.phone= phone;
