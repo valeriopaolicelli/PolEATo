@@ -15,7 +15,8 @@ public class Order implements Serializable {
    private Double totalPrice;
    private String customerID; //TODO: must be implemented with login phase
    private String date;
-   private String status;
+   private String status_it;
+   private String status_en;
    private String restaurantID;
    private Restaurant r;
    private String time;
@@ -24,6 +25,8 @@ public class Order implements Serializable {
         this.totalPrice=0.0;
         selectedFoods=new ArrayList<>();
         customerID = "C00"; // TODO; Must be restrieved from database
+        status_it= "New order";
+        status_en= "Nuovo ordine";
     }
 
     public void updateTotalPrice(){
@@ -84,14 +87,6 @@ public class Order implements Serializable {
         this.time = time;
     }
 
-    public String getStatus() {
-        return status;
-    }
-
-    public void setStatus(String status) {
-        this.status = status;
-    }
-
     public void uploadOrder() {
         DatabaseReference dbReference = FirebaseDatabase.getInstance().getReference("restaurants");
         DatabaseReference reservation =  dbReference.child(this.getRestaurantID()).child("reservations").push();
@@ -100,8 +95,8 @@ public class Order implements Serializable {
         dbReference.child(this.getRestaurantID()).child("reservations").child(dbkey).child("dishes").setValue(this.getSelectedFoods());
         dbReference.child(this.getRestaurantID()).child("reservations").child(dbkey).child("date").setValue(this.getDate());
         dbReference.child(this.getRestaurantID()).child("reservations").child(dbkey).child("time").setValue(this.getTime());
-        dbReference.child(this.getRestaurantID()).child("reservations").child(dbkey).child("status").child("it").setValue("Nuovo ordine");
-        dbReference.child(this.getRestaurantID()).child("reservations").child(dbkey).child("status").child("en").setValue("New order");
+        dbReference.child(this.getRestaurantID()).child("reservations").child(dbkey).child("status").child("it").setValue(status_it);
+        dbReference.child(this.getRestaurantID()).child("reservations").child(dbkey).child("status").child("en").setValue(status_en);
     }
 
 }
