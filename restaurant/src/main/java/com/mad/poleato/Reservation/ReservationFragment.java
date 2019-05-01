@@ -1,6 +1,7 @@
 package com.mad.poleato.Reservation;
 
 import android.os.Bundle;
+import android.provider.ContactsContract;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -146,7 +147,6 @@ public class ReservationFragment extends Fragment {
                 Reservation r= null;
                 final String order_id, customer_id;
                 String note= null;
-
                 Locale locale= Locale.getDefault();
                 localeShort = locale.toString().substring(0, 2);
 
@@ -154,7 +154,27 @@ public class ReservationFragment extends Fragment {
                 customer_id = dataSnapshot.child("customerID").getValue().toString();
                 final String date= dataSnapshot.child("date").getValue().toString();
                 final String time= dataSnapshot.child("time").getValue().toString();
-                final String status= dataSnapshot.child("status").child(localeShort).getValue().toString();
+                String status= "";
+                if(dataSnapshot.child("status").child(localeShort).getValue() == null) {
+                    if(localeShort.equals("it")) {
+                        if(dataSnapshot.child("status").getValue().toString().equals("New order"))
+                            status= "Nuovo ordine";
+                        else if(dataSnapshot.child("status").getValue().toString().equals("Cooking"))
+                            status= "Preparazione";
+                        else if(dataSnapshot.child("status").getValue().toString().equals("Delivering"))
+                            status= "In consegna";
+                    }
+                    else{
+                        if(dataSnapshot.child("status").getValue().toString().equals("Nuovo ordine"))
+                            status= "New order";
+                        else if(dataSnapshot.child("status").getValue().toString().equals("Preparazione"))
+                            status= "Cooking";
+                        else if(dataSnapshot.child("status").getValue().toString().equals("In consegna"))
+                            status= "Delivering";
+                    }
+                }
+                else
+                    status= dataSnapshot.child("status").child(localeShort).getValue().toString();
                 //TODO update with proper date, time and notes
 
                 //Retrieve through customerID the details of the customer
@@ -203,7 +223,7 @@ public class ReservationFragment extends Fragment {
             public void onChildChanged(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
                 Log.d("Valerio", dataSnapshot.getKey());
                 final DataSnapshot dataSnapshot1= dataSnapshot;
-                final String status = dataSnapshot.child("status").child(localeShort).getValue().toString();
+                //final String status = dataSnapshot.child("status").child(localeShort).getValue().toString();
                 final String order_id= dataSnapshot.getKey();
                 final String customer_id= dataSnapshot.child("customerID").getValue().toString();
                 final String date= dataSnapshot.child("date").getValue().toString();
