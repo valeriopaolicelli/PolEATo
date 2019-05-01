@@ -1,11 +1,15 @@
 package com.mad.poleato.Account;
 
+import android.app.ProgressDialog;
 import android.content.Context;
-import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.constraint.solver.widgets.Snapshot;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.util.Log;
@@ -19,40 +23,64 @@ import android.widget.Toast;
 
 import androidx.navigation.Navigation;
 
-import com.google.firebase.FirebaseApp;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
 import com.mad.poleato.R;
-
-import org.w3c.dom.Text;
 
 import java.text.DecimalFormat;
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
 
 
 public class AccountFragment extends Fragment {
 
+    private Toast myToast;
 
     private Map<String, TextView> tvFields;
 
     private FloatingActionButton buttEdit;
-    private ImageView imageBackground;
+    private ImageView profileImage;
+
+    private ProgressDialog progressDialog;
+    Handler handler = new Handler() {
+        @Override
+        public void handleMessage(Message msg) {
+            progressDialog.dismiss();
+        }
+    };
+
+
+    String localeShort;
+
+    String loggedID;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-    }
+        if(getActivity() != null)
+        myToast = Toast.makeText(getActivity(), "", Toast.LENGTH_LONG);
 
-    Context context;
+        //download Type base on the current active Locale
+        String locale = Locale.getDefault().toString();
+        Log.d("matte", "LOCALE: "+locale);
+        localeShort = locale.substring(0, 2);
+
+
+        loggedID = "R03";
+    }
 
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
-        this.context = context;
+
     }
 
     @Override
@@ -72,7 +100,7 @@ public class AccountFragment extends Fragment {
         tvFields.put("IsActive", (TextView)view.findViewById(R.id.tvStatusField));
         tvFields.put("PriceRange", (TextView)view.findViewById(R.id.tvPriceRangeField));
 
-        imageBackground = view.findViewById(R.id.ivBackground);
+        profileImage = view.findViewById(R.id.ivBackground);
 
         // Button to edit the restaurant details
         buttEdit = view.findViewById(R.id.buttEdit);
@@ -92,26 +120,35 @@ public class AccountFragment extends Fragment {
     public void onResume() {
         super.onResume();
         //fill the views fields
-        fillFields();
+        if(getActivity() != null)
+            progressDialog = ProgressDialog.show(getActivity(), "", getString(R.string.loading));
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                //start a new thread to process job
+                fillFields();
+            }
+        }).start();
     }
 
     public void fillFields() {
+
         DatabaseReference reference = FirebaseDatabase.getInstance().getReference("restaurants");
 
         reference.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                DataSnapshot issue = dataSnapshot.child("R00");
-                // it is setted to the first record (restaurant)
+                DataSnapshot issue = dataSnapshot.child(loggedID);
+                // it is set to the first record (restaurant)
                 // when the sign in and log in procedures will be handled, it will be the proper one
                 if (dataSnapshot.exists()) {
                     // dataSnapshot is the "issue" node with all children
                     for(DataSnapshot snap : issue.getChildren()){
                         if(tvFields.containsKey(snap.getKey())){
                             if(snap.getKey().equals("DeliveryCost")){
-                                DecimalFormat decimalFormat = new DecimalFormat("#.00"); //two decimal
-                                String priceStr = decimalFormat.format(Double.parseDouble(snap.getValue().toString()));
-                                tvFields.get(snap.getKey()).setText(priceStr+"€");
+                                //DecimalFormat decimalFormat = new DecimalFormat("#0.00"); //two decimal
+                                //String priceStr = decimalFormat.format(Double.parseDouble(snap.getValue().toString()));
+                                tvFields.get(snap.getKey()).setText(snap.getValue().toString()+"€");
                             }
                             else if(snap.getKey().equals("IsActive") && getActivity() != null){
                                 if((Boolean)snap.getValue())
@@ -127,6 +164,8 @@ public class AccountFragment extends Fragment {
                                     s += "$";
                                 tvFields.get(snap.getKey()).setText(s);
                             }
+                            else if(snap.getKey().equals("Type"))
+                                tvFields.get(snap.getKey()).setText(snap.child(localeShort).getValue().toString());
                             else
                                 tvFields.get(snap.getKey()).setText(snap.getValue().toString());
                         }
@@ -138,10 +177,37 @@ public class AccountFragment extends Fragment {
             public void onCancelled(@NonNull DatabaseError databaseError) {
                 Log.d("matte", "onCancelled | ERROR: " + databaseError.getDetails() +
                         " | MESSAGE: " + databaseError.getMessage());
-                Toast.makeText(getContext(), databaseError.getMessage().toString(), Toast.LENGTH_SHORT);
+                myToast.setText(databaseError.getMessage().toString());
+                myToast.show();
             }
         });
+
+        //Download the profile pic
+        StorageReference storageReference = FirebaseStorage.getInstance().getReference();
+        StorageReference photoReference= storageReference.child(loggedID+"/ProfileImage/img.jpg");
+
+        final long ONE_MEGABYTE = 1024 * 1024;
+        photoReference.getBytes(ONE_MEGABYTE).addOnSuccessListener(new OnSuccessListener<byte[]>() {
+            @Override
+            public void onSuccess(byte[] bytes) {
+                Bitmap bmp = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
+                profileImage.setImageBitmap(bmp);
+                //send message to main thread
+                handler.sendEmptyMessage(0);
+            }
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception exception) {
+                Log.d("matte", "No image found. Default img setting");
+                //set predefined image
+                profileImage.setImageResource(R.drawable.plate_fork);
+                //send message to main thread
+                handler.sendEmptyMessage(0);
+            }
+        });
+
     }
+
 
     @Override
     public void onSaveInstanceState(Bundle outState) {
@@ -170,5 +236,7 @@ public class AccountFragment extends Fragment {
 //        }
 
     }
+
+
 }
 

@@ -25,6 +25,20 @@
     <string name="active_status"><font size="18">Attivo</font></string>
     <string name="inactive_status"><font size="18">Inattivo</font></string>
 
+    <string name="go_active_message">Sei sicuro che vuoi diventare attivo? I clienti
+                                    potranno iniziare ad ordinare.</string>
+    <string name="go_inactive_message">Sei sicuro che vuoi diventare inattivo? Non potrai più
+                    ricevere ordini finché rimani inattivo.</string>
+
+    <string name="yes">Sì</string>
+    <string name="no">No</string>
+
+    <string name="loading">Caricamento</string>
+    <string name="failure">Qualcosa è andato storto</string>
+    <string name="saved">Salvato</string>
+    <string name="saving">Salvataggio</string>
+
+
 
 
 

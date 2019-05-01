@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <android.support.constraint.ConstraintLayout
+    android:id="@+id/mainEdit"
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
@@ -30,7 +31,6 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:adjustViewBounds="true"
-                android:src="@mipmap/new_york_restaurant"
                 app:layout_constraintBottom_toTopOf="@id/input_layout_name"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
@@ -97,8 +97,7 @@
                 app:layout_constraintBottom_toTopOf="@id/typeLabel"
                 app:layout_constraintEnd_toStartOf="@id/input_layout_name"
                 app:layout_constraintTop_toBottomOf="@id/switchStatus"
-                app:layout_constraintStart_toStartOf="parent"
- />
+                app:layout_constraintStart_toStartOf="parent" />
 
             <android.support.design.widget.TextInputLayout
                 android:id="@+id/input_layout_name"
@@ -486,7 +485,7 @@
                 android:contentDescription="@string/phone"
                 android:layout_marginStart="16dp"
                 android:layout_marginTop="8dp"
-                app:layout_constraintBottom_toTopOf="@id/empty_view"
+                app:layout_constraintBottom_toTopOf="@id/input_layout_delivery"
                 app:layout_constraintEnd_toStartOf="@id/input_layout_phone"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/input_layout_email"
@@ -502,7 +501,7 @@
                 app:layout_constraintEnd_toStartOf="@id/cancel_phone"
                 app:layout_constraintStart_toEndOf="@id/phone_icon"
                 app:layout_constraintTop_toBottomOf="@id/input_layout_email"
-                app:layout_constraintBottom_toTopOf="@id/empty_view">
+                app:layout_constraintBottom_toTopOf="@id/input_layout_delivery">
 
                 <EditText
                     android:id="@+id/editTextPhone"
@@ -531,6 +530,62 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toEndOf="@+id/input_layout_phone"
                 app:layout_constraintTop_toBottomOf="@id/input_layout_email"
+                app:layout_constraintBottom_toTopOf="@id/input_layout_delivery"/>
+
+
+            <!-- Delivery cost -->
+            <ImageView
+                android:id="@+id/delivery_icon"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:contentDescription="@string/delivery_cost"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="8dp"
+                app:layout_constraintBottom_toTopOf="@id/empty_view"
+                app:layout_constraintEnd_toStartOf="@id/input_layout_delivery"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/input_layout_phone"
+                android:src="@drawable/phone_icon"/>
+
+            <android.support.design.widget.TextInputLayout
+                android:id="@+id/input_layout_delivery"
+                android:layout_width="0dp"
+                android:layout_height="56dp"
+                android:layout_marginTop="8dp"
+                android:layout_marginBottom="8dp"
+                android:theme="@style/FloatLabel"
+                app:layout_constraintEnd_toStartOf="@id/cancel_delivery"
+                app:layout_constraintStart_toEndOf="@id/delivery_icon"
+                app:layout_constraintTop_toBottomOf="@id/input_layout_phone"
+                app:layout_constraintBottom_toTopOf="@id/empty_view">
+
+                <EditText
+                    android:id="@+id/editTextDelivery"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="5dp"
+                    android:hint="@string/delivery_cost"
+                    android:imeOptions="actionDone"
+                    android:inputType="numberDecimal"
+                    android:maxLength="15"
+                    tools:ignore="Autofill"
+                    android:singleLine="true"
+                    android:textColor="@color/colorTextSubField" />
+            </android.support.design.widget.TextInputLayout>
+
+            <ImageButton
+                android:id="@+id/cancel_delivery"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:layout_marginBottom="8dp"
+                android:layout_marginEnd="8dp"
+                android:background="@android:color/transparent"
+                android:contentDescription="@string/delete"
+                android:src="@drawable/clear"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@+id/input_layout_delivery"
+                app:layout_constraintTop_toBottomOf="@id/input_layout_phone"
                 app:layout_constraintBottom_toTopOf="@id/empty_view"/>
             <!-- empty view to recover the space used by toolbar (which has a marginTop of 50dp) -->
             <View
