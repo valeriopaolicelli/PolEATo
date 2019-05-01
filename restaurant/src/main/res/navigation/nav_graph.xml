@@ -33,8 +33,7 @@
         <action
             android:id="@+id/action_addFoodFragment_to_daily_offer"
             app:destination="@id/daily_offer_id"
-            app:popUpTo="@+id/daily_offer_id"
-            app:popUpToInclusive="true"/>
+           />
     </fragment>
     <fragment
         android:id="@+id/editFoodFragment_id"
