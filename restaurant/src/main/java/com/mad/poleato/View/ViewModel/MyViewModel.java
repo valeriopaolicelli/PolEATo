@@ -29,7 +29,7 @@ public class MyViewModel extends ViewModel {
     private MutableLiveData<HashMap<String, List<Food>>> _listDataChild = new MutableLiveData<>(); // child data in format of header title, child title
     private boolean flag = false;
 
-    private String loggedID = "R00";
+    private String loggedID = "R05";
 
     public LiveData<HashMap<String, List<Food>>> getListC() {
         return _listDataChild;
