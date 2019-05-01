@@ -25,14 +25,17 @@ import android.view.ViewGroup;
 import android.widget.ImageButton;
 import android.widget.PopupMenu;
 import android.widget.SearchView;
+import android.widget.Toast;
 
 
+import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 
@@ -43,6 +46,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Set;
+import java.util.concurrent.locks.Condition;
 
 
 public class RestaurantSearchFragment extends DialogFragment {
@@ -62,6 +66,12 @@ public class RestaurantSearchFragment extends DialogFragment {
     private List<Restaurant> currDisplayedList; //list of filtered elements displayed on the screen
     private Set<String> typesToFilter;
 
+    ProgressDialog progressDialog;
+    private long totalItem;
+    Toast myToast;
+
+    Condition e;
+
 
     //id for the filter fragment
     public static final int FILTER_FRAGMENT = 26;
@@ -71,22 +81,68 @@ public class RestaurantSearchFragment extends DialogFragment {
     public void onAttach(Context context) {
         super.onAttach(context);
         this.hostActivity = this.getActivity();
+
+        if(hostActivity != null)
+            myToast = Toast.makeText(hostActivity, "", Toast.LENGTH_LONG);
+
     }
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        totalItem = 0;
+
         restaurantMap = new HashMap<>();
         restaurantList = new ArrayList<>();
         typesToFilter = new HashSet<>();
         currDisplayedList = new ArrayList<>();
 
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+       // if(getActivity() != null)
+          //  progressDialog = ProgressDialog.show(getActivity(), "", getString(R.string.loading));
+
+
+
+        //Producer & consumer pattern
+
+
+        downloadInfos();
+        //wait for signaling
+        //downloadImages();
+    }
+
+    @Nullable
+    @Override
+    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        fragView = inflater.inflate(R.layout.restaurant_recyclerview, container, false);
+
+        return fragView;
+
+    }
+
+
+    private void downloadInfos() {
         Locale locale = Locale.getDefault();
         // get "en" or "it"
         final String localeShort = locale.toString().substring(0, 2);
 
         dbReference = FirebaseDatabase.getInstance().getReference("restaurants");
+       /* dbReference.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                totalItem = dataSnapshot.getChildrenCount();
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });*/
         dbReference.addChildEventListener(new ChildEventListener() {
             @Override
             public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
@@ -120,7 +176,7 @@ public class RestaurantSearchFragment extends DialogFragment {
                 String type = dataSnapshot.child("Type").child(localeShort).getValue().toString();
                 Boolean isOpen = (Boolean) dataSnapshot.child("IsActive").getValue();
                 int priceRange = Integer.parseInt(dataSnapshot.child("PriceRange").getValue().toString());
-                double deliveryCost = Double.parseDouble(dataSnapshot.child("DeliveryCost").getValue().toString().replace(",","."));
+                double deliveryCost = Double.parseDouble(dataSnapshot.child("DeliveryCost").getValue().toString().replace(",", "."));
 
                 Restaurant resObj = restaurantMap.get(id);
                 resObj.setImage(img);
@@ -158,12 +214,16 @@ public class RestaurantSearchFragment extends DialogFragment {
             }
         });
 
+    }
+
+    public void downloadImages(){
+
 
         //Download the profile pic
-        /*StorageReference storageReference = FirebaseStorage.getInstance().getReference();
-        StorageReference photoReference= storageReference.child(loggedID+"/ProfileImage/img.jpg");
+        StorageReference storageReference = FirebaseStorage.getInstance().getReference();
+        StorageReference photoReference= storageReference.child("/ProfileImage/img.jpg");
 
-        final long ONE_MEGABYTE = 1024 * 1024;
+      /*  final long ONE_MEGABYTE = 1024 * 1024;
         photoReference.getBytes(ONE_MEGABYTE).addOnSuccessListener(new OnSuccessListener<byte[]>() {
             @Override
             public void onSuccess(byte[] bytes) {
@@ -175,8 +235,10 @@ public class RestaurantSearchFragment extends DialogFragment {
         }).addOnFailureListener(new OnFailureListener() {
             @Override
             public void onFailure(@NonNull Exception exception) {
-                if(getActivity() != null)
-                    Toast.makeText(getActivity(), "No Such file or Path found!!", Toast.LENGTH_LONG).show();
+                if(getActivity() != null){
+                    myToast.setText("No Such file or Path found!!");
+                    myToast.show();
+                }
                 else
                     Log.d("matte", "null context and profilePic download failed");
                 //set predefined image
@@ -185,16 +247,6 @@ public class RestaurantSearchFragment extends DialogFragment {
                 handler.sendEmptyMessage(0);
             }
         });*/
-
-
-    }
-
-    @Nullable
-    @Override
-    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        fragView = inflater.inflate(R.layout.restaurant_recyclerview, container, false);
-
-        return fragView;
 
     }
 

@@ -33,6 +33,7 @@
     <string name="price">Prezzo: </string>
     <string name="date">Data</string>
     <string name="time">Orario</string>
+    <string name="loading">Caricamento</string>
 
     <string name="price_sort">Ordina per prezzo(dal più basso)</string>
     <string name="name_sort">Ordina per nome(A-Z)</string>

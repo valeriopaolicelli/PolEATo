@@ -25,6 +25,7 @@ public class RestaurantRecyclerViewAdapter extends RecyclerView.Adapter<Restaura
 
     private List<Restaurant> list; //current displayed list
     private Context context;
+    Toast myToast;
 
     /**
      * current order state of the list
@@ -70,9 +71,13 @@ public class RestaurantRecyclerViewAdapter extends RecyclerView.Adapter<Restaura
 
     // Provide a suitable constructor (depends on the kind of dataset)
     public RestaurantRecyclerViewAdapter(Context context, List<Restaurant> list) {
+
         this.list = list;
         this.context = context;
         currState = State.INIT;
+
+        if(context != null)
+            myToast = Toast.makeText(context, "", Toast.LENGTH_LONG);
 
         this.nameComparator = new SortByName();
         this.priceComparator = new SortByPrice();
@@ -142,7 +147,8 @@ public class RestaurantRecyclerViewAdapter extends RecyclerView.Adapter<Restaura
                 }
                 else
                 {
-                    Toast.makeText(context, "Restaurant is closed at the moment", Toast.LENGTH_SHORT).show();
+                    myToast.setText("Restaurant is closed at the moment");
+                    myToast.show();
                 }
             }
         });
