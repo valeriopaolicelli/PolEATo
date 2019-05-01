@@ -144,8 +144,9 @@ public class ReservationFragment extends Fragment {
             public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
                 //retrieve the customer (reservation) details
                 Reservation r= null;
-                final String status;
+                final String[] status = {null};
                 final String order_id, customer_id;
+                final DataSnapshot dataSnapshot1= dataSnapshot;
                 String note= null;
 
                 Locale locale= Locale.getDefault();
@@ -153,7 +154,6 @@ public class ReservationFragment extends Fragment {
 
                 order_id = dataSnapshot.getKey();
                 customer_id = dataSnapshot.child("customerID").getValue().toString();
-                status = dataSnapshot.child("status").child(localeShort).getValue().toString();
                 final String date= dataSnapshot.child("date").getValue().toString();
                 final String time= dataSnapshot.child("time").getValue().toString();
 
@@ -172,7 +172,8 @@ public class ReservationFragment extends Fragment {
                                 r.setSurname(customerDetails.get(1));
                                 r.setAddress(customerDetails.get(2));
                                 r.setPhone(customerDetails.get(3));
-                                r.setStat(status, getContext());
+//                                status[0] = dataSnapshot1.child("status").child(localeShort).getValue().toString();
+  //                              r.setStat(status[0], getContext());
                                 r.setDate(date);
                                 r.setTime(time);
                             }
@@ -182,7 +183,7 @@ public class ReservationFragment extends Fragment {
                 });
 
                 // fields setted to null only because they will be setted later in the call back of FB
-                r = new Reservation(order_id, null, null, null, null, null, status, null, getContext());
+                r = new Reservation(order_id, null, null, null, null, null, null, null, getContext());
                 reservations.add(r);
 
                 //and for each customer (reservation) retrieve the list of dishes
@@ -205,7 +206,8 @@ public class ReservationFragment extends Fragment {
             @Override
             public void onChildChanged(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
                 Log.d("Valerio", dataSnapshot.getKey());
-                final String status = dataSnapshot.child("status").child(localeShort).getValue().toString();
+                final DataSnapshot dataSnapshot1= dataSnapshot;
+                final String[] status = {null};
                 final String order_id= dataSnapshot.getKey();
                 final String customer_id= dataSnapshot.child("customerID").getValue().toString();
                 final String date= dataSnapshot.child("date").getValue().toString();
@@ -227,7 +229,8 @@ public class ReservationFragment extends Fragment {
                                 r.setSurname(customerDetails.get(1));
                                 r.setAddress(customerDetails.get(2));
                                 r.setPhone(customerDetails.get(3));
-                                r.setStat(status, getContext());
+      //                          status[0] = dataSnapshot1.child("status").child(localeShort).getValue().toString();
+      //                          r.setStat(status[0], getContext());
                                 r.setDate(date);
                                 r.setTime(time);
                             }
@@ -247,21 +250,6 @@ public class ReservationFragment extends Fragment {
                     quantity = Integer.parseInt(dish.child("selectedQuantity").getValue().toString());
                     d = new Dish(nameDish, quantity, note);
                     dishes.add(d);
-                }
-
-                for(Reservation r: reservations){
-                    if(r.getOrder_id().equals(order_id)){
-                        r.setName(customerDetails.get(0));
-                        r.setSurname(customerDetails.get(1));
-                        r.setAddress(customerDetails.get(2));
-                        r.setPhone(customerDetails.get(3));
-                        r.setDishes(dishes);
-                        r.setStat(status, getContext());
-                        r.setStat(status, getContext());
-                        r.setDate(date);
-                        r.setTime(time);
-                        break;
-                    }
                 }
 
                 listAdapter.notifyDataSetChanged();
