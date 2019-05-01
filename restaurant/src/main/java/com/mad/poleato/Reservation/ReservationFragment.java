@@ -30,6 +30,7 @@ import com.mad.poleato.Reservation.ReservationListManagement.ReservationExpandab
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 
 /*
  * A simple {@link Fragment} subclass.
@@ -48,6 +49,7 @@ public class ReservationFragment extends Fragment {
     private Point size;
     private int width;
     String loggedID;
+    private String localeShort;
 
     private DatabaseReference customer; //to retrieve the customer details -> global to handle async behaviour of FB
 
@@ -146,9 +148,14 @@ public class ReservationFragment extends Fragment {
                 final String order_id, customer_id;
                 String note= null;
 
+                Locale locale= Locale.getDefault();
+                localeShort = locale.toString().substring(0, 2);
+
                 order_id = dataSnapshot.getKey();
                 customer_id = dataSnapshot.child("customerID").getValue().toString();
-                status = dataSnapshot.child("status").getValue().toString();
+                status = dataSnapshot.child("status").child(localeShort).getValue().toString();
+                final String date= dataSnapshot.child("date").getValue().toString();
+                final String time= dataSnapshot.child("time").getValue().toString();
 
                 //TODO update with proper date, time and notes
 
@@ -166,6 +173,8 @@ public class ReservationFragment extends Fragment {
                                 r.setAddress(customerDetails.get(2));
                                 r.setPhone(customerDetails.get(3));
                                 r.setStat(status, getContext());
+                                r.setDate(date);
+                                r.setTime(time);
                             }
                         }
                         listAdapter.notifyDataSetChanged();
@@ -194,13 +203,13 @@ public class ReservationFragment extends Fragment {
             @Override
             public void onChildChanged(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
                 Log.d("Valerio", dataSnapshot.getKey());
-                String status;
-                final String order_id, customer_id;
+                final String status= dataSnapshot.child("status").getValue().toString();
+                final String order_id= dataSnapshot.getKey();
+                final String customer_id= dataSnapshot.child("customerID").getValue().toString();
+                final String date= dataSnapshot.child("date").getValue().toString();
+                final String time= dataSnapshot.child("time").getValue().toString();
                 String note= null;
                 ArrayList<Dish> dishes= new ArrayList<>();
-                order_id = dataSnapshot.getKey();
-                customer_id = dataSnapshot.child("customerID").getValue().toString();
-                status = dataSnapshot.child("status").getValue().toString();
 
                 //TODO update with proper date, time and notes
 
@@ -216,6 +225,9 @@ public class ReservationFragment extends Fragment {
                                 r.setSurname(customerDetails.get(1));
                                 r.setAddress(customerDetails.get(2));
                                 r.setPhone(customerDetails.get(3));
+                                r.setStat(status, getContext());
+                                r.setDate(date);
+                                r.setTime(time);
                             }
                         }
                         listAdapter.notifyDataSetChanged();
@@ -243,6 +255,9 @@ public class ReservationFragment extends Fragment {
                         r.setPhone(customerDetails.get(3));
                         r.setDishes(dishes);
                         r.setStat(status, getContext());
+                        r.setStat(status, getContext());
+                        r.setDate(date);
+                        r.setTime(time);
                         break;
                     }
                 }
@@ -322,10 +337,12 @@ public class ReservationFragment extends Fragment {
                 String surnameCustomer= ds.child("Surname").getValue().toString();
                 String addressCustomer= ds.child("Address").getValue().toString();
                 String phoneCustomer= ds.child("Phone").getValue().toString();
+
                 customerDetails.add(nameCustomer);
                 customerDetails.add(surnameCustomer);
                 customerDetails.add(addressCustomer);
                 customerDetails.add(phoneCustomer);
+
                 firebaseCallBack.onCallBack(customerDetails);
             }
 

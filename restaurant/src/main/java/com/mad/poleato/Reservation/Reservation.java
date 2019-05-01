@@ -109,6 +109,14 @@ public class Reservation {
         this.address = address;
     }
 
+    public void setDate(String date) {
+        this.date = date;
+    }
+
+    public void setTime(String time) {
+        this.time = time;
+    }
+
     public boolean isChecked() {
         return checked;
     }
