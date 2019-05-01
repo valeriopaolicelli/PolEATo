@@ -125,7 +125,7 @@ OneSignal is used to send notifications between applications
 
                             order.setDate(date.getText().toString());
                             order.setTime(time.getText().toString());
-
+                            order.setStatusItEn();
                             order.uploadOrder();
 
                             sendNotification();

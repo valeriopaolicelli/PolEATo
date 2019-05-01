@@ -29,6 +29,11 @@ public class Order implements Serializable {
         status_en= "Nuovo ordine";
     }
 
+    public void setStatusItEn(){
+        status_it= "New order";
+        status_en= "Nuovo ordine";
+    }
+
     public void updateTotalPrice(){
        totalPrice = 0.0;
        if(!selectedFoods.isEmpty()){
