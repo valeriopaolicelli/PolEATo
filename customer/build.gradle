@@ -1,9 +1,21 @@
+buildscript {
+    repositories {
+        maven { url 'https://plugins.gradle.org/m2/'}
+    }
+    dependencies {
+        classpath 'gradle.plugin.com.onesignal:onesignal-gradle-plugin:[0.11.0, 0.99.99]'
+    }
+}
+apply plugin: 'com.onesignal.androidsdk.onesignal-gradle-plugin'
+
+repositories {
+    maven { url 'https://maven.google.com' }
+}
+
 apply plugin: 'com.android.application'
 
 android {
     compileSdkVersion 28
-
-
 
     defaultConfig {
         applicationId "com.mad.poleato"
@@ -13,6 +25,12 @@ android {
         versionName "1.0"
 
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+
+        manifestPlaceholders = [
+                onesignal_app_id: 'a2d0eb0d-4b93-4b96-853e-dcfe6c34778e',
+                // Project number pulled from dashboard, local value is ignored.
+                onesignal_google_project_number: 'REMOTE'
+        ]
 
     }
 
@@ -40,6 +58,8 @@ dependencies {
     implementation 'com.google.firebase:firebase-database:16.1.0'
     implementation 'com.android.support:recyclerview-v7:28.0.0'
     implementation 'com.android.support:gridlayout-v7:28.0.0'
-    implementation 'com.google.firebase:firebase-storage:16.0.3'
+    implementation 'com.google.firebase:firebase-storage:16.1.0'
+    implementation 'com.onesignal:OneSignal:3.10.8'
+    implementation 'com.squareup.okhttp3:okhttp:3.10.0'
 }
 apply plugin: 'com.google.gms.google-services'
