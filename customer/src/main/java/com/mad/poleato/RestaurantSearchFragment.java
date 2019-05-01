@@ -51,6 +51,7 @@ import java.util.concurrent.locks.Condition;
 
 public class RestaurantSearchFragment extends DialogFragment {
 
+    private Toast myToast;
     private Activity hostActivity;
     private View fragView;
     private RestaurantRecyclerViewAdapter recyclerAdapter;
@@ -66,11 +67,13 @@ public class RestaurantSearchFragment extends DialogFragment {
     private List<Restaurant> currDisplayedList; //list of filtered elements displayed on the screen
     private Set<String> typesToFilter;
 
-    ProgressDialog progressDialog;
-    private long totalItem;
-    Toast myToast;
-
-    Condition e;
+    private ProgressDialog progressDialog;
+    Handler handler = new Handler() {
+        @Override
+        public void handleMessage(Message msg) {
+            progressDialog.dismiss();
+        }
+    };
 
 
     //id for the filter fragment
@@ -91,8 +94,6 @@ public class RestaurantSearchFragment extends DialogFragment {
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        totalItem = 0;
-
         restaurantMap = new HashMap<>();
         restaurantList = new ArrayList<>();
         typesToFilter = new HashSet<>();
@@ -103,17 +104,10 @@ public class RestaurantSearchFragment extends DialogFragment {
     @Override
     public void onResume() {
         super.onResume();
-       // if(getActivity() != null)
-          //  progressDialog = ProgressDialog.show(getActivity(), "", getString(R.string.loading));
+        if(getActivity() != null)
+            progressDialog = ProgressDialog.show(getActivity(), "", getString(R.string.loading));
 
-
-
-        //Producer & consumer pattern
-
-
-        downloadInfos();
-        //wait for signaling
-        //downloadImages();
+        fillFields();
     }
 
     @Nullable
@@ -126,35 +120,50 @@ public class RestaurantSearchFragment extends DialogFragment {
     }
 
 
-    private void downloadInfos() {
+
+    private void fillFields() {
         Locale locale = Locale.getDefault();
         // get "en" or "it"
         final String localeShort = locale.toString().substring(0, 2);
 
         dbReference = FirebaseDatabase.getInstance().getReference("restaurants");
-       /* dbReference.addValueEventListener(new ValueEventListener() {
+
+        /**
+         *         This listener is guaranteed to be called only after "ChildEvent".
+         *         Thus it notifies the end of the children
+         */
+        dbReference.addValueEventListener(new ValueEventListener() {
+
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                totalItem = dataSnapshot.getChildrenCount();
+
             }
 
             @Override
             public void onCancelled(@NonNull DatabaseError databaseError) {
 
             }
-        });*/
+        });
         dbReference.addChildEventListener(new ChildEventListener() {
             @Override
             public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
                 Log.d("matte", "onChildAdded | PREVIOUS CHILD: " + s);
 
+
                 String id = dataSnapshot.getKey();
-                Bitmap img = BitmapFactory.decodeResource(getResources(), R.drawable.image_empty); // TODO: make it dynamic
                 String name = dataSnapshot.child("Name").getValue().toString();
                 String type = dataSnapshot.child("Type").child(localeShort).getValue().toString();
                 Boolean isOpen = (Boolean) dataSnapshot.child("IsActive").getValue();
                 int priceRange = Integer.parseInt(dataSnapshot.child("PriceRange").getValue().toString());
                 double deliveryCost = Double.parseDouble(dataSnapshot.child("DeliveryCost").getValue().toString().replace(",", "."));
+
+
+
+
+
+                Bitmap img = BitmapFactory.decodeResource(getResources(), R.drawable.image_empty); // TODO: make it dynamic
+
+
 
                 Restaurant resObj = new Restaurant(id, img, name, type, isOpen, priceRange, deliveryCost);
                 //add to the original list
@@ -216,14 +225,14 @@ public class RestaurantSearchFragment extends DialogFragment {
 
     }
 
-    public void downloadImages(){
+    public void downloadImages(String url){
 
 
         //Download the profile pic
         StorageReference storageReference = FirebaseStorage.getInstance().getReference();
-        StorageReference photoReference= storageReference.child("/ProfileImage/img.jpg");
+        StorageReference photoReference= storageReference.;
 
-      /*  final long ONE_MEGABYTE = 1024 * 1024;
+      final long ONE_MEGABYTE = 1024 * 1024;
         photoReference.getBytes(ONE_MEGABYTE).addOnSuccessListener(new OnSuccessListener<byte[]>() {
             @Override
             public void onSuccess(byte[] bytes) {
@@ -246,7 +255,7 @@ public class RestaurantSearchFragment extends DialogFragment {
                 //send message to main thread
                 handler.sendEmptyMessage(0);
             }
-        });*/
+        });
 
     }
 
