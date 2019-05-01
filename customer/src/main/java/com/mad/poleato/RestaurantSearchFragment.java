@@ -38,7 +38,7 @@ import java.util.List;
 import java.util.Set;
 
 
-public class RestaurantSearchFragment extends DialogFragment {
+public class RestaurantSearchFragment extends Fragment {
 
     private Activity hostActivity;
     private View fragView;
