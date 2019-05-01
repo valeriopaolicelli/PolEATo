@@ -806,6 +806,7 @@ public class EditProfileFragment extends Fragment {
                         });
                         // taskSnapshot.getMetadata() contains file metadata such as size, content-type, and download URL.
                         Uri downloadUrl = taskSnapshot.getUploadSessionUri();
+
                         String s = taskSnapshot.getMetadata().getReference().getDownloadUrl().toString();
                         Log.d("matte", "downloadUrl-->" + downloadUrl);
                         if(getActivity() != null){
