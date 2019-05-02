@@ -123,6 +123,7 @@ public class Order implements Serializable {
        o.setTime(this.time);
        o.setTotalPrice(this.totalPrice);
        o.setCustomerID(this.customerID);
+       o.setRestaurantID(this.restaurantID);
 
        reservation.setValue(o);
 
