@@ -188,7 +188,7 @@ public class ReservationFragment extends Fragment {
 
 
                 // fields setted to null only because they will be setted later in the call back of FB
-                r = new Reservation(order_id, null, null, null, null, null, status, null, getContext());
+                r = new Reservation(order_id, null, null, null, null, null, status, null, getActivity().getApplicationContext());
                 reservations.add(r);
 
                 //and for each customer (reservation) retrieve the list of dishes
