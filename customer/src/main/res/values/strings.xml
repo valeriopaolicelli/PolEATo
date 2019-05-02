@@ -63,13 +63,18 @@
     <string name="confirm_order">Confirm Order</string>
     <string name="X">X</string>
     <string name="notes">Insert notes here(max 30 chars)</string>
+    <string name="order_proceed">Proceed with order request?</string>
+    <string name="confirm">Confirm</string>
+    <string name="cancel">Cancel</string>
+
 
     <string name="specify_date">Specify the date to receive the order</string>
     <string name="specify_time">Specify the time to receive the order</string>
 
+
+
+
     <string name="title_activity_main">MainActivity</string>
-
-
     <string name="title_bottombar_restaurantSearch">Search</string>
     <string name="title_actionbar_restaurantSearch">Search</string>
 

@@ -55,6 +55,9 @@
     <string name="reject">Rifiutato</string>
     <string name="specify_date">Specificare la data in cui ricevere l\'ordine</string>
     <string name="specify_time">Specificare l\'orario in cui ricevere l\'ordine</string>
+    <string name="order_proceed">Procedere con l\'ordine?</string>
+    <string name="confirm">Conferma</string>
+    <string name="cancel">Annulla</string>
 
 
     <string name="closed_restaurant">Il ristorante è chiuso al momento</string>

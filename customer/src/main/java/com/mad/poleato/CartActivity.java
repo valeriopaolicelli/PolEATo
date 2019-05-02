@@ -119,9 +119,9 @@ OneSignal is used to send notifications between applications
                 }
                 if(!wrongField){
                     AlertDialog.Builder builder = new AlertDialog.Builder(CartActivity.this);
-                    builder.setTitle("Confirm order");
-                    builder.setMessage("Proceed with order request?");
-                    builder.setPositiveButton("Confirm", new DialogInterface.OnClickListener() {
+                    builder.setTitle(getString(R.string.confirm_order));
+                    builder.setMessage(getString(R.string.order_proceed));
+                    builder.setPositiveButton(getString(R.string.confirm), new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialogInterface, int i) {
                             order.setDishes();
@@ -139,7 +139,7 @@ OneSignal is used to send notifications between applications
                         }
                     });
 
-                    builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                    builder.setNegativeButton(getString(R.string.cancel), new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialogInterface, int i) {
                             dialogInterface.cancel();
