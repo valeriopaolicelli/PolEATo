@@ -49,7 +49,7 @@ import java.util.Set;
 import java.util.concurrent.locks.Condition;
 
 
-public class RestaurantSearchFragment extends DialogFragment {
+public class RestaurantSearchFragment extends Fragment {
 
     private Toast myToast;
     private Activity hostActivity;

@@ -61,4 +61,20 @@
     <string name="hamburger_cooking">Hamburger</string>
     <string name="american_cooking">Americano</string>
     <string name="mexican_cooking">Messicano</string>
+
+
+    <string name="title_bottombar_restaurantSearch">Ricerca</string>
+    <string name="title_actionbar_restaurantSearch">Ricerca</string>
+
+    <string name="title_bottombar_historyOrder">Ordini</string>
+    <string name="title_actionbar_historyOrder">Ordini</string>
+    <string name="title_actionbar_add_food">Add food</string>
+    <string name="title_actionbar_edit_food">Edit food</string>
+
+    <string name="title_bottombar_account">Account</string>
+    <string name="title_actionbar_account">Account</string>
+    <string name="title_actionbar_edit_account">Edit Account</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>

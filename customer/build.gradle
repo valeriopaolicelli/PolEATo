@@ -61,5 +61,13 @@ dependencies {
     implementation 'com.google.firebase:firebase-storage:16.1.0'
     implementation 'com.onesignal:OneSignal:3.10.8'
     implementation 'com.squareup.okhttp3:okhttp:3.10.0'
+    implementation 'com.google.firebase:firebase-storage:16.0.3'
+
+    def nav_version = "1.0.0"
+
+    implementation "android.arch.navigation:navigation-fragment:$nav_version"
+    // For Kotlin use navigation-fragment-ktx
+    implementation "android.arch.navigation:navigation-ui:$nav_version"
+    // For Kotlin use navigation-ui-ktx
 }
 apply plugin: 'com.google.gms.google-services'
