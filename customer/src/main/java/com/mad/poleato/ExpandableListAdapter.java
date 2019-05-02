@@ -116,6 +116,7 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
                     if(!order.getSelectedFoods().containsKey(food.getName())) {
                         order.addFoodToOrder(food);
                     }
+                    order.getSelectedFoods().get(food.getName()).setSelectedQuantity(food.getSelectedQuantity());
                     order.updateTotalPrice();
                     //((OrderActivity)host).setOrder(order); //works but it's bad programming => better use interfaces
                     Log.d("fabio", "new total price: "+ order.getTotalPrice());
@@ -136,6 +137,7 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
                     if(food.getSelectedQuantity()==0){
                         order.removeFoodFromOrder(food);
                     }
+                    order.getSelectedFoods().get(food.getName()).setSelectedQuantity(food.getSelectedQuantity());
                     order.updateTotalPrice();
                     Log.d("fabio", "new total price: "+ order.getTotalPrice());
                     // ((OrderActivity)host).setOrder(order);
