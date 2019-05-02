@@ -34,7 +34,7 @@
         android:supportsRtl="true"
         android:testOnly="true"
         android:theme="@style/MyMaterialTheme" >
-        <activity android:name="com.mad.poleato.MainActivity" >
+        <activity android:name="com.mad.poleato.MainProfile" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

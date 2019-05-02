@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/nav_graph"
+    app:startDestination="@id/rides_id">
+
+    <fragment
+        android:id="@+id/rides_id"
+        android:name="com.mad.poleato.Rides.Rides"
+        android:label="@string/title_actionbar_deliveryRide"
+        tools:layout="@layout/fragment_rides" />
+    <fragment
+        android:id="@+id/routes_id"
+        android:name="com.mad.poleato.Routes"
+        android:label="@string/title_actionbar_deliveryRoutes"
+        tools:layout="@layout/fragment_routes" />
+</navigation>

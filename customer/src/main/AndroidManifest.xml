@@ -15,7 +15,7 @@
         <activity android:name="com.mad.poleato.EditProfile"
             android:windowSoftInputMode="stateAlwaysVisible|stateHidden">
         </activity>
-        <activity android:name="com.mad.poleato.MainActivity">
+        <activity android:name="com.mad.poleato.MainProfile">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <action android:name="android.intent.action.VIEW" />

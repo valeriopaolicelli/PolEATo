@@ -154,7 +154,7 @@ MERGED from [com.android.support:versionedparcelable:28.0.0] /home/matte/.gradle
 		ADDED from /home/matte/github/PolEATo/app/src/main/AndroidManifest.xml:11:9-35
 	android:theme
 		ADDED from /home/matte/github/PolEATo/app/src/main/AndroidManifest.xml:18:9-47
-activity#com.mad.poleato.MainActivity
+activity#com.mad.poleato.MainProfile
 ADDED from /home/matte/github/PolEATo/app/src/main/AndroidManifest.xml:20:9-26:20
 	android:name
 		ADDED from /home/matte/github/PolEATo/app/src/main/AndroidManifest.xml:20:19-47
