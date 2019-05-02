@@ -145,7 +145,7 @@ public class ReservationExpandableListAdapter extends BaseExpandableListAdapter 
             holder.tv_status.setTextColor(context.getResources().getColor(R.color.colorTextAccepted));
             holder.button.setVisibility(View.VISIBLE);
         }
-        else if (c.getStatus() == Status.ACCEPATANCE ) {
+        else if (c.getStatus() == Status.ACCEPTANCE ) {
             holder.button.setText(context.getResources().getString(R.string.button_reservation));
             holder.tv_status.setTextColor(context.getResources().getColor(R.color.colorTextSubField));
             holder.button.setVisibility(View.VISIBLE);

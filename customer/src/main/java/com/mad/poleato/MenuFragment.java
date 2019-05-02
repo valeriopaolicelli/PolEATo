@@ -163,7 +163,7 @@ public class MenuFragment extends Fragment {
                 childItem = new ArrayList<>();
 
                 for(DataSnapshot ds : dataSnapshot.getChildren()){
-                    String foodName = (String)ds.getKey();
+                    String foodName = ds.getKey();
                     // TODO: Make it dynamic with image
                     SerialBitmap img = new SerialBitmap(BitmapFactory.decodeResource(getResources(),R.drawable.image_empty));
                     Food f = new Food(img, foodName,ds.child("Description").getValue().toString(),
@@ -171,7 +171,7 @@ public class MenuFragment extends Fragment {
                             Integer.parseInt(ds.child("Quantity").getValue().toString()));
                     childItem.add(f);
                 }
-            listDataChild.put(listDataGroup.get(counter), childItem);
+                listDataChild.put(listDataGroup.get(counter), childItem);
                 counter++;
 
                 listAdapter.notifyDataSetChanged();

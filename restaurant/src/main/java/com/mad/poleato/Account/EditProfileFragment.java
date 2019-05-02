@@ -177,11 +177,8 @@ public class EditProfileFragment extends Fragment {
         checkedTypes = new HashSet<>();
         imageButtons = new HashMap<>();
 
-        loggedID = "R05";
-
-
-
-
+        loggedID = "R00";
+        
     }
 
 

@@ -73,7 +73,7 @@ public class Reservation {
     }
 
     public void setStatus(Status status, Context context) {
-        if(status == Status.ACCEPATANCE)
+        if(status == Status.ACCEPTANCE)
             this.stat = context.getString(R.string.new_order);
         else if( status == Status.DELIVERY)
             this.stat = context.getString(R.string.delivery);
@@ -91,7 +91,7 @@ public class Reservation {
     public void setStat(String stat, Context context) {
         this.stat= stat;
         if(stat.equals(context.getString(R.string.new_order)))
-            this.status= Status.ACCEPATANCE;
+            this.status= Status.ACCEPTANCE;
         if(stat.equals(context.getString(R.string.delivery)))
             this.status= Status.DELIVERY;
         if(stat.equals(context.getString(R.string.cooking)))

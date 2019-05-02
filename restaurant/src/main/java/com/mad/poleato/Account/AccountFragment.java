@@ -74,7 +74,7 @@ public class AccountFragment extends Fragment {
         localeShort = locale.substring(0, 2);
 
 
-        loggedID = "R05";
+        loggedID = "R00";
     }
 
     @Override
