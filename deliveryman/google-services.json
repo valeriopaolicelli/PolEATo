@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "504775808769",
+    "firebase_url": "https://poleato-5b090.firebaseio.com",
+    "project_id": "poleato-5b090",
+    "storage_bucket": "poleato-5b090.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:504775808769:android:bb32c317e93f027f",
+        "android_client_info": {
+          "package_name": "com.mad.poleato"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "504775808769-jeqhgoee3jvdbc24v8jbdv5cr57t0rqq.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.mad.poleato",
+            "certificate_hash": "0a3bf002e89576f7aad3f0cc55dd25fd7b9fd01e"
+          }
+        },
+        {
+          "client_id": "504775808769-9ndek09riagafrvopujqh377op6203hp.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAXHZE-6lvKU3KW0g5VK6CF5rnJoyttb4s"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "504775808769-9ndek09riagafrvopujqh377op6203hp.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

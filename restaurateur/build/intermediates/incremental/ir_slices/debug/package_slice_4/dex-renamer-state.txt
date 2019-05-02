@@ -1,4 +1,0 @@
-#Thu Mar 28 21:51:46 CET 2019
-base.0=/home/matte/github/PolEATo/restaurateur/build/intermediates/transforms/dexMerger/debug/4
-path.0=classes.dex
-renamed.0=classes.dex

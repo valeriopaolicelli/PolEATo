@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Deliveryman</string>
+    <string name="title_bar"><font size="18">Il tuo account</font></string>
+    <string name="name"><font size="18">Nome</font></string>
+    <string name="surname"><font size="18">Cognome</font></string>
+    <string name="address"><font size="18">Indirizzo</font></string>
+    <string name="email"><font size="18">Email</font></string>
+    <string name="pay"><font size="18">Metodo di pagamento</font></string>
+    <string name="id"><font size="18">Rider ID</font></string>
+    <string name="other"><font size="18">Altro campo</font></string>
+    <string name="save"><font size="18">Salva</font></string>
+    <string name="phone"><font size="18">Numero di telefono</font></string>
+    <string name="ch_pass"><font size="18">Cambia Password(max 12 char)</font></string>
+    <string name="old_pass"><font size="18">Inserisci la vecchia password</font></string>
+    <string name="new_pass"><font size="18">Inserisci la nuova password</font></string>
+    <string name="re_new_pass"><font size="18">Re-inserisci la nuova password</font></string>
+    <string name="delete">Cancella</string>
+    <string name="delete_image">Rimuovi immagine</string>
+    <string name="camera">Fotocamera</string>
+    <string name="gallery">Galleria</string>
+    <string name="edit">Modifica profilo</string>
+</resources>

@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Restaurant</string>
+    <string name="title_bar"><font size="18">Your account</font></string>
+    <string name="restaurant_name"><font size="18">Restaurant name</font></string>
+    <string name="type"><font size="18">Restaurant type</font></string>
+    <string name="info"><font size="18">Restaurant description</font></string>
+    <string name="open"><font size="18">Opening hours</font></string>
+    <string name="owner"><font size="18">Owner</font></string>
+    <string name="name"><font size="18">Name</font></string>
+    <string name="surname"><font size="18">Surname</font></string>
+    <string name="date"><font size="18">Date</font></string>
+    <string name="time"><font size="18">Time</font></string>
+    <string name="seats"><font size="18">Seats</font></string>
+    <string name="address"><font size="18">Address</font></string>
+    <string name="email"><font size="18">Email</font></string>
+    <string name="pay"><font size="18">Payment method</font></string>
+    <string name="other"><font size="18">Other field</font></string>
+    <string name="save"><font size="18">Apply</font></string>
+    <string name="phone"><font size="18">Phone number</font></string>
+    <string name="delivery_cost"><font size="18">Delivery cost</font></string>
+    <string name="current_status"><font size="18">Your status</font></string>
+    <string name="price_range"><font size="18">Price range</font></string>
+
+    <string name="active_status"><font size="18">Active</font></string>
+    <string name="inactive_status"><font size="18">Inactive</font></string>
+
+    <string name="go_active_message">Are you sure you want to become active? Customers
+                                    will start to send you requests.</string>
+
+    <string name="go_inactive_message">Are you sure you want to become inactive? You can not
+                    receives requests anymore while inactive.</string>
+
+    <string name="yes">Yes</string>
+    <string name="no">No</string>
+
+    <string name="loading">Loading</string>
+    <string name="failure">Something goes wrong</string>
+    <string name="saved">Saved</string>
+    <string name="saving">Saving changes</string>
+
+
+
+
+    <string name="ch_pass"><font size="18">Change password(max 12 char)</font></string>
+    <string name="old_pass"><font size="18">Insert old password</font></string>
+    <string name="new_pass"><font size="18">Insert new password</font></string>
+    <string name="re_new_pass"><font size="18">Re-insert new password</font></string>
+    <string name="delete">Delete</string>
+    <string name="delete_image">Delete image</string>
+    <string name="camera">Camera</string>
+    <string name="gallery">Gallery</string>
+    <string name="edit">Edit Profile</string>
+
+    <string name="starters">Starters</string>
+    <string name="firsts">Firsts</string>
+    <string name="seconds">Seconds</string>
+    <string name="desserts">Desserts</string>
+    <string name="drinks">Drinks</string>
+    <string name="currency">$</string>
+    <string name="dish_type">Type:</string>
+    <string name="modify">Modify</string>
+    <string name="remove">Remove</string>
+    <string name="empty_field">All fields must be filled</string>
+    <string name="error_format_price">Price must be a number</string>
+    <string name="error_format_quantity">Quantity must be a integer number</string>
+
+    <string-array name="plates_array">
+        <item>Starters</item>
+        <item>Firsts</item>
+        <item>Seconds</item>
+        <item>Desserts</item>
+        <item>Drinks</item>
+    </string-array>
+
+    <string name="dishes">Dish</string>
+    <string name="quantity">Quantity</string>
+    <string name="note">Notes</string>
+    <string name="status">Status</string>
+    <string name="new_order">New order</string>
+    <string name="cooking">Cooking</string>
+    <string name="delivery">Delivering</string>
+    <string name="reject">Rejected</string>
+    <string name="button_reservation">Accept or Reject</string>
+    <string name="button_delivery">Ready</string>
+    <string name="order">ID</string>
+    <string name="order_info">Info deliver</string>
+    <string name="order_deliver">Deliver order</string>
+
+    <string name="title_deliver">Deliver order</string>
+    <string name="msg_deliver">Is everything ready? Status will pass to \'on delivery\'</string>
+    <string name="choice_confirm">Confirm</string>
+    <string name="choice_reject">Reject</string>
+    <string name="choice_cancel">Cancel</string>
+    <string name="title_confirm">Confirm order</string>
+    <string name="msg_confirm">Do you want to confirm or reject this order? Status will pass to \'on cooking\'</string>
+
+
+    <string name="title_activity_main">Restaurant</string>
+
+    <string name="title_bottombar_reservation">Reservation</string>
+    <string name="title_actionbar_reservation">Reservation</string>
+
+    <string name="title_bottombar_dailyoffer">Menù</string>
+    <string name="title_actionbar_dailyoffer">Daily Offer</string>
+    <string name="title_actionbar_add_food">Add food</string>
+    <string name="title_actionbar_edit_food">Edit food</string>
+
+    <string name="title_bottombar_account">Account</string>
+    <string name="title_actionbar_account">Account</string>
+    <string name="title_actionbar_edit_account">Edit Account</string>
+
+    <string name="title_notifications">Notifications</string>
+
+    <string name="italian_cooking">Italian</string>
+    <string name="pizza_cooking">Pizza</string>
+    <string name="kebab_cooking">Kebab</string>
+    <string name="chinese_cooking">Chinese</string>
+    <string name="japanese_cooking">Japanese</string>
+    <string name="thai_cooking">Thai</string>
+    <string name="hamburger_cooking">Hamburger</string>
+    <string name="american_cooking">American</string>
+    <string name="mexican_cooking">Mexican</string>
+
+</resources>

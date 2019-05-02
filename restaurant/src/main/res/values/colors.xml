@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="colorPrimary">#008577</color>
+    <color name="colorPrimaryDark">#388E3C</color>
+    <color name="navigationBarColor">#000000</color>
+    <color name="colorAccent">#c8e8ff</color>
+    <color name="colorBodyPrimary">#FFFFFF</color>
+    <color name="colorPanelPrimary">#00C853</color>
+    <color name="colorTextField">#2196F3</color>
+    <color name="colorTextTitle">#444444</color>
+    <color name="colorTextSubField">#000000</color>
+    <color name="colorTextNoteField">#444444</color>
+    <color name="colorBackground">#C6F5C4</color>
+    <color name="colorLine">#2ACC6C</color>
+    <color name="colorTextAccepted">#00C853</color>
+    <color name="colorTextRejected">#B11818</color>
+</resources>
