@@ -133,43 +133,51 @@ public class AccountFragment extends Fragment {
 
     public void fillFields() {
 
-        DatabaseReference reference = FirebaseDatabase.getInstance().getReference("restaurants");
+        DatabaseReference reference = FirebaseDatabase.getInstance().getReference("restaurants/"+loggedID);
 
         reference.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                DataSnapshot issue = dataSnapshot.child(loggedID);
                 // it is set to the first record (restaurant)
                 // when the sign in and log in procedures will be handled, it will be the proper one
                 if (dataSnapshot.exists()) {
                     // dataSnapshot is the "issue" node with all children
-                    for(DataSnapshot snap : issue.getChildren()){
-                        if(tvFields.containsKey(snap.getKey())){
-                            if(snap.getKey().equals("DeliveryCost")){
-                                //DecimalFormat decimalFormat = new DecimalFormat("#0.00"); //two decimal
-                                //String priceStr = decimalFormat.format(Double.parseDouble(snap.getValue().toString()));
-                                tvFields.get(snap.getKey()).setText(snap.getValue().toString()+"€");
-                            }
-                            else if(snap.getKey().equals("IsActive") && getActivity() != null){
-                                if((Boolean)snap.getValue())
-                                    tvFields.get(snap.getKey()).setText(getString(R.string.active_status));
+
+                    if(dataSnapshot.hasChild("DeliveryCost") &&
+                            dataSnapshot.hasChild("IsActive") &&
+                            dataSnapshot.hasChild("PriceRange") &&
+                            dataSnapshot.hasChild("Type") &&
+                            dataSnapshot.child("Type").hasChild(localeShort))
+                    {
+                        for(DataSnapshot snap : dataSnapshot.getChildren()){
+                            if(tvFields.containsKey(snap.getKey())){
+                                if(snap.getKey().equals("DeliveryCost")){
+                                    //DecimalFormat decimalFormat = new DecimalFormat("#0.00"); //two decimal
+                                    //String priceStr = decimalFormat.format(Double.parseDouble(snap.getValue().toString()));
+                                    tvFields.get(snap.getKey()).setText(snap.getValue().toString()+"€");
+                                }
+                                else if(snap.getKey().equals("IsActive") && getActivity() != null){
+                                    if((Boolean)snap.getValue())
+                                        tvFields.get(snap.getKey()).setText(getString(R.string.active_status));
+                                    else
+                                        tvFields.get(snap.getKey()).setText(getString(R.string.inactive_status));
+                                }
+                                else if(snap.getKey().equals("PriceRange")){
+                                    //translate price range value into a $ string
+                                    int count = Integer.parseInt(snap.getValue().toString());
+                                    String s = "";
+                                    for(int idx = 0; idx < count; idx ++)
+                                        s += "$";
+                                    tvFields.get(snap.getKey()).setText(s);
+                                }
+                                else if(snap.getKey().equals("Type"))
+                                    tvFields.get(snap.getKey()).setText(snap.child(localeShort).getValue().toString());
                                 else
-                                    tvFields.get(snap.getKey()).setText(getString(R.string.inactive_status));
+                                    tvFields.get(snap.getKey()).setText(snap.getValue().toString());
                             }
-                            else if(snap.getKey().equals("PriceRange")){
-                                //translate price range value into a $ string
-                                int count = Integer.parseInt(snap.getValue().toString());
-                                String s = "";
-                                for(int idx = 0; idx < count; idx ++)
-                                    s += "$";
-                                tvFields.get(snap.getKey()).setText(s);
-                            }
-                            else if(snap.getKey().equals("Type"))
-                                tvFields.get(snap.getKey()).setText(snap.child(localeShort).getValue().toString());
-                            else
-                                tvFields.get(snap.getKey()).setText(snap.getValue().toString());
-                        }
-                    } //for end
+                        } //for end
+
+                    } //end if
                 }
             }
 

@@ -152,43 +152,54 @@ public class RestaurantSearchFragment extends Fragment {
             public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
                 Log.d("matte", "onChildAdded | PREVIOUS CHILD: " + s);
 
-                Bitmap img = BitmapFactory.decodeResource(getResources(), R.drawable.plate_fork); // TODO: make it dynamic
-                final String id = dataSnapshot.getKey();
-                String name = dataSnapshot.child("Name").getValue().toString();
-                String type = dataSnapshot.child("Type").child(localeShort).getValue().toString();
-                Boolean isOpen = (Boolean) dataSnapshot.child("IsActive").getValue();
-                int priceRange = Integer.parseInt(dataSnapshot.child("PriceRange").getValue().toString());
-                double deliveryCost = Double.parseDouble(dataSnapshot.child("DeliveryCost").getValue().toString().replace(",", "."));
-                final String imageUrl = dataSnapshot.child("photoUrl").getValue().toString();
 
-                StorageReference photoReference = FirebaseStorage.getInstance().getReferenceFromUrl(imageUrl);
-                final long ONE_MEGABYTE = 1024 * 1024;
-                photoReference.getBytes(ONE_MEGABYTE).addOnSuccessListener(new OnSuccessListener<byte[]>() {
-                    @Override
-                    public void onSuccess(byte[] bytes) {
-                        String s = imageUrl;
-                        Log.d("matte", "onSuccess | restaurantID: "+id);
-                        Bitmap bmp = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
-                        restaurantMap.get(id).setImage(bmp);
-                        recyclerAdapter.notifyDataSetChanged();
-                    }
-                }).addOnFailureListener(new OnFailureListener() {
-                    @Override
-                    public void onFailure(@NonNull Exception exception) {
-                        String s = imageUrl;
-                        Log.d("matte", "onFailure() : excp -> "+exception.getMessage()
-                        +"| restaurantID: "+id);
-                    }
-                });
+                if(dataSnapshot.hasChild("Name") &&
+                        dataSnapshot.hasChild("Type") &&
+                        dataSnapshot.child("Type").hasChild(localeShort) &&
+                        dataSnapshot.hasChild("IsActive") &&
+                        dataSnapshot.hasChild("PriceRange") &&
+                        dataSnapshot.hasChild("DeliveryCost") &&
+                        dataSnapshot.hasChild("photoUrl")
+                )
+                {
+                    Bitmap img = BitmapFactory.decodeResource(getResources(), R.drawable.plate_fork);
+                    final String id = dataSnapshot.getKey();
+                    String name = dataSnapshot.child("Name").getValue().toString();
+                    String type = dataSnapshot.child("Type").child(localeShort).getValue().toString();
+                    Boolean isOpen = (Boolean) dataSnapshot.child("IsActive").getValue();
+                    int priceRange = Integer.parseInt(dataSnapshot.child("PriceRange").getValue().toString());
+                    double deliveryCost = Double.parseDouble(dataSnapshot.child("DeliveryCost").getValue().toString().replace(",", "."));
+                    final String imageUrl = dataSnapshot.child("photoUrl").getValue().toString();
 
-                Restaurant resObj = new Restaurant(id, img, name, type, isOpen, priceRange, deliveryCost);
-                //add to the original list
-                restaurantMap.put(id, resObj);
-                restaurantList.add(resObj);
+                    StorageReference photoReference = FirebaseStorage.getInstance().getReferenceFromUrl(imageUrl);
+                    final long ONE_MEGABYTE = 1024 * 1024;
+                    photoReference.getBytes(ONE_MEGABYTE).addOnSuccessListener(new OnSuccessListener<byte[]>() {
+                        @Override
+                        public void onSuccess(byte[] bytes) {
+                            String s = imageUrl;
+                            Log.d("matte", "onSuccess | restaurantID: "+id);
+                            Bitmap bmp = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
+                            restaurantMap.get(id).setImage(bmp);
+                            recyclerAdapter.notifyDataSetChanged();
+                        }
+                    }).addOnFailureListener(new OnFailureListener() {
+                        @Override
+                        public void onFailure(@NonNull Exception exception) {
+                            String s = imageUrl;
+                            Log.d("matte", "onFailure() : excp -> "+exception.getMessage()
+                                    +"| restaurantID: "+id);
+                        }
+                    });
 
-                //check the filter before display
-                if (isValidToDisplay(resObj))
-                    addToDisplay(resObj);
+                    Restaurant resObj = new Restaurant(id, img, name, type, isOpen, priceRange, deliveryCost);
+                    //add to the original list
+                    restaurantMap.put(id, resObj);
+                    restaurantList.add(resObj);
+
+                    //check the filter before display
+                    if (isValidToDisplay(resObj))
+                        addToDisplay(resObj);
+                }
 
             }
 
@@ -196,41 +207,52 @@ public class RestaurantSearchFragment extends Fragment {
             public void onChildChanged(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
                 Log.d("matte", "onChildChanged | PREVIOUS CHILD: " + s);
 
-                final String id = dataSnapshot.getKey();
-                String name = dataSnapshot.child("Name").getValue().toString();
-                String type = dataSnapshot.child("Type").child(localeShort).getValue().toString();
-                Boolean isOpen = (Boolean) dataSnapshot.child("IsActive").getValue();
-                int priceRange = Integer.parseInt(dataSnapshot.child("PriceRange").getValue().toString());
-                double deliveryCost = Double.parseDouble(dataSnapshot.child("DeliveryCost").getValue().toString().replace(",", "."));
-                String imageUrl = dataSnapshot.child("photoUrl").getValue().toString();
+                if(dataSnapshot.hasChild("Name") &&
+                    dataSnapshot.hasChild("Type") &&
+                    dataSnapshot.child("Type").hasChild(localeShort) &&
+                    dataSnapshot.hasChild("IsActive") &&
+                    dataSnapshot.hasChild("PriceRange") &&
+                    dataSnapshot.hasChild("DeliveryCost") &&
+                    dataSnapshot.hasChild("photoUrl")
+                )
+                {
+                    final String id = dataSnapshot.getKey();
+                    String name = dataSnapshot.child("Name").getValue().toString();
+                    String type = dataSnapshot.child("Type").child(localeShort).getValue().toString();
+                    Boolean isOpen = (Boolean) dataSnapshot.child("IsActive").getValue();
+                    int priceRange = Integer.parseInt(dataSnapshot.child("PriceRange").getValue().toString());
+                    double deliveryCost = Double.parseDouble(dataSnapshot.child("DeliveryCost").getValue().toString().replace(",", "."));
+                    String imageUrl = dataSnapshot.child("photoUrl").getValue().toString();
 
-                Restaurant resObj = restaurantMap.get(id);
-                resObj.setName(name);
-                resObj.setType(type);
-                resObj.setIsOpen(isOpen);
-                resObj.setPriceRange(priceRange);
-                resObj.setDeliveryCost(deliveryCost);
-                //insert the element by keeping the actual order after checking the filter
-                if (isValidToDisplay(resObj))
-                    recyclerAdapter.updateLayout();
+                    Restaurant resObj = restaurantMap.get(id);
+                    resObj.setName(name);
+                    resObj.setType(type);
+                    resObj.setIsOpen(isOpen);
+                    resObj.setPriceRange(priceRange);
+                    resObj.setDeliveryCost(deliveryCost);
+                    //insert the element by keeping the actual order after checking the filter
+                    if (isValidToDisplay(resObj))
+                        recyclerAdapter.updateLayout();
 
-                //check the new image
-                StorageReference photoReference = FirebaseStorage.getInstance().getReferenceFromUrl(imageUrl);
-                final long ONE_MEGABYTE = 10*1024 * 1024;
-                photoReference.getBytes(ONE_MEGABYTE).addOnSuccessListener(new OnSuccessListener<byte[]>() {
-                    @Override
-                    public void onSuccess(byte[] bytes) {
-                        Log.d("matte", "onSuccess");
-                        Bitmap bmp = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
-                        restaurantMap.get(id).setImage(bmp);
-                        recyclerAdapter.notifyDataSetChanged();
-                    }
-                }).addOnFailureListener(new OnFailureListener() {
-                    @Override
-                    public void onFailure(@NonNull Exception exception) {
-                        Log.d("matte", "onFailure() : excp -> "+exception.getMessage());
-                    }
-                });
+                    //check the new image
+                    StorageReference photoReference = FirebaseStorage.getInstance().getReferenceFromUrl(imageUrl);
+                    final long ONE_MEGABYTE = 10*1024 * 1024;
+                    photoReference.getBytes(ONE_MEGABYTE).addOnSuccessListener(new OnSuccessListener<byte[]>() {
+                        @Override
+                        public void onSuccess(byte[] bytes) {
+                            Log.d("matte", "onSuccess");
+                            Bitmap bmp = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
+                            restaurantMap.get(id).setImage(bmp);
+                            recyclerAdapter.notifyDataSetChanged();
+                        }
+                    }).addOnFailureListener(new OnFailureListener() {
+                        @Override
+                        public void onFailure(@NonNull Exception exception) {
+                            Log.d("matte", "onFailure() : excp -> "+exception.getMessage());
+                        }
+                    });
+
+                }
 
             }
 

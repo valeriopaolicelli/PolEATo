@@ -100,11 +100,35 @@ public class Order implements Serializable {
         this.time = time;
     }
 
+    public void setTotalPrice(Double totalPrice) {
+        this.totalPrice = totalPrice;
+    }
+
+    public void setCustomerID(String customerID) {
+        this.customerID = customerID;
+    }
+
     public void uploadOrder() {
         DatabaseReference dbReference = FirebaseDatabase.getInstance().getReference("restaurants");
         DatabaseReference reservation =  dbReference.child(this.getRestaurantID()).child("reservations").push();
-        reservation.setValue(new Order(this.status,this.customerID,this.totalPrice,this.date,this.time));
-        reservation.child("dishes").setValue(this.getDishes());
+
+       /* reservation.child("status/it").setValue(this.status);
+        reservation.child("status/en").setValue(this.status);
+
+        reservation.child();*/
+
+       Order o = new Order();
+
+       o.setDate(this.date);
+       o.setTime(this.time);
+       o.setTotalPrice(this.totalPrice);
+       o.setCustomerID(this.customerID);
+
+       reservation.setValue(o);
+
+       reservation.child("status").child("it").setValue("Nuovo ordine");
+       reservation.child("status").child("en").setValue("New order");
+       reservation.child("dishes").setValue(this.getDishes());
     }
 
 

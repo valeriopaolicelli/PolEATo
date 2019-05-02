@@ -29,7 +29,9 @@ public class Reservation {
 
     private String time;
 
-    public Reservation(String order_id, String name, String surname, String address, String date, String time, String status, String phone, Context context) {
+    public Reservation(String order_id, String name, String surname,
+                       String address, String date, String time,
+                       String status, String phone, Context context) {
         this.order_id = order_id;
         this.name = name;
         this.surname = surname;

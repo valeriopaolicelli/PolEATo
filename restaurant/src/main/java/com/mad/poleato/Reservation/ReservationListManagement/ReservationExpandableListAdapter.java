@@ -360,6 +360,14 @@ public class ReservationExpandableListAdapter extends BaseExpandableListAdapter 
         return false;
     }
 
+
+    public void addReservation(Reservation r){
+        this.listHashMap.put(r.getOrder_id(), r.getDishes());
+        this.reservations.add(r);
+
+        this.notifyDataSetChanged();
+    }
+
     @Override
     public void notifyDataSetChanged() {
         super.notifyDataSetChanged();

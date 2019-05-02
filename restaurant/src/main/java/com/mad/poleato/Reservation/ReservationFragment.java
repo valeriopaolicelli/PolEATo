@@ -1,5 +1,6 @@
 package com.mad.poleato.Reservation;
 
+import android.content.Context;
 import android.os.Bundle;
 import android.provider.ContactsContract;
 import android.support.annotation.NonNull;
@@ -145,117 +146,145 @@ public class ReservationFragment extends Fragment {
         reference.addChildEventListener(new ChildEventListener() {
             @Override
             public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
-                //retrieve the customer (reservation) details
-                Reservation r= null;
-                final String order_id, customer_id;
-                String note= null;
-                Locale locale= Locale.getDefault();
-                localeShort = locale.toString().substring(0, 2);
 
-                order_id = dataSnapshot.getKey();
-                customer_id = dataSnapshot.child("customerID").getValue().toString();
-                final String date= dataSnapshot.child("date").getValue().toString();
-                final String time= dataSnapshot.child("time").getValue().toString();
-                String status = "";
-                if(dataSnapshot.hasChild("status/"+localeShort))
-                    status = dataSnapshot.child("status").child(localeShort).getValue().toString();
+                if(dataSnapshot.hasChild("customerID") &&
+                        dataSnapshot.hasChild("restaurantID") &&
+                        dataSnapshot.hasChild("totalPrice") &&
+                        dataSnapshot.hasChild("time") &&
+                        dataSnapshot.hasChild("status") &&
+                        dataSnapshot.child("status").hasChild(localeShort) &&
+                        dataSnapshot.hasChild("date") &&
+                        dataSnapshot.hasChild("dishes")
+                )
+                {
+                    //retrieve the customer (reservation) details
+                    Reservation r= null;
+                    final String order_id, customer_id;
+                    String note= null;
+                    Locale locale= Locale.getDefault();
+                    localeShort = locale.toString().substring(0, 2);
+
+                    order_id = dataSnapshot.getKey();
+                    customer_id = dataSnapshot.child("customerID").getValue().toString();
+                    final String date= dataSnapshot.child("date").getValue().toString();
+                    final String time= dataSnapshot.child("time").getValue().toString();
+                    final String status = dataSnapshot.child("status").child(localeShort).getValue().toString();
 
 
 
-                //TODO update with proper date, time and notes
+                    //TODO update with proper date, time and notes
 
-                //Retrieve through customerID the details of the customer
-                customer= FirebaseDatabase.getInstance().getReference("customers").child(customer_id);
+                    //Retrieve through customerID the details of the customer
+                    customer= FirebaseDatabase.getInstance().getReference("customers").child(customer_id);
 
-                readData(new FirebaseCallBack() {
-                    @Override
-                    public void onCallBack(List<String> customerDetails) {
-                        Log.d("Valerio", customerDetails.toString());
-                        for(Reservation r : reservations){
-                            if(order_id.equals(r.getOrder_id())){
-                                r.setName(customerDetails.get(0));
-                                r.setSurname(customerDetails.get(1));
-                                r.setAddress(customerDetails.get(2));
-                                r.setPhone(customerDetails.get(3));
-                                r.setDate(date);
-                                r.setTime(time);
+                    readData(new FirebaseCallBack() {
+                        @Override
+                        public void onCallBack(List<String> customerDetails) {
+                            Log.d("Valerio", customerDetails.toString());
+                            for(Reservation r : reservations){
+                                if(order_id.equals(r.getOrder_id())){
+                                    r.setName(customerDetails.get(0));
+                                    r.setSurname(customerDetails.get(1));
+                                    r.setAddress(customerDetails.get(2));
+                                    r.setPhone(customerDetails.get(3));
+                                }
                             }
+                            listAdapter.notifyDataSetChanged();
                         }
-                        listAdapter.notifyDataSetChanged();
+
+                    });
+
+
+                    // fields setted to null only because they will be setted later in the call back of FB
+                    r = new Reservation(order_id, null, null, null, date, time,
+                            status, null, getActivity().getApplicationContext());
+                    reservations.add(r);
+
+                    //and for each customer (reservation) retrieve the list of dishes
+                    DataSnapshot dishesOfReservation = dataSnapshot.child("dishes");
+                    String nameDish;
+                    int quantity;
+                    Dish d;
+
+                    for (DataSnapshot dish : dishesOfReservation.getChildren()) {
+                        nameDish = dish.child("name").getValue().toString();
+                        quantity = Integer.parseInt(dish.child("selectedQuantity").getValue().toString());
+                        note= dish.child("customerNotes").getValue().toString();
+                        d = new Dish(nameDish, quantity, note);
+                        r.addDishtoReservation(d);
                     }
-
-                });
-
-
-                // fields setted to null only because they will be setted later in the call back of FB
-                r = new Reservation(order_id, null, null, null, null, null, status, null, getActivity().getApplicationContext());
-                reservations.add(r);
-
-                //and for each customer (reservation) retrieve the list of dishes
-                DataSnapshot dishesOfReservation = dataSnapshot.child("dishes");
-                String nameDish;
-                int quantity;
-                Dish d;
-
-                for (DataSnapshot dish : dishesOfReservation.getChildren()) {
-                    nameDish = dish.child("name").getValue().toString();
-                    quantity = Integer.parseInt(dish.child("selectedQuantity").getValue().toString());
-                    note= dish.child("customerNotes").getValue().toString();
-                    d = new Dish(nameDish, quantity, note);
-                    r.addDishtoReservation(d);
+                    listHash.put(r.getOrder_id(), r.getDishes());
+                    listAdapter.notifyDataSetChanged();
                 }
-                listHash.put(r.getOrder_id(), r.getDishes());
-                listAdapter.notifyDataSetChanged();
+
+
             }
 
             @Override
             public void onChildChanged(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
                 Log.d("Valerio", dataSnapshot.getKey());
-                final DataSnapshot dataSnapshot1= dataSnapshot;
-                //final String status = dataSnapshot.child("status").child(localeShort).getValue().toString();
-                final String order_id= dataSnapshot.getKey();
-                final String customer_id= dataSnapshot.child("customerID").getValue().toString();
-                final String date= dataSnapshot.child("date").getValue().toString();
-                final String time= dataSnapshot.child("time").getValue().toString();
-                String note= null;
-                ArrayList<Dish> dishes= new ArrayList<>();
 
-                //TODO update with proper date, time and notes
+                if(dataSnapshot.hasChild("customerID") &&
+                        dataSnapshot.hasChild("restaurantID") &&
+                        dataSnapshot.hasChild("totalPrice") &&
+                        dataSnapshot.hasChild("time") &&
+                        dataSnapshot.hasChild("status") &&
+                        dataSnapshot.child("status").hasChild(localeShort) &&
+                        dataSnapshot.hasChild("date") &&
+                        dataSnapshot.hasChild("dishes")
+                )
+                {
+                    final String order_id= dataSnapshot.getKey();
+                    final String customer_id= dataSnapshot.child("customerID").getValue().toString();
+                    final String date= dataSnapshot.child("date").getValue().toString();
+                    final String time= dataSnapshot.child("time").getValue().toString();
+                    final String status = dataSnapshot.child("status").child(localeShort).getValue().toString();
+                    String note= null;
+                    ArrayList<Dish> dishes= new ArrayList<>();
 
-                //Retrieve through customerID the details of the customer
-                customer= FirebaseDatabase.getInstance().getReference("customers").child(customer_id);
-                readData(new FirebaseCallBack() {
-                    @Override
-                    public void onCallBack(List<String> customerDetails) {
-                        Log.d("Valerio", customerDetails.toString());
-                        for(Reservation r : reservations){
-                            if(order_id.equals(r.getOrder_id())){
-                                r.setName(customerDetails.get(0));
-                                r.setSurname(customerDetails.get(1));
-                                r.setAddress(customerDetails.get(2));
-                                r.setPhone(customerDetails.get(3));
-                                r.setDate(date);
-                                r.setTime(time);
+                    //TODO update with proper date, time and notes
+
+                    //Retrieve through customerID the details of the customer
+                    customer= FirebaseDatabase.getInstance().getReference("customers").child(customer_id);
+                    readData(new FirebaseCallBack() {
+                        @Override
+                        public void onCallBack(List<String> customerDetails) {
+                            Log.d("Valerio", customerDetails.toString());
+                            for(Reservation r : reservations){
+                                if(order_id.equals(r.getOrder_id())){
+                                    r.setName(customerDetails.get(0));
+                                    r.setSurname(customerDetails.get(1));
+                                    r.setAddress(customerDetails.get(2));
+                                    r.setPhone(customerDetails.get(3));
+                                }
                             }
+
+                            listAdapter.notifyDataSetChanged();
                         }
-                        listAdapter.notifyDataSetChanged();
+                    });
+
+                    //and for each customer (reservation) retrieve the list of dishes
+                    DataSnapshot dishesOfReservation = dataSnapshot.child("dishes");
+                    String nameDish;
+                    int quantity;
+                    Dish d;
+
+                    for (DataSnapshot dish : dishesOfReservation.getChildren()) {
+                        nameDish = dish.child("name").getValue().toString();
+                        quantity = Integer.parseInt(dish.child("selectedQuantity").getValue().toString());
+                        d = new Dish(nameDish, quantity, note);
+                        dishes.add(d);
                     }
-                });
 
-                //and for each customer (reservation) retrieve the list of dishes
-                DataSnapshot dishesOfReservation = dataSnapshot.child("dishes");
-                String nameDish;
-                int quantity;
-                Dish d;
+                    Reservation r = new Reservation(order_id, null, null, null, date, time,
+                            status, null, getActivity());
 
-                for (DataSnapshot dish : dishesOfReservation.getChildren()) {
-                    nameDish = dish.child("name").getValue().toString();
-                    quantity = Integer.parseInt(dish.child("selectedQuantity").getValue().toString());
-                    d = new Dish(nameDish, quantity, note);
-                    dishes.add(d);
+                    listHash.put(order_id, dishes);
+                    reservations.add(r);
+                    listAdapter.notifyDataSetChanged();
+
                 }
 
-                listAdapter.notifyDataSetChanged();
             }
 
             @Override

@@ -327,38 +327,43 @@ public class EditProfileFragment extends Fragment {
     private void fillFields(){
 
         //Download text infos
-        reference = FirebaseDatabase.getInstance().getReference("restaurants");
+        reference = FirebaseDatabase.getInstance().getReference("restaurants/"+loggedID);
 
         reference.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
 
-                DataSnapshot issue = dataSnapshot.child(loggedID);
-                // it is setted to the first record (restaurant)
-                // when the sign in and log in procedures will be handled, it will be the proper one
-                if (dataSnapshot.exists()) {
-                    // dataSnapshot is the "issue" node with all children
-                    for(DataSnapshot snap : issue.getChildren()){
-                        if(editTextFields.containsKey(snap.getKey())){
-                            if(snap.getKey().equals("DeliveryCost")){
-                                editTextFields.get(snap.getKey()).setText(snap.getValue().toString());
-                            }
-                            else
-                                editTextFields.get(snap.getKey()).setText(snap.getValue().toString());
-                        }
-                        else if(snap.getKey().equals("Type") && !snap.child(localeShort).getValue().toString().isEmpty()){
 
-                            String[] types = snap.child(localeShort).getValue().toString().toLowerCase().split(",(\\s)*");
-                            for(String t : types)
-                                checkBoxes.get(t).setChecked(true);
-                        }
-                        else if(snap.getKey().equals("IsActive")){
-                            //communicate that this change is not done by the user before doing it
-                            //isSwitchedByApp = true;
-                            statusSwitch.setChecked((Boolean) snap.getValue());
-                        }
-                    } //for end
-                }
+                if(dataSnapshot.hasChild("DeliveryCost") &&
+                        dataSnapshot.hasChild("IsActive") &&
+                        dataSnapshot.hasChild("PriceRange") &&
+                        dataSnapshot.hasChild("Type") &&
+                        dataSnapshot.child("Type").hasChild(localeShort))
+                {
+                    // it is setted to the first record (restaurant)
+                    // when the sign in and log in procedures will be handled, it will be the proper one
+                    if (dataSnapshot.exists()) {
+                        // dataSnapshot is the "issue" node with all children
+                        for (DataSnapshot snap : dataSnapshot.getChildren()) {
+                            if (editTextFields.containsKey(snap.getKey())) {
+                                if (snap.getKey().equals("DeliveryCost")) {
+                                    editTextFields.get(snap.getKey()).setText(snap.getValue().toString());
+                                } else
+                                    editTextFields.get(snap.getKey()).setText(snap.getValue().toString());
+                            } else if (snap.getKey().equals("Type") && !snap.child(localeShort).getValue().toString().isEmpty()) {
+
+                                String[] types = snap.child(localeShort).getValue().toString().toLowerCase().split(",(\\s)*");
+                                for (String t : types)
+                                    checkBoxes.get(t).setChecked(true);
+                            } else if (snap.getKey().equals("IsActive")) {
+                                //communicate that this change is not done by the user before doing it
+                                //isSwitchedByApp = true;
+                                statusSwitch.setChecked((Boolean) snap.getValue());
+                            }
+                        } //for end
+
+                    }
+                } //end if
             }
 
             @Override
