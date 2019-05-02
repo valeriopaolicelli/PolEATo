@@ -18,10 +18,11 @@ public class Order implements Serializable {
    private List<Food> dishes;
    private Double totalPrice;
    private String customerID; //TODO: must be implemented with login phase
-   private Date date;
+   private String date;
    private String status;
    private String restaurantID;
    private Restaurant r;
+   private String time;
 
     public Order() {
         this.totalPrice=0.0;
@@ -33,6 +34,14 @@ public class Order implements Serializable {
         this.status=status;
         this.customerID=customerID;
         this.totalPrice=totalPrice;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
+    }
+
+    public String getStatus() {
+        return status;
     }
 
     public void updateTotalPrice(){
@@ -77,13 +86,20 @@ public class Order implements Serializable {
         this.r = r;
     }
 
-
-    public String getStatus() {
-        return status;
+    public String getDate(){
+        return date;
     }
 
-    public void setStatus(String status) {
-        this.status = status;
+    public void setDate(String date) {
+        this.date = date;
+    }
+
+    public String getTime(){
+        return time;
+    }
+
+    public void setTime(String time) {
+        this.time = time;
     }
 
     public void uploadOrder() {

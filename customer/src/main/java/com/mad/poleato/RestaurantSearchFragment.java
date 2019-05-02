@@ -25,14 +25,17 @@ import android.view.ViewGroup;
 import android.widget.ImageButton;
 import android.widget.PopupMenu;
 import android.widget.SearchView;
+import android.widget.Toast;
 
 
+import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 
@@ -43,10 +46,12 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Set;
+import java.util.concurrent.locks.Condition;
 
 
 public class RestaurantSearchFragment extends DialogFragment {
 
+    private Toast myToast;
     private Activity hostActivity;
     private View fragView;
     private RestaurantRecyclerViewAdapter recyclerAdapter;
@@ -62,6 +67,14 @@ public class RestaurantSearchFragment extends DialogFragment {
     private List<Restaurant> currDisplayedList; //list of filtered elements displayed on the screen
     private Set<String> typesToFilter;
 
+    private ProgressDialog progressDialog;
+    Handler handler = new Handler() {
+        @Override
+        public void handleMessage(Message msg) {
+            progressDialog.dismiss();
+        }
+    };
+
 
     //id for the filter fragment
     public static final int FILTER_FRAGMENT = 26;
@@ -71,6 +84,10 @@ public class RestaurantSearchFragment extends DialogFragment {
     public void onAttach(Context context) {
         super.onAttach(context);
         this.hostActivity = this.getActivity();
+
+        if(hostActivity != null)
+            myToast = Toast.makeText(hostActivity, "", Toast.LENGTH_LONG);
+
     }
 
     @Override
@@ -82,28 +99,93 @@ public class RestaurantSearchFragment extends DialogFragment {
         typesToFilter = new HashSet<>();
         currDisplayedList = new ArrayList<>();
 
+        if(getActivity() != null)
+            progressDialog = ProgressDialog.show(getActivity(), "", getString(R.string.loading));
+
+        fillFields();
+
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+
+    }
+
+    @Nullable
+    @Override
+    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        fragView = inflater.inflate(R.layout.restaurant_recyclerview, container, false);
+
+        return fragView;
+
+    }
+
+
+
+    private void fillFields() {
         Locale locale = Locale.getDefault();
         // get "en" or "it"
         final String localeShort = locale.toString().substring(0, 2);
 
         dbReference = FirebaseDatabase.getInstance().getReference("restaurants");
+
+        /**
+         *         This listener is guaranteed to be called only after "ChildEvent".
+         *         Thus it notifies the end of the children
+         */
+        dbReference.addValueEventListener(new ValueEventListener() {
+
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                handler.sendEmptyMessage(0);
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+                Log.d("matte", "ValueEventiListener : OnCancelled() invoked");
+                handler.sendEmptyMessage(0);
+            }
+        });
         dbReference.addChildEventListener(new ChildEventListener() {
             @Override
             public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
                 Log.d("matte", "onChildAdded | PREVIOUS CHILD: " + s);
 
-                String id = dataSnapshot.getKey();
-                Bitmap img = BitmapFactory.decodeResource(getResources(), R.drawable.image_empty); // TODO: make it dynamic
+                Bitmap img = BitmapFactory.decodeResource(getResources(), R.drawable.plate_fork); // TODO: make it dynamic
+                final String id = dataSnapshot.getKey();
                 String name = dataSnapshot.child("Name").getValue().toString();
                 String type = dataSnapshot.child("Type").child(localeShort).getValue().toString();
                 Boolean isOpen = (Boolean) dataSnapshot.child("IsActive").getValue();
                 int priceRange = Integer.parseInt(dataSnapshot.child("PriceRange").getValue().toString());
                 double deliveryCost = Double.parseDouble(dataSnapshot.child("DeliveryCost").getValue().toString().replace(",", "."));
+                final String imageUrl = dataSnapshot.child("photoUrl").getValue().toString();
+
+                StorageReference photoReference = FirebaseStorage.getInstance().getReferenceFromUrl(imageUrl);
+                final long ONE_MEGABYTE = 1024 * 1024;
+                photoReference.getBytes(ONE_MEGABYTE).addOnSuccessListener(new OnSuccessListener<byte[]>() {
+                    @Override
+                    public void onSuccess(byte[] bytes) {
+                        String s = imageUrl;
+                        Log.d("matte", "onSuccess | restaurantID: "+id);
+                        Bitmap bmp = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
+                        restaurantMap.get(id).setImage(bmp);
+                        recyclerAdapter.notifyDataSetChanged();
+                    }
+                }).addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception exception) {
+                        String s = imageUrl;
+                        Log.d("matte", "onFailure() : excp -> "+exception.getMessage()
+                        +"| restaurantID: "+id);
+                    }
+                });
 
                 Restaurant resObj = new Restaurant(id, img, name, type, isOpen, priceRange, deliveryCost);
                 //add to the original list
                 restaurantMap.put(id, resObj);
                 restaurantList.add(resObj);
+
                 //check the filter before display
                 if (isValidToDisplay(resObj))
                     addToDisplay(resObj);
@@ -114,16 +196,15 @@ public class RestaurantSearchFragment extends DialogFragment {
             public void onChildChanged(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
                 Log.d("matte", "onChildChanged | PREVIOUS CHILD: " + s);
 
-                String id = dataSnapshot.getKey();
-                Bitmap img = BitmapFactory.decodeResource(getResources(), R.drawable.image_empty); // TODO: make it dynamic
+                final String id = dataSnapshot.getKey();
                 String name = dataSnapshot.child("Name").getValue().toString();
                 String type = dataSnapshot.child("Type").child(localeShort).getValue().toString();
                 Boolean isOpen = (Boolean) dataSnapshot.child("IsActive").getValue();
                 int priceRange = Integer.parseInt(dataSnapshot.child("PriceRange").getValue().toString());
-                double deliveryCost = Double.parseDouble(dataSnapshot.child("DeliveryCost").getValue().toString().replace(",","."));
+                double deliveryCost = Double.parseDouble(dataSnapshot.child("DeliveryCost").getValue().toString().replace(",", "."));
+                String imageUrl = dataSnapshot.child("photoUrl").getValue().toString();
 
                 Restaurant resObj = restaurantMap.get(id);
-                resObj.setImage(img);
                 resObj.setName(name);
                 resObj.setType(type);
                 resObj.setIsOpen(isOpen);
@@ -132,6 +213,24 @@ public class RestaurantSearchFragment extends DialogFragment {
                 //insert the element by keeping the actual order after checking the filter
                 if (isValidToDisplay(resObj))
                     recyclerAdapter.updateLayout();
+
+                //check the new image
+                StorageReference photoReference = FirebaseStorage.getInstance().getReferenceFromUrl(imageUrl);
+                final long ONE_MEGABYTE = 10*1024 * 1024;
+                photoReference.getBytes(ONE_MEGABYTE).addOnSuccessListener(new OnSuccessListener<byte[]>() {
+                    @Override
+                    public void onSuccess(byte[] bytes) {
+                        Log.d("matte", "onSuccess");
+                        Bitmap bmp = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
+                        restaurantMap.get(id).setImage(bmp);
+                        recyclerAdapter.notifyDataSetChanged();
+                    }
+                }).addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception exception) {
+                        Log.d("matte", "onFailure() : excp -> "+exception.getMessage());
+                    }
+                });
 
             }
 
@@ -158,45 +257,8 @@ public class RestaurantSearchFragment extends DialogFragment {
             }
         });
 
-
-        //Download the profile pic
-        /*StorageReference storageReference = FirebaseStorage.getInstance().getReference();
-        StorageReference photoReference= storageReference.child(loggedID+"/ProfileImage/img.jpg");
-
-        final long ONE_MEGABYTE = 1024 * 1024;
-        photoReference.getBytes(ONE_MEGABYTE).addOnSuccessListener(new OnSuccessListener<byte[]>() {
-            @Override
-            public void onSuccess(byte[] bytes) {
-                Bitmap bmp = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
-                profileImage.setImageBitmap(bmp);
-                //send message to main thread
-                handler.sendEmptyMessage(0);
-            }
-        }).addOnFailureListener(new OnFailureListener() {
-            @Override
-            public void onFailure(@NonNull Exception exception) {
-                if(getActivity() != null)
-                    Toast.makeText(getActivity(), "No Such file or Path found!!", Toast.LENGTH_LONG).show();
-                else
-                    Log.d("matte", "null context and profilePic download failed");
-                //set predefined image
-                profileImage.setImageResource(R.drawable.plate_fork);
-                //send message to main thread
-                handler.sendEmptyMessage(0);
-            }
-        });*/
-
-
     }
 
-    @Nullable
-    @Override
-    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        fragView = inflater.inflate(R.layout.restaurant_recyclerview, container, false);
-
-        return fragView;
-
-    }
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
@@ -405,16 +467,6 @@ public class RestaurantSearchFragment extends DialogFragment {
                 return true;
             }
         }
-        return false;
-    }
-
-    private boolean isRemovedFilter(Set<String> newFilters){
-        for(String s : typesToFilter){
-            //if a filter was removed
-            if(!newFilters.contains(s))
-                return true;
-        }
-
         return false;
     }
 
