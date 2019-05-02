@@ -142,7 +142,6 @@ public class MenuFragment extends Fragment {
         try {
             order = listener.getOrder();
             listAdapter.setOrder(order);
-            listAdapter.updateLitDataChild();
         } catch (ClassCastException castException) {
             /** The activity does not implement the listener. */
         }
@@ -166,7 +165,9 @@ public class MenuFragment extends Fragment {
                     String foodName = (String)ds.getKey();
                     // TODO: Make it dynamic with image
                     SerialBitmap img = new SerialBitmap(BitmapFactory.decodeResource(getResources(),R.drawable.image_empty));
-                    Food f = new Food(img, foodName,ds.child("Description").getValue().toString(),Double.parseDouble(ds.child("Price").getValue().toString()),Integer.parseInt(ds.child("Quantity").getValue().toString()));
+                    Food f = new Food(img, foodName,ds.child("Description").getValue().toString(),
+                            Double.parseDouble(ds.child("Price").getValue().toString()),
+                            Integer.parseInt(ds.child("Quantity").getValue().toString()));
                     childItem.add(f);
                 }
             listDataChild.put(listDataGroup.get(counter), childItem);

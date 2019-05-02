@@ -77,7 +77,7 @@ public class RestaurantRecyclerViewAdapter extends RecyclerView.Adapter<Restaura
         currState = State.INIT;
 
         if(context != null)
-            myToast = Toast.makeText(context, "", Toast.LENGTH_LONG);
+            myToast = Toast.makeText(context, "", Toast.LENGTH_SHORT);
 
         this.nameComparator = new SortByName();
         this.priceComparator = new SortByPrice();
