@@ -30,6 +30,12 @@
     <string name="free_delivery">Free</string>
     <string name="date">Date</string>
     <string name="time">Time</string>
+    <string name="loading">Loading</string>
+    <string name="status">Status</string>
+    <string name="new_order">New order</string>
+    <string name="cooking">Cooking</string>
+    <string name="delivery">Delivering</string>
+    <string name="reject">Rejected</string>
 
     <string name="italian_cooking">Italian</string>
     <string name="pizza_cooking">Pizza</string>

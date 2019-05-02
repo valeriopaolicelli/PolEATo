@@ -23,8 +23,16 @@ public class Order implements Serializable {
     public Order() {
         this.totalPrice=0.0;
         selectedFoods=new ArrayList<>();
-        status = "New Order";
         customerID = "C00"; // TODO; Must be restrieved from database
+        status= "New order";
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
+    }
+
+    public String getStatus() {
+        return status;
     }
 
     public void updateTotalPrice(){
@@ -83,14 +91,6 @@ public class Order implements Serializable {
 
     public void setTime(String time) {
         this.time = time;
-    }
-
-    public String getStatus() {
-        return status;
-    }
-
-    public void setStatus(String status) {
-        this.status = status;
     }
 
     public void uploadOrder() {
