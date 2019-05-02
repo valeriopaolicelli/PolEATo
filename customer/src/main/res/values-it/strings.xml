@@ -34,6 +34,8 @@
     <string name="date">Data</string>
     <string name="time">Orario</string>
     <string name="loading">Caricamento</string>
+    <string name="status">Status</string>
+
 
     <string name="price_sort">Ordina per prezzo(dal più basso)</string>
     <string name="name_sort">Ordina per nome(A-Z)</string>
@@ -51,6 +53,12 @@
     <string name="cooking">Preparazione</string>
     <string name="delivery">In consegna</string>
     <string name="reject">Rifiutato</string>
+    <string name="specify_date">Specificare la data in cui ricevere l\'ordine</string>
+    <string name="specify_time">Specificare l\'orario in cui ricevere l\'ordine</string>
+
+
+    <string name="closed_restaurant">Il ristorante è chiuso al momento</string>
+
 
     <string name="italian_cooking">Italiano</string>
     <string name="pizza_cooking">Pizza</string>
@@ -63,6 +71,7 @@
     <string name="mexican_cooking">Messicano</string>
 
 
+    <string name="title_activity_main">Activity Principale</string>
     <string name="title_bottombar_restaurantSearch">Ricerca</string>
     <string name="title_actionbar_restaurantSearch">Ricerca</string>
 
