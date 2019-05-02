@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <android.support.v7.widget.GridLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:rowCount="3"
+        app:columnCount="3"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginBottom="16dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+
+        <CheckBox
+            android:id="@+id/italianCheckBox"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/italian_cooking"
+            android:buttonTint="#0091EA"/>
+
+        <CheckBox
+            android:id="@+id/pizzaCheckBox"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/pizza_cooking"
+            android:buttonTint="#0091EA"/>
+
+        <CheckBox
+            android:id="@+id/kebabCheckBox"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/kebab_cooking"
+            android:buttonTint="#0091EA"/>
+
+
+        <CheckBox
+            android:id="@+id/chineseCheckBox"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/chinese_cooking"
+            android:buttonTint="#0091EA"/>
+
+        <CheckBox
+            android:id="@+id/japaneseCheckBox"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/japanese_cooking"
+            android:buttonTint="#0091EA"/>
+
+        <CheckBox
+            android:id="@+id/thaiCheckBox"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/thai_cooking"
+            android:buttonTint="#0091EA"/>
+
+        <CheckBox
+            android:id="@+id/hamburgerCheckBox"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/hamburger_cooking"
+            android:buttonTint="#0091EA"/>
+
+        <CheckBox
+            android:id="@+id/americanCheckBox"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/american_cooking"
+            android:buttonTint="#0091EA"/>
+
+        <CheckBox
+            android:id="@+id/mexicanCheckBox"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/mexican_cooking"
+            android:buttonTint="#0091EA"/>
+
+    </android.support.v7.widget.GridLayout>
+</android.support.constraint.ConstraintLayout>

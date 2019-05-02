@@ -142,6 +142,7 @@ public class MenuFragment extends Fragment {
         try {
             order = listener.getOrder();
             listAdapter.setOrder(order);
+            listAdapter.updateLitDataChild();
         } catch (ClassCastException castException) {
             /** The activity does not implement the listener. */
         }

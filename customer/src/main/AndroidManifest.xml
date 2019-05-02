@@ -19,13 +19,12 @@
         android:label="@string/app_name"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-
         <activity android:name=".CartActivity"
             android:windowSoftInputMode="stateHidden|adjustPan">
         </activity>
         <!--<activity-->
-            <!--android:name=".EditProfile"-->
-            <!--android:windowSoftInputMode="stateAlwaysVisible|stateHidden" />-->
+        <!--android:name=".EditProfile"-->
+        <!--android:windowSoftInputMode="stateAlwaysVisible|stateHidden" />-->
         <activity
             android:name=".MainActivity"
             android:label="@string/title_activity_main"
@@ -38,7 +37,7 @@
             </intent-filter>
         </activity>
         <activity android:name=".OrderActivity"
-            />
+            android:theme="@style/AppThemeOrder"/>
 
         <provider
             android:name="android.support.v4.content.FileProvider"

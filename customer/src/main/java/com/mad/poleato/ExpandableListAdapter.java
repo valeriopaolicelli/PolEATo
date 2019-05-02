@@ -43,10 +43,6 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
         notifyDataSetChanged();
     }
 
-    public void removeChild(final int groupPosition, final int childPosition){
-        this._listDataChild.get(getGroup(groupPosition).toString()).remove(childPosition);
-        notifyDataSetChanged();
-    }
 
     public void setOrder(Order order){
         this.order=order;
