@@ -96,13 +96,16 @@ public class Order implements Serializable {
     public void uploadOrder() {
         DatabaseReference dbReference = FirebaseDatabase.getInstance().getReference("restaurants");
         DatabaseReference reservation =  dbReference.child(this.getRestaurantID()).child("reservations").push();
-        reservation.setValue(this);
+        //reservation.setValue(this);
         String dbkey = reservation.getKey();
         dbReference.child(this.getRestaurantID()).child("reservations").child(dbkey).child("dishes").setValue(this.getSelectedFoods());
         dbReference.child(this.getRestaurantID()).child("reservations").child(dbkey).child("date").setValue(this.getDate());
         dbReference.child(this.getRestaurantID()).child("reservations").child(dbkey).child("time").setValue(this.getTime());
         dbReference.child(this.getRestaurantID()).child("reservations").child(dbkey).child("status").child("it").setValue("Nuovo ordine");
         dbReference.child(this.getRestaurantID()).child("reservations").child(dbkey).child("status").child("en").setValue("New order");
+        dbReference.child(this.getRestaurantID()).child("reservations").child(dbkey).child("totalPrice").setValue(this.getTotalPrice());
+        dbReference.child(this.getRestaurantID()).child("reservations").child(dbkey).child("customerID").setValue(this.getCustomerID());
+        dbReference.child(this.getRestaurantID()).child("reservations").child(dbkey).child("restaurantID").setValue(this.getRestaurantID());
     }
 
 }
