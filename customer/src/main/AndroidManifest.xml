@@ -37,7 +37,8 @@
             </intent-filter>
         </activity>
         <activity android:name=".OrderActivity"
-            android:theme="@style/AppThemeOrder"/>
+            android:theme="@style/AppThemeOrder"
+            android:windowSoftInputMode="stateHidden|adjustPan"/>
 
         <provider
             android:name="android.support.v4.content.FileProvider"

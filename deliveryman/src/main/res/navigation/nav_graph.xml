@@ -12,7 +12,7 @@
         tools:layout="@layout/fragment_rides" />
     <fragment
         android:id="@+id/routes_id"
-        android:name="com.mad.poleato.Routes"
+        android:name="com.mad.poleato.Routes.Routes"
         android:label="@string/title_actionbar_deliveryRoutes"
         tools:layout="@layout/fragment_routes" />
 </navigation>
