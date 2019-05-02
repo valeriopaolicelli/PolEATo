@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/nav_graph"
+    app:startDestination="@id/restaurantSearchFragment_id">
+
+    <fragment
+        android:id="@+id/restaurantSearchFragment_id"
+        android:name="com.mad.poleato.RestaurantSearchFragment"
+        android:label="@string/title_actionbar_restaurantSearch"
+        tools:layout="@layout/restaurant_recyclerview" />
+    <fragment
+        android:id="@+id/holder_history_id"
+        android:name="com.mad.poleato.holder_history"
+        android:label="@string/title_actionbar_historyOrder"
+        tools:layout="@layout/fragment_holder_history" />
+    <fragment
+        android:id="@+id/mainProfile_id"
+        android:name="com.mad.poleato.MainProfile"
+        android:label="@string/title_actionbar_account"
+        tools:layout="@layout/fragment_main_profile" />
+
+
+</navigation>
