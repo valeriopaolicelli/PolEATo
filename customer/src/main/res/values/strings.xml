@@ -28,7 +28,8 @@
     <string name="delivery_cost">Delivery</string>
     <string name="price_range">Price</string>
     <string name="free_delivery">Free</string>
-
+    <string name="date">Date</string>
+    <string name="time">Time</string>
 
     <string name="italian_cooking">Italian</string>
     <string name="pizza_cooking">Pizza</string>
@@ -40,10 +41,35 @@
     <string name="american_cooking">American</string>
     <string name="mexican_cooking">Mexican</string>
 
+    <string name="currency">$</string>
+    <string name="restaurant_name"><font size="18">Restaurant name</font></string>
+    <string name="type"><font size="18">Type of cooking</font></string>
+    <string name="info"><font size="18">Description</font></string>
+    <string name="cart"><font size="18">Cart</font></string>
+    <string name="plus">+</string>
+    <string name="minum">-</string>
+    <string name="slash">/</string>
+    <string name="price">Price: </string>
+    <string name="empty_cart">Cart is empty</string>
+    <string name="total">Total: </string>
+    <string name="confirm_order">Confirm Order</string>
+    <string name="X">X</string>
+    <string name="notes">Insert notes here(max 30 chars)</string>
+
     <string name="title_activity_main">MainActivity</string>
-    <string name="title_home">Home</string>
-    <string name="title_dashboard">Dashboard</string>
-    <string name="title_notifications">Notifications</string>
+
+
+    <string name="title_bottombar_restaurantSearch">Search</string>
+    <string name="title_actionbar_restaurantSearch">Search</string>
+
+    <string name="title_bottombar_historyOrder">Orders</string>
+    <string name="title_actionbar_historyOrder">Orders</string>
+    <string name="title_actionbar_add_food">Add food</string>
+    <string name="title_actionbar_edit_food">Edit food</string>
+
+    <string name="title_bottombar_account">Account</string>
+    <string name="title_actionbar_account">Account</string>
+    <string name="title_actionbar_edit_account">Edit Account</string>
 
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>

@@ -8,17 +8,17 @@
     <fragment
         android:id="@+id/restaurantSearchFragment_id"
         android:name="com.mad.poleato.RestaurantSearchFragment"
-        android:label="restaurant_recyclerview"
+        android:label="@string/title_actionbar_restaurantSearch"
         tools:layout="@layout/restaurant_recyclerview" />
     <fragment
         android:id="@+id/holder_history_id"
         android:name="com.mad.poleato.holder_history"
-        android:label="fragment_holder_history"
+        android:label="@string/title_actionbar_historyOrder"
         tools:layout="@layout/fragment_holder_history" />
     <fragment
         android:id="@+id/mainProfile_id"
         android:name="com.mad.poleato.MainProfile"
-        android:label="fragment_main_profile"
+        android:label="@string/title_actionbar_account"
         tools:layout="@layout/fragment_main_profile" />
 
 

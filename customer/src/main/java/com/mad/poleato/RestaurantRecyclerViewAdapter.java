@@ -1,6 +1,7 @@
 package com.mad.poleato;
 
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v7.widget.RecyclerView;
@@ -10,9 +11,12 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 
 import java.text.DecimalFormat;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
@@ -128,11 +132,18 @@ public class RestaurantRecyclerViewAdapter extends RecyclerView.Adapter<Restaura
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Log.d("matte", "OnClick | restaurant ID: "+ list.get(position).getId());
-                Bundle bundle = new Bundle();
-                bundle.putString("id", list.get(position).getId());
-                //Intent menuIntent = new Intent(context, /*TODO FABIO*/);
-                //menuIntent.putExtras(bundle);
+                if(list.get(position).getIsOpen()) {
+                    Log.d("matte", "OnClick | restaurant ID: " + list.get(position).getId());
+                    Bundle bundle = new Bundle();
+                    bundle.putString("id", list.get(position).getId());
+                    Intent menuIntent = new Intent(context, OrderActivity.class);
+                    menuIntent.putExtras(bundle);
+                    context.startActivity(menuIntent);
+                }
+                else
+                {
+                    Toast.makeText(context, "Restaurant is closed at the moment", Toast.LENGTH_SHORT).show();
+                }
             }
         });
 
@@ -158,27 +169,33 @@ public class RestaurantRecyclerViewAdapter extends RecyclerView.Adapter<Restaura
                 ****** SORTING ******
                 *********************   */
 
+    //Use the static method `Collectios.sort()` instead of list.sort() which is not supported in API < 24
+
 
     public void sortByName(){
-        this.list.sort(this.nameComparator);
+        Collections.sort(this.list, this.nameComparator);
+        //this.list.sort(this.nameComparator);
         currState = State.NAME_SORTED;
         notifyDataSetChanged();
     }
 
     public void sortByPrice(){
-        this.list.sort(this.priceComparator);
+        Collections.sort(this.list, this.priceComparator);
+        //this.list.sort(this.priceComparator);
         currState = State.PRICE_SORTED;
         notifyDataSetChanged();
     }
 
     public void sortByPriceInverse(){
-        this.list.sort(this.priceInverseComparator);
+        Collections.sort(this.list, this.priceInverseComparator);
+        //this.list.sort(this.priceInverseComparator);
         currState = State.PRICE_INVERSE_SORTED;
         notifyDataSetChanged();
     }
 
     public void sortByDelivery(){
-        this.list.sort(this.deliveryComparator);
+        Collections.sort(this.list, this.deliveryComparator);
+        //this.list.sort(deliveryComparator);
         currState = State.DELIVERY_SORTED;
         notifyDataSetChanged();
     }
