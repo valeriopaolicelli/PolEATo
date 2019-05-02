@@ -28,6 +28,7 @@ import java.net.URL;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
+
 import java.util.Scanner;
 
 public class CartActivity extends AppCompatActivity implements Interface {
@@ -63,7 +64,7 @@ OneSignal is used to send notifications between applications
         order = (Order) getIntent().getSerializableExtra("order");
         dbReference = FirebaseDatabase.getInstance().getReference("restaurants");
 
-        foodList = order.getSelectedFoods();
+        foodList = new ArrayList<>(order.getSelectedFoods().values());
 
         tvTotal = (TextView) findViewById(R.id.tv_total);
         tvEmptyCart = (TextView) findViewById(R.id.empty_cart);
@@ -123,11 +124,7 @@ OneSignal is used to send notifications between applications
                     builder.setPositiveButton("Confirm", new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialogInterface, int i) {
-                            //                            DatabaseReference reservation =  dbReference.child(order.getRestaurantID()).child("reservations").push();
-                            //                            reservation.setValue(order);
-                            //                            String dbkey = reservation.getKey();
-                            //                            dbReference.child(order.getRestaurantID()).child("reservations").child(dbkey).child("dishes").setValue(order.getSelectedFoods());
-
+                            order.setDishes();
                             order.setDate(date.getText().toString());
                             order.setTime(time.getText().toString());
                             order.setStatus(getApplicationContext().getString(R.string.new_order));

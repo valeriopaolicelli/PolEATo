@@ -38,23 +38,26 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
 
 
 
-    public void insertChild(final int groupPosition, Food food){
-        this._listDataChild.get(getGroup(groupPosition).toString()).add(food);
-        notifyDataSetChanged();
-    }
-
     public void insertChild(String groupTag, Food food){
         this._listDataChild.get(groupTag).add(food);
         notifyDataSetChanged();
     }
 
-    public void removeChild(final int groupPosition, final int childPosition){
-        this._listDataChild.get(getGroup(groupPosition).toString()).remove(childPosition);
-        notifyDataSetChanged();
-    }
 
     public void setOrder(Order order){
         this.order=order;
+    }
+
+    public void updateLitDataChild(){
+        for(String s: _listDataChild.keySet()){
+            for(Food f : _listDataChild.get(s)){
+                if(order.getSelectedFoods().containsKey(f.getName()))
+                    f.setSelectedQuantity(order.getSelectedFoods().get(f.getName()).getSelectedQuantity());
+                else
+                    f.setSelectedQuantity(0);
+            }
+        }
+        notifyDataSetChanged();
     }
 
     public void refresh(){
@@ -110,7 +113,7 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
                 //check if restaurant has enough quantity requested
                 if(selectedQuantity<quantity) {
                     food.increaseSelectedQuantity();
-                    if(!order.getSelectedFoods().contains(food)) {
+                    if(!order.getSelectedFoods().containsKey(food.getName())) {
                         order.addFoodToOrder(food);
                     }
                     order.updateTotalPrice();

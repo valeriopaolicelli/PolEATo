@@ -3,6 +3,8 @@ package com.mad.poleato;
 import android.graphics.Bitmap;
 
 
+import com.google.firebase.database.Exclude;
+
 import java.io.Serializable;
 
 
@@ -27,6 +29,7 @@ public class Food implements Serializable {
         this.selectedQuantity = 0;
     }
 
+    @Exclude
     public SerialBitmap getImg() {
         return img;
     }
@@ -43,7 +46,7 @@ public class Food implements Serializable {
         return description;
     }
 
-    public int getQuantity() { return quantity; }
+    public Integer getQuantity() { return quantity; }
 
     public void setImg(SerialBitmap img){ this.img = img; }
 
@@ -55,7 +58,7 @@ public class Food implements Serializable {
 
     public void setQuantity(int quantity){ this.quantity = quantity; }
 
-    public int getSelectedQuantity() {
+    public Integer getSelectedQuantity() {
         return selectedQuantity;
     }
 

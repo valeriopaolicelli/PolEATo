@@ -23,8 +23,8 @@
             android:windowSoftInputMode="stateHidden|adjustPan">
         </activity>
         <!--<activity-->
-            <!--android:name=".EditProfile"-->
-            <!--android:windowSoftInputMode="stateAlwaysVisible|stateHidden" />-->
+        <!--android:name=".EditProfile"-->
+        <!--android:windowSoftInputMode="stateAlwaysVisible|stateHidden" />-->
         <activity
             android:name=".MainActivity"
             android:label="@string/title_activity_main"
