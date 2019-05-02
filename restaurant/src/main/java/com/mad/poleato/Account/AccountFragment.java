@@ -4,7 +4,6 @@ import android.app.ProgressDialog;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -17,7 +16,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
-import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -25,6 +23,8 @@ import androidx.navigation.Navigation;
 
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -34,7 +34,6 @@ import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.mad.poleato.R;
 
-import java.text.DecimalFormat;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
@@ -60,7 +59,9 @@ public class AccountFragment extends Fragment {
 
     String localeShort;
 
-    String loggedID;
+    String currentUserID;
+    private FirebaseAuth mAuth;
+
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -73,8 +74,9 @@ public class AccountFragment extends Fragment {
         Log.d("matte", "LOCALE: "+locale);
         localeShort = locale.substring(0, 2);
 
-
-        loggedID = "R00";
+        mAuth = FirebaseAuth.getInstance();
+        FirebaseUser currentUser = mAuth.getCurrentUser();
+        currentUserID = currentUser.getUid();
     }
 
     @Override
@@ -130,7 +132,7 @@ public class AccountFragment extends Fragment {
 
     public void fillFields() {
 
-        DatabaseReference reference = FirebaseDatabase.getInstance().getReference("restaurants/"+loggedID);
+        DatabaseReference reference = FirebaseDatabase.getInstance().getReference("restaurants/"+ currentUserID);
 
         reference.addValueEventListener(new ValueEventListener() {
             @Override
@@ -142,7 +144,7 @@ public class AccountFragment extends Fragment {
 
                     if(dataSnapshot.hasChild("DeliveryCost") &&
                             dataSnapshot.hasChild("IsActive") &&
-                            dataSnapshot.hasChild("PriceRange") &&
+                            //dataSnapshot.hasChild("PriceRange") &&
                             dataSnapshot.hasChild("Type") &&
                             dataSnapshot.child("Type").hasChild(localeShort))
                     {
@@ -189,7 +191,7 @@ public class AccountFragment extends Fragment {
 
         //Download the profile pic
         StorageReference storageReference = FirebaseStorage.getInstance().getReference();
-        StorageReference photoReference= storageReference.child(loggedID+"/ProfileImage/img.jpg");
+        StorageReference photoReference= storageReference.child(currentUserID +"/ProfileImage/img.jpg");
 
         final long ONE_MEGABYTE = 1024 * 1024;
         photoReference.getBytes(ONE_MEGABYTE).addOnSuccessListener(new OnSuccessListener<byte[]>() {

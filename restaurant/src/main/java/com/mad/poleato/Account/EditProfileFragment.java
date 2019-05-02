@@ -20,7 +20,6 @@ import android.os.Message;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.constraint.ConstraintLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
@@ -28,7 +27,6 @@ import android.support.v4.content.FileProvider;
 import android.support.v7.widget.PopupMenu;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.util.Base64;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -36,14 +34,11 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.animation.AlphaAnimation;
-import android.view.animation.Animation;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.ScrollView;
 import android.widget.Switch;
 import android.widget.Toast;
@@ -52,6 +47,8 @@ import androidx.navigation.Navigation;
 
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -115,7 +112,8 @@ public class EditProfileFragment extends Fragment {
     String localeShort;
     View transparentView;
 
-    String loggedID;
+    String currentUserID;
+    private FirebaseAuth mAuth;
 
 
     // TODO: Rename parameter arguments, choose names that match
@@ -177,7 +175,9 @@ public class EditProfileFragment extends Fragment {
         checkedTypes = new HashSet<>();
         imageButtons = new HashMap<>();
 
-        loggedID = "R00";
+        mAuth = FirebaseAuth.getInstance();
+        FirebaseUser currentUser = mAuth.getCurrentUser();
+        currentUserID = currentUser.getUid();
         
     }
 
@@ -187,27 +187,6 @@ public class EditProfileFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         v = inflater.inflate(R.layout.edit_account_layout, container, false);
-
-//        v.findViewById(R.id.applyMod).setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                saveChanges();
-//            }
-//        });
-
-        //  change_im = findViewById(R.id.change_im);
-     //   transparentView = v.findViewById(R.id.transparentView);
-      //  transparentView.setVisibility(View.INVISIBLE);
-        //transparentView.setEnabled(true);
-
-        /*Animation animation = new AlphaAnimation(0.0f, 1.0f);
-        animation.setFillAfter(true);
-        v.startAnimation(animation);*/
-    /*} else {
-        Animation animation = new AlphaAnimation(0.0f, 1.0f);
-        animation.setFillAfter(true);
-        v.startAnimation(animation);
-    }*/
 
 
         editTextFields.put("Name",(EditText) v.findViewById(R.id.editTextName));
@@ -327,7 +306,7 @@ public class EditProfileFragment extends Fragment {
     private void fillFields(){
 
         //Download text infos
-        reference = FirebaseDatabase.getInstance().getReference("restaurants/"+loggedID);
+        reference = FirebaseDatabase.getInstance().getReference("restaurants/"+ currentUserID);
 
         reference.addValueEventListener(new ValueEventListener() {
             @Override
@@ -378,7 +357,7 @@ public class EditProfileFragment extends Fragment {
 
         //Download the profile pic
         StorageReference storageReference = FirebaseStorage.getInstance().getReference();
-        StorageReference photoReference= storageReference.child(loggedID+"/ProfileImage/img.jpg");
+        StorageReference photoReference= storageReference.child(currentUserID +"/ProfileImage/img.jpg");
 
         final long ONE_MEGABYTE = 1024 * 1024;
         photoReference.getBytes(ONE_MEGABYTE).addOnSuccessListener(new OnSuccessListener<byte[]>() {
@@ -419,20 +398,6 @@ public class EditProfileFragment extends Fragment {
 
     }
 
-    @Override
-    public void onActivityCreated(Bundle savedInstanceState) {
-        super.onActivityCreated(savedInstanceState);
-
-        final ScrollView mScrollView = v.findViewById(R.id.editScrollView);
-        //restoring scrollview position
-//        final int[] position = savedInstanceState.getIntArray("ARTICLE_SCROLL_POSITION");
-//        if(position != null)
-//            mScrollView.post(new Runnable() {
-//                public void run() {
-//                    mScrollView.scrollTo(position[0], position[1]);
-//                }
-//            });
-    }
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -694,7 +659,6 @@ public class EditProfileFragment extends Fragment {
 
         /* --------------- SAVING TO FIREBASE --------------- */
         if(!wrongField){
-            // TODO here save all the data to the DB
 
             String otherLocale = "";
 
@@ -720,12 +684,12 @@ public class EditProfileFragment extends Fragment {
 
             }
             //insert both it and en
-            reference.child(loggedID).child("Type").child(localeShort).setValue(types);
-            reference.child(loggedID).child("Type").child(otherLocale).setValue(translatedTypes);
+            reference.child("Type").child(localeShort).setValue(types);
+            reference.child("Type").child(otherLocale).setValue(translatedTypes);
 
 
 
-            reference.child(loggedID).child("IsActive").setValue(statusSwitch.isChecked());
+            reference.child("IsActive").setValue(statusSwitch.isChecked());
             EditText ed;
             for(String fieldName : editTextFields.keySet()){
                 ed = editTextFields.get(fieldName);
@@ -734,10 +698,10 @@ public class EditProfileFragment extends Fragment {
                     String s = ed.getText().toString().replace(",", ".");
                     double d = Double.parseDouble(s);
                     String priceStr = decimalFormat.format(d);
-                    reference.child(loggedID).child(fieldName).setValue(priceStr);
+                    reference.child(fieldName).setValue(priceStr);
                 }
                 else
-                    reference.child(loggedID).child(fieldName).setValue(ed.getText().toString());
+                    reference.child(fieldName).setValue(ed.getText().toString());
             }
 
             // Save profile pic to the DB
@@ -758,7 +722,7 @@ public class EditProfileFragment extends Fragment {
         final StorageReference storageReference = FirebaseStorage
                 .getInstance()
                 .getReference()
-                .child(loggedID+"/ProfileImage/img.jpg");
+                .child(currentUserID +"/ProfileImage/img.jpg");
 
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         bitmap.compress(Bitmap.CompressFormat.JPEG, 20, baos);
@@ -776,7 +740,7 @@ public class EditProfileFragment extends Fragment {
                                         uri.toString();
                                 FirebaseDatabase.getInstance()
                                         .getReference("restaurants")
-                                        .child(loggedID+"/photoUrl")
+                                        .child(currentUserID +"/photoUrl")
                                         .setValue(downloadUrl);
                             }
                         });

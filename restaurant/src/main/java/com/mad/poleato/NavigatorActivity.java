@@ -1,24 +1,16 @@
 package com.mad.poleato;
 
 import android.os.Bundle;
-import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
-import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AppCompatActivity;
-import android.view.MenuItem;
-import android.view.View;
-import android.view.ViewParent;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 import androidx.navigation.ui.NavigationUI;
-
-import com.google.firebase.FirebaseApp;
 import com.onesignal.OneSignal;
 
-public class MainActivity extends AppCompatActivity {
+public class NavigatorActivity extends AppCompatActivity {
 
     private TextView mTextMessage;
     private NavController navController;
@@ -48,14 +40,14 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+        setContentView(R.layout.navigator_layout);
         // OneSignal Initialization
         OneSignal.startInit(this)
                 .inFocusDisplaying(OneSignal.OSInFocusDisplayOption.Notification)
                 .unsubscribeWhenNotificationsAreDisabled(true)
                 .init();
 
-        OneSignal.sendTag("User_ID", "R00");
+        OneSignal.sendTag("User_ID", "R00"); // TODO
         /**
          * Set navigation between NavController and Bottom Toolbar
          */
