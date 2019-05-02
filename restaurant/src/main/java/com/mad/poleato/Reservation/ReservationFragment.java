@@ -99,7 +99,7 @@ public class ReservationFragment extends Fragment {
         size = new Point();
         display.getSize(size);
         width = size.x;
-        loggedID = "R05";
+        loggedID = "R00";
     }
 
     @Override
@@ -139,7 +139,9 @@ public class ReservationFragment extends Fragment {
         listHash = new HashMap<>();
         customerDetails= new ArrayList<>();
 
-        DatabaseReference reference = FirebaseDatabase.getInstance().getReference("restaurants").child(loggedID).child("reservations");
+        DatabaseReference reference = FirebaseDatabase.getInstance().getReference("restaurants")
+                .child(loggedID).child("reservations");
+
         reference.addChildEventListener(new ChildEventListener() {
             @Override
             public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
@@ -154,7 +156,12 @@ public class ReservationFragment extends Fragment {
                 customer_id = dataSnapshot.child("customerID").getValue().toString();
                 final String date= dataSnapshot.child("date").getValue().toString();
                 final String time= dataSnapshot.child("time").getValue().toString();
-                String status= dataSnapshot.child("status").child(localeShort).getValue().toString();
+                String status = "";
+                if(dataSnapshot.hasChild("status/"+localeShort))
+                    status = dataSnapshot.child("status").child(localeShort).getValue().toString();
+
+
+
                 //TODO update with proper date, time and notes
 
                 //Retrieve through customerID the details of the customer
@@ -176,7 +183,9 @@ public class ReservationFragment extends Fragment {
                         }
                         listAdapter.notifyDataSetChanged();
                     }
+
                 });
+
 
                 // fields setted to null only because they will be setted later in the call back of FB
                 r = new Reservation(order_id, null, null, null, null, null, status, null, getContext());
