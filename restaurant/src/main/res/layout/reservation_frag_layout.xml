@@ -18,10 +18,11 @@
             android:id="@+id/reservationslv"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:divider="@color/colorPanelPrimary"
+            android:divider="#cccccc"
             android:layout_marginBottom="?attr/actionBarSize"
-            android:dividerHeight="0dp"
+            android:dividerHeight="10dp"
             android:padding="3dp"
+            android:childDivider="#00000000"
             />
     </LinearLayout>
 

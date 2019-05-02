@@ -29,7 +29,8 @@
                 android:id="@+id/cardImage"
                 android:layout_width="98dp"
                 android:layout_height="0dp"
-                android:scaleType="fitXY"
+                android:scaleType="fitCenter"
+                android:layout_marginStart="8dp"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintLeft_toLeftOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />

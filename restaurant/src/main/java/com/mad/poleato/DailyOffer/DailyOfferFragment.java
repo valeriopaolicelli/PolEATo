@@ -40,8 +40,6 @@ public class DailyOfferFragment extends Fragment {
     private View fragView;
     private ExpandableListAdapter listAdapter;
     private ExpandableListView expListView;
-    private List<String> listDataGroup;
-    private HashMap<String, List<Food>> listDataChild;
     private FloatingActionButton floatingActionButton;
     private Display display;
     private Point size;
@@ -104,8 +102,16 @@ public class DailyOfferFragment extends Fragment {
             @Override
             public void onChanged(@Nullable HashMap<String, List<Food>> stringListHashMap) {
                 listAdapter.setAllChild(stringListHashMap);
+                //upload menu on FireBase
+                uploadMenu();
             }
         });
+
+
+    }
+
+    public void uploadMenu(){
+
 
 
     }
@@ -163,7 +169,8 @@ public class DailyOfferFragment extends Fragment {
         });
 
         /** PREPARE ELEMENT LIST OF EXPANDABLE LIST (da modificare per avere la lista vuota)*/
-        model.prepareListData(getContext());
+        //model.prepareListData(getContext());
+        model.downloadMenu(getActivity());
 
     }
 

@@ -36,11 +36,14 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.AlphaAnimation;
+import android.view.animation.Animation;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ScrollView;
 import android.widget.Switch;
 import android.widget.Toast;
@@ -65,7 +68,6 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
-import java.lang.reflect.Type;
 import java.text.DecimalFormat;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -111,6 +113,7 @@ public class EditProfileFragment extends Fragment {
 
 
     String localeShort;
+    View transparentView;
 
     String loggedID;
 
@@ -174,7 +177,9 @@ public class EditProfileFragment extends Fragment {
         checkedTypes = new HashSet<>();
         imageButtons = new HashMap<>();
 
-        loggedID = "R00";
+        loggedID = "R05";
+
+
 
 
     }
@@ -194,6 +199,18 @@ public class EditProfileFragment extends Fragment {
 //        });
 
         //  change_im = findViewById(R.id.change_im);
+     //   transparentView = v.findViewById(R.id.transparentView);
+      //  transparentView.setVisibility(View.INVISIBLE);
+        //transparentView.setEnabled(true);
+
+        /*Animation animation = new AlphaAnimation(0.0f, 1.0f);
+        animation.setFillAfter(true);
+        v.startAnimation(animation);*/
+    /*} else {
+        Animation animation = new AlphaAnimation(0.0f, 1.0f);
+        animation.setFillAfter(true);
+        v.startAnimation(animation);
+    }*/
 
 
         editTextFields.put("Name",(EditText) v.findViewById(R.id.editTextName));
@@ -440,7 +457,7 @@ public class EditProfileFragment extends Fragment {
                 }
 
             } else
-                profileImage.setImageBitmap(decodeBase64(image));
+                profileImage.setImageBitmap(decodeBase64(image)); //TODO back pressed on gallery
         }
     }
 
@@ -642,7 +659,7 @@ public class EditProfileFragment extends Fragment {
 
         //as above with the addition punctuation
         //String punctuationRegex = new String("[\\.,\\*\\:\\'\\(\\)]");
-        String textRegex = new String("[^=&%\\/\\s]+([^=&%\\/]+)?[^=&%\\/\\s]+");
+        String textRegex = new String("[^=&\\/\\s]+([^=&\\/]+)?[^=&\\/\\s]+");
 
         String emailRegex = new String("^.+@[^\\.].*\\.[a-z]{2,}$");
 
@@ -753,53 +770,70 @@ public class EditProfileFragment extends Fragment {
 
 
 
+
+
     private void uploadFile(Bitmap bitmap) {
-        StorageReference storageReference = FirebaseStorage.getInstance().getReference();
+        final StorageReference storageReference = FirebaseStorage
+                .getInstance()
+                .getReference()
+                .child(loggedID+"/ProfileImage/img.jpg");
 
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         bitmap.compress(Bitmap.CompressFormat.JPEG, 20, baos);
         byte[] data = baos.toByteArray();
 
-        UploadTask uploadTask = storageReference.child(loggedID+"/ProfileImage/img.jpg").putBytes(data);
-        uploadTask.addOnFailureListener(new OnFailureListener() {
-            @Override
-            public void onFailure(@NonNull Exception exception) {
-                // Handle unsuccessful uploads
-                Log.d("matte", "Upload failed");
-                if(getActivity() != null){
-                    myToast.setText(getString(R.string.failure));
-                    myToast.show();
-                }
-                /**
-                 * GO TO ACCOUNT_FRAGMENT
-                 */
-                Navigation.findNavController(v).navigate(R.id.action_editProfile_id_to_account_id);
-                /**
-                 *
-                 */
-            }
-        }).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
-            @Override
-            public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                // taskSnapshot.getMetadata() contains file metadata such as size, content-type, and download URL.
-                Uri downloadUrl = taskSnapshot.getUploadSessionUri();
-                Log.d("matte", "downloadUrl-->" + downloadUrl);
-                if(getActivity() != null){
-                    myToast.setText(getString(R.string.saved));
-                    myToast.show();
-                }
+        UploadTask uploadTask = storageReference.putBytes(data);
+        uploadTask
+                .addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                    @Override
+                    public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                        storageReference.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+                            @Override
+                            public void onSuccess(Uri uri) {
+                                final String downloadUrl =
+                                        uri.toString();
+                                FirebaseDatabase.getInstance()
+                                        .getReference("restaurants")
+                                        .child(loggedID+"/photoUrl")
+                                        .setValue(downloadUrl);
+                            }
+                        });
+                        // taskSnapshot.getMetadata() contains file metadata such as size, content-type, and download URL.
+                        Uri downloadUrl = taskSnapshot.getUploadSessionUri();
 
-                /**
-                 * GO TO ACCOUNT_FRAGMENT
-                 */
-                Navigation.findNavController(v).navigate(R.id.action_editProfile_id_to_account_id);
-                /**
-                 *
-                 */
+                        String s = taskSnapshot.getMetadata().getReference().getDownloadUrl().toString();
+                        Log.d("matte", "downloadUrl-->" + downloadUrl);
+                        if(getActivity() != null){
+                            myToast.setText(getString(R.string.saved));
+                            myToast.show();
+                        }
 
-                /* Upload uri on FB */
-                FirebaseDatabase.getInstance().getReference("restaurants").child(loggedID).child("photoUrl").setValue(downloadUrl.toString());
-            }
+                        /**
+                         * GO TO ACCOUNT_FRAGMENT
+                         */
+                        Navigation.findNavController(v).navigate(R.id.action_editProfile_id_to_account_id);
+                        /**
+                         *
+                         */
+                    }
+                })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception exception) {
+                        // Handle unsuccessful uploads
+                        Log.d("matte", "Upload failed");
+                        if(getActivity() != null){
+                            myToast.setText(getString(R.string.failure));
+                            myToast.show();
+                        }
+                        /**
+                         * GO TO ACCOUNT_FRAGMENT
+                         */
+                        Navigation.findNavController(v).navigate(R.id.action_editProfile_id_to_account_id);
+                        /**
+                         *
+                         */
+                    }
         });
 
     }
