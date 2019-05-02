@@ -146,7 +146,8 @@ public class AccountFragment extends Fragment {
                             dataSnapshot.hasChild("IsActive") &&
                             //dataSnapshot.hasChild("PriceRange") &&
                             dataSnapshot.hasChild("Type") &&
-                            dataSnapshot.child("Type").hasChild(localeShort))
+                            dataSnapshot.child("Type").hasChild("it") &&
+                            dataSnapshot.child("Type").hasChild("en"))
                     {
                         for(DataSnapshot snap : dataSnapshot.getChildren()){
                             if(tvFields.containsKey(snap.getKey())){

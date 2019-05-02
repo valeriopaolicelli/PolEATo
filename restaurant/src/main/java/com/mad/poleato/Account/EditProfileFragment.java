@@ -315,9 +315,10 @@ public class EditProfileFragment extends Fragment {
 
                 if(dataSnapshot.hasChild("DeliveryCost") &&
                         dataSnapshot.hasChild("IsActive") &&
-                        dataSnapshot.hasChild("PriceRange") &&
+                        //dataSnapshot.hasChild("PriceRange") &&
                         dataSnapshot.hasChild("Type") &&
-                        dataSnapshot.child("Type").hasChild(localeShort))
+                        dataSnapshot.child("Type").hasChild("it") &&
+                        dataSnapshot.child("Type").hasChild("en"))
                 {
                     // it is setted to the first record (restaurant)
                     // when the sign in and log in procedures will be handled, it will be the proper one
