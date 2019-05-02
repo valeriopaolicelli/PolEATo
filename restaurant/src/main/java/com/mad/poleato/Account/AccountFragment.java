@@ -122,13 +122,10 @@ public class AccountFragment extends Fragment {
         //fill the views fields
         if(getActivity() != null)
             progressDialog = ProgressDialog.show(getActivity(), "", getString(R.string.loading));
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                //start a new thread to process job
-                fillFields();
-            }
-        }).start();
+
+        //start a new thread to process job
+        fillFields();
+
     }
 
     public void fillFields() {
