@@ -1,5 +1,7 @@
 package com.mad.poleato;
 
+import android.support.v7.widget.GridLayout;
+
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.Exclude;
 import com.google.firebase.database.FirebaseDatabase;
@@ -7,11 +9,13 @@ import com.google.firebase.database.FirebaseDatabase;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 
 public class Order implements Serializable {
 
-   private List<Food> selectedFoods;
+   private HashMap<String,Food> selectedFoods;
+   private List<Food> dishes;
    private Double totalPrice;
    private String customerID; //TODO: must be implemented with login phase
    private Date date;
@@ -21,15 +25,20 @@ public class Order implements Serializable {
 
     public Order() {
         this.totalPrice=0.0;
-        selectedFoods=new ArrayList<>();
+        selectedFoods=new HashMap<>();
         status = "New Order";
-        customerID = "C00"; // TODO; Must be restrieved from database
+        customerID = "C00"; // TODO; Must be retrieved from database
+    }
+    public Order(String status, String customerID, Double totalPrice){
+        this.status=status;
+        this.customerID=customerID;
+        this.totalPrice=totalPrice;
     }
 
     public void updateTotalPrice(){
        totalPrice = 0.0;
        if(!selectedFoods.isEmpty()){
-         for(Food f:selectedFoods){
+         for(Food f:selectedFoods.values()){
            totalPrice+=f.getPrice()*f.getSelectedQuantity();
         }
        totalPrice += r.getDeliveryCost();
@@ -45,14 +54,14 @@ public class Order implements Serializable {
     }
 
     public void addFoodToOrder(Food f){
-        this.selectedFoods.add(f);
+        this.selectedFoods.put(f.getName(),f);
     }
     public void removeFoodFromOrder(Food f){
-        this.selectedFoods.remove(f);
+        this.selectedFoods.remove(f.getName());
     }
 
     @Exclude
-    public List<Food> getSelectedFoods(){
+    public HashMap<String,Food> getSelectedFoods(){
         return selectedFoods;
     }
 
@@ -80,9 +89,18 @@ public class Order implements Serializable {
     public void uploadOrder() {
         DatabaseReference dbReference = FirebaseDatabase.getInstance().getReference("restaurants");
         DatabaseReference reservation =  dbReference.child(this.getRestaurantID()).child("reservations").push();
-        reservation.setValue(this);
-        String dbkey = reservation.getKey();
-        dbReference.child(this.getRestaurantID()).child("reservations").child(dbkey).child("dishes").setValue(this.getSelectedFoods());
+        reservation.setValue(new Order(this.status,this.customerID,this.totalPrice));
+        reservation.child("dishes").setValue(this.getDishes());
     }
 
+
+    @Exclude
+    public List<Food> getDishes() {
+        return dishes;
+    }
+
+    @Exclude
+    public void setDishes() {
+        dishes = new ArrayList<>(this.selectedFoods.values());
+    }
 }

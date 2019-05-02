@@ -20,6 +20,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class CartActivity extends AppCompatActivity implements Interface {
 
@@ -41,7 +42,7 @@ public class CartActivity extends AppCompatActivity implements Interface {
         order = (Order) getIntent().getSerializableExtra("order");
         dbReference = FirebaseDatabase.getInstance().getReference("restaurants");
 
-        foodList = order.getSelectedFoods();
+        foodList = new ArrayList<>(order.getSelectedFoods().values());
 
         tvTotal = (TextView) findViewById(R.id.tv_total);
         tvEmptyCart = (TextView) findViewById(R.id.empty_cart);
@@ -88,6 +89,7 @@ public class CartActivity extends AppCompatActivity implements Interface {
 //                            reservation.setValue(order);
 //                            String dbkey = reservation.getKey();
 //                            dbReference.child(order.getRestaurantID()).child("reservations").child(dbkey).child("dishes").setValue(order.getSelectedFoods());
+                            order.setDishes();
                             order.uploadOrder();
                             Intent returnIntent = new Intent();
                             setResult(Activity.RESULT_OK,returnIntent);

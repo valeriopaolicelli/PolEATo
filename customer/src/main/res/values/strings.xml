@@ -54,7 +54,7 @@
     <string name="confirm_order">Confirm Order</string>
     <string name="X">X</string>
     <string name="notes">Insert notes here(max 30 chars)</string>
-
+    <string name="title_activity_signup">SignupActivity</string>
 
 
 </resources>
