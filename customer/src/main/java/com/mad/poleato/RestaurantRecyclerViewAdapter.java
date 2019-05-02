@@ -148,7 +148,7 @@ public class RestaurantRecyclerViewAdapter extends RecyclerView.Adapter<Restaura
                 }
                 else
                 {
-                    myToast.setText("Restaurant is closed at the moment");
+                    myToast.setText(context.getString(R.string.closed_restaurant));
                     myToast.show();
                 }
             }

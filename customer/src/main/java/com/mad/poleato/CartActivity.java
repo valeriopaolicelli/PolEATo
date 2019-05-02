@@ -43,11 +43,13 @@ public class CartActivity extends AppCompatActivity implements Interface {
     private static RecyclerView rv;
     private List<Food> foodList;
     private EditText time, date;
+    private Toast myToast;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_cart_layout);
+        myToast = Toast.makeText(this, "", Toast.LENGTH_SHORT);
 /*
 OneSignal is used to send notifications between applications
  */
@@ -98,17 +100,20 @@ OneSignal is used to send notifications between applications
                 boolean wrongField= false;
                 if(order.getSelectedFoods().isEmpty()){
                     wrongField= true;
-                    Toast.makeText(getApplicationContext(),"Cart is Empty", Toast.LENGTH_SHORT).show();
+                    myToast.setText(getString(R.string.empty_cart));
+                    myToast.show();
                 }
 
                 if(time.getText().toString().equals("")) {
                     wrongField=true;
-                    Toast.makeText(getApplicationContext(), "Specify the time to receive the order", Toast.LENGTH_LONG).show();
+                    myToast.setText(getString(R.string.specify_time));
+                    myToast.show();
                     time.setBackground(ContextCompat.getDrawable(getApplicationContext(), R.drawable.border_wrong_field));
                 }
                 if(date.getText().toString().equals("")){
                     wrongField= true;
-                    Toast.makeText(getApplicationContext(), "Specify the date to receive the order", Toast.LENGTH_LONG).show();
+                    myToast.setText(getString(R.string.specify_date));
+                    myToast.show();
                     date.setBackground(ContextCompat.getDrawable(getApplicationContext(), R.drawable.border_wrong_field));
                 }
                 if(!wrongField){

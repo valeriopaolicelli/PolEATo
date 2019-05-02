@@ -37,6 +37,8 @@
     <string name="delivery">Delivering</string>
     <string name="reject">Rejected</string>
 
+    <string name="closed_restaurant">Restaurant is closed at the moment</string>
+
     <string name="italian_cooking">Italian</string>
     <string name="pizza_cooking">Pizza</string>
     <string name="kebab_cooking">Kebab</string>
@@ -61,6 +63,9 @@
     <string name="confirm_order">Confirm Order</string>
     <string name="X">X</string>
     <string name="notes">Insert notes here(max 30 chars)</string>
+
+    <string name="specify_date">Specify the date to receive the order</string>
+    <string name="specify_time">Specify the time to receive the order</string>
 
     <string name="title_activity_main">MainActivity</string>
 
