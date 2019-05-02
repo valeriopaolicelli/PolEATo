@@ -26,10 +26,12 @@ public class Order implements Serializable {
         status = "New Order";
         customerID = "C00"; // TODO; Must be retrieved from database
     }
-    public Order(String status, String customerID, Double totalPrice){
+    public Order(String status, String customerID, Double totalPrice, String date, String time){
         this.status=status;
         this.customerID=customerID;
         this.totalPrice=totalPrice;
+        this.date=date;
+        this.time=time;
     }
 
     public void setStatus(String status) {
@@ -101,7 +103,7 @@ public class Order implements Serializable {
     public void uploadOrder() {
         DatabaseReference dbReference = FirebaseDatabase.getInstance().getReference("restaurants");
         DatabaseReference reservation =  dbReference.child(this.getRestaurantID()).child("reservations").push();
-        reservation.setValue(new Order(this.status,this.customerID,this.totalPrice));
+        reservation.setValue(new Order(this.status,this.customerID,this.totalPrice,this.date,this.time));
         reservation.child("dishes").setValue(this.getDishes());
     }
 
