@@ -187,7 +187,8 @@ public class ReservationFragment extends Fragment {
                         dataSnapshot.hasChild("totalPrice") &&
                         dataSnapshot.hasChild("time") &&
                         dataSnapshot.hasChild("status") &&
-                        dataSnapshot.child("status").hasChild(localeShort) &&
+                        dataSnapshot.child("status").hasChild("it") &&
+                        dataSnapshot.child("status").hasChild("en") &&
                         dataSnapshot.hasChild("date") &&
                         dataSnapshot.hasChild("dishes")
                 )
@@ -259,7 +260,8 @@ public class ReservationFragment extends Fragment {
                         dataSnapshot.hasChild("totalPrice") &&
                         dataSnapshot.hasChild("time") &&
                         dataSnapshot.hasChild("status") &&
-                        dataSnapshot.child("status").hasChild(localeShort) &&
+                        dataSnapshot.child("status").hasChild("it") &&
+                        dataSnapshot.child("status").hasChild("en") &&
                         dataSnapshot.hasChild("date") &&
                         dataSnapshot.hasChild("dishes")
                 )

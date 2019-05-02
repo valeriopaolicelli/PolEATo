@@ -188,28 +188,6 @@ public class EditProfileFragment extends Fragment {
                              Bundle savedInstanceState) {
         v = inflater.inflate(R.layout.edit_account_layout, container, false);
 
-//        v.findViewById(R.id.applyMod).setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                saveChanges();
-//            }
-//        });
-
-        //  change_im = findViewById(R.id.change_im);
-     //   transparentView = v.findViewById(R.id.transparentView);
-      //  transparentView.setVisibility(View.INVISIBLE);
-        //transparentView.setEnabled(true);
-
-        /*Animation animation = new AlphaAnimation(0.0f, 1.0f);
-        animation.setFillAfter(true);
-        v.startAnimation(animation);*/
-    /*} else {
-        Animation animation = new AlphaAnimation(0.0f, 1.0f);
-        animation.setFillAfter(true);
-        v.startAnimation(animation);
-    }*/
-
-
         editTextFields.put("Name",(EditText) v.findViewById(R.id.editTextName));
         editTextFields.put("Info",(EditText) v.findViewById(R.id.editTextInfo));
         editTextFields.put("Open",(EditText) v.findViewById(R.id.editTextOpen));
@@ -336,9 +314,10 @@ public class EditProfileFragment extends Fragment {
 
                 if(dataSnapshot.hasChild("DeliveryCost") &&
                         dataSnapshot.hasChild("IsActive") &&
-                        dataSnapshot.hasChild("PriceRange") &&
+                        //dataSnapshot.hasChild("PriceRange") &&
                         dataSnapshot.hasChild("Type") &&
-                        dataSnapshot.child("Type").hasChild(localeShort))
+                        dataSnapshot.child("Type").hasChild("it") &&
+                        dataSnapshot.child("Type").hasChild("en"))
                 {
                     // it is setted to the first record (restaurant)
                     // when the sign in and log in procedures will be handled, it will be the proper one
@@ -720,12 +699,12 @@ public class EditProfileFragment extends Fragment {
 
             }
             //insert both it and en
-            reference.child(loggedID).child("Type").child(localeShort).setValue(types);
-            reference.child(loggedID).child("Type").child(otherLocale).setValue(translatedTypes);
+            reference.child("Type").child(localeShort).setValue(types);
+            reference.child("Type").child(otherLocale).setValue(translatedTypes);
 
 
 
-            reference.child(loggedID).child("IsActive").setValue(statusSwitch.isChecked());
+            reference.child("IsActive").setValue(statusSwitch.isChecked());
             EditText ed;
             for(String fieldName : editTextFields.keySet()){
                 ed = editTextFields.get(fieldName);
@@ -734,10 +713,10 @@ public class EditProfileFragment extends Fragment {
                     String s = ed.getText().toString().replace(",", ".");
                     double d = Double.parseDouble(s);
                     String priceStr = decimalFormat.format(d);
-                    reference.child(loggedID).child(fieldName).setValue(priceStr);
+                    reference.child(fieldName).setValue(priceStr);
                 }
                 else
-                    reference.child(loggedID).child(fieldName).setValue(ed.getText().toString());
+                    reference.child(fieldName).setValue(ed.getText().toString());
             }
 
             // Save profile pic to the DB
