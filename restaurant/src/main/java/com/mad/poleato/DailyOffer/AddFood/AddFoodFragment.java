@@ -18,6 +18,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.DialogFragment;
+import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.content.FileProvider;
 import android.support.v7.widget.PopupMenu;
@@ -54,7 +55,7 @@ import java.util.TreeMap;
 
 import static android.app.Activity.RESULT_OK;
 
-public class AddFoodFragment extends DialogFragment {
+public class AddFoodFragment extends Fragment {
 
     private static final int REQUEST_TAKE_PHOTO = 1;
     private static final int RESULT_LOAD_IMG = 2;
@@ -202,12 +203,12 @@ public class AddFoodFragment extends DialogFragment {
         View v = inflater.inflate(R.layout.add_food_fragment, container, false);
 
         spinnerFood = (Spinner) v.findViewById(R.id.spinnerFood);
-        // Create an ArrayAdapter using the string array and a default spinner layout
+        /** Create an ArrayAdapter using the string array and a default spinner layout */
         ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(getContext(),
                 R.array.plates_array, android.R.layout.simple_spinner_item);
-        // Specify the layout to use when the list of choices appears
+        /** Specify the layout to use when the list of choices appears */
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        // Apply the adapter to the spinner
+        /** Apply the adapter to the spinner */
         spinnerFood.setAdapter(adapter);
         spinnerFood.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
@@ -304,18 +305,18 @@ public class AddFoodFragment extends DialogFragment {
 
     }
 
-    @Override
-    public void onStart() {
-        super.onStart();
-        Dialog dialog = getDialog();
-
-        // Set dialog Full screen (You have to control even style.xml to change all params)
-        if (dialog != null) {
-            int width = ViewGroup.LayoutParams.MATCH_PARENT;
-            int height = ViewGroup.LayoutParams.MATCH_PARENT;
-            dialog.getWindow().setLayout(width, height);
-        }
-    }
+//    @Override
+//    public void onStart() {
+//        super.onStart();
+//        Dialog dialog = getDialog();
+//
+//        // Set dialog Full screen (You have to control even style.xml to change all params)
+//        if (dialog != null) {
+//            int width = ViewGroup.LayoutParams.MATCH_PARENT;
+//            int height = ViewGroup.LayoutParams.MATCH_PARENT;
+//            dialog.getWindow().setLayout(width, height);
+//        }
+//    }
 
     public void updateEditText (CharSequence charSequence) {
 //        editText.setText(charSequence);
@@ -346,9 +347,9 @@ public class AddFoodFragment extends DialogFragment {
                 setPic(currentPhotoPath);
             }
             else {
-                SharedPreferences fields= getContext().getSharedPreferences("ProfileDataRestaurant", Context.MODE_PRIVATE);
-                image= fields.getString("ProfileImage", encodeTobase64());
-                imageFood.setImageBitmap(decodeBase64(image));
+//                SharedPreferences fields= getContext().getSharedPreferences("ProfileDataRestaurant", Context.MODE_PRIVATE);
+//                image= fields.getString("ProfileImage", encodeTobase64());
+//                imageFood.setImageBitmap(decodeBase64(image));
             }
         }
         if (requestCode == RESULT_LOAD_IMG) {
@@ -368,9 +369,9 @@ public class AddFoodFragment extends DialogFragment {
                 }
 
             } else {
-                SharedPreferences fields = getContext().getSharedPreferences("ProfileDataRestaurant", Context.MODE_PRIVATE);
-                image = fields.getString("BackgroundTmpA", encodeTobase64());
-                imageFood.setImageBitmap(decodeBase64(image));
+//                SharedPreferences fields = getContext().getSharedPreferences("ProfileDataRestaurant", Context.MODE_PRIVATE);
+//                image = fields.getString("BackgroundTmpA", encodeTobase64());
+//                imageFood.setImageBitmap(decodeBase64(image));
             }
         }
     }
@@ -451,7 +452,7 @@ public class AddFoodFragment extends DialogFragment {
     }
 
     public void removeProfileImage(){
-        imageFood.setImageResource(R.drawable.food_default);
+        imageFood.setImageResource(R.drawable.plate_fork);
     }
 
     private void setPic(String currentPhotoPath) {

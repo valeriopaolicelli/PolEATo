@@ -1,11 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 
-
-<ScrollView
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/mainScrollView"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
@@ -19,9 +17,10 @@
         <ImageView
             android:id="@+id/ivBackground"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="380dp"
+            android:layout_marginBottom="8dp"
             android:adjustViewBounds="true"
-            app:layout_constraintBottom_toTopOf="@id/name_icon"
+            app:layout_constraintBottom_toTopOf="@+id/name_icon"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toStartOf="parent"
@@ -134,7 +133,6 @@
             app:layout_constraintTop_toBottomOf="@id/typeLabel" />
 
 
-
         <!-- Info -->
         <ImageView
             android:id="@+id/info_icon"
@@ -176,7 +174,6 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="@id/infoLabel"
             app:layout_constraintTop_toBottomOf="@id/infoLabel" />
-
 
 
         <!-- Opening hours -->
@@ -262,7 +259,6 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="@id/addressLabel"
             app:layout_constraintTop_toBottomOf="@id/addressLabel" />
-
 
 
         <!-- Email -->
@@ -360,9 +356,9 @@
             android:id="@+id/deliveryCost_icon"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
-            android:contentDescription="@string/phone"
-            android:layout_marginTop="8dp"
             android:layout_marginStart="16dp"
+            android:layout_marginTop="8dp"
+            android:contentDescription="@string/phone"
             android:padding="4dp"
             android:src="@drawable/ic_baseline_directions_bike_24px"
             app:layout_constraintBottom_toTopOf="@id/tvDeliveryCostField"
@@ -374,8 +370,8 @@
             android:id="@+id/deliveryCostLabel"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
             android:layout_marginStart="16dp"
+            android:layout_marginTop="8dp"
             android:layout_marginEnd="16dp"
             android:text="@string/delivery_cost"
             android:textColor="@color/colorTextField"
@@ -405,8 +401,8 @@
             android:id="@+id/status_icon"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
-            android:layout_marginTop="8dp"
             android:layout_marginStart="16dp"
+            android:layout_marginTop="8dp"
             android:contentDescription="@string/phone"
             android:padding="4dp"
             android:src="@drawable/ic_baseline_notification_important_24px"
@@ -419,8 +415,8 @@
             android:id="@+id/statusLabel"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
             android:layout_marginStart="16dp"
+            android:layout_marginTop="8dp"
             android:layout_marginEnd="16dp"
             android:text="@string/current_status"
             android:textColor="@color/colorTextField"
@@ -449,8 +445,8 @@
             android:id="@+id/priceRange_icon"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
-            android:layout_marginTop="8dp"
             android:layout_marginStart="16dp"
+            android:layout_marginTop="8dp"
             android:contentDescription="@string/phone"
             android:padding="4dp"
             android:src="@drawable/ic_baseline_attach_money_24px"
@@ -463,8 +459,8 @@
             android:id="@+id/priceRangeLabel"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
             android:layout_marginStart="16dp"
+            android:layout_marginTop="8dp"
             android:layout_marginEnd="16dp"
             android:text="@string/price_range"
             android:textColor="@color/colorTextField"
@@ -487,7 +483,7 @@
             app:layout_constraintStart_toStartOf="@id/priceRangeLabel"
             app:layout_constraintTop_toBottomOf="@id/priceRangeLabel" />
 
-            <!-- Blank view to avoid that scroll view cuts off the last field -->
-        </android.support.constraint.ConstraintLayout>
+        <!-- Blank view to avoid that scroll view cuts off the last field -->
+    </android.support.constraint.ConstraintLayout>
 
-    </ScrollView>
+</ScrollView>

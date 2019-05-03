@@ -317,7 +317,7 @@ public class ReservationFragment extends Fragment {
                         reservations.add(r);
                     }
                     else
-                        r.setStat(status, getActivity());
+                        r.setStat(status, getActivity().getApplicationContext());
 
                     listAdapter.notifyDataSetChanged();
 
