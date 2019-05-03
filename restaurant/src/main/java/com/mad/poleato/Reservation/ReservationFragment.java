@@ -53,7 +53,7 @@ public class ReservationFragment extends Fragment {
     private Display display;
     private Point size;
     private int width;
-    String loggedID;
+    String loggedID; //TODO set the proper one (login)
     private String localeShort;
 
     private ProgressDialog progressDialog;
@@ -352,7 +352,6 @@ public class ReservationFragment extends Fragment {
             public void onCancelled(@NonNull DatabaseError databaseError) {
                 Log.d("matte", "onCancelled | ERROR: " + databaseError.getDetails() +
                         " | MESSAGE: " + databaseError.getMessage());
-                Toast.makeText(getContext(), databaseError.getMessage().toString(), Toast.LENGTH_SHORT);
             }
         });
     }

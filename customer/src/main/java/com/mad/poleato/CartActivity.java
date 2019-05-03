@@ -5,6 +5,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.StrictMode;
+import android.support.annotation.NonNull;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
@@ -18,8 +19,11 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.onesignal.OneSignal;
 
 import java.io.OutputStream;
@@ -37,7 +41,6 @@ public class CartActivity extends AppCompatActivity implements Interface {
     private boolean flag=false;
     private static TextView tvTotal;
     private static TextView tvEmptyCart;
-    private DatabaseReference dbReference;
     private CartRecyclerViewAdapter recyclerAdapter;
     private Button orderBtn;
     private RecyclerView.LayoutManager layoutManager;
@@ -62,7 +65,6 @@ OneSignal is used to send notifications between applications
         OneSignal.sendTag("User_ID", "C00");
 
         order = (Order) getIntent().getSerializableExtra("order");
-        dbReference = FirebaseDatabase.getInstance().getReference("restaurants");
 
         foodList = new ArrayList<>(order.getSelectedFoods().values());
 
@@ -124,12 +126,18 @@ OneSignal is used to send notifications between applications
                     builder.setPositiveButton(getString(R.string.confirm), new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialogInterface, int i) {
+                            /*
+                             * Add order into restaurant DB and into customer DB (order history)
+                             */
                             order.setDishes();
                             order.setDate(date.getText().toString());
                             order.setTime(time.getText().toString());
                             order.setStatus(getApplicationContext().getString(R.string.new_order));
                             order.uploadOrder();
 
+                            /*
+                             * Send notification to restaurant: NEW ORDER
+                             */
                             sendNotification();
 
                             Intent returnIntent = new Intent();

@@ -1,9 +1,15 @@
 package com.mad.poleato;
+import android.support.annotation.NonNull;
+
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.Exclude;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 import java.io.Serializable;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -109,27 +115,67 @@ public class Order implements Serializable {
     }
 
     public void uploadOrder() {
-        DatabaseReference dbReference = FirebaseDatabase.getInstance().getReference("restaurants");
-        DatabaseReference reservation =  dbReference.child(this.getRestaurantID()).child("reservations").push();
+        /*
+         * UPLOAD order into restaurant table
+         */
 
-       /* reservation.child("status/it").setValue(this.status);
-        reservation.child("status/en").setValue(this.status);
+        DatabaseReference dbReferenceRestaurant = FirebaseDatabase.getInstance().getReference("restaurants");
+        DatabaseReference reservationRestaurant =  dbReferenceRestaurant.child(this.getRestaurantID()).child("reservations").push();
 
-        reservation.child();*/
+        Order o = new Order();
 
-       Order o = new Order();
+        o.setDate(this.date);
+        o.setTime(this.time);
+        o.setTotalPrice(this.totalPrice);
+        o.setCustomerID(this.customerID);
+        o.setRestaurantID(this.restaurantID);
 
-       o.setDate(this.date);
-       o.setTime(this.time);
-       o.setTotalPrice(this.totalPrice);
-       o.setCustomerID(this.customerID);
-       o.setRestaurantID(this.restaurantID);
+        reservationRestaurant.setValue(o);
 
-       reservation.setValue(o);
+        reservationRestaurant.child("status").child("it").setValue("Nuovo ordine");
+        reservationRestaurant.child("status").child("en").setValue("New order");
+        reservationRestaurant.child("dishes").setValue(this.getDishes());
 
-       reservation.child("status").child("it").setValue("Nuovo ordine");
-       reservation.child("status").child("en").setValue("New order");
-       reservation.child("dishes").setValue(this.getDishes());
+        /*
+         * Add order to customer order history
+         */
+        final String[] restaurantName = new String[1];
+        final String orderID= reservationRestaurant.getKey();
+        final List<Food> dishes= this.dishes;
+        final String date= this.date;
+        final String time= this.time;
+        final Double totalPrice= this.totalPrice;
+        final String customerID= this.customerID;
+
+        DatabaseReference referenceRestaurantOfReservation = dbReferenceRestaurant.child(this.getRestaurantID());
+        referenceRestaurantOfReservation.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                if(dataSnapshot.exists())
+                    restaurantName[0] = dataSnapshot.child("Name").getValue().toString();
+                    List<Dish> dish= new ArrayList<>();
+                    String name, notes;
+                    int quantity;
+                    for(Food f : dishes){
+                        name= f.getName();
+                        quantity= f.getSelectedQuantity();
+                        notes= f.getCustomerNotes();
+                        dish.add(new Dish(name, quantity, notes));
+                    }
+                    DecimalFormat df = new DecimalFormat("#.00");
+                    String price = df.format(totalPrice);
+
+                    Reservation reservation= new Reservation(orderID, restaurantName[0], date, time, price);
+                    DatabaseReference referenceCustomer= FirebaseDatabase.getInstance().getReference("customers").child(customerID);
+                    referenceCustomer.child("reservations").child(orderID).setValue(reservation);
+                    referenceCustomer.child("reservations").child(orderID).child("dishes").setValue(dish);
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
     }
 
 
