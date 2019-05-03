@@ -109,8 +109,8 @@ public class EditProfileFragment extends Fragment {
     };
 
 
-    String localeShort;
-    View transparentView;
+    private String localeShort;
+    private boolean priceRangeUninitialized;
 
     String currentUserID;
     private FirebaseAuth mAuth;
@@ -158,6 +158,8 @@ public class EditProfileFragment extends Fragment {
             mParam1 = getArguments().getString(ARG_PARAM1);
             mParam2 = getArguments().getString(ARG_PARAM2);
         }
+
+        priceRangeUninitialized = false;
 
         //download Type base on the current active Locale
         String locale = Locale.getDefault().toString();
@@ -312,6 +314,9 @@ public class EditProfileFragment extends Fragment {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
 
+                //if not set upload it at the end (set it to 0)
+                if(!dataSnapshot.hasChild("PriceRange"))
+                    priceRangeUninitialized = true;
 
                 if(dataSnapshot.hasChild("DeliveryCost") &&
                         dataSnapshot.hasChild("IsActive") &&
@@ -323,6 +328,11 @@ public class EditProfileFragment extends Fragment {
                     // it is setted to the first record (restaurant)
                     // when the sign in and log in procedures will be handled, it will be the proper one
                     if (dataSnapshot.exists()) {
+
+                        //if already set do not touch it during upload phase
+                        if(dataSnapshot.hasChild("PriceRange"))
+                            priceRangeUninitialized = false;
+
                         // dataSnapshot is the "issue" node with all children
                         for (DataSnapshot snap : dataSnapshot.getChildren()) {
                             if (editTextFields.containsKey(snap.getKey())) {
@@ -704,6 +714,10 @@ public class EditProfileFragment extends Fragment {
                 else
                     reference.child(fieldName).setValue(ed.getText().toString());
             }
+
+            //if already set do not touch it during upload phase. Otherwise set it to 0
+            if(priceRangeUninitialized)
+                reference.child("PriceRange").setValue("0");
 
             // Save profile pic to the DB
             Bitmap img = ((BitmapDrawable) profileImage.getDrawable()).getBitmap();

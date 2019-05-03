@@ -3,33 +3,76 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/signin_main_layout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/colorPanelPrimary">
+    android:background="@color/colorPanelPrimary"
+    tools:context=".SignInActivity"
+    android:weightSum="1">
 
     <TextView
         android:id="@+id/tvTitle"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_height="108dp"
+        android:layout_marginTop="32dp"
         android:text="PolEATo"
         android:textColor="#ffffff"
         android:textSize="80sp"
         android:textStyle="italic|bold"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintBottom_toTopOf="@id/linearLayout"
+        app:layout_constraintBottom_toTopOf="@id/button_linearlayout"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_weight=".3" />
 
     <LinearLayout
-        android:id="@+id/linearLayout"
+        android:id="@+id/button_linearlayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginStart="32dp"
+        android:layout_marginEnd="32dp"
         android:orientation="vertical"
-        app:layout_constraintTop_toTopOf="@id/tvTitle"
+        app:layout_constraintBottom_toTopOf="@id/text_linearLayout"
+        app:layout_constraintEnd_toEndOf="@id/tvTitle"
+        app:layout_constraintStart_toStartOf="@id/tvTitle"
+        app:layout_constraintTop_toBottomOf="@id/tvTitle"
+        app:layout_constraintVertical_weight=".3">
+
+        <com.google.android.gms.common.SignInButton
+            android:id="@+id/google_button"
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
+            android:layout_alignParentTop="true"
+            android:layout_margin="10dp"
+            android:layout_marginStart="32dp"
+            android:layout_marginEnd="32dp"
+            android:textSize="18sp"
+            android:elevation="@dimen/default_gap"/>
+
+        <com.facebook.login.widget.LoginButton
+            android:id="@+id/facebook_button"
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
+            android:layout_alignParentTop="true"
+            android:layout_margin="10dp"
+            android:layout_marginStart="32dp"
+            android:layout_marginEnd="32dp"
+            android:textSize="18sp"
+            android:elevation="@dimen/default_gap"/>
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/text_linearLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="32dp"
+        android:orientation="vertical"
+        android:weightSum="1"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        android:weightSum="1">
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/button_linearlayout"
+        app:layout_constraintVertical_weight=".3">
 
         <EditText
             android:id="@+id/edEmail"
@@ -38,11 +81,10 @@
             android:layout_marginStart="32dp"
             android:layout_marginEnd="32dp"
             android:layout_marginBottom="32dp"
+            android:layout_weight=".5"
             android:background="#ffffff"
             android:hint="Email"
-            android:textSize="25sp"
-            android:textStyle="italic"
-            android:layout_weight=".5"/>
+            android:textSize="25sp" />
 
         <EditText
             android:id="@+id/edPassword"
@@ -51,64 +93,35 @@
             android:layout_marginStart="32dp"
             android:layout_marginEnd="32dp"
             android:layout_marginBottom="32dp"
+            android:layout_weight=".5"
             android:background="#ffffff"
             android:hint="Password"
-            android:textSize="25sp"
-            android:textStyle="italic"
-            android:layout_weight=".5"/>
+            android:textSize="25sp" />
 
         <LinearLayout
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal">
+            android:orientation="horizontal"
+            android:weightSum="1">
+
             <Button
-                android:id="@+id/signInButton"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:text="Sign in"/>
-            <Button
-                android:id="@+id/signUpButton"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:text="Sign up"/>
-        </LinearLayout>
-
-
-    </LinearLayout>
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:weightSum="1"
-        app:layout_constraintTop_toBottomOf="@id/linearLayout"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent">
-
-        <com.google.android.gms.common.SignInButton
-                android:id="@+id/google_button"
+                android:id="@+id/ButtonSignIn"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="5dp"
-                android:text="Text"
-                android:layout_alignParentTop="true"
-                android:layout_margin="10dp"
-                android:textSize="18sp"
-                android:layout_weight=".5"/>
+                android:layout_gravity="center"
+                android:layout_weight=".5"
+                android:text="Sign in" />
 
-       <!-- <com.facebook.login.widget.LoginButton
-            android:id="@+id/login_button"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_horizontal"
-            android:layout_marginTop="30dp"
-            android:layout_marginBottom="30dp"
-            android:layout_weight=".5"/> -->
+            <Button
+                android:id="@+id/ButtonSignUp"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_weight=".5"
+                android:text="Sign up" />
 
-
+        </LinearLayout>
     </LinearLayout>
+
 
 </android.support.constraint.ConstraintLayout>

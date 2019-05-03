@@ -15,6 +15,14 @@
       },
       "oauth_client": [
         {
+          "client_id": "504775808769-jeqhgoee3jvdbc24v8jbdv5cr57t0rqq.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.mad.poleato",
+            "certificate_hash": "0a3bf002e89576f7aad3f0cc55dd25fd7b9fd01e"
+          }
+        },
+        {
           "client_id": "504775808769-9ndek09riagafrvopujqh377op6203hp.apps.googleusercontent.com",
           "client_type": 3
         }
