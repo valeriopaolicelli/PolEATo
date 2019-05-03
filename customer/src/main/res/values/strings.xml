@@ -73,6 +73,10 @@
 
 
 
+    <string name="active_status"><font size="18">Active</font></string>
+    <string name="inactive_status"><font size="18">Inactive</font></string>
+    <string name="current_status"><font size="18">Your status</font></string>
+
 
     <string name="title_activity_main">MainActivity</string>
     <string name="title_bottombar_restaurantSearch">Search</string>

@@ -2,6 +2,8 @@ package com.mad.poleato.DailyOffer.ExpandableListManagement;
 
 import android.app.Activity;
 import android.arch.lifecycle.ViewModelProviders;
+import android.graphics.Path;
+import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.support.v7.widget.PopupMenu;
 import android.util.Log;
@@ -17,8 +19,12 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import androidx.navigation.NavDirections;
 import androidx.navigation.Navigation;
 
+import com.mad.poleato.DailyOffer.DailyOfferFragmentDirections;
+import com.mad.poleato.DailyOffer.EditFood.EditFoodFragment;
+import com.mad.poleato.DailyOffer.EditFood.EditFoodFragmentDirections;
 import com.mad.poleato.DailyOffer.Food;
 import com.mad.poleato.R;
 import com.mad.poleato.View.ViewModel.MyViewModel;
@@ -119,7 +125,14 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
                         /**
                          * GO TO EDIT_FOOD_FRAGMENT
                          */
-                        Navigation.findNavController(finalConvertView).navigate(R.id.action_daily_offer_id_to_editFoodFragment_id);
+                        DailyOfferFragmentDirections.ActionDailyOfferIdToEditFoodFragmentId action =
+                                        DailyOfferFragmentDirections
+                                                .actionDailyOfferIdToEditFoodFragmentId("name", "description", "price", "quantity");
+                        action.setName(holder.name.getText().toString());
+                        action.setDescription(holder.description.getText().toString());
+                        action.setPrice(holder.price.getText().toString());
+                        action.setQuantity(holder.quantity.getText().toString());
+                        Navigation.findNavController(finalConvertView).navigate(action);
 
                         return false;
                     }

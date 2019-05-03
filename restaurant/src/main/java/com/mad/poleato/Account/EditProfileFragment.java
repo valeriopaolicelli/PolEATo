@@ -96,7 +96,7 @@ public class EditProfileFragment extends Fragment {
     private DatabaseReference reference;
 
     private View v;
-    private String image;
+    private Bitmap image;
     private FloatingActionButton change_im;
     private ImageView profileImage;
     private Switch statusSwitch;
@@ -187,28 +187,6 @@ public class EditProfileFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         v = inflater.inflate(R.layout.edit_account_layout, container, false);
-
-//        v.findViewById(R.id.applyMod).setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                saveChanges();
-//            }
-//        });
-
-        //  change_im = findViewById(R.id.change_im);
-     //   transparentView = v.findViewById(R.id.transparentView);
-      //  transparentView.setVisibility(View.INVISIBLE);
-        //transparentView.setEnabled(true);
-
-        /*Animation animation = new AlphaAnimation(0.0f, 1.0f);
-        animation.setFillAfter(true);
-        v.startAnimation(animation);*/
-    /*} else {
-        Animation animation = new AlphaAnimation(0.0f, 1.0f);
-        animation.setFillAfter(true);
-        v.startAnimation(animation);
-    }*/
-
 
         editTextFields.put("Name",(EditText) v.findViewById(R.id.editTextName));
         editTextFields.put("Info",(EditText) v.findViewById(R.id.editTextInfo));
@@ -336,9 +314,10 @@ public class EditProfileFragment extends Fragment {
 
                 if(dataSnapshot.hasChild("DeliveryCost") &&
                         dataSnapshot.hasChild("IsActive") &&
-                        dataSnapshot.hasChild("PriceRange") &&
+                        //dataSnapshot.hasChild("PriceRange") &&
                         dataSnapshot.hasChild("Type") &&
-                        dataSnapshot.child("Type").hasChild(localeShort))
+                        dataSnapshot.child("Type").hasChild("it") &&
+                        dataSnapshot.child("Type").hasChild("en"))
                 {
                     // it is setted to the first record (restaurant)
                     // when the sign in and log in procedures will be handled, it will be the proper one
@@ -386,6 +365,7 @@ public class EditProfileFragment extends Fragment {
             public void onSuccess(byte[] bytes) {
                 Bitmap bmp = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
                 profileImage.setImageBitmap(bmp);
+                image = bmp;
                 //send message to main thread
                 handler.sendEmptyMessage(0);
 
@@ -441,7 +421,7 @@ public class EditProfileFragment extends Fragment {
             if (resultCode == RESULT_OK) {
                 setPic(currentPhotoPath);
             } else
-                profileImage.setImageBitmap(decodeBase64(image));
+                profileImage.setImageBitmap(image);
         }
         if (requestCode == RESULT_LOAD_IMG) {
             if (resultCode == RESULT_OK) {
@@ -459,7 +439,7 @@ public class EditProfileFragment extends Fragment {
                 }
 
             } else
-                profileImage.setImageBitmap(decodeBase64(image)); //TODO back pressed on gallery
+                profileImage.setImageBitmap(image); //TODO back pressed on gallery
         }
     }
 
@@ -599,32 +579,11 @@ public class EditProfileFragment extends Fragment {
         return rotatedImg;
     }
 
-    private String encodeTobase64() {
-        Bitmap image = ((BitmapDrawable) profileImage.getDrawable()).getBitmap();
-        ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        image.compress(Bitmap.CompressFormat.PNG, 100, baos);
-        byte[] b = baos.toByteArray();
-        String imageEncoded = Base64.encodeToString(b, Base64.DEFAULT);
-        Log.d("Image Log:", imageEncoded);
-        return imageEncoded;
-    }
-
-    public Bitmap decodeBase64(String input) {
-        byte[] decodedByte = Base64.decode(input, 0);
-        return BitmapFactory
-                .decodeByteArray(decodedByte, 0, decodedByte.length);
-    }
-
 
     public void saveChanges() {
 
         // TODO HERE MAKE UI NON RESPONSIVE
 
-        /*ConstraintLayout layout = (ConstraintLayout) v.findViewById(R.id.mainEdit);
-        for (int i = 0; i < layout.getChildCount(); i++) {
-            View child = layout.getChildAt(i);
-            child.setEnabled(false);
-        }*/
 
         boolean wrongField = false;
         if(getActivity() != null){
@@ -740,12 +699,12 @@ public class EditProfileFragment extends Fragment {
 
             }
             //insert both it and en
-            reference.child(loggedID).child("Type").child(localeShort).setValue(types);
-            reference.child(loggedID).child("Type").child(otherLocale).setValue(translatedTypes);
+            reference.child("Type").child(localeShort).setValue(types);
+            reference.child("Type").child(otherLocale).setValue(translatedTypes);
 
 
 
-            reference.child(loggedID).child("IsActive").setValue(statusSwitch.isChecked());
+            reference.child("IsActive").setValue(statusSwitch.isChecked());
             EditText ed;
             for(String fieldName : editTextFields.keySet()){
                 ed = editTextFields.get(fieldName);
@@ -754,10 +713,10 @@ public class EditProfileFragment extends Fragment {
                     String s = ed.getText().toString().replace(",", ".");
                     double d = Double.parseDouble(s);
                     String priceStr = decimalFormat.format(d);
-                    reference.child(loggedID).child(fieldName).setValue(priceStr);
+                    reference.child(fieldName).setValue(priceStr);
                 }
                 else
-                    reference.child(loggedID).child(fieldName).setValue(ed.getText().toString());
+                    reference.child(fieldName).setValue(ed.getText().toString());
             }
 
             // Save profile pic to the DB
@@ -990,47 +949,6 @@ public class EditProfileFragment extends Fragment {
         }
     }
 
-
-    /*private class SwitchListener implements View.OnClickListener {
-
-        @Override
-        public void onClick(View v) {
-
-            if(getActivity() == null){
-                Log.d("matte", "NULL context in OnClick of the Switch");
-                return;
-            }
-
-            //get the lock before making changes to the switch (in order to not trigger an infinite loop)
-            String msg = "";
-            //restore previous value to block the change before AlertDialog
-            final boolean isChecked = statusSwitch.isChecked();
-            statusSwitch.setChecked(!isChecked);
-            if(isChecked)
-                msg += getString(R.string.go_active_message);
-            else
-                msg += getString(R.string.go_inactive_message);
-
-            new AlertDialog.Builder(getActivity()).setMessage(msg)
-                    .setPositiveButton(getString(R.string.yes), new DialogInterface.OnClickListener()
-                    {
-                        public void onClick(DialogInterface paramAnonymousDialogInterface, int paramAnonymousInt) {
-                            statusSwitch.setChecked(isChecked);
-                            //release the lock after the last switch change
-                            //statusSwitch.setClickable(false);
-                        }
-                    })
-                    .setNegativeButton(getString(R.string.no), new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            //release the lock after the last switch change
-                            //statusSwitch.setClickable(false);
-                        }
-                    })
-                    .show();
-        }
-
-    }*/
 
     private class SwitchListener extends OnSwipeTouchListener{
 

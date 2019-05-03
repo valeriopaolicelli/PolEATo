@@ -1,7 +1,10 @@
 package com.mad.poleato.Reservation;
 
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.provider.ContactsContract;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -53,6 +56,14 @@ public class ReservationFragment extends Fragment {
     String loggedID;
     private String localeShort;
 
+    private ProgressDialog progressDialog;
+    Handler handler = new Handler() {
+        @Override
+        public void handleMessage(Message msg) {
+            progressDialog.dismiss();
+        }
+    };
+
     private DatabaseReference customer; //to retrieve the customer details -> global to handle async behaviour of FB
 
     // TODO: Rename parameter arguments, choose names that match
@@ -95,6 +106,8 @@ public class ReservationFragment extends Fragment {
             mParam1 = getArguments().getString(ARG_PARAM1);
             mParam2 = getArguments().getString(ARG_PARAM2);
         }
+        Locale locale= Locale.getDefault();
+        localeShort = locale.toString().substring(0, 2);
         /** Calculate position of ExpandableListView indicator. */
         display = getActivity().getWindowManager().getDefaultDisplay();
         size = new Point();
@@ -107,6 +120,10 @@ public class ReservationFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.reservation_frag_layout, container, false);
+
+        if(getActivity() != null)
+            progressDialog = ProgressDialog.show(getActivity(), "", getString(R.string.loading));
+
         initData();
 
         lv = view.findViewById(R.id.reservationslv);
@@ -143,26 +160,40 @@ public class ReservationFragment extends Fragment {
         DatabaseReference reference = FirebaseDatabase.getInstance().getReference("restaurants")
                 .child(loggedID).child("reservations");
 
+
+
+        reference.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                handler.sendEmptyMessage(0);
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+                handler.sendEmptyMessage(0);
+            }
+        });
+
         reference.addChildEventListener(new ChildEventListener() {
             @Override
             public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+
+                Reservation r= null;
+                final String order_id, customer_id;
+                String note= null;
 
                 if(dataSnapshot.hasChild("customerID") &&
                         dataSnapshot.hasChild("restaurantID") &&
                         dataSnapshot.hasChild("totalPrice") &&
                         dataSnapshot.hasChild("time") &&
                         dataSnapshot.hasChild("status") &&
-                        dataSnapshot.child("status").hasChild(localeShort) &&
+                        dataSnapshot.child("status").hasChild("it") &&
+                        dataSnapshot.child("status").hasChild("en") &&
                         dataSnapshot.hasChild("date") &&
                         dataSnapshot.hasChild("dishes")
                 )
                 {
                     //retrieve the customer (reservation) details
-                    Reservation r= null;
-                    final String order_id, customer_id;
-                    String note= null;
-                    Locale locale= Locale.getDefault();
-                    localeShort = locale.toString().substring(0, 2);
 
                     order_id = dataSnapshot.getKey();
                     customer_id = dataSnapshot.child("customerID").getValue().toString();
@@ -229,7 +260,8 @@ public class ReservationFragment extends Fragment {
                         dataSnapshot.hasChild("totalPrice") &&
                         dataSnapshot.hasChild("time") &&
                         dataSnapshot.hasChild("status") &&
-                        dataSnapshot.child("status").hasChild(localeShort) &&
+                        dataSnapshot.child("status").hasChild("it") &&
+                        dataSnapshot.child("status").hasChild("en") &&
                         dataSnapshot.hasChild("date") &&
                         dataSnapshot.hasChild("dishes")
                 )
@@ -279,8 +311,14 @@ public class ReservationFragment extends Fragment {
                     Reservation r = new Reservation(order_id, null, null, null, date, time,
                             status, null, getActivity());
 
-                    listHash.put(order_id, dishes);
-                    reservations.add(r);
+                    // if the status is changed (onclick listener) the order must change only and not re-added
+                    if(!listHash.containsKey(order_id)){
+                        listHash.put(order_id, dishes);
+                        reservations.add(r);
+                    }
+                    else
+                        r.setStat(status, getActivity());
+
                     listAdapter.notifyDataSetChanged();
 
                 }

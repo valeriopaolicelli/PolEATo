@@ -12,12 +12,11 @@
         tools:layout="@layout/reservation_frag_layout" />
 
 
-
     <fragment
         android:id="@+id/daily_offer_id"
         android:name="com.mad.poleato.DailyOffer.DailyOfferFragment"
         android:label="@string/title_actionbar_dailyoffer"
-        tools:layout="@layout/dailyoffer_frag_layout" >
+        tools:layout="@layout/dailyoffer_frag_layout">
         <action
             android:id="@+id/action_daily_offer_to_addFoodFragment"
             app:destination="@id/addFoodFragment_id" />
@@ -29,29 +28,43 @@
         android:id="@+id/addFoodFragment_id"
         android:name="com.mad.poleato.DailyOffer.AddFood.AddFoodFragment"
         android:label="@string/title_actionbar_add_food"
-        tools:layout="@layout/add_food_fragment" >
+        tools:layout="@layout/add_food_fragment">
         <action
             android:id="@+id/action_addFoodFragment_to_daily_offer"
-            app:destination="@id/daily_offer_id"
-           />
+            app:destination="@id/daily_offer_id" />
     </fragment>
     <fragment
         android:id="@+id/editFoodFragment_id"
         android:name="com.mad.poleato.DailyOffer.EditFood.EditFoodFragment"
-        android:label="edit_food_fragment"
-        tools:layout="@layout/edit_food_fragment" >
+        android:label="@string/title_actionbar_edit_food"
+        tools:layout="@layout/edit_food_fragment">
         <action
             android:id="@+id/action_editFoodFragment_id_to_daily_offer_id"
             app:destination="@id/daily_offer_id" />
+        <argument
+            android:name="name"
+            app:argType="string"
+            app:nullable="true" />
+        <argument
+            android:name="description"
+            app:argType="string"
+            app:nullable="true" />
+        <argument
+            android:name="price"
+            app:argType="string"
+            app:nullable="true" />
+        <argument
+            android:name="quantity"
+            app:argType="string"
+            app:nullable="true" />
     </fragment>
-
 
 
     <fragment
         android:id="@+id/account_id"
         android:name="com.mad.poleato.Account.AccountFragment"
         android:label="@string/title_actionbar_account"
-        tools:layout="@layout/account_frag_layout" >
+        tools:layout="@layout/account_frag_layout">
         <action
             android:id="@+id/action_account_id_to_editProfile_id"
             app:destination="@id/editProfile_id" />

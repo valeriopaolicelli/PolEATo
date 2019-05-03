@@ -122,13 +122,10 @@ public class AccountFragment extends Fragment {
         //fill the views fields
         if(getActivity() != null)
             progressDialog = ProgressDialog.show(getActivity(), "", getString(R.string.loading));
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                //start a new thread to process job
-                fillFields();
-            }
-        }).start();
+
+        //start a new thread to process job
+        fillFields();
+
     }
 
     public void fillFields() {
@@ -145,9 +142,10 @@ public class AccountFragment extends Fragment {
 
                     if(dataSnapshot.hasChild("DeliveryCost") &&
                             dataSnapshot.hasChild("IsActive") &&
-                            dataSnapshot.hasChild("PriceRange") &&
+                            //dataSnapshot.hasChild("PriceRange") &&
                             dataSnapshot.hasChild("Type") &&
-                            dataSnapshot.child("Type").hasChild(localeShort))
+                            dataSnapshot.child("Type").hasChild("it") &&
+                            dataSnapshot.child("Type").hasChild("en"))
                     {
                         for(DataSnapshot snap : dataSnapshot.getChildren()){
                             if(tvFields.containsKey(snap.getKey())){
@@ -215,36 +213,6 @@ public class AccountFragment extends Fragment {
         });
 
     }
-
-
-    @Override
-    public void onSaveInstanceState(Bundle outState) {
-        super.onSaveInstanceState(outState);
-
-//        final ScrollView mScrollView = getView().findViewById(R.id.mainScrollView);
-//        //saving scrollView position when rotate the screen
-//        outState.putIntArray("ARTICLE_SCROLL_POSITION",
-//                new int[]{ mScrollView.getScrollX(), mScrollView.getScrollY()});
-    }
-
-
-    @Override
-    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
-        super.onActivityCreated(savedInstanceState);
-
-        final ScrollView mScrollView = getView().findViewById(R.id.mainScrollView);
-        //restoring scrollview position
-//        final int[] position = savedInstanceState.getIntArray("ARTICLE_SCROLL_POSITION");
-//        if (position != null) {
-//            mScrollView.post(new Runnable() {
-//                public void run() {
-//                    mScrollView.scrollTo(position[0], position[1]);
-//                }
-//            });
-//        }
-
-    }
-
 
 }
 
