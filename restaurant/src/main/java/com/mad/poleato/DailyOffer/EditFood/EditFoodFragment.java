@@ -1,9 +1,7 @@
 package com.mad.poleato.DailyOffer.EditFood;
 
 import android.app.Dialog;
-import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Matrix;
@@ -28,17 +26,16 @@ import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
-import android.widget.Spinner;
 import android.widget.Toast;
 
+import androidx.navigation.NavDirections;
 import androidx.navigation.Navigation;
 
+import com.mad.poleato.DailyOffer.DailyOfferFragmentDirections;
 import com.mad.poleato.DailyOffer.Food;
 import com.mad.poleato.R;
 
@@ -47,7 +44,6 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
-import java.text.DecimalFormat;
 import java.util.TreeMap;
 
 
@@ -218,9 +214,6 @@ public class EditFoodFragment extends DialogFragment {
 
 
 
-
-
-
         change_im = v.findViewById(R.id.frag_change_im);
         imageFood = v.findViewById(R.id.imageFood);
         buttonSave = v.findViewById(R.id.button_frag_save);
@@ -291,6 +284,12 @@ public class EditFoodFragment extends DialogFragment {
                     /**
                      * GO TO DAILY_OFFER_FRAGMENT
                      */
+//                    Bundle bundle = new Bundle();
+//                    bundle.putString("name", editTextFields.get("Name").getText().toString());
+//                    bundle.putString("description", editTextFields.get("Description").getText().toString());
+//                    bundle.putString("Price", priceString);
+//                    bundle.putString("Price", editTextFields.get("Quantity").getText().toString());
+
                     Navigation.findNavController(v).navigate(R.id.action_editFoodFragment_id_to_daily_offer_id);
                 }
             }
@@ -313,6 +312,19 @@ public class EditFoodFragment extends DialogFragment {
         image = fields.getString("BackgroundTmpE", encodeTobase64());
         imageFood.setImageBitmap(decodeBase64(image));*/
 
+    }
+
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        String name = EditFoodFragmentArgs.fromBundle(getArguments()).getName();
+        String description = EditFoodFragmentArgs.fromBundle(getArguments()).getDescription();
+        String price = EditFoodFragmentArgs.fromBundle(getArguments()).getPrice();
+        String quantity = EditFoodFragmentArgs.fromBundle(getArguments()).getQuantity();
+        editTextFields.get("Name").setText(name);
+        editTextFields.get("Description").setText(description);
+        editTextFields.get("Price").setText(price);
+        editTextFields.get("Quantity").setText(quantity);
     }
 
     @Override
