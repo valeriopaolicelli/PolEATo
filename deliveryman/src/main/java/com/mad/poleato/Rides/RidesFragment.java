@@ -3,6 +3,8 @@ package com.mad.poleato.Rides;
 
 import android.app.Activity;
 import android.app.ProgressDialog;
+import android.arch.lifecycle.Observer;
+import android.arch.lifecycle.ViewModelProviders;
 import android.content.Context;
 import android.os.Bundle;
 import android.os.Handler;
@@ -25,8 +27,11 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.mad.poleato.FirebaseData.MyFirebaseData;
 import com.mad.poleato.R;
+import com.mad.poleato.View.ViewModel.MyViewModel;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -45,11 +50,12 @@ public class RidesFragment extends Fragment {
     private RidesRecyclerViewAdapter ridesAdapter;
     private RecyclerView.LayoutManager layoutManager;
     private RecyclerView rv;
-    private DatabaseReference dbReferece;
 
-    private HashMap<String, Ride>rideMap;
-    private List<Ride>rideList;
+    private HashMap<String, Ride> rideMap;
+    private List<Ride> rideList;
     private List<Ride> currDisplayedList; //list of filtered elements displayed on the screen
+    private MyViewModel model;
+    private MyFirebaseData myFirebaseData;
 
     private ProgressDialog progressDialog;
     Handler handler = new Handler() {
@@ -65,8 +71,8 @@ public class RidesFragment extends Fragment {
         super.onAttach(context);
         this.hostActivity = this.getActivity();
 
-        if(hostActivity!=null){
-            myToast = Toast.makeText(hostActivity,"", Toast.LENGTH_LONG);
+        if (hostActivity != null) {
+            myToast = Toast.makeText(hostActivity, "", Toast.LENGTH_LONG);
         }
     }
 
@@ -78,21 +84,41 @@ public class RidesFragment extends Fragment {
         rideMap = new HashMap<>();
         currDisplayedList = new ArrayList<>();
 
-        if(getActivity() != null){
+        if (getActivity() != null) {
             //TODO: update strings.xml
             progressDialog = ProgressDialog.show(getActivity(), "", "Loading");
         }
 
-        fillFields();
-    }
 
+
+
+        /** Listeners to update UI Expandable list from VIEW_MODEL list child */
+        model = ViewModelProviders.of(getActivity()).get(MyViewModel.class);
+        model.getListR().observe(this, new Observer<HashMap<String, Ride>>() {
+            @Override
+            public void onChanged(@Nullable HashMap<String, Ride> stringRideHashMap) {
+                if(stringRideHashMap.values() != null)
+                    ridesAdapter.setAllRiders((ArrayList<Ride>) stringRideHashMap.values());
+            }
+        });
+//        model.getListR().observe(this, new Observer<HashMap<String, List<Food>>>() {
+//            @Override
+//            public void onChanged(@Nullable HashMap<String, List<Food>> stringListHashMap) {
+//                listAdapter.setAllChild(stringListHashMap);
+//                //upload menu on FireBase
+//                uploadMenu();
+//            }
+//        });
+
+        myFirebaseData = new MyFirebaseData(getActivity());
+    }
 
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        fragView = inflater.inflate(R.layout.ride_recyclerview, container,false);
+        fragView = inflater.inflate(R.layout.ride_recyclerview, container, false);
         return fragView;
     }
 
@@ -106,90 +132,19 @@ public class RidesFragment extends Fragment {
         layoutManager = new LinearLayoutManager(this.hostActivity);
         rv.setLayoutManager(layoutManager);
 
-        this.ridesAdapter = new RidesRecyclerViewAdapter(this.hostActivity,this.currDisplayedList);
+        this.ridesAdapter = new RidesRecyclerViewAdapter(this.hostActivity, this.currDisplayedList);
         rv.setAdapter(ridesAdapter);
         //add separator between list items
         DividerItemDecoration itemDecor = new DividerItemDecoration(hostActivity, 1); // 1 means HORIZONTAL
         rv.addItemDecoration(itemDecor);
 
+
+
+        myFirebaseData.fillFields();
     }
 
-    public void fillFields(){
-        dbReferece = FirebaseDatabase.getInstance().getReference("deliveryman").child("D00").child("reservations");
-
-        dbReferece.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                handler.sendEmptyMessage(0);
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
-                handler.sendEmptyMessage(0);
-            }
-        });
-
-        dbReferece.addChildEventListener(new ChildEventListener() {
-            List<Ride>childItem;
-            @Override
-            public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
-                Log.d("fabio", "onChildAdded | PREVIOUS CHILD" + s);
-                String orderID = dataSnapshot.getKey();
-                String addressCustomer = dataSnapshot.child("addressCustomer").getValue().toString();
-                String addressRestaurant = dataSnapshot.child("addressRestaurant").getValue().toString();
-                String nameRestaurant = dataSnapshot.child("nameRestaurant").getValue().toString();
-                String surnameCustomer = dataSnapshot.child("surnameCustomer").getValue().toString();
-                Double totalPrice = Double.parseDouble(dataSnapshot.child("totalPrice").getValue().toString());
-                Integer numberOfDishes = Integer.parseInt(dataSnapshot.child("numberOfDishes").getValue().toString());
-
-                Ride rideObj = new Ride(orderID,surnameCustomer,addressCustomer,nameRestaurant,addressRestaurant,totalPrice,numberOfDishes);
-
-                rideMap.put(orderID,rideObj);
-                rideList.add(rideObj);
-                addToDisplay(rideObj);
-            }
-
-            @Override
-            public void onChildChanged(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
-                Log.d("fabio", "onChildAdded | PREVIOUS CHILD" + s);
-                String orderID = dataSnapshot.getKey();
-                String addressCustomer = dataSnapshot.child("addressCustomer").toString();
-                String addressRestaurant = dataSnapshot.child("addressRestaurant").toString();
-                String nameRestaurant = dataSnapshot.child("nameRestaurant").toString();
-                String surnameCustomer = dataSnapshot.child("surnameCustomer").toString();
-                Double totalPrice = Double.parseDouble(dataSnapshot.child("totalPrice").toString());
-                Integer numberOfDishes = Integer.parseInt(dataSnapshot.child("numberOfDishes").toString());
-
-                Ride rideObj = new Ride(orderID,surnameCustomer,addressCustomer,nameRestaurant,addressRestaurant,totalPrice,numberOfDishes);
-
-                rideMap.put(orderID,rideObj);
-                rideList.add(rideObj);
 
 
-                ridesAdapter.notifyDataSetChanged();
-            }
-
-            @Override
-            public void onChildRemoved(@NonNull DataSnapshot dataSnapshot) {
-                String id = dataSnapshot.getKey();
-                Ride toRemove = rideMap.get(id);
-                rideMap.remove(id);
-                rideList.remove(toRemove);
-                removeFromDisplay(toRemove);
-            }
-
-            @Override
-            public void onChildMoved(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
-
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
-
-            }
-
-        });
-    }
     private void addToDisplay(Ride r) {
         //add new item to the displayed list
         currDisplayedList.add(r);

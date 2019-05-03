@@ -41,6 +41,11 @@ public class RidesRecyclerViewAdapter extends RecyclerView.Adapter<RidesRecycler
         this.ridesList=ridesList;
     }
 
+    public void setAllRiders(List<Ride> riders) {
+        this.ridesList = riders;
+        notifyDataSetChanged();
+    }
+
 
     @NonNull
     @Override
