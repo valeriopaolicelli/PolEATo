@@ -36,7 +36,7 @@
     <fragment
         android:id="@+id/editFoodFragment_id"
         android:name="com.mad.poleato.DailyOffer.EditFood.EditFoodFragment"
-        android:label="edit_food_fragment"
+        android:label="@string/title_actionbar_edit_food"
         tools:layout="@layout/edit_food_fragment">
         <action
             android:id="@+id/action_editFoodFragment_id_to_daily_offer_id"
