@@ -137,7 +137,9 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
                     if(food.getSelectedQuantity()==0){
                         order.removeFoodFromOrder(food);
                     }
-                    order.getSelectedFoods().get(food.getName()).setSelectedQuantity(food.getSelectedQuantity());
+                    else
+                        order.getSelectedFoods().get(food.getName()).setSelectedQuantity(food.getSelectedQuantity());
+
                     order.updateTotalPrice();
                     Log.d("fabio", "new total price: "+ order.getTotalPrice());
                     // ((OrderActivity)host).setOrder(order);
