@@ -54,6 +54,8 @@ public class SignInActivity extends AppCompatActivity {
         // profile. ID and basic profile are included in DEFAULT_SIGN_IN.
         GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
                 .requestEmail()
+                //.requestIdToken("504775808769-jbk1ab9gqb7gsi149mmvqhre1v37ji2k.apps.googleusercontent.com")
+                //.requestServerAuthCode("504775808769-jbk1ab9gqb7gsi149mmvqhre1v37ji2k.apps.googleusercontent.com", false)
                 .build();
 
         // Build a GoogleSignInClient with the options specified by gso.
@@ -86,7 +88,7 @@ public class SignInActivity extends AppCompatActivity {
         //check if signed in with Google
         GoogleSignInAccount account = GoogleSignIn.getLastSignedInAccount(this);
         if(account != null)
-            access();
+            firebaseAuthWithGoogle(account);
     }
 
     //access to the app
@@ -188,6 +190,8 @@ public class SignInActivity extends AppCompatActivity {
 
     private void firebaseAuthWithGoogle(GoogleSignInAccount account) {
         Log.d("matte", "firebaseAuthWithGoogle:" + account.getId());
+
+        String s = account.getIdToken();
 
         AuthCredential credential = GoogleAuthProvider.getCredential(account.getIdToken(), null);
         mAuth.signInWithCredential(credential)

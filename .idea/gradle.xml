@@ -11,11 +11,9 @@
         <option name="modules">
           <set>
             <option value="$PROJECT_DIR$" />
-            <option value="$PROJECT_DIR$/app" />
-            <option value="$PROJECT_DIR$/circleimageview" />
             <option value="$PROJECT_DIR$/customer" />
             <option value="$PROJECT_DIR$/deliveryman" />
-            <option value="$PROJECT_DIR$/restaurateur" />
+            <option value="$PROJECT_DIR$/restaurant" />
           </set>
         </option>
         <option name="resolveModulePerSourceSet" value="false" />

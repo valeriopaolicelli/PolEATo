@@ -8,6 +8,9 @@ import android.widget.TextView;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 import androidx.navigation.ui.NavigationUI;
+
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.onesignal.OneSignal;
 
 public class NavigatorActivity extends AppCompatActivity {
@@ -15,6 +18,9 @@ public class NavigatorActivity extends AppCompatActivity {
     private TextView mTextMessage;
     private NavController navController;
     private BottomNavigationView navigation;
+
+    private String currentUserID;
+    private FirebaseAuth mAuth;
 
 //    private BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener
 //            = new BottomNavigationView.OnNavigationItemSelectedListener() {
@@ -47,7 +53,11 @@ public class NavigatorActivity extends AppCompatActivity {
                 .unsubscribeWhenNotificationsAreDisabled(true)
                 .init();
 
-        OneSignal.sendTag("User_ID", "R00"); // TODO
+        mAuth = FirebaseAuth.getInstance();
+        FirebaseUser currentUser = mAuth.getCurrentUser();
+        currentUserID = currentUser.getUid();
+
+        OneSignal.sendTag("User_ID", currentUserID);
         /**
          * Set navigation between NavController and Bottom Toolbar
          */

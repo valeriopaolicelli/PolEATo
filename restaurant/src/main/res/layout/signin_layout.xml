@@ -95,6 +95,7 @@
             android:layout_marginBottom="32dp"
             android:layout_weight=".5"
             android:background="#ffffff"
+            android:inputType="textPassword"
             android:hint="Password"
             android:textSize="25sp" />
 
