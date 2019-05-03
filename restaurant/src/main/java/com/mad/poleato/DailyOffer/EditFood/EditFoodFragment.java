@@ -327,18 +327,18 @@ public class EditFoodFragment extends DialogFragment {
         editTextFields.get("Quantity").setText(quantity);
     }
 
-    @Override
-    public void onStart() {
-        super.onStart();
-        Dialog dialog = getDialog();
-
-        // Set dialog Full screen (You have to control even style.xml to change all params)
-        if (dialog != null) {
-            int width = ViewGroup.LayoutParams.MATCH_PARENT;
-            int height = ViewGroup.LayoutParams.MATCH_PARENT;
-            dialog.getWindow().setLayout(width, height);
-        }
-    }
+//    @Override
+//    public void onStart() {
+//        super.onStart();
+//        Dialog dialog = getDialog();
+//
+//        // Set dialog Full screen (You have to control even style.xml to change all params)
+//        if (dialog != null) {
+//            int width = ViewGroup.LayoutParams.MATCH_PARENT;
+//            int height = ViewGroup.LayoutParams.MATCH_PARENT;
+//            dialog.getWindow().setLayout(width, height);
+//        }
+//    }
 
 
     @Override
@@ -454,7 +454,7 @@ public class EditFoodFragment extends DialogFragment {
     }
 
     public void removeProfileImage(){
-        imageFood.setImageResource(R.drawable.food_default);
+        imageFood.setImageResource(R.drawable.plate_fork);
     }
 
     private void setPic(String currentPhotoPath) {

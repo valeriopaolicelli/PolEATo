@@ -7,9 +7,9 @@
 
     <fragment
         android:id="@+id/rides_id"
-        android:name="com.mad.poleato.Rides.Rides"
+        android:name="com.mad.poleato.Rides.RidesFragment"
         android:label="@string/title_actionbar_deliveryRide"
-        tools:layout="@layout/fragment_rides" />
+        tools:layout="@layout/ride_recyclerview" />
     <fragment
         android:id="@+id/routes_id"
         android:name="com.mad.poleato.Routes.Routes"
