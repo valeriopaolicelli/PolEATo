@@ -1,0 +1,193 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/linearLayout3"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="#eeeeee"
+    android:orientation="vertical">
+
+
+    <android.support.v7.widget.CardView
+        android:id="@+id/childView"
+        android:layout_width="match_parent"
+        android:layout_height="122dp"
+        android:layout_gravity="center"
+
+
+        android:layout_marginStart="4dp"
+        android:layout_marginTop="4dp"
+        android:layout_marginEnd="4dp"
+        android:layout_marginBottom="8dp"
+        app:cardCornerRadius="10dp">
+
+
+        <android.support.constraint.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <ImageView
+                android:id="@+id/deliveryCost_icon"
+                android:layout_width="36dp"
+                android:layout_height="26dp"
+                android:layout_marginStart="8dp"
+                android:layout_marginTop="4dp"
+                android:layout_marginEnd="8dp"
+                android:contentDescription="@string/phone"
+                android:padding="4dp"
+                android:src="@drawable/ic_baseline_directions_bike_24px"
+                app:layout_constraintEnd_toStartOf="@+id/order_tv"
+                app:layout_constraintHorizontal_bias="1.0"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+
+            <TextView
+                android:id="@+id/order_tv"
+                android:layout_width="282dp"
+                android:layout_height="28dp"
+                android:layout_marginEnd="60dp"
+                android:textAlignment="center"
+                app:layout_constraintBottom_toBottomOf="@+id/deliveryCost_icon"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="@+id/deliveryCost_icon"
+                app:layout_constraintVertical_bias="0.0" />
+
+            <TextView
+                android:id="@+id/surname_label"
+                android:layout_width="60dp"
+                android:layout_height="21dp"
+                android:layout_marginStart="8dp"
+                android:layout_marginTop="4dp"
+                android:text="@string/customer_surname"
+                app:layout_constraintStart_toStartOf="@+id/deliveryCost_icon"
+                app:layout_constraintTop_toBottomOf="@+id/deliveryCost_icon" />
+
+            <TextView
+                android:id="@+id/surname_tv"
+                android:layout_width="90dp"
+                android:layout_height="20dp"
+                android:layout_marginStart="8dp"
+                app:layout_constraintBottom_toBottomOf="@+id/surname_label"
+                app:layout_constraintStart_toEndOf="@+id/surname_label"
+                app:layout_constraintTop_toTopOf="@+id/surname_label"
+                app:layout_constraintVertical_bias="0.0" />
+
+            <TextView
+                android:id="@+id/addressLabel"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="12dp"
+                android:text="@string/address_label"
+                app:layout_constraintBottom_toBottomOf="@+id/surname_tv"
+                app:layout_constraintStart_toEndOf="@+id/surname_tv"
+                app:layout_constraintTop_toTopOf="@+id/surname_tv"
+                app:layout_constraintVertical_bias="1.0" />
+
+            <TextView
+                android:id="@+id/deliveryaddress_tv"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="28dp"
+                app:layout_constraintBottom_toBottomOf="@+id/addressLabel"
+                app:layout_constraintStart_toEndOf="@+id/addressLabel"
+                app:layout_constraintTop_toTopOf="@+id/addressLabel"
+                app:layout_constraintVertical_bias="0.0" />
+
+            <TextView
+                android:id="@+id/restaurantLabel"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:text="@string/restaurant_name"
+                app:layout_constraintEnd_toEndOf="@+id/surname_label"
+                app:layout_constraintStart_toStartOf="@+id/surname_label"
+                app:layout_constraintTop_toBottomOf="@+id/surname_label" />
+
+            <TextView
+                android:id="@+id/restaurant_tv"
+                android:layout_width="wrap_content"
+                android:layout_height="0dp"
+                android:layout_marginStart="8dp"
+                app:layout_constraintBottom_toBottomOf="@+id/restaurantLabel"
+                app:layout_constraintEnd_toEndOf="@+id/surname_tv"
+                app:layout_constraintHorizontal_bias="0.0"
+                app:layout_constraintStart_toEndOf="@+id/restaurantLabel"
+                app:layout_constraintTop_toTopOf="@+id/restaurantLabel"
+                app:layout_constraintVertical_bias="0.0" />
+
+            <TextView
+                android:id="@+id/restaurantAddressLabel"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/address"
+                app:layout_constraintBottom_toBottomOf="@+id/restaurant_tv"
+                app:layout_constraintEnd_toEndOf="@+id/addressLabel"
+                app:layout_constraintStart_toStartOf="@+id/addressLabel"
+                app:layout_constraintTop_toTopOf="@+id/restaurant_tv"
+                app:layout_constraintVertical_bias="0.0" />
+
+            <TextView
+                android:id="@+id/restaurantAddress_tv"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:layout_constraintBottom_toBottomOf="@+id/restaurantAddressLabel"
+                app:layout_constraintEnd_toEndOf="@+id/deliveryaddress_tv"
+                app:layout_constraintStart_toStartOf="@+id/deliveryaddress_tv"
+                app:layout_constraintTop_toTopOf="@+id/restaurantAddressLabel"
+                app:layout_constraintVertical_bias="0.0" />
+
+            <TextView
+                android:id="@+id/totalPriceLabel"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:layout_marginEnd="76dp"
+                android:layout_marginBottom="8dp"
+                android:text="@string/total"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="@+id/restaurantLabel"
+                app:layout_constraintHorizontal_bias="0.0"
+                app:layout_constraintStart_toStartOf="@+id/restaurantLabel"
+                app:layout_constraintTop_toBottomOf="@+id/restaurantLabel" />
+
+            <TextView
+                android:id="@+id/totalPrice_tv"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                app:layout_constraintBottom_toBottomOf="@+id/totalPriceLabel"
+                app:layout_constraintEnd_toEndOf="@+id/restaurant_tv"
+                app:layout_constraintHorizontal_bias="1.0"
+                app:layout_constraintStart_toStartOf="@+id/restaurant_tv"
+                app:layout_constraintTop_toTopOf="@+id/totalPriceLabel"
+                app:layout_constraintVertical_bias="0.0" />
+
+            <TextView
+                android:id="@+id/dishesLabel"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:text="@string/dishes"
+                app:layout_constraintBottom_toBottomOf="@+id/totalPrice_tv"
+                app:layout_constraintStart_toStartOf="@+id/restaurantAddressLabel"
+                app:layout_constraintTop_toTopOf="@+id/totalPrice_tv"
+                app:layout_constraintVertical_bias="1.0" />
+
+            <TextView
+                android:id="@+id/dishes_tv"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:layout_constraintBottom_toBottomOf="@+id/dishesLabel"
+                app:layout_constraintEnd_toEndOf="@+id/restaurantAddress_tv"
+                app:layout_constraintStart_toStartOf="@+id/restaurantAddress_tv"
+                app:layout_constraintTop_toTopOf="@+id/dishesLabel" />
+
+
+        </android.support.constraint.ConstraintLayout>
+
+    </android.support.v7.widget.CardView>
+
+
+</LinearLayout>
