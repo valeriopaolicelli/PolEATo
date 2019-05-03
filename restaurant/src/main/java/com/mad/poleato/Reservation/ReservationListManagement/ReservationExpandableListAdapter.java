@@ -4,6 +4,7 @@ import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.support.annotation.NonNull;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -13,7 +14,11 @@ import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.TextView;
 
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.mad.poleato.R;
 import com.mad.poleato.Reservation.Dish;
 import com.mad.poleato.Reservation.Reservation;
@@ -22,7 +27,7 @@ import com.mad.poleato.Reservation.Status;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-
+import java.util.Random;
 
 
 import static android.view.View.GONE;
@@ -37,12 +42,17 @@ public class ReservationExpandableListAdapter extends BaseExpandableListAdapter 
     private HashMap<Integer, ArrayList<Boolean>>childsChecked = new HashMap<>();
     @SuppressLint("UseSparseArrays")
     private HashMap<Integer, CheckBox> groupCheckBoxes = new HashMap<>();
+    private String loggedID;
+    boolean notify;
 
     public ReservationExpandableListAdapter(Context context, List<Reservation> reservations, HashMap<String, List<Dish>> listHashMap) {
         this.context = context;
         this.reservations = reservations;
         this.listHashMap = listHashMap;
+        this.loggedID= "R00";
 
+        // flag to decide if notify the rider
+        notify = false;
         //initialize default check states of checkboxes
         initCheckStates(false);
     }
@@ -103,9 +113,7 @@ public class ReservationExpandableListAdapter extends BaseExpandableListAdapter 
     public View getGroupView(int i, boolean b, View view, ViewGroup viewGroup) {
         final Reservation c = (Reservation) getGroup(i);
         final ViewHolder holder;
-        boolean buttonflag = false;
         final List<Dish> dishes = c.getDishes();
-
         boolean flag = false;
         if( view ==  null){
             holder = new ViewHolder();
@@ -211,14 +219,15 @@ public class ReservationExpandableListAdapter extends BaseExpandableListAdapter 
                                 @Override
                                 public void onClick(DialogInterface dialogInterface, int i) {
 
-                                    //TODO when log in will be enabled, change the R00 child, with the proper one
-                                    FirebaseDatabase.getInstance().getReference("restaurants").child("R00").child("reservations").child(c.getOrder_id()).child("status").child("en").setValue("Delivering");
-                                    FirebaseDatabase.getInstance().getReference("restaurants").child("R00").child("reservations").child(c.getOrder_id()).child("status").child("it").setValue("In consegna");
-                                    c.setStatus(Status.DELIVERY, context);
-
-                                    holder.button.setText(context.getString(R.string.order_info));
-                                    c.setButtonText(context.getString(R.string.order_info));
-                                    notifyDataSetChanged();
+                                //TODO when log in will be enabled, change the R00 child, with the proper one
+                                FirebaseDatabase.getInstance().getReference("restaurants").child(loggedID).child("reservations").child(c.getOrder_id()).child("status").child("en").setValue("Delivering");
+                                FirebaseDatabase.getInstance().getReference("restaurants").child(loggedID).child("reservations").child(c.getOrder_id()).child("status").child("it").setValue("In consegna");
+                                c.setStatus(Status.DELIVERY, context);
+                                holder.button.setText(context.getString(R.string.order_info));
+                                c.setButtonText(context.getString(R.string.order_info));
+                                notify = true;
+                                notifyRandomRider(c);
+                                notifyDataSetChanged();
                                 }
                             });
                             builder.setNegativeButton(context.getString(R.string.choice_cancel), new DialogInterface.OnClickListener() {
@@ -238,12 +247,11 @@ public class ReservationExpandableListAdapter extends BaseExpandableListAdapter 
                                 public void onClick(DialogInterface dialogInterface, int i) {
                                     // Change button text
                                     c.setStatus(Status.COOKING, context);
-                                    FirebaseDatabase.getInstance().getReference("restaurants").child("R00").child("reservations").child(c.getOrder_id()).child("status").child("en").setValue("Cooking");
-                                    FirebaseDatabase.getInstance().getReference("restaurants").child("R00").child("reservations").child(c.getOrder_id()).child("status").child("it").setValue("Preparazione");
+                                    FirebaseDatabase.getInstance().getReference("restaurants").child(loggedID).child("reservations").child(c.getOrder_id()).child("status").child("en").setValue("Cooking");
+                                    FirebaseDatabase.getInstance().getReference("restaurants").child(loggedID).child("reservations").child(c.getOrder_id()).child("status").child("it").setValue("Preparazione");
                                     holder.button.setText(context.getString(R.string.title_deliver));
                                     c.setButtonText(context.getString(R.string.title_deliver));
                                     notifyDataSetChanged();
-
                                     //TODO: Aggiornare quantità menù
                                 }
                             });
@@ -251,8 +259,8 @@ public class ReservationExpandableListAdapter extends BaseExpandableListAdapter 
                                 @Override
                                 public void onClick(DialogInterface dialogInterface, int i) {
                                     c.setStatus(Status.REJECTED, context);
-                                    FirebaseDatabase.getInstance().getReference("restaurants").child("R00").child("reservations").child(c.getOrder_id()).child("status").child("en").setValue("Rejected");
-                                    FirebaseDatabase.getInstance().getReference("restaurants").child("R00").child("reservations").child(c.getOrder_id()).child("status").child("it").setValue("Rifiutato");
+                                    FirebaseDatabase.getInstance().getReference("restaurants").child(loggedID).child("reservations").child(c.getOrder_id()).child("status").child("en").setValue("Rejected");
+                                    FirebaseDatabase.getInstance().getReference("restaurants").child(loggedID).child("reservations").child(c.getOrder_id()).child("status").child("it").setValue("Rifiutato");
                                     notifyDataSetChanged();
                                 }
                             });
@@ -274,6 +282,63 @@ public class ReservationExpandableListAdapter extends BaseExpandableListAdapter 
         }
 
         return view;
+    }
+
+    private void notifyRandomRider(final Reservation c) {
+        final DatabaseReference referenceRider= FirebaseDatabase.getInstance().getReference("deliveryman");
+        final long[] numberOfRider = new long[1];
+        final List<String> riderIDs= new ArrayList<>();
+        referenceRider.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull final DataSnapshot dataSnapshotRider) {
+                numberOfRider[0] = dataSnapshotRider.getChildrenCount();
+                if (riderIDs.size() == 0) {
+                    for (DataSnapshot ds : dataSnapshotRider.getChildren())
+                        riderIDs.add(ds.getKey());
+
+                    /* retrieve the restaurant information */
+                    final String[] addressRestaurant = new String[1];
+                    final String[] nameRestaurant = new String[1];
+                    DatabaseReference referenceRestaurant = FirebaseDatabase.getInstance().getReference("restaurants").child(loggedID);
+                    referenceRestaurant.addValueEventListener(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(@NonNull DataSnapshot dataSnapshotRestaurant) {
+                            /* random selection of rider */
+                            int selectedRider = (int) (Math.random() * numberOfRider[0]);
+                            //TODO retrieve real user id of rider from db
+                            String childID = riderIDs.get(selectedRider);
+                            DatabaseReference reservationRider = referenceRider.child(childID).child("reservations").push();
+                            String reservationRiderID = reservationRider.getKey();
+                            if (dataSnapshotRestaurant.exists() &&
+                                    dataSnapshotRestaurant.hasChild("Address") &&
+                                    dataSnapshotRestaurant.hasChild("Name")) {
+                                addressRestaurant[0] = dataSnapshotRestaurant.child("Address").getValue().toString();
+                                nameRestaurant[0] = dataSnapshotRestaurant.child("Name").getValue().toString();
+                                if (notify) {
+                                    reservationRider.child("surnameCustomer").setValue(c.getSurname());
+                                    reservationRider.child("addressCustomer").setValue(c.getAddress());
+                                    reservationRider.child("orderID").setValue(c.getOrder_id());
+                                    reservationRider.child("numberOfDishes").setValue(c.getNumberOfDishes());
+                                    reservationRider.child("totalPrice").setValue(c.getTotalPrice());
+                                    reservationRider.child("addressRestaurant").setValue(addressRestaurant[0]);
+                                    reservationRider.child("nameRestaurant").setValue(nameRestaurant[0]);
+                                    notify = false;
+                                }
+                            }
+                        }
+
+                        @Override
+                        public void onCancelled(@NonNull DatabaseError databaseError) {
+                            Log.d("Valerio", "NotifyRandomRider -> retrieve restaurant info: " + databaseError.getMessage());
+                        }
+                    });
+                }
+            }
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+                Log.d("Valerio", "NotifyRandomRider -> retrieve number of deliverymans: " + databaseError.getMessage());
+            }
+        });
     }
 
     @Override

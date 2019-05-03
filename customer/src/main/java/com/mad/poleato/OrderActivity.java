@@ -91,16 +91,25 @@ public class OrderActivity extends AppCompatActivity implements Interface {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 String id = dataSnapshot.getKey();
-                Bitmap img = BitmapFactory.decodeResource(getResources(), R.drawable.image_empty); // TODO: make it dynamic
-                String name = dataSnapshot.child("Name").getValue().toString();
-                String type = dataSnapshot.child("Type").child(localeShort).getValue().toString();
-                Boolean isOpen = (Boolean) dataSnapshot.child("IsActive").getValue();
-                int priceRange = Integer.parseInt(dataSnapshot.child("PriceRange").getValue().toString());
-                double deliveryCost = Double.parseDouble(dataSnapshot.child("DeliveryCost").getValue().toString().replace(",", "."));
+                if(dataSnapshot.hasChild("Name") &&
+                        dataSnapshot.hasChild("Type") &&
+                        dataSnapshot.child("Type").hasChild("it") &&
+                        dataSnapshot.child("Type").hasChild("en") &&
+                        dataSnapshot.hasChild("IsActive") &&
+                        //dataSnapshot.hasChild("PriceRange") &&
+                        dataSnapshot.hasChild("DeliveryCost")
+                ) {
+                    Bitmap img = BitmapFactory.decodeResource(getResources(), R.drawable.plate_fork); // TODO: make it dynamic
+                    String name = dataSnapshot.child("Name").getValue().toString();
+                    String type = dataSnapshot.child("Type").child(localeShort).getValue().toString();
+                    Boolean isOpen = (Boolean) dataSnapshot.child("IsActive").getValue();
+                    int priceRange = Integer.parseInt(dataSnapshot.child("PriceRange").getValue().toString());
+                    double deliveryCost = Double.parseDouble(dataSnapshot.child("DeliveryCost").getValue().toString().replace(",", "."));
 
-                Restaurant resObj = new Restaurant(id, img, name, type, isOpen, priceRange, deliveryCost);
+                    Restaurant resObj = new Restaurant(id, img, name, type, isOpen, priceRange, deliveryCost);
 
-                order.setR(resObj);
+                    order.setR(resObj);
+                }
             }
 
             @Override
