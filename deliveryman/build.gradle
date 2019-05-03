@@ -1,3 +1,18 @@
+buildscript {
+    repositories {
+        maven { url 'https://plugins.gradle.org/m2/'}
+    }
+    dependencies {
+        classpath 'gradle.plugin.com.onesignal:onesignal-gradle-plugin:0.12.1'
+    }
+}
+
+apply plugin: 'com.onesignal.androidsdk.onesignal-gradle-plugin'
+
+repositories {
+    maven { url 'https://maven.google.com' }
+}
+
 apply plugin: 'com.android.application'
 
 android {
@@ -10,9 +25,12 @@ android {
         targetSdkVersion 28
         versionCode 1
         versionName "1.0"
-
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
-
+        manifestPlaceholders = [
+                onesignal_app_id: 'a2d0eb0d-4b93-4b96-853e-dcfe6c34778e',
+                // Project number pulled from dashboard, local value is ignored.
+                onesignal_google_project_number: 'REMOTE'
+        ]
     }
 
     buildTypes {
@@ -38,6 +56,7 @@ dependencies {
     implementation 'com.google.firebase:firebase-core:16.0.8'
     implementation 'com.google.firebase:firebase-database:16.1.0'
     def nav_version = "1.0.0"
+    implementation 'com.onesignal:OneSignal:3.10.8'
 
     implementation "android.arch.navigation:navigation-fragment:$nav_version" // For Kotlin use navigation-fragment-ktx
     implementation "android.arch.navigation:navigation-ui:$nav_version" // For Kotlin use navigation-ui-ktx

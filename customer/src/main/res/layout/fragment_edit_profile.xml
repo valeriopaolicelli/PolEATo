@@ -6,6 +6,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/colorBodyPrimary"
+    android:id="@+id/editScrollView"
     tools:context=".EditProfile">
     <android.support.constraint.ConstraintLayout
         android:layout_width="match_parent"
@@ -44,6 +45,7 @@
                 app:civ_border_width="2dp" />
 
             <android.support.design.widget.FloatingActionButton
+                android:id="@+id/change_im"
                 android:layout_width="151dp"
                 android:layout_height="wrap_content"
                 android:layout_alignEnd="@id/profile_image"

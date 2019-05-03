@@ -11,6 +11,8 @@ import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 import androidx.navigation.ui.NavigationUI;
 
+import com.onesignal.OneSignal;
+
 public class MainActivity extends AppCompatActivity {
 
     private NavController navController;
@@ -40,6 +42,12 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        OneSignal.startInit(this)
+                .inFocusDisplaying(OneSignal.OSInFocusDisplayOption.Notification)
+                .unsubscribeWhenNotificationsAreDisabled(true)
+                .init();
+
+        OneSignal.sendTag("User_ID", "D00");
         navigation = (BottomNavigationView) findViewById(R.id.navigation);
 //        navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
         navController = Navigation.findNavController(this,R.id.nav_host_fragment);
