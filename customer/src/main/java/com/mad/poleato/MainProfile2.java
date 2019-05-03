@@ -106,14 +106,6 @@ public class MainProfile2 extends AppCompatActivity {
     }
 
 
-
-    public static Bitmap decodeBase64(String input) {
-        byte[] b = Base64.decode(input, Base64.DEFAULT);
-        InputStream is = new ByteArrayInputStream(b);
-        Bitmap bitmap = BitmapFactory.decodeStream(is);
-        return bitmap;
-    }
-
     public void editProfile(MenuItem item){
         Intent i = new Intent(getApplicationContext(), EditProfile.class);
         startActivity(i);
