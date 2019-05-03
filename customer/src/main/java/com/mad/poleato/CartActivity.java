@@ -185,8 +185,8 @@ OneSignal is used to send notifications between applications
 
                                 + "\"filters\": [{\"field\": \"tag\", \"key\": \"User_ID\", \"relation\": \"=\", \"value\": \"" + send_email + "\"}],"
 
-                                + "\"data\": {\"foo\": \"bar\"},"
-                                + "\"contents\": {\"en\": \"English Message\"}"
+                                + "\"data\": {\"Order\": \"New order\"},"
+                                + "\"contents\": {\"en\": \"New order\"}"
                                 + "}";
 
 

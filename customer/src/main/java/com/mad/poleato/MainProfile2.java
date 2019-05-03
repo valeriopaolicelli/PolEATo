@@ -82,7 +82,13 @@ public class MainProfile2 extends AppCompatActivity {
                 // it is fixed to the first record (customer)
                 // when the sign in and log in procedures will be handled, it will be the proper one
 
-                if (dataSnapshot.exists()) {
+                if (dataSnapshot.exists() &&
+                        issue.exists() &&
+                        issue.hasChild("Name") &&
+                        issue.hasChild("Surname") &&
+                        issue.hasChild("Address") &&
+                        issue.hasChild("Email") &&
+                        issue.hasChild("Phone")) {
                     // dataSnapshot is the "issue" node with all children
                     tvNameField.setText(issue.child("Name").getValue().toString());
                     tvSurnameField.setText(issue.child("Surname").getValue().toString());
@@ -99,14 +105,6 @@ public class MainProfile2 extends AppCompatActivity {
         });
     }
 
-
-
-    public static Bitmap decodeBase64(String input) {
-        byte[] b = Base64.decode(input, Base64.DEFAULT);
-        InputStream is = new ByteArrayInputStream(b);
-        Bitmap bitmap = BitmapFactory.decodeStream(is);
-        return bitmap;
-    }
 
     public void editProfile(MenuItem item){
         Intent i = new Intent(getApplicationContext(), EditProfile.class);

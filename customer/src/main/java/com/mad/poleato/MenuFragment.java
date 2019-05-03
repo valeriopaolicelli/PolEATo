@@ -8,6 +8,7 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.Display;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -21,6 +22,8 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 
@@ -39,6 +42,17 @@ public class MenuFragment extends Fragment {
     private String restaurantID;
     private Order order;
     private Interface listener;
+
+    private SortMenu sortMenu;
+
+    private enum groupType{
+        STARTERS,
+        FITSTS,
+        SECONDS,
+        DESSERTS,
+        DRINKS
+    }
+    groupType currState;
 
     @Override
     public void onAttach(Context context) {
@@ -150,12 +164,13 @@ public class MenuFragment extends Fragment {
         expListView.setAdapter(listAdapter);
     }
 
+
+
     public void setList(){
         DatabaseReference reference = FirebaseDatabase.getInstance().getReference("restaurants").child(restaurantID).child("Menu");
         listDataGroup = new ArrayList<>();
         listDataChild = new HashMap<>();
         reference.addChildEventListener(new ChildEventListener() {
-            int counter = 0;
             List<Food>childItem;
             @Override
             public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
@@ -171,19 +186,47 @@ public class MenuFragment extends Fragment {
                             Integer.parseInt(ds.child("Quantity").getValue().toString()));
                     childItem.add(f);
                 }
-                listDataChild.put(listDataGroup.get(counter), childItem);
-                counter++;
-
+                Collections.sort(listDataGroup,new SortMenu());
+                listDataChild.put(dataSnapshot.getKey(), childItem);
                 listAdapter.notifyDataSetChanged();
             }
 
             @Override
             public void onChildChanged(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+                childItem = new ArrayList<>();
 
+                for(DataSnapshot ds : dataSnapshot.getChildren()){
+                    String foodName = ds.getKey();
+                    // TODO: Make it dynamic with image
+                    SerialBitmap img = new SerialBitmap(BitmapFactory.decodeResource(getResources(),R.drawable.image_empty));
+                    Food f = new Food(img, foodName,ds.child("Description").getValue().toString(),
+                            Double.parseDouble(ds.child("Price").getValue().toString()),
+                            Integer.parseInt(ds.child("Quantity").getValue().toString()));
+                    childItem.add(f);
+                }
+                Collections.sort(listDataGroup,new SortMenu());
+                listDataChild.put(dataSnapshot.getKey(), childItem);
+                listAdapter.notifyDataSetChanged();
             }
 
             @Override
             public void onChildRemoved(@NonNull DataSnapshot dataSnapshot) {
+                listDataGroup.remove(dataSnapshot.getKey());
+                childItem = new ArrayList<>();
+                Log.d("fabio", "Removed child" + dataSnapshot.getKey());
+
+                for(DataSnapshot ds : dataSnapshot.getChildren()){
+                    String foodName = ds.getKey();
+                    // TODO: Make it dynamic with image
+                    SerialBitmap img = new SerialBitmap(BitmapFactory.decodeResource(getResources(),R.drawable.image_empty));
+                    Food f = new Food(img, foodName,ds.child("Description").getValue().toString(),
+                            Double.parseDouble(ds.child("Price").getValue().toString()),
+                            Integer.parseInt(ds.child("Quantity").getValue().toString()));
+                    childItem.add(f);
+                }
+                Collections.sort(listDataGroup,new SortMenu());
+                listDataChild.put(dataSnapshot.getKey(), childItem);
+                listAdapter.notifyDataSetChanged();
 
             }
 
@@ -199,5 +242,28 @@ public class MenuFragment extends Fragment {
         });
 
     }
+
+    private class SortMenu implements Comparator<String>{
+        @Override
+        public int compare(String s, String t1) {
+            if(s.equals("Starters"))
+                return -1;
+            else if(t1.equals("Starters"))
+                return 1;
+            else if(s.equals("Drinks"))
+                return 1;
+            else if(t1.equals("Drinks"))
+                return -1;
+            else if(s.equals("Firsts") && (t1.equals("Seconds") || t1.equals("Desserts")))
+                return -1;
+            else if(s.equals("Seconds") && (t1.equals("Desserts")))
+                return -1;
+            else if(s.equals("Desserts"))
+                return 1;
+            else
+                return 0;
+        }
+    }
+
 
 }
