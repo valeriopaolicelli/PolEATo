@@ -103,7 +103,7 @@ public class SignUpActivity extends AppCompatActivity {
                     break;
 
                 case R.id.ButtonSignIn:
-                    Intent myIntent = new Intent(SignUpActivity.this, SignUpActivity.class);
+                    Intent myIntent = new Intent(SignUpActivity.this, SignInActivity.class);
                     SignUpActivity.this.startActivity(myIntent);
                     break;
 

@@ -110,7 +110,9 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
                 android:layout_weight=".5"
-                android:text="Sign in" />
+                android:text="Sign in"
+                android:layout_marginStart="16dp"
+                android:layout_marginEnd="16dp"/>
 
             <Button
                 android:id="@+id/ButtonSignUp"
@@ -118,7 +120,8 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
                 android:layout_weight=".5"
-                android:text="Sign up" />
+                android:text="Sign up"
+                android:layout_marginEnd="16dp" />
 
         </LinearLayout>
     </LinearLayout>

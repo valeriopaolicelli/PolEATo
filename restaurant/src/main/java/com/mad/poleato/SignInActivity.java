@@ -74,18 +74,17 @@ public class SignInActivity extends AppCompatActivity {
         signInButton.setOnClickListener(signInRoutine);
         signUpButton.setOnClickListener(signInRoutine);
 
-
     }
 
     @Override
     public void onStart() {
         super.onStart();
         // Check if user is signed in (non-null) and update UI accordingly.
-        FirebaseUser currentUser = Authenticator.retrieveIfEmailSigned();
+        FirebaseUser currentUser = mAuth.getCurrentUser();
         if(currentUser != null)
             access();
         //check if signed in with Google
-        GoogleSignInAccount account = Authenticator.retrieveIfGoogleSigned(this);
+        GoogleSignInAccount account = GoogleSignIn.getLastSignedInAccount(this);
         if(account != null)
             access();
     }
@@ -109,13 +108,11 @@ public class SignInActivity extends AppCompatActivity {
                             myToast.setText("Logged in!");
                             myToast.show();
                             access();
-                            //updateUI(user);
                         } else {
                             // If sign in fails, display a message to the user.
                             Log.d("matte", "signInWithEmail:failure", task.getException());
                             myToast.setText("Authentication failed.");
                             myToast.show();
-                            //updateUI(null);
                         }
 
                         // ...
@@ -207,9 +204,7 @@ public class SignInActivity extends AppCompatActivity {
                             Log.d("matte", "signInWithCredential:failure", task.getException());
                             Snackbar.make(findViewById(R.id.signin_main_layout), "Authentication Failed.", Snackbar.LENGTH_SHORT).show();
                         }
-
-                        // ...
-                    }
+                    }//onComplete end
                 });
     }
 

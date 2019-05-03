@@ -122,4 +122,7 @@
     <string name="american_cooking">American</string>
     <string name="mexican_cooking">Mexican</string>
 
+
+    <string name="logout">Logout</string>
+
 </resources>

@@ -108,7 +108,6 @@ public class EditProfileFragment extends Fragment {
         }
     };
 
-
     private String localeShort;
     private boolean priceRangeUninitialized;
 
@@ -594,7 +593,8 @@ public class EditProfileFragment extends Fragment {
             EditText ed = editTextFields.get(fieldName);
             if(ed != null){
                 if(ed.getText().toString().equals("")){
-                    Toast.makeText(getContext(), "All fields must be filled", Toast.LENGTH_LONG).show();
+                    myToast.setText("All fields must be filled");
+                    myToast.show();
                     ed.setBackground(ContextCompat.getDrawable(getContext(), R.drawable.border_wrong_field));
                     wrongField = true;
                 }
@@ -626,12 +626,14 @@ public class EditProfileFragment extends Fragment {
 
         if (!editTextFields.get("Name").getText().toString().matches(nameRegex)) {
             wrongField = true;
-            Toast.makeText(getContext(), "The name must start with letters and must end with letters. Space are allowed. Numbers are not allowed", Toast.LENGTH_LONG).show();
+            myToast.setText("The name must start with letters and must end with letters. Space are allowed. Numbers are not allowed");
+            myToast.show();
             editTextFields.get("Name").setBackground(ContextCompat.getDrawable(getContext(), R.drawable.border_wrong_field));
         }
         if (!editTextFields.get("Info").getText().toString().matches(textRegex)) {
             wrongField = true;
-            Toast.makeText(getContext(), "The description must start with letters and must end with letters. Space are allowed. Numbers are not allowed", Toast.LENGTH_LONG).show();
+            myToast.setText("The description must start with letters and must end with letters. Space are allowed. Numbers are not allowed");
+            myToast.show();
             editTextFields.get("Info").setBackground(ContextCompat.getDrawable(getContext(), R.drawable.border_wrong_field));
         }
         else{
@@ -657,13 +659,15 @@ public class EditProfileFragment extends Fragment {
 
         if (!editTextFields.get("Email").getText().toString().matches(emailRegex)) {
             wrongField = true;
-            Toast.makeText(getContext(), "Invalid Email", Toast.LENGTH_LONG).show();
+            myToast.setText("Invalid Email");
+            myToast.show();
             editTextFields.get("Email").setBackground(ContextCompat.getDrawable(getContext(), R.drawable.border_wrong_field));
         }
         if (!editTextFields.get("DeliveryCost").getText().toString().matches(priceRegex)) {
             wrongField = true;
-            Toast.makeText(getContext(), "Invalid Price", Toast.LENGTH_LONG).show();
-            editTextFields.get("Price").setBackground(ContextCompat.getDrawable(getContext(), R.drawable.border_wrong_field));
+            myToast.setText("Invalid Price");
+            myToast.show();
+            editTextFields.get("DeliveryCost").setBackground(ContextCompat.getDrawable(getContext(), R.drawable.border_wrong_field));
         }
 
 
