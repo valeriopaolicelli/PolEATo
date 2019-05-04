@@ -121,7 +121,13 @@
     <string name="mexican_cooking">Messicano</string>
 
 
+    <!-- Login strings -->
     <string name="logout">Esci</string>
+    <string name="void_fields">Campi vuoti</string>
+    <string name="login_succ">Utente riconosciuto!</string>
+    <string name="login_fail">Authentication failed.</string>
+    <string name="creation_succ">Account creatod!</string>
+    <string name="creation_fail">Creazione account fallita! Devi inserire una mail valida e una password di almeno 6 caratteri</string>
 
 
 
