@@ -164,7 +164,6 @@ public class MainProfile extends Fragment {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
 
-                if (dataSnapshot.exists()) {
                     // dataSnapshot is the "issue" node with all children
 
                     if(dataSnapshot.hasChild("Name") &&
@@ -187,7 +186,7 @@ public class MainProfile extends Fragment {
                             }
                         } //end for
                     } //end if
-                }
+
             }
 
             @Override

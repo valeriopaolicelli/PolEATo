@@ -19,8 +19,10 @@
     </style>
 
     <style name="FloatLabel" parent="Theme.AppCompat.Light.DarkActionBar">
-        <item name="colorPrimary">@color/colorTextField</item>
+        <item name="colorPrimary">@color/colorPanelPrimary</item>
         <item name="colorError">@color/colorPanelPrimary</item>
+        <item name="android:textColorHint">@color/colorBodyPrimary</item>
+        <item name="android:textSize">20sp</item>
     </style>
 
 
