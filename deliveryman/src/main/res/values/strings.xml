@@ -47,6 +47,15 @@
     <string name="total">Total: </string>
     <string name="dishes">#Dishes</string>
 
+
+
+
+    <string name="active_status"><font size="18">Active</font></string>
+    <string name="inactive_status"><font size="18">Inactive</font></string>
+    <string name="current_status"><font size="18">Your status</font></string>
+
+
+
     <!-- Login string -->
     <string name="signin">Sign in</string>
     <string name="signup">Sign up</string>

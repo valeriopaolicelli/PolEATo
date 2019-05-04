@@ -416,8 +416,6 @@ public class EditProfileFragment extends Fragment {
             if (resultCode == RESULT_OK) {
                 setPic(currentPhotoPath);
             }
-//            else
-//                profileImage.setImageBitmap(image);
         }
         if (requestCode == RESULT_LOAD_IMG) {
             if (resultCode == RESULT_OK) {
@@ -435,8 +433,6 @@ public class EditProfileFragment extends Fragment {
                 }
 
             }
-//            else
-//                profileImage.setImageBitmap(image); //TODO back pressed on gallery
         }
     }
 

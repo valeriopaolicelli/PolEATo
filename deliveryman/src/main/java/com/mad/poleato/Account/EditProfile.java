@@ -157,56 +157,6 @@ public class EditProfile extends Fragment {
 
     }
 
-//    @Override
-//    public void onSaveInstanceState(Bundle outState) {
-//        super.onSaveInstanceState(outState);
-//
-//        /*TextView nameField = findViewById(R.id.editTextName),
-//                surnameField = findViewById(R.id.editTextSurname),
-//                addressField = findViewById(R.id.editTextAddress),
-//                emailField = findViewById(R.id.editTextEmail),
-//                phoneField = findViewById(R.id.editTextPhone);
-//
-//        outState.putString("name_field", nameField.getText().toString());
-//        outState.putString("surname_field", surnameField.getText().toString());
-//        outState.putString("address_field", addressField.getText().toString());
-//        outState.putString("email_field", emailField.getText().toString());
-//        outState.putString("phone_field", phoneField.getText().toString());*/
-//
-//        final ScrollView mScrollView = v.findViewById(R.id.editScrollView);
-//        //saving scrollView position
-//        outState.putIntArray("ARTICLE_SCROLL_POSITION",
-//                new int[]{ mScrollView.getScrollX(), mScrollView.getScrollY()});
-//    }
-//
-//    @Override
-//    protected void onRestoreInstanceState(Bundle savedInstanceState) {
-//        super.onRestoreInstanceState(savedInstanceState);
-//
-//        /*TextView nameField = findViewById(R.id.editTextName),
-//                surnameField = findViewById(R.id.editTextSurname),
-//                addressField = findViewById(R.id.editTextAddress),
-//                emailField = findViewById(R.id.editTextEmail),
-//                phoneField = findViewById(R.id.editTextPhone);
-//
-//        nameField.setText(savedInstanceState.getCharSequence("name_field"));
-//        surnameField.setText(savedInstanceState.getCharSequence("surname_field"));
-//        addressField.setText(savedInstanceState.getCharSequence("address_field"));
-//        emailField.setText(savedInstanceState.getCharSequence("email_field"));
-//        phoneField.setText(savedInstanceState.getCharSequence("phone_field"));*/
-//
-//        final ScrollView mScrollView = findViewById(R.id.editScrollView);
-//        //restoring scrollview position
-//        final int[] position = savedInstanceState.getIntArray("ARTICLE_SCROLL_POSITION");
-//        if(position != null)
-//            mScrollView.post(new Runnable() {
-//                public void run() {
-//                    mScrollView.scrollTo(position[0], position[1]);
-//                }
-//            });
-//    }
-
-
     @Override
     public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -343,8 +293,6 @@ public class EditProfile extends Fragment {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 DataSnapshot issue= dataSnapshot.child(currentUserID);
-                // it is fixed to the first record (customer)
-                // when the sign in and log in procedures will be handled, it will be the proper one
 
                 if (dataSnapshot.exists()) {
                     // dataSnapshot is the "issue" node with all children

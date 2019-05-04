@@ -1,7 +1,10 @@
 package com.mad.poleato.Account;
 
-
 import android.app.ProgressDialog;
+import android.content.Context;
+import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -11,13 +14,19 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.navigation.Navigation;
 
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -25,32 +34,28 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
+import com.mad.poleato.NavigatorActivity;
 import com.mad.poleato.R;
+import com.mad.poleato.SignInActivity;
 
-import de.hdodenhof.circleimageview.CircleImageView;
+import java.util.HashMap;
+import java.util.Locale;
+import java.util.Map;
 
-/**
- * A simple {@link Fragment} subclass.
- */
+
 public class MainProfile extends Fragment {
 
     private Toast myToast;
 
-    private TextView tvNameField;
-    private TextView tvSurnameField;
-    private TextView tvAddressField;
-    private TextView tvEmailField;
-    private TextView tvPhoneField;
-    private TextView tvIdField;
-    private CircleImageView profileImage;
-    private DatabaseReference reference;
-    private FloatingActionButton buttEdit;
+    private Map<String, TextView> tvFields;
 
-    private String currentUserID;
-    private FirebaseAuth mAuth;
+    private FloatingActionButton buttEdit;
+    private ImageView profileImage;
 
     private ProgressDialog progressDialog;
-    Handler handler = new Handler() {
+    private Handler handler = new Handler() {
         @Override
         public void handleMessage(Message msg) {
             progressDialog.dismiss();
@@ -58,35 +63,74 @@ public class MainProfile extends Fragment {
     };
 
 
-    public MainProfile() {
-        // Required empty public constructor
-    }
+    private String localeShort;
+
+    private String currentUserID;
+    private FirebaseAuth mAuth;
 
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
+        //in order to create the logout menu (don't move!)
+        setHasOptionsMenu(true);
         super.onCreate(savedInstanceState);
+        if(getActivity() != null)
+            myToast = Toast.makeText(getActivity(), "", Toast.LENGTH_LONG);
+
+        //download Type base on the current active Locale
+        String locale = Locale.getDefault().toString();
+        Log.d("matte", "LOCALE: "+locale);
+        localeShort = locale.substring(0, 2);
+
         mAuth = FirebaseAuth.getInstance();
         FirebaseUser currentUser = mAuth.getCurrentUser();
         currentUserID = currentUser.getUid();
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
-        View fragView = inflater.inflate(R.layout.fragment_profile, container, false);
+    public void onAttach(Context context) {
+        super.onAttach(context);
 
-        tvNameField = fragView.findViewById(R.id.tvNameField);
-        tvSurnameField = fragView.findViewById(R.id.tvSurnameField);
-        tvAddressField = fragView.findViewById(R.id.tvAddressField);
-        tvEmailField = fragView.findViewById(R.id.tvEmailField);
-        tvPhoneField = fragView.findViewById(R.id.tvPhoneField);
-        tvIdField = fragView.findViewById(R.id.tvIdField);
-        profileImage = fragView.findViewById(R.id.profile_image);
+    }
 
+    //TODO michelangelo
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        menu.clear();
+        // Inflate the menu; this adds items to the action bar if it is present.
+        inflater.inflate(R.menu.popup_account_settings, menu);
+        menu.findItem(R.id.logout).setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
+            @Override
+            public boolean onMenuItemClick(MenuItem item) {
+                //logout
+                Log.d("matte", "Logout");
+                FirebaseAuth.getInstance().signOut();
+                //Intent myIntent = new Intent(NavigatorActivity.this, SignInActivity.class);
+                //NavigatorActivity.this.startActivity(myIntent);
+                return true;
+            }
+        });
+        super.onCreateOptionsMenu(menu,inflater);
+    }
+
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        View view = inflater.inflate(R.layout.fragment_profile, container, false);
+
+        // Retrieve all fields (restaurant details) in the xml file
+        tvFields = new HashMap<>();
+        tvFields.put("Name", (TextView)view.findViewById(R.id.tvNameField));
+        tvFields.put("Surname", (TextView)view.findViewById(R.id.tvSurnameField));
+        tvFields.put("Address", (TextView)view.findViewById(R.id.tvAddressField));
+        tvFields.put("Email", (TextView)view.findViewById(R.id.tvEmailField));
+        tvFields.put("Phone", (TextView)view.findViewById(R.id.tvPhoneField));
+        tvFields.put("ID", (TextView)view.findViewById(R.id.tvIdField));
+        tvFields.put("IsActive", (TextView)view.findViewById(R.id.tvStatusField));
+
+        profileImage = view.findViewById(R.id.ivBackground);
 
         // Button to edit the restaurant details
-        buttEdit = fragView.findViewById(R.id.buttEdit);
+        buttEdit = view.findViewById(R.id.buttEdit);
         buttEdit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -96,15 +140,14 @@ public class MainProfile extends Fragment {
                 Navigation.findNavController(v).navigate(R.id.action_mainProfile_id_to_editProfile_id);
             }
         });
-
-        return fragView;
+        return view;
     }
 
     @Override
     public void onResume() {
         super.onResume();
         //fill the views fields
-        if (getActivity() != null)
+        if(getActivity() != null)
             progressDialog = ProgressDialog.show(getActivity(), "", getString(R.string.loading));
 
         //start a new thread to process job
@@ -114,23 +157,36 @@ public class MainProfile extends Fragment {
 
     public void fillFields() {
 
-        reference= FirebaseDatabase.getInstance().getReference("deliveryman");
+        DatabaseReference reference = FirebaseDatabase.getInstance()
+                .getReference("deliveryman/"+ currentUserID);
 
         reference.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                DataSnapshot issue= dataSnapshot.child(currentUserID);
-                // it is fixed to the first record (customer)
-                // when the sign in and log in procedures will be handled, it will be the proper one
 
                 if (dataSnapshot.exists()) {
                     // dataSnapshot is the "issue" node with all children
-                    tvNameField.setText(issue.child("Name").getValue().toString());
-                    tvSurnameField.setText(issue.child("Surname").getValue().toString());
-                    tvAddressField.setText(issue.child("Address").getValue().toString());
-                    tvEmailField.setText(issue.child("Email").getValue().toString());
-                    tvPhoneField.setText(issue.child("Phone").getValue().toString());
-                    tvIdField.setText(issue.child("ID").getValue().toString());
+
+                    if(dataSnapshot.hasChild("Name") &&
+                            dataSnapshot.hasChild("Surname") &&
+                            dataSnapshot.hasChild("Address") &&
+                            dataSnapshot.hasChild("Email") &&
+                            dataSnapshot.hasChild("Phone") &&
+                            dataSnapshot.hasChild("IsActive"))
+                    {
+                        for(DataSnapshot snap : dataSnapshot.getChildren()){
+                            if(tvFields.containsKey(snap.getKey())){
+
+                                if(snap.getKey().equals("IsActive") && getActivity() != null){
+                                    if((Boolean)snap.getValue())
+                                        tvFields.get(snap.getKey()).setText(getString(R.string.active_status));
+                                    else
+                                        tvFields.get(snap.getKey()).setText(getString(R.string.inactive_status));
+                                }
+                                tvFields.get(snap.getKey()).setText(snap.getValue().toString());
+                            }
+                        } //end for
+                    } //end if
                 }
             }
 
@@ -142,5 +198,32 @@ public class MainProfile extends Fragment {
                 myToast.show();
             }
         });
+
+        //Download the profile pic
+        StorageReference storageReference = FirebaseStorage.getInstance().getReference();
+        StorageReference photoReference= storageReference.child(currentUserID +"/ProfileImage/img.jpg");
+
+        final long ONE_MEGABYTE = 1024 * 1024;
+        photoReference.getBytes(ONE_MEGABYTE).addOnSuccessListener(new OnSuccessListener<byte[]>() {
+            @Override
+            public void onSuccess(byte[] bytes) {
+                Bitmap bmp = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
+                profileImage.setImageBitmap(bmp);
+                //send message to main thread
+                handler.sendEmptyMessage(0);
+            }
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception exception) {
+                Log.d("matte", "No image found. Default img setting");
+                //set predefined image
+                profileImage.setImageResource(R.drawable.image_empty);
+                //send message to main thread
+                handler.sendEmptyMessage(0);
+            }
+        });
+
     }
+
 }
+

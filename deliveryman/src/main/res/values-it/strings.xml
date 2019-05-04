@@ -50,6 +50,11 @@
     <string name="dishes">#Piatti</string>
 
 
+    <string name="current_status"><font size="18">Il tuo stato</font></string>
+    <string name="active_status"><font size="18">Attivo</font></string>
+    <string name="inactive_status"><font size="18">Inattivo</font></string>
+
+
     <!-- Login strings -->
     <string name="signin">Accedi</string>
     <string name="signup">Registrati</string>
