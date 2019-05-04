@@ -195,6 +195,12 @@ public class RestaurantSearchFragment extends Fragment {
                     int priceRange = Integer.parseInt(dataSnapshot.child("PriceRange").getValue().toString());
                     double deliveryCost = Double.parseDouble(dataSnapshot.child("DeliveryCost").getValue().toString().replace(",", "."));
                     final String imageUrl = dataSnapshot.child("photoUrl").getValue().toString();
+                    //insert before the download because otherwise it can happen that the download finish before
+                    //  and the put raise exception
+                    Restaurant resObj = new Restaurant(id, img, name, type, isOpen, priceRange, deliveryCost);
+                    //add to the original list
+                    restaurantMap.put(id, resObj);
+                    restaurantList.add(resObj);
 
                     StorageReference photoReference = FirebaseStorage.getInstance().getReferenceFromUrl(imageUrl);
                     final long ONE_MEGABYTE = 1024 * 1024;
@@ -216,10 +222,7 @@ public class RestaurantSearchFragment extends Fragment {
                         }
                     });
 
-                    Restaurant resObj = new Restaurant(id, img, name, type, isOpen, priceRange, deliveryCost);
-                    //add to the original list
-                    restaurantMap.put(id, resObj);
-                    restaurantList.add(resObj);
+
 
                     //check the filter before display
                     if (isValidToDisplay(resObj))

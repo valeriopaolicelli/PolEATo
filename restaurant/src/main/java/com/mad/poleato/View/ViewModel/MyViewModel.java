@@ -9,7 +9,10 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.util.Log;
 
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.ChildEventListener;
@@ -17,6 +20,8 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
 import com.mad.poleato.R;
 import com.mad.poleato.DailyOffer.Food;
 
@@ -95,7 +100,54 @@ public class MyViewModel extends ViewModel {
             @Override
             public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
 
-                List<Food> l = new ArrayList<>();
+                if(dataSnapshot.hasChild("Name") &&
+                    dataSnapshot.hasChild("Quantity") &&
+                    dataSnapshot.hasChild("Description") &&
+                    dataSnapshot.hasChild("Price") &&
+                    dataSnapshot.hasChild("Category") &&
+                    dataSnapshot.hasChild("photoUrl"))
+                {
+                    //set default image initially, then change if download is successful
+                    final String id = dataSnapshot.getKey();
+                    Bitmap img = BitmapFactory.decodeResource(context.getResources(), R.drawable.plate_fork);
+                    String name = dataSnapshot.child("Name").getValue().toString();
+                    int quantity = Integer.parseInt(dataSnapshot.child("Quantity").getValue().toString());
+                    String description = dataSnapshot.child("Description").getValue().toString();
+                    double price = Double.parseDouble(dataSnapshot.child("Price")
+                            .getValue()
+                            .toString()
+                            .replace(",", "."));
+                    final String category = dataSnapshot.child("Category").getValue().toString();
+                    final String imageUrl = dataSnapshot.child("photoUrl").getValue().toString();
+
+                    Food f = new Food(id, img, name, description, price, quantity);
+                    _listDataChild.getValue().get(category).add(f);
+                    final int curr_index = _listDataChild.getValue().get(category).size();
+
+                    StorageReference photoReference = FirebaseStorage.getInstance().getReferenceFromUrl(imageUrl);
+                    final long ONE_MEGABYTE = 1024 * 1024;
+                    photoReference.getBytes(ONE_MEGABYTE).addOnSuccessListener(new OnSuccessListener<byte[]>() {
+                        @Override
+                        public void onSuccess(byte[] bytes) {
+                            String s = imageUrl;
+                            Log.d("matte", "onSuccess");
+                            Bitmap bmp = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
+                            _listDataChild.getValue().get(category).get(curr_index).setImg(bmp);
+                            //recyclerAdapter.notifyDataSetChanged();
+                        }
+                    }).addOnFailureListener(new OnFailureListener() {
+                        @Override
+                        public void onFailure(@NonNull Exception exception) {
+                            String s = imageUrl;
+                            Log.d("matte", "onFailure() : excp -> "+exception.getMessage()
+                                    +"| restaurantID: "+id);
+                        }
+                    });
+
+
+                }
+
+                /*List<Food> l = new ArrayList<>();
                 for(DataSnapshot snap : dataSnapshot.getChildren()){
                     String name = snap.getKey();
                     String ingredients = snap.child("Description").getValue().toString();
@@ -116,13 +168,66 @@ public class MyViewModel extends ViewModel {
                 else if(dataSnapshot.getKey().equals("Seconds"))
                     _listDataChild.getValue().put(context.getString(R.string.seconds), l);
                 else if(dataSnapshot.getKey().equals("Starters"))
-                    _listDataChild.getValue().put(context.getString(R.string.starters), l);
+                    _listDataChild.getValue().put(context.getString(R.string.starters), l);*/
 
             }
 
             @Override
             public void onChildChanged(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
-                List<Food> l = new ArrayList<>();
+
+                if(dataSnapshot.hasChild("Name") &&
+                        dataSnapshot.hasChild("Quantity") &&
+                        dataSnapshot.hasChild("Description") &&
+                        dataSnapshot.hasChild("Price") &&
+                        dataSnapshot.hasChild("Category") &&
+                        dataSnapshot.hasChild("photoUrl")){
+
+                    final String id = dataSnapshot.getKey();
+                    Bitmap img = BitmapFactory.decodeResource(context.getResources(), R.drawable.plate_fork);
+                    String name = dataSnapshot.child("Name").getValue().toString();
+                    int quantity = Integer.parseInt(dataSnapshot.child("Quantity").getValue().toString());
+                    String description = dataSnapshot.child("Description").getValue().toString();
+                    double price = Double.parseDouble(dataSnapshot.child("Price")
+                            .getValue()
+                            .toString()
+                            .replace(",", "."));
+                    final String category = dataSnapshot.child("Category").getValue().toString();
+                    final String imageUrl = dataSnapshot.child("photoUrl").getValue().toString();
+
+                    for(Food f : _listDataChild.getValue().get(category)){
+                        //if food is already present remove it and replace
+                        if(f.getId().equals(id)){
+                            _listDataChild.getValue().get(category).remove(f);
+                        }
+                    }
+
+                    Food f = new Food(id, img, name, description, price, quantity);
+                    _listDataChild.getValue().get(category).add(f);
+                    final int curr_index = _listDataChild.getValue().get(category).size();
+
+                    StorageReference photoReference = FirebaseStorage.getInstance().getReferenceFromUrl(imageUrl);
+                    final long ONE_MEGABYTE = 1024 * 1024;
+                    photoReference.getBytes(ONE_MEGABYTE).addOnSuccessListener(new OnSuccessListener<byte[]>() {
+                        @Override
+                        public void onSuccess(byte[] bytes) {
+                            String s = imageUrl;
+                            Log.d("matte", "onSuccess");
+                            Bitmap bmp = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
+                            _listDataChild.getValue().get(category).get(curr_index).setImg(bmp);
+                            //recyclerAdapter.notifyDataSetChanged();
+                        }
+                    }).addOnFailureListener(new OnFailureListener() {
+                        @Override
+                        public void onFailure(@NonNull Exception exception) {
+                            String s = imageUrl;
+                            Log.d("matte", "onFailure() : excp -> "+exception.getMessage()
+                                    +"| restaurantID: "+id);
+                        }
+                    });
+
+                }
+
+                /*List<Food> l = new ArrayList<>();
                 for(DataSnapshot snap : dataSnapshot.getChildren()){
                     String name = snap.getKey();
                     String ingredients = snap.child("Description").getValue().toString();
@@ -143,14 +248,25 @@ public class MyViewModel extends ViewModel {
                 else if(dataSnapshot.getKey().equals("Seconds"))
                     _listDataChild.getValue().put(context.getString(R.string.seconds), l);
                 else if(dataSnapshot.getKey().equals("Starters"))
-                    _listDataChild.getValue().put(context.getString(R.string.starters), l);
+                    _listDataChild.getValue().put(context.getString(R.string.starters), l);*/
 
             }
 
             @Override
             public void onChildRemoved(@NonNull DataSnapshot dataSnapshot) {
 
-                List<Food> l = new ArrayList<>();
+                if(dataSnapshot.hasChild("Category")){
+                    String category = dataSnapshot.child("Category").getValue().toString();
+                    String id = dataSnapshot.getKey();
+                    for(Food f : _listDataChild.getValue().get(category)){
+                        //if food is already present remove it and replace
+                        if(f.getId().equals(id)){
+                            _listDataChild.getValue().get(category).remove(f);
+                        }
+                    }
+                }
+
+                /*List<Food> l = new ArrayList<>();
                 for(DataSnapshot snap : dataSnapshot.getChildren()){
                     String name = snap.getKey();
                     String ingredients = snap.child("Description").getValue().toString();
@@ -171,7 +287,7 @@ public class MyViewModel extends ViewModel {
                 else if(dataSnapshot.getKey().equals("Seconds"))
                     _listDataChild.getValue().put(context.getString(R.string.seconds), l);
                 else if(dataSnapshot.getKey().equals("Starters"))
-                    _listDataChild.getValue().put(context.getString(R.string.starters), l);
+                    _listDataChild.getValue().put(context.getString(R.string.starters), l);*/
 
             }
 
@@ -192,7 +308,7 @@ public class MyViewModel extends ViewModel {
 
     }
 
-    public void prepareListData(Context context) {
+    /*public void prepareListData(Context context) {
 
         if (flag == false) {
 
@@ -200,14 +316,14 @@ public class MyViewModel extends ViewModel {
             List<String> listDataGroup = new ArrayList<String>();
             HashMap<String, List<Food>> listDataChild = new HashMap<String, List<Food>>();
 
-            /** Adding child data*/
+            // Adding child data
             listDataGroup.add(context.getString(R.string.starters));
             listDataGroup.add(context.getString(R.string.firsts));
             listDataGroup.add(context.getString(R.string.seconds));
             listDataGroup.add(context.getString(R.string.desserts));
             listDataGroup.add(context.getString(R.string.drinks));
 
-            /** Adding child data */
+            // Adding child data
             List<Food> starters = new ArrayList<Food>();
             starters.add(new Food(BitmapFactory.decodeResource(context.getResources(), R.drawable.caprese),
                     "Caprese", "Pomodori, mozzarella, olio e basilico", 2.50, 10));
@@ -247,6 +363,6 @@ public class MyViewModel extends ViewModel {
 
             setData(listDataGroup, listDataChild);
         }
-    }
+    }*/
 
 }

@@ -124,6 +124,8 @@ public class DailyOfferFragment extends Fragment {
 
 
 
+
+
     }
 
     @Override

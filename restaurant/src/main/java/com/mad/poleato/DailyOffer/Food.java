@@ -7,18 +7,24 @@ import java.io.Serializable;
 public class Food implements Serializable {
 
     private Bitmap img;
+    private String id;
     private String name;
     private String description;
     private Double price;
     private int quantity;
 
-    public Food(Bitmap img, String name, String description, Double price, int quantity){
+    public Food(String id, Bitmap img, String name, String description, Double price, int quantity){
 
+        this.id = id;
         this.img = img;
         this.name = name;
         this.description = description;
         this.price = price;
         this.quantity = quantity;
+    }
+
+    public String getId() {
+        return id;
     }
 
     public Bitmap getImg() {
@@ -38,6 +44,10 @@ public class Food implements Serializable {
     }
 
     public int getQuantity() { return quantity; }
+
+    public void setId(String id) {
+        this.id = id;
+    }
 
     public void setImg(Bitmap img){ this.img = img; }
 
