@@ -33,6 +33,12 @@
     <string name="title_actionbar_account">Account</string>
     <string name="title_actionbar_edit_account">Edit Account</string>
 
+
+    <string name="loading">Loading</string>
+    <string name="failure">Something goes wrong</string>
+    <string name="saved">Saved</string>
+    <string name="saving">Saving changes</string>
+
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
 

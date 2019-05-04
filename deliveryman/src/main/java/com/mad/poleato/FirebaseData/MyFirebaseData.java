@@ -1,6 +1,7 @@
 package com.mad.poleato.FirebaseData;
 
 import android.app.Activity;
+import android.app.ProgressDialog;
 import android.arch.lifecycle.ViewModelProviders;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -17,17 +18,21 @@ import com.mad.poleato.Rides.Ride;
 import com.mad.poleato.View.ViewModel.MyViewModel;
 
 import java.util.List;
+import java.util.logging.Handler;
 
 public class MyFirebaseData {
 
     private MyViewModel model;
     private Activity activity;
+    private Handler handler;
+    private ProgressDialog progressDialog;
 
-    public MyFirebaseData(Activity activity) {
+    public MyFirebaseData(Activity activity, ProgressDialog progressDialog) {
         this.activity = activity;
+        this.progressDialog = progressDialog;
     }
 
-    public void fillFields() {
+    public void fillFieldsRiders() {
 
         model = ViewModelProviders.of((FragmentActivity) activity).get(MyViewModel.class);
 
@@ -37,11 +42,13 @@ public class MyFirebaseData {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 //handler.sendEmptyMessage(0);
+                progressDialog.dismiss();
             }
 
             @Override
             public void onCancelled(@NonNull DatabaseError databaseError) {
                 //handler.sendEmptyMessage(0);
+                progressDialog.dismiss();
             }
         });
 

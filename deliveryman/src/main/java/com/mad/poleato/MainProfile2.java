@@ -28,7 +28,7 @@ import java.io.InputStream;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
-public class MainProfile extends AppCompatActivity {
+public class MainProfile2 extends AppCompatActivity {
 // tvIdField
     //
     private TextView tvNameField;
@@ -112,7 +112,7 @@ public class MainProfile extends AppCompatActivity {
     }
 
     public void editProfile(MenuItem item){
-        Intent i = new Intent(getApplicationContext(),EditProfile.class);
+        Intent i = new Intent(getApplicationContext(), EditProfile2.class);
         startActivity(i);
     }
 

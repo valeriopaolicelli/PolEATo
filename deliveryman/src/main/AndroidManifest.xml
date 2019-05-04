@@ -26,7 +26,7 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".EditProfile"
+            android:name=".EditProfile2"
             android:windowSoftInputMode="stateAlwaysVisible|stateHidden" />
 
         <provider

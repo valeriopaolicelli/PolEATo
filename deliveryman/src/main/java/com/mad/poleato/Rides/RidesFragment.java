@@ -101,16 +101,9 @@ public class RidesFragment extends Fragment {
                     ridesAdapter.setAllRiders((ArrayList<Ride>) stringRideHashMap.values());
             }
         });
-//        model.getListR().observe(this, new Observer<HashMap<String, List<Food>>>() {
-//            @Override
-//            public void onChanged(@Nullable HashMap<String, List<Food>> stringListHashMap) {
-//                listAdapter.setAllChild(stringListHashMap);
-//                //upload menu on FireBase
-//                uploadMenu();
-//            }
-//        });
 
-        myFirebaseData = new MyFirebaseData(getActivity());
+
+        myFirebaseData = new MyFirebaseData(getActivity(), progressDialog);
     }
 
 
@@ -140,7 +133,7 @@ public class RidesFragment extends Fragment {
 
 
 
-        myFirebaseData.fillFields();
+        myFirebaseData.fillFieldsRiders();
     }
 
 

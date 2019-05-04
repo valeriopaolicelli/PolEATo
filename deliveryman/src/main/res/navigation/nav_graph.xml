@@ -10,9 +10,36 @@
         android:name="com.mad.poleato.Rides.RidesFragment"
         android:label="@string/title_actionbar_deliveryRide"
         tools:layout="@layout/ride_recyclerview" />
+
+
+
     <fragment
         android:id="@+id/routes_id"
         android:name="com.mad.poleato.Routes.Routes"
         android:label="@string/title_actionbar_deliveryRoutes"
         tools:layout="@layout/fragment_routes" />
+
+
+
+    <fragment
+        android:id="@+id/mainProfile_id"
+        android:name="com.mad.poleato.Account.MainProfile"
+        android:label="@string/title_actionbar_account"
+        tools:layout="@layout/fragment_profile">
+        <action
+            android:id="@+id/action_mainProfile_id_to_editProfile_id"
+            app:destination="@id/editProfile_id" />
+    </fragment>
+    <fragment
+        android:id="@+id/editProfile_id"
+        android:name="com.mad.poleato.Account.EditProfile"
+        android:label="@string/title_actionbar_edit_account"
+        tools:layout="@layout/fragment_edit_profile">
+        <action
+            android:id="@+id/action_editProfile_id_to_mainProfile_id"
+            app:destination="@id/mainProfile_id"
+            app:popUpTo="@+id/mainProfile_id"
+            app:popUpToInclusive="true"/>
+    </fragment>
+
 </navigation>

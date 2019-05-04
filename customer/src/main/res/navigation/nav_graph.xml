@@ -17,7 +17,7 @@
         tools:layout="@layout/fragment_holder_history" />
     <fragment
         android:id="@+id/mainProfile_id"
-        android:name="com.mad.poleato.MainProfile"
+        android:name="com.mad.poleato.MainProfile2"
         android:label="@string/title_actionbar_account"
         tools:layout="@layout/fragment_main_profile" />
 

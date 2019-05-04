@@ -1,5 +1,7 @@
-package com.mad.poleato;
+package com.mad.poleato.Account;
 
+
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -11,34 +13,42 @@ import android.media.ExifInterface;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
+import android.os.Handler;
+import android.os.Message;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
+import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.content.FileProvider;
-import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.PopupMenu;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Base64;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.ImageButton;
-import android.widget.PopupMenu;
 import android.widget.ScrollView;
 import android.widget.Switch;
+import android.widget.TextView;
 import android.widget.Toast;
+
+import androidx.navigation.Navigation;
 
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.mad.poleato.R;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -49,10 +59,15 @@ import java.util.TreeMap;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
-public class EditProfile extends AppCompatActivity {
+import static android.app.Activity.RESULT_OK;
 
-    private TreeMap<String,ImageButton> imageButtons= new TreeMap<>();
-    private TreeMap<String,EditText> editTextFields= new TreeMap<>();
+/**
+ * A simple {@link Fragment} subclass.
+ */
+public class EditProfile extends Fragment {
+
+    private TreeMap<String, ImageButton> imageButtons= new TreeMap<>();
+    private TreeMap<String, EditText> editTextFields= new TreeMap<>();
     private DatabaseReference reference;
 
     static final int REQUEST_TAKE_PHOTO = 1;
@@ -60,126 +75,164 @@ public class EditProfile extends AppCompatActivity {
 
     private String currentPhotoPath;
     private String image;
+    private View v;
     private static CircleImageView profileImage;
     private FloatingActionButton change_im;
     private Switch switchPass;
 
+    private boolean isSwitchedByApp;
 
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.fragment_edit_profile);
-        if (getSupportActionBar() != null) {
-            getSupportActionBar().setTitle(R.string.edit);
-            getSupportActionBar().setDisplayShowHomeEnabled(true);
-            getSupportActionBar().setIcon(R.mipmap.baseline_edit_white_24dp);
-        } else {
-            Log.d("Exit", "getSupportActionBar() is null");
-            finish();
+    private ProgressDialog progressDialog;
+    Handler handler = new Handler() {
+        @Override
+        public void handleMessage(Message msg) {
+            progressDialog.dismiss();
         }
-        profileImage = findViewById(R.id.profile_image);
-        change_im = findViewById(R.id.change_im);
-        //fill the maps
-        collectFields();
-        //fill the fields
-        fillFields();
+    };
 
+
+    String localeShort;
+    View transparentView;
+
+    String loggedID;
+
+    public EditProfile() {
+        // Required empty public constructor
     }
 
     @Override
-    protected void onResume() {
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        setHasOptionsMenu(true);
+        super.onCreate(savedInstanceState);
+    }
+
+    @Override
+    public void onResume() {
         super.onResume();
         handleButton();
         buttonListener();
         handleSwitch();
     }
 
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu items for use in the action bar
-        MenuInflater inflater = getMenuInflater();
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+                             Bundle savedInstanceState) {
+        v = inflater.inflate(R.layout.fragment_edit_profile, container, false);
+
+        profileImage = v.findViewById(R.id.profile_image);
+        change_im = v.findViewById(R.id.change_im);
+
+        //set listener to change the photo
+        v.findViewById(R.id.change_im).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                changeImage();
+            }
+        });
+
+        //fill the maps
+        collectFields();
+        //fill the fields
+        fillFields();
+
+        return v;
+    }
+
+
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        menu.clear();
+        // Inflate the menu; this adds items to the action bar if it is present.
         inflater.inflate(R.menu.my_edit_menu, menu);
-        return super.onCreateOptionsMenu(menu);
+        menu.findItem(R.id.applyMod).setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
+            @Override
+            public boolean onMenuItemClick(MenuItem item) {
+                saveChanges();
+                return true;
+            }
+        });
+        super.onCreateOptionsMenu(menu,inflater);
+
     }
 
+//    @Override
+//    public void onSaveInstanceState(Bundle outState) {
+//        super.onSaveInstanceState(outState);
+//
+//        /*TextView nameField = findViewById(R.id.editTextName),
+//                surnameField = findViewById(R.id.editTextSurname),
+//                addressField = findViewById(R.id.editTextAddress),
+//                emailField = findViewById(R.id.editTextEmail),
+//                phoneField = findViewById(R.id.editTextPhone);
+//
+//        outState.putString("name_field", nameField.getText().toString());
+//        outState.putString("surname_field", surnameField.getText().toString());
+//        outState.putString("address_field", addressField.getText().toString());
+//        outState.putString("email_field", emailField.getText().toString());
+//        outState.putString("phone_field", phoneField.getText().toString());*/
+//
+//        final ScrollView mScrollView = v.findViewById(R.id.editScrollView);
+//        //saving scrollView position
+//        outState.putIntArray("ARTICLE_SCROLL_POSITION",
+//                new int[]{ mScrollView.getScrollX(), mScrollView.getScrollY()});
+//    }
+//
+//    @Override
+//    protected void onRestoreInstanceState(Bundle savedInstanceState) {
+//        super.onRestoreInstanceState(savedInstanceState);
+//
+//        /*TextView nameField = findViewById(R.id.editTextName),
+//                surnameField = findViewById(R.id.editTextSurname),
+//                addressField = findViewById(R.id.editTextAddress),
+//                emailField = findViewById(R.id.editTextEmail),
+//                phoneField = findViewById(R.id.editTextPhone);
+//
+//        nameField.setText(savedInstanceState.getCharSequence("name_field"));
+//        surnameField.setText(savedInstanceState.getCharSequence("surname_field"));
+//        addressField.setText(savedInstanceState.getCharSequence("address_field"));
+//        emailField.setText(savedInstanceState.getCharSequence("email_field"));
+//        phoneField.setText(savedInstanceState.getCharSequence("phone_field"));*/
+//
+//        final ScrollView mScrollView = findViewById(R.id.editScrollView);
+//        //restoring scrollview position
+//        final int[] position = savedInstanceState.getIntArray("ARTICLE_SCROLL_POSITION");
+//        if(position != null)
+//            mScrollView.post(new Runnable() {
+//                public void run() {
+//                    mScrollView.scrollTo(position[0], position[1]);
+//                }
+//            });
+//    }
+
+
     @Override
-    public void onSaveInstanceState(Bundle outState) {
-        super.onSaveInstanceState(outState);
-
-        /*TextView nameField = findViewById(R.id.editTextName),
-                surnameField = findViewById(R.id.editTextSurname),
-                addressField = findViewById(R.id.editTextAddress),
-                emailField = findViewById(R.id.editTextEmail),
-                phoneField = findViewById(R.id.editTextPhone);
-
-        outState.putString("name_field", nameField.getText().toString());
-        outState.putString("surname_field", surnameField.getText().toString());
-        outState.putString("address_field", addressField.getText().toString());
-        outState.putString("email_field", emailField.getText().toString());
-        outState.putString("phone_field", phoneField.getText().toString());*/
-
-        final ScrollView mScrollView = findViewById(R.id.editScrollView);
-        //saving scrollView position
-        outState.putIntArray("ARTICLE_SCROLL_POSITION",
-            new int[]{ mScrollView.getScrollX(), mScrollView.getScrollY()});
-    }
-
-    @Override
-    protected void onRestoreInstanceState(Bundle savedInstanceState) {
-        super.onRestoreInstanceState(savedInstanceState);
-
-        /*TextView nameField = findViewById(R.id.editTextName),
-                surnameField = findViewById(R.id.editTextSurname),
-                addressField = findViewById(R.id.editTextAddress),
-                emailField = findViewById(R.id.editTextEmail),
-                phoneField = findViewById(R.id.editTextPhone);
-
-        nameField.setText(savedInstanceState.getCharSequence("name_field"));
-        surnameField.setText(savedInstanceState.getCharSequence("surname_field"));
-        addressField.setText(savedInstanceState.getCharSequence("address_field"));
-        emailField.setText(savedInstanceState.getCharSequence("email_field"));
-        phoneField.setText(savedInstanceState.getCharSequence("phone_field"));*/
-
-        final ScrollView mScrollView = findViewById(R.id.editScrollView);
-        //restoring scrollview position
-        final int[] position = savedInstanceState.getIntArray("ARTICLE_SCROLL_POSITION");
-        if(position != null)
-            mScrollView.post(new Runnable() {
-                public void run() {
-                    mScrollView.scrollTo(position[0], position[1]);
-                }
-            });
-    }
-
-
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+    public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == REQUEST_TAKE_PHOTO){
             if (resultCode == RESULT_OK) {
                 setPic(currentPhotoPath);
             }
             else {
-                SharedPreferences fields= this.getSharedPreferences("ProfileDataDeliveryMan", Context.MODE_PRIVATE);
-                image= fields.getString("ProfileImage", encodeTobase64());
-                profileImage.setImageBitmap(decodeBase64(image));
+//                SharedPreferences fields= getActivity().getSharedPreferences("ProfileDataDeliveryMan", Context.MODE_PRIVATE);
+//                image= fields.getString("ProfileImage", encodeTobase64());
+//                profileImage.setImageBitmap(decodeBase64(image));
             }
         }
         if (requestCode == RESULT_LOAD_IMG) {
             if (resultCode == RESULT_OK) {
                 try {
                     final Uri imageUri = data.getData();
-                    final InputStream imageStream = getContentResolver().openInputStream(imageUri);
+                    final InputStream imageStream = getActivity().getContentResolver().openInputStream(imageUri);
                     final Bitmap selectedImage = BitmapFactory.decodeStream(imageStream);
                     profileImage.setImageBitmap(selectedImage);
                 } catch (FileNotFoundException e) {
                     e.printStackTrace();
-                    Toast.makeText(this, "Something went wrong", Toast.LENGTH_LONG).show();
+                    Toast.makeText(getContext(), "Something went wrong", Toast.LENGTH_LONG).show();
                 }
 
             } else {
-                SharedPreferences fields= this.getSharedPreferences("ProfileDataDeliveryMan", Context.MODE_PRIVATE);
-                image= fields.getString("ProfileImage", encodeTobase64());
-                profileImage.setImageBitmap(decodeBase64(image));
+//                SharedPreferences fields= getActivity().getSharedPreferences("ProfileDataDeliveryMan", Context.MODE_PRIVATE);
+//                image= fields.getString("ProfileImage", encodeTobase64());
+//                profileImage.setImageBitmap(decodeBase64(image));
             }
         }
     }
@@ -259,25 +312,25 @@ public class EditProfile extends AppCompatActivity {
     }
 
     public void collectFields(){
-        editTextFields.put("Name",(EditText)findViewById(R.id.editTextName));
-        editTextFields.put("Surname",(EditText)findViewById(R.id.editTextSurname));
-        editTextFields.put("Address",(EditText)findViewById(R.id.editTextAddress));
-        editTextFields.put("Email",(EditText)findViewById(R.id.editTextEmail));
-        editTextFields.put("Phone",(EditText)findViewById(R.id.editTextPhone));
-        editTextFields.put("OldPassword", (EditText)findViewById(R.id.oldPass));
-        editTextFields.put("NewPassword", (EditText)findViewById(R.id.newPass));
-        editTextFields.put("ReNewPassword", (EditText)findViewById(R.id.reNewPass));
+        editTextFields.put("Name",(EditText) v.findViewById(R.id.editTextName));
+        editTextFields.put("Surname",(EditText) v.findViewById(R.id.editTextSurname));
+        editTextFields.put("Address",(EditText) v.findViewById(R.id.editTextAddress));
+        editTextFields.put("Email",(EditText) v.findViewById(R.id.editTextEmail));
+        editTextFields.put("Phone",(EditText) v.findViewById(R.id.editTextPhone));
+        editTextFields.put("OldPassword", (EditText) v.findViewById(R.id.oldPass));
+        editTextFields.put("NewPassword", (EditText) v.findViewById(R.id.newPass));
+        editTextFields.put("ReNewPassword", (EditText) v.findViewById(R.id.reNewPass));
 
-        imageButtons.put("Name", (ImageButton)findViewById(R.id.cancel_name));
-        imageButtons.put("Surname", (ImageButton)findViewById(R.id.cancel_surname));
-        imageButtons.put("Address", (ImageButton)findViewById(R.id.cancel_address));
-        imageButtons.put("Email", (ImageButton)findViewById(R.id.cancel_email));
-        imageButtons.put("Phone", (ImageButton)findViewById(R.id.cancel_phone));
-        imageButtons.put("OldPassword", (ImageButton)findViewById(R.id.cancel_oldpass));
-        imageButtons.put("NewPassword", (ImageButton)findViewById(R.id.cancel_newpass));
-        imageButtons.put("ReNewPassword", (ImageButton)findViewById(R.id.cancel_renewpass));
+        imageButtons.put("Name", (ImageButton) v.findViewById(R.id.cancel_name));
+        imageButtons.put("Surname", (ImageButton) v.findViewById(R.id.cancel_surname));
+        imageButtons.put("Address", (ImageButton) v.findViewById(R.id.cancel_address));
+        imageButtons.put("Email", (ImageButton) v.findViewById(R.id.cancel_email));
+        imageButtons.put("Phone", (ImageButton) v.findViewById(R.id.cancel_phone));
+        imageButtons.put("OldPassword", (ImageButton) v.findViewById(R.id.cancel_oldpass));
+        imageButtons.put("NewPassword", (ImageButton) v.findViewById(R.id.cancel_newpass));
+        imageButtons.put("ReNewPassword", (ImageButton) v.findViewById(R.id.cancel_renewpass));
 
-        switchPass= findViewById(R.id.switchPass);
+        switchPass= v.findViewById(R.id.switchPass);
     }
 
     private void fillFields() {
@@ -309,7 +362,7 @@ public class EditProfile extends AppCompatActivity {
 
             @Override
             public void onCancelled(@NonNull DatabaseError databaseError) {
-                Toast.makeText(getApplicationContext(), databaseError.getMessage().toString(), Toast.LENGTH_SHORT);
+                Toast.makeText(getActivity().getApplicationContext(), databaseError.getMessage().toString(), Toast.LENGTH_SHORT);
             }
         });
 
@@ -326,7 +379,7 @@ public class EditProfile extends AppCompatActivity {
 
     }
 
-    public void saveChanges(MenuItem item) {
+    public void saveChanges() {
         boolean wrongField = false;
         // fields cannot be empty
         String[] fieldName = {"Name", "Surname", "Address", "Email", "Phone"};
@@ -334,11 +387,11 @@ public class EditProfile extends AppCompatActivity {
             EditText field = editTextFields.get(fieldName[i]);
             if(field != null){
                 if (field.getText().toString().equals("")) {
-                    Toast.makeText(this, "All fields must be filled", Toast.LENGTH_LONG).show();
-                    field.setBackground(ContextCompat.getDrawable(this, R.drawable.border_wrong_field));
+                    Toast.makeText(getContext(), "All fields must be filled", Toast.LENGTH_LONG).show();
+                    field.setBackground(ContextCompat.getDrawable(getContext(), R.drawable.border_wrong_field));
                     wrongField = true;
                 } else
-                    field.setBackground(ContextCompat.getDrawable(this, R.drawable.border_right_field));
+                    field.setBackground(ContextCompat.getDrawable(getContext(), R.drawable.border_right_field));
             }
             else
                 return;
@@ -358,18 +411,18 @@ public class EditProfile extends AppCompatActivity {
 
         if (!editTextFields.get("Name").getText().toString().matches(nameRegex)) {
             wrongField = true;
-            Toast.makeText(this, "Only letters are allowed for the name", Toast.LENGTH_LONG).show();
-            editTextFields.get("Name").setBackground(ContextCompat.getDrawable(this, R.drawable.border_wrong_field));
+            Toast.makeText(getContext(), "Only letters are allowed for the name", Toast.LENGTH_LONG).show();
+            editTextFields.get("Name").setBackground(ContextCompat.getDrawable(getContext(), R.drawable.border_wrong_field));
         }
         if (!editTextFields.get("Surname").getText().toString().matches(nameRegex)) {
             wrongField = true;
-            Toast.makeText(this, "Only letters are allowed for the surname", Toast.LENGTH_LONG).show();
-            editTextFields.get("Surname").setBackground(ContextCompat.getDrawable(this, R.drawable.border_wrong_field));
+            Toast.makeText(getContext(), "Only letters are allowed for the surname", Toast.LENGTH_LONG).show();
+            editTextFields.get("Surname").setBackground(ContextCompat.getDrawable(getContext(), R.drawable.border_wrong_field));
         }
         if (!editTextFields.get("Email").getText().toString().matches(emailRegex)) {
             wrongField = true;
-            Toast.makeText(this, "Invalid Email", Toast.LENGTH_LONG).show();
-            editTextFields.get("Email").setBackground(ContextCompat.getDrawable(this, R.drawable.border_wrong_field));
+            Toast.makeText(getContext(), "Invalid Email", Toast.LENGTH_LONG).show();
+            editTextFields.get("Email").setBackground(ContextCompat.getDrawable(getContext(), R.drawable.border_wrong_field));
         }
 
         if (switchPass.isChecked()) {
@@ -379,15 +432,15 @@ public class EditProfile extends AppCompatActivity {
 
             if(!newPass.matches(passRegex)){
                 wrongField = true;
-                Toast.makeText(this, "Password must contain at least 1 lowercase 1 uppercase and 1 digit", Toast.LENGTH_LONG).show();
-                editTextFields.get("NewPassword").setBackground(ContextCompat.getDrawable(this, R.drawable.border_wrong_field));
+                Toast.makeText(getContext(), "Password must contain at least 1 lowercase 1 uppercase and 1 digit", Toast.LENGTH_LONG).show();
+                editTextFields.get("NewPassword").setBackground(ContextCompat.getDrawable(getContext(), R.drawable.border_wrong_field));
             }
 
             if (!newPass.equals(reNewPass)) {
                 wrongField = true;
-                Toast.makeText(this, "New password are different", Toast.LENGTH_LONG).show();
-                editTextFields.get("NewPassword").setBackground(ContextCompat.getDrawable(this, R.drawable.border_wrong_field));
-                editTextFields.get("ReNewPassword").setBackground(ContextCompat.getDrawable(this, R.drawable.border_wrong_field));
+                Toast.makeText(getContext(), "New password are different", Toast.LENGTH_LONG).show();
+                editTextFields.get("NewPassword").setBackground(ContextCompat.getDrawable(getContext(), R.drawable.border_wrong_field));
+                editTextFields.get("ReNewPassword").setBackground(ContextCompat.getDrawable(getContext(), R.drawable.border_wrong_field));
             }
 
             //TODO check old password on DB
@@ -403,20 +456,20 @@ public class EditProfile extends AppCompatActivity {
 
             if (oldPass.equals("")) {
                 wrongField = true;
-                Toast.makeText(this, "Old password must be filled", Toast.LENGTH_LONG).show();
-                editTextFields.get("OldPassword").setBackground(ContextCompat.getDrawable(this, R.drawable.border_wrong_field));
+                Toast.makeText(getContext(), "Old password must be filled", Toast.LENGTH_LONG).show();
+                editTextFields.get("OldPassword").setBackground(ContextCompat.getDrawable(getContext(), R.drawable.border_wrong_field));
             }
 
             if (newPass.equals("")) {
                 wrongField = true;
-                Toast.makeText(this, "New password must be filled", Toast.LENGTH_LONG).show();
-                editTextFields.get("NewPassword").setBackground(ContextCompat.getDrawable(this, R.drawable.border_wrong_field));
+                Toast.makeText(getContext(), "New password must be filled", Toast.LENGTH_LONG).show();
+                editTextFields.get("NewPassword").setBackground(ContextCompat.getDrawable(getContext(), R.drawable.border_wrong_field));
             }
 
             if (reNewPass.equals("")) {
                 wrongField = true;
-                Toast.makeText(this, "Re-insert new password", Toast.LENGTH_LONG).show();
-                editTextFields.get("ReNewPassword").setBackground(ContextCompat.getDrawable(this, R.drawable.border_wrong_field));
+                Toast.makeText(getContext(), "Re-insert new password", Toast.LENGTH_LONG).show();
+                editTextFields.get("ReNewPassword").setBackground(ContextCompat.getDrawable(getContext(), R.drawable.border_wrong_field));
             }
         }
 
@@ -427,13 +480,20 @@ public class EditProfile extends AppCompatActivity {
             }
             // TODO save image into DB
 
-            Toast.makeText(this, "Saved", Toast.LENGTH_LONG).show();
-            finish();
+            Toast.makeText(getContext(), "Saved", Toast.LENGTH_LONG).show();
+
+            /**
+             * GO TO ACCOUNT_FRAGMENT
+             */
+            Navigation.findNavController(v).navigate(R.id.action_editProfile_id_to_mainProfile_id);
+            /**
+             *
+             */
         }
     }
 
-    public void changeImage(View view) {
-        PopupMenu popup = new PopupMenu(EditProfile.this, change_im);
+    public void changeImage() {
+        android.support.v7.widget.PopupMenu popup = new android.support.v7.widget.PopupMenu(getContext(), change_im);
         popup.getMenuInflater().inflate(
                 R.menu.popup_menu, popup.getMenu());
         popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
@@ -449,7 +509,7 @@ public class EditProfile extends AppCompatActivity {
                         Intent photoPickerIntent = new Intent(Intent.ACTION_PICK);
                         photoPickerIntent.setType("image/*");
                         startActivityForResult(photoPickerIntent, RESULT_LOAD_IMG);
-
+                        return true;
                     case R.id.removeImage:
                         removeProfileImage();
                         return true;
@@ -468,7 +528,7 @@ public class EditProfile extends AppCompatActivity {
         Uri photoURI;
         Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
         // Ensure that there's a camera activity to handle the intent
-        if (takePictureIntent.resolveActivity(getPackageManager()) != null) {
+        if (takePictureIntent.resolveActivity(getActivity().getPackageManager()) != null) {
             // Create the File where the photo should go
             File photoFile = null;
             try {
@@ -479,7 +539,7 @@ public class EditProfile extends AppCompatActivity {
             }
             // Continue only if the File was successfully created
             if (photoFile != null) {
-                photoURI = FileProvider.getUriForFile(this,
+                photoURI = FileProvider.getUriForFile(getContext(),
                         "com.example.android.fileproviderD",
                         photoFile);
                 takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI);
@@ -494,7 +554,7 @@ public class EditProfile extends AppCompatActivity {
         // Create an image file name
         //String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
         String imageFileName = "JPEG_" + "profile";
-        File storageDir = getExternalFilesDir(Environment.DIRECTORY_PICTURES);
+        File storageDir = getActivity().getExternalFilesDir(Environment.DIRECTORY_PICTURES);
 
         File image = File.createTempFile(
                 imageFileName,  /* prefix */
@@ -634,5 +694,5 @@ public class EditProfile extends AppCompatActivity {
             }
         });
     }
-}
 
+}
