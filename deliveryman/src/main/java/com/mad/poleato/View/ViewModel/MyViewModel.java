@@ -20,9 +20,11 @@ import java.util.List;
 
 
 public class MyViewModel extends ViewModel {
-    private MutableLiveData<HashMap<String, Ride>> _MapDataRides = new MutableLiveData<>(); // header titles
+    private MutableLiveData<HashMap<String, Ride>> _MapDataRides;
 
     public LiveData<HashMap<String, Ride>> getListR() {
+        if (_MapDataRides == null)
+        _MapDataRides = new MutableLiveData<>(); // header titles
         return _MapDataRides;
     }
 
@@ -32,6 +34,10 @@ public class MyViewModel extends ViewModel {
 
     public void removeChild(final String orderID) {
         this._MapDataRides.getValue().remove(orderID);
+    }
+
+    public void initChild(){
+        _MapDataRides.setValue(new HashMap<String, Ride>());
     }
 
     public void testInitRiders () {
