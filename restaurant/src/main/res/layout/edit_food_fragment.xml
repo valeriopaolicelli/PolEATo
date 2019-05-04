@@ -38,52 +38,25 @@
             android:layout_marginTop="16dp"
             android:scaleType="fitCenter"
             android:src="@drawable/plate_fork"
-            app:layout_constraintBottom_toTopOf="@id/type_food_label"
+            app:layout_constraintBottom_toTopOf="@id/input_layout_name"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             tools:ignore="ContentDescription" />
 
 
-        <TextView
-            android:id="@+id/type_food_label"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="16dp"
-            android:layout_marginTop="24dp"
-            android:layout_marginEnd="8dp"
-            android:layout_marginBottom="16dp"
-            android:text="@string/plate_type"
-            android:textColor="#000000"
-            app:layout_constraintBottom_toTopOf="@id/input_layout_name"
-            app:layout_constraintEnd_toStartOf="@id/spinnerFood"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/imageFood" />
-
-        <Spinner
-            android:id="@+id/spinnerFood"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="8dp"
-            android:layout_marginTop="24dp"
-            android:layout_marginRight="8dp"
-            android:layout_marginBottom="16dp"
-            app:layout_constraintBottom_toTopOf="@id/input_layout_name"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toEndOf="@id/type_food_label"
-            app:layout_constraintTop_toBottomOf="@id/imageFood" />
-
         <android.support.design.widget.TextInputLayout
             android:id="@+id/input_layout_name"
             android:layout_width="0dp"
             android:layout_height="56dp"
             android:layout_marginStart="8dp"
+            android:layout_marginTop="16dp"
             android:layout_marginEnd="8dp"
             android:theme="@style/FloatLabel"
             app:layout_constraintBottom_toTopOf="@id/input_layout_description"
             app:layout_constraintEnd_toStartOf="@id/cancel_name"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/type_food_label"
+            app:layout_constraintTop_toBottomOf="@id/imageFood"
             app:layout_constraintVertical_bias="0.0">
 
             <EditText

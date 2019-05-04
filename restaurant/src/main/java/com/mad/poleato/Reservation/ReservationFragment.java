@@ -167,7 +167,7 @@ public class ReservationFragment extends Fragment {
         lv = view.findViewById(R.id.reservationslv);
         /*fix expandablelistview arrow position */
         lv.setIndicatorBounds(width - GetDipsFromPixel(35), width - GetDipsFromPixel(5));
-        listAdapter = new ReservationExpandableListAdapter(getActivity(), reservations, listHash);
+        listAdapter = new ReservationExpandableListAdapter(getActivity(), reservations, listHash, currentUserID);
         lv.setAdapter(listAdapter);
         lv.setOnGroupClickListener(new ExpandableListView.OnGroupClickListener() {
             @Override
