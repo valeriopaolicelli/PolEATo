@@ -36,9 +36,8 @@ public class RidesRecyclerViewAdapter extends RecyclerView.Adapter<RidesRecycler
         }
     }
 
-    public RidesRecyclerViewAdapter(Context context, List<Ride> ridesList){
+    public RidesRecyclerViewAdapter(Context context){
         this.context=context;
-        this.ridesList=ridesList;
     }
 
     public void setAllRiders(List<Ride> riders) {

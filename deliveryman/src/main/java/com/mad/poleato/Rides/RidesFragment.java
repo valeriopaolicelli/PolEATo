@@ -88,7 +88,6 @@ public class RidesFragment extends Fragment {
 
         rideList = new ArrayList<>();
         rideMap = new HashMap<>();
-        currDisplayedList = new ArrayList<>();
 
         if (getActivity() != null) {
             //TODO: update strings.xml
@@ -137,12 +136,6 @@ public class RidesFragment extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         fragView = inflater.inflate(R.layout.ride_recyclerview, container, false);
-        return fragView;
-    }
-
-    @Override
-    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
-        super.onViewCreated(view, savedInstanceState);
 
         rv = (RecyclerView) fragView.findViewById(R.id.rides_recyclerview);
         rv.setHasFixedSize(true);
@@ -150,11 +143,20 @@ public class RidesFragment extends Fragment {
         layoutManager = new LinearLayoutManager(this.hostActivity);
         rv.setLayoutManager(layoutManager);
 
-        this.ridesAdapter = new RidesRecyclerViewAdapter(this.hostActivity, this.currDisplayedList);
+        this.ridesAdapter = new RidesRecyclerViewAdapter(this.hostActivity);
         rv.setAdapter(ridesAdapter);
         //add separator between list items
         DividerItemDecoration itemDecor = new DividerItemDecoration(hostActivity, 1); // 1 means HORIZONTAL
         rv.addItemDecoration(itemDecor);
+
+        return fragView;
+    }
+
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+
+
 
 
 
