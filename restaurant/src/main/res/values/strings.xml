@@ -41,7 +41,6 @@
 
 
 
-
     <string name="ch_pass"><font size="18">Change password(max 12 char)</font></string>
     <string name="old_pass"><font size="18">Insert old password</font></string>
     <string name="new_pass"><font size="18">Insert new password</font></string>
@@ -65,6 +64,7 @@
     <string name="error_format_price">Price must be a number</string>
     <string name="error_format_quantity">Quantity must be a integer number</string>
 
+    <string name="plate_type">Plate type</string>
     <string-array name="plates_array">
         <item>Starters</item>
         <item>Firsts</item>
@@ -72,6 +72,8 @@
         <item>Desserts</item>
         <item>Drinks</item>
     </string-array>
+    <string name="description">Description</string>
+    <string name="price">Price</string>
 
     <string name="dishes">Dish</string>
     <string name="quantity">Quantity</string>
