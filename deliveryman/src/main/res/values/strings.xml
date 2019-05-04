@@ -39,8 +39,7 @@
     <string name="saved">Saved</string>
     <string name="saving">Saving changes</string>
 
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="hello_blank_fragment">Work in progress</string>
 
     <string name="customer_surname">Surname: </string>
     <string name="restaurant_name">Restaurant: </string>

@@ -18,11 +18,11 @@ public class ReservationExpandableListAdapter extends BaseExpandableListAdapter 
     private String loggedID;
     //TODO retrieve proper id
 
-    public ReservationExpandableListAdapter(Context context, List<Reservation> reservations, HashMap<String, List<Dish>> listHashMap) {
+    public ReservationExpandableListAdapter(Context context, List<Reservation> reservations, HashMap<String, List<Dish>> listHashMap, String currentUserID) {
         this.context = context;
         this.reservations = reservations;
         this.listHashMap = listHashMap;
-        this.loggedID= "R00"; //TODO
+        this.loggedID= currentUserID;
     }
 
     @Override

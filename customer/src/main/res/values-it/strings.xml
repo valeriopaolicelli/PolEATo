@@ -95,10 +95,6 @@
     <string name="title_actionbar_account">Account</string>
     <string name="title_actionbar_edit_account">Edit Account</string>
 
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
-
-
 
     <!-- Login strings -->
     <string name="signin">Accedi</string>

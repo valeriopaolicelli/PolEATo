@@ -40,8 +40,9 @@
     <string name="saved">Salvato</string>
     <string name="saving">Salvataggio</string>
 
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
+
+    <string name="hello_blank_fragment">Ci stiamo lavorando</string>
+
     <string name="customer_surname">Cognome: </string>
     <string name="restaurant_name">Ristorante: </string>
     <string name="address_label">Indirizzo: </string>

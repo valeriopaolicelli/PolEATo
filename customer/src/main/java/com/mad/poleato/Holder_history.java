@@ -88,7 +88,7 @@ public class Holder_history extends Fragment {
         /*fix expandablelistview arrow position */
         lv.setIndicatorBounds(width - GetDipsFromPixel(35), width - GetDipsFromPixel(5));
 
-        listAdapter = new ReservationExpandableListAdapter(getActivity(), reservations, listHash);
+        listAdapter = new ReservationExpandableListAdapter(getActivity(), reservations, listHash, currentUserID);
         lv.setAdapter(listAdapter);
 
         return view;
