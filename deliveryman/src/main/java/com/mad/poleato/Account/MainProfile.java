@@ -127,7 +127,7 @@ public class MainProfile extends Fragment {
         tvFields.put("ID", (TextView)view.findViewById(R.id.tvIdField));
         tvFields.put("IsActive", (TextView)view.findViewById(R.id.tvStatusField));
 
-        profileImage = view.findViewById(R.id.ivBackground);
+        profileImage = view.findViewById(R.id.profile_image);
 
         // Button to edit the restaurant details
         buttEdit = view.findViewById(R.id.buttEdit);

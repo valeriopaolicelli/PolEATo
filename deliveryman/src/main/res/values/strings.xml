@@ -53,8 +53,14 @@
     <string name="active_status"><font size="18">Active</font></string>
     <string name="inactive_status"><font size="18">Inactive</font></string>
     <string name="current_status"><font size="18">Your status</font></string>
+    <string name="go_active_message">Are you sure you want to become active? Customers
+                                    will start to send you requests.</string>
 
+    <string name="go_inactive_message">Are you sure you want to become inactive? You can not
+                    receives requests anymore while inactive.</string>
 
+    <string name="yes">Yes</string>
+    <string name="no">No</string>
 
     <!-- Login string -->
     <string name="signin">Sign in</string>
