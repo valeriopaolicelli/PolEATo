@@ -6,7 +6,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/colorBodyPrimary"
-    tools:context=".MainProfile2">
+    tools:context="Account.MainProfile">
 
     <android.support.constraint.ConstraintLayout
         android:layout_width="match_parent"
@@ -18,7 +18,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:adjustViewBounds="true"
-            app:layout_constraintBottom_toTopOf="@id/name_icon"
+            app:layout_constraintBottom_toTopOf="@id/status_icon"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
@@ -52,6 +52,48 @@
             app:layout_constraintTop_toTopOf="parent"
             tools:srcCompat="@tools:sample/avatars" />
 
+
+        <!-- Status -->
+        <ImageView
+            android:id="@+id/status_icon"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="16dp"
+            android:layout_marginEnd="16dp"
+            android:contentDescription="@string/phone"
+            android:src="@drawable/ic_baseline_notification_important_24px"
+            app:layout_constraintTop_toBottomOf= "@id/ivBackground"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toStartOf="@id/statusLabel"
+            app:layout_constraintBottom_toTopOf="@id/tvStatusField"/>
+
+        <TextView
+            android:id="@+id/statusLabel"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="16dp"
+            android:text="@string/current_status"
+            android:textColor="@color/colorTextField"
+            app:layout_constraintBottom_toTopOf="@id/tvStatusField"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@id/status_icon"
+            app:layout_constraintTop_toTopOf="@id/status_icon" />
+
+        <TextView
+            android:id="@+id/tvStatusField"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="16dp"
+            android:maxLength="15"
+            android:singleLine="true"
+            android:textColor="@color/colorTextSubField"
+            android:textIsSelectable="true"
+            app:layout_constraintTop_toBottomOf="@id/statusLabel"
+            app:layout_constraintStart_toStartOf="@id/statusLabel"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintBottom_toTopOf="@id/nameLabel"/>
+
         <!-- Name -->
 
         <ImageView
@@ -65,7 +107,7 @@
             app:layout_constraintBottom_toBottomOf="@id/nameLabel"
             app:layout_constraintEnd_toStartOf="@id/nameLabel"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/ivBackground"
+            app:layout_constraintTop_toBottomOf="@id/tvStatusField"
             tools:ignore="contentDescription" />
 
         <TextView
@@ -78,7 +120,7 @@
             app:layout_constraintBottom_toTopOf="@id/tvNameField"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toEndOf="@id/name_icon"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintTop_toBottomOf="@id/tvStatusField"/>
 
         <TextView
             android:id="@+id/tvNameField"
@@ -135,6 +177,8 @@
             app:layout_constraintStart_toStartOf="@id/surnameLabel"
             app:layout_constraintTop_toBottomOf="@id/surnameLabel" />
 
+
+        <!-- Address -->
         <ImageView
             android:id="@+id/address_icon"
             android:layout_width="wrap_content"
@@ -175,6 +219,7 @@
             app:layout_constraintStart_toStartOf="@id/addressLabel"
             app:layout_constraintTop_toBottomOf="@id/addressLabel" />
 
+        <!-- Email -->
         <ImageView
             android:id="@+id/email_icon"
             android:layout_width="wrap_content"
@@ -216,6 +261,8 @@
             app:layout_constraintStart_toStartOf="@id/emailLabel"
             app:layout_constraintTop_toBottomOf="@id/emailLabel" />
 
+
+        <!-- Address -->
         <ImageView
             android:id="@+id/phone_icon"
             android:layout_width="wrap_content"
@@ -257,6 +304,7 @@
             app:layout_constraintTop_toBottomOf="@id/phoneLabel" />
 
 
+        <!-- ID -->
         <ImageView
             android:id="@+id/id_icon"
             android:layout_width="wrap_content"
@@ -298,5 +346,6 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="@id/idLabel"
             app:layout_constraintTop_toBottomOf="@id/idLabel" />
+
     </android.support.constraint.ConstraintLayout>
 </ScrollView>

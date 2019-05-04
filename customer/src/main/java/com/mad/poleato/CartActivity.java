@@ -184,7 +184,7 @@ public class CartActivity extends AppCompatActivity implements Interface {
                     String send_email;
 
                     //This is a Simple Logic to Send Notification different Device Programmatically....
-                    send_email= "R00"; //TODO
+                    send_email= order.getRestaurantID();
 
                     try {
                         String jsonResponse;

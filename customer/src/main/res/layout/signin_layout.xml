@@ -65,7 +65,6 @@
         android:id="@+id/text_linearLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="32dp"
         android:orientation="vertical"
         android:weightSum="1"
         app:layout_constraintBottom_toBottomOf="parent"
@@ -74,31 +73,55 @@
         app:layout_constraintTop_toBottomOf="@id/button_linearlayout"
         app:layout_constraintVertical_weight=".3">
 
-        <EditText
-            android:id="@+id/edEmail"
+        <android.support.design.widget.TextInputLayout
+            android:id="@+id/tiEmail"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="56dp"
+            android:layout_marginBottom="32dp"
             android:layout_marginStart="32dp"
             android:layout_marginEnd="32dp"
-            android:layout_marginBottom="32dp"
-            android:layout_weight=".5"
             android:background="#ffffff"
-            android:inputType="textEmailAddress"
-            android:hint="Email"
-            android:textSize="25sp" />
+            android:theme="@style/FloatLabel">
 
-        <EditText
-            android:id="@+id/edPassword"
+            <EditText
+                android:id="@+id/edEmail"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="5dp"
+                android:hint="@string/email"
+                android:imeOptions="actionNext"
+                android:inputType="textEmailAddress"
+                android:maxLength="40"
+                android:singleLine="true"
+                android:textColor="@color/colorTextSubField"
+                tools:ignore="Autofill" />
+        </android.support.design.widget.TextInputLayout>
+
+        <android.support.design.widget.TextInputLayout
+            android:id="@+id/tiPassword"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="56dp"
+            android:layout_marginBottom="32dp"
             android:layout_marginStart="32dp"
             android:layout_marginEnd="32dp"
-            android:layout_marginBottom="32dp"
-            android:layout_weight=".5"
             android:background="#ffffff"
-            android:inputType="textPassword"
-            android:hint="Password"
-            android:textSize="25sp" />
+            android:theme="@style/FloatLabel">
+
+            <EditText
+                android:id="@+id/edPassword"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="5dp"
+                android:hint="@string/password"
+                android:imeOptions="actionDone"
+                android:inputType="textPassword"
+                android:maxLength="40"
+                android:singleLine="true"
+                android:textColor="@color/colorTextSubField"
+                tools:ignore="Autofill" />
+        </android.support.design.widget.TextInputLayout>
+
+
 
         <LinearLayout
             android:layout_width="match_parent"

@@ -103,13 +103,13 @@ public class MyFirebaseData {
                         dataSnapshot.hasChild("totalPrice") &&
                         dataSnapshot.hasChild("numberOfDishes")) {
 
-                    String orderID = dataSnapshot.getKey();
-                    String addressCustomer = dataSnapshot.child("addressCustomer").toString();
-                    String addressRestaurant = dataSnapshot.child("addressRestaurant").toString();
-                    String nameRestaurant = dataSnapshot.child("nameRestaurant").toString();
-                    String surnameCustomer = dataSnapshot.child("surnameCustomer").toString();
-                    Double totalPrice = Double.parseDouble(dataSnapshot.child("totalPrice").toString());
-                    Integer numberOfDishes = Integer.parseInt(dataSnapshot.child("numberOfDishes").toString());
+                    String orderID = dataSnapshot.child("orderID").getValue().toString();
+                    String addressCustomer = dataSnapshot.child("addressCustomer").getValue().toString();
+                    String addressRestaurant = dataSnapshot.child("addressRestaurant").getValue().toString();
+                    String nameRestaurant = dataSnapshot.child("nameRestaurant").getValue().toString();
+                    String surnameCustomer = dataSnapshot.child("surnameCustomer").getValue().toString();
+                    Double totalPrice = Double.parseDouble(dataSnapshot.child("totalPrice").getValue().toString());
+                    Integer numberOfDishes = Integer.parseInt(dataSnapshot.child("numberOfDishes").getValue().toString());
 
                     Ride rideObj = new Ride(orderID, surnameCustomer, addressCustomer, nameRestaurant,
                             addressRestaurant, totalPrice, numberOfDishes);
