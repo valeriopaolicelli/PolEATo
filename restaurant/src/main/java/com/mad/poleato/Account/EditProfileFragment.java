@@ -84,7 +84,7 @@ public class EditProfileFragment extends Fragment {
     private static final int REQUEST_TAKE_PHOTO = 1;
     private static final int RESULT_LOAD_IMG = 2;
     private String currentPhotoPath;
-    Toast myToast;
+    private Toast myToast;
 
     private Map<String, ImageButton> imageButtons;
     private Map<String, EditText> editTextFields;
@@ -97,11 +97,9 @@ public class EditProfileFragment extends Fragment {
     private FloatingActionButton change_im;
     private ImageView profileImage;
     private Switch statusSwitch;
-    //if the switch is not switched by user set it to true (default=false)
-    private boolean isSwitchedByApp;
 
     private ProgressDialog progressDialog;
-    Handler handler = new Handler() {
+    private Handler handler = new Handler() {
         @Override
         public void handleMessage(Message msg) {
             progressDialog.dismiss();
@@ -111,7 +109,7 @@ public class EditProfileFragment extends Fragment {
     private String localeShort;
     private boolean priceRangeUninitialized;
 
-    String currentUserID;
+    private String currentUserID;
     private FirebaseAuth mAuth;
 
 
@@ -165,8 +163,7 @@ public class EditProfileFragment extends Fragment {
         Log.d("matte", "LOCALE: "+locale);
         localeShort = locale.substring(0, 2);
 
-        //init
-        isSwitchedByApp = false;
+
         myToast = Toast.makeText(getActivity(), "", Toast.LENGTH_SHORT);
 
 
@@ -245,17 +242,6 @@ public class EditProfileFragment extends Fragment {
 
         profileImage = v.findViewById(R.id.ivBackground);
 
-        //fill the fields with initial values (uses FireBase)
-        if(getActivity() != null)
-            progressDialog = ProgressDialog.show(getActivity(), "", getString(R.string.loading));
-        //start a new thread to process job
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                fillFields();
-            }
-        }).start();
-
         // set the line limiter
         EditText edOpen = v.findViewById(R.id.editTextOpen);
         EditText edInfo = v.findViewById(R.id.editTextInfo);
@@ -274,6 +260,12 @@ public class EditProfileFragment extends Fragment {
 
         profileImage = v.findViewById(R.id.ivBackground);
         change_im = v.findViewById(R.id.change_im);
+
+        //fill the fields with initial values (uses FireBase)
+        if(getActivity() != null)
+            progressDialog = ProgressDialog.show(getActivity(), "", getString(R.string.loading));
+
+        fillFields();
 
         return v;
     }
@@ -344,8 +336,6 @@ public class EditProfileFragment extends Fragment {
                                 for (String t : types)
                                     checkBoxes.get(t).setChecked(true);
                             } else if (snap.getKey().equals("IsActive")) {
-                                //communicate that this change is not done by the user before doing it
-                                //isSwitchedByApp = true;
                                 statusSwitch.setChecked((Boolean) snap.getValue());
                             }
                         } //for end
@@ -375,7 +365,6 @@ public class EditProfileFragment extends Fragment {
                 Bitmap bmp = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
                 profileImage.setImageBitmap(bmp);
                 image = bmp;
-                //send message to main thread
                 handler.sendEmptyMessage(0);
 
             }
@@ -385,15 +374,11 @@ public class EditProfileFragment extends Fragment {
                 Log.d("matte", "No image found. Default img setting");
                 //set default image if no image was set
                 profileImage.setImageResource(R.drawable.plate_fork);
-                //send message to main thread
                 handler.sendEmptyMessage(0);
             }
         });
 
     }
-
-
-
 
 
     @Override
@@ -416,8 +401,6 @@ public class EditProfileFragment extends Fragment {
             if (resultCode == RESULT_OK) {
                 setPic(currentPhotoPath);
             }
-//            else
-//                profileImage.setImageBitmap(image);
         }
         if (requestCode == RESULT_LOAD_IMG) {
             if (resultCode == RESULT_OK) {
@@ -435,8 +418,6 @@ public class EditProfileFragment extends Fragment {
                 }
 
             }
-//            else
-//                profileImage.setImageBitmap(image); //TODO back pressed on gallery
         }
     }
 
@@ -514,6 +495,7 @@ public class EditProfileFragment extends Fragment {
         currentPhotoPath = image.getAbsolutePath();
         return image;
     }
+
     public void removeProfileImage(){
         profileImage.setImageResource(R.drawable.plate_fork);
     }
@@ -735,9 +717,6 @@ public class EditProfileFragment extends Fragment {
     }
 
 
-
-
-
     private void uploadFile(Bitmap bitmap) {
         final StorageReference storageReference = FirebaseStorage
                 .getInstance()
@@ -821,11 +800,8 @@ public class EditProfileFragment extends Fragment {
         else if(view.getId() == R.id.cancel_delivery)
             editTextFields.get("DeliveryCost").setText("");
     }
-    /*
-        public void removeProfileImage(){
-            profileImage.setImageResource(R.drawable.empty_background);
-        }
-    */
+
+
     public void handleButton(){
         for(ImageButton b : imageButtons.values())
             b.setVisibility(View.INVISIBLE);

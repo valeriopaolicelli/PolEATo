@@ -17,6 +17,8 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -34,6 +36,9 @@ public class OrderActivity extends AppCompatActivity implements Interface {
     private PageAdapter adapter;
     private Order order;
     private DatabaseReference dbReferece;
+
+    private String currentUserID;
+    private FirebaseAuth mAuth;
 
     /* *************************
      ********* FRAGMENTS ********
@@ -78,7 +83,11 @@ public class OrderActivity extends AppCompatActivity implements Interface {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_order_layout);
 
-        order = new Order();
+        mAuth = FirebaseAuth.getInstance();
+        FirebaseUser currentUser = mAuth.getCurrentUser();
+        currentUserID = currentUser.getUid();
+
+        order = new Order(currentUserID);
         //gettin id of restaurant selected by user
         Bundle bundle = getIntent().getExtras();
 

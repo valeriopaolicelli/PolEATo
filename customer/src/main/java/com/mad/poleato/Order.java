@@ -26,12 +26,13 @@ public class Order implements Serializable {
    private Restaurant r;
    private String time;
 
-    public Order() {
+    public Order(String currentUserID) {
         this.totalPrice=0.0;
         selectedFoods=new HashMap<>();
         status = "New Order";
-        customerID = "C00"; // TODO; Must be retrieved from database
+        customerID = currentUserID; // TODO; Must be retrieved from database
     }
+
     public Order(String status, String customerID, Double totalPrice, String date, String time){
         this.status=status;
         this.customerID=customerID;
@@ -94,6 +95,7 @@ public class Order implements Serializable {
         return date;
     }
 
+
     public void setDate(String date) {
         this.date = date;
     }
@@ -124,7 +126,7 @@ public class Order implements Serializable {
                                                         .child("reservations")
                                                         .push();
 
-        Order o = new Order();
+        Order o = new Order(customerID);
 
         o.setDate(this.date);
         o.setTime(this.time);
