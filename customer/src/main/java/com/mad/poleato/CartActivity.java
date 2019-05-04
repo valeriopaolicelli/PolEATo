@@ -126,7 +126,7 @@ OneSignal is used to send notifications between applications
                     builder.setPositiveButton(getString(R.string.confirm), new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialogInterface, int i) {
-                            /*
+                            /**
                              * Add order into restaurant DB and into customer DB (order history)
                              */
                             order.setDishes();
@@ -135,7 +135,7 @@ OneSignal is used to send notifications between applications
                             order.setStatus(getApplicationContext().getString(R.string.new_order));
                             order.uploadOrder();
 
-                            /*
+                            /**
                              * Send notification to restaurant: NEW ORDER
                              */
                             sendNotification();
