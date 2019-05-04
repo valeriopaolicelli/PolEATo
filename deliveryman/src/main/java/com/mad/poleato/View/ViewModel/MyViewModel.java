@@ -30,6 +30,7 @@ public class MyViewModel extends ViewModel {
 
     public void insertChild(String orderID, Ride ride) {
         this._MapDataRides.getValue().put(orderID, ride);
+        this._MapDataRides.postValue(_MapDataRides.getValue());
     }
 
     public void removeChild(final String orderID) {

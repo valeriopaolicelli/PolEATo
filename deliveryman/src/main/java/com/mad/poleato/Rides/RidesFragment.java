@@ -94,8 +94,7 @@ public class RidesFragment extends Fragment {
             progressDialog = ProgressDialog.show(getActivity(), "", "Loading");
         }
 
-
-
+        myFirebaseData = new MyFirebaseData(getActivity(), progressDialog);
 
         /** Listeners to update UI Expandable list from VIEW_MODEL list child */
         model = ViewModelProviders.of(getActivity()).get(MyViewModel.class);
@@ -106,9 +105,6 @@ public class RidesFragment extends Fragment {
                     ridesAdapter.setAllRiders(new ArrayList<Ride>(stringRideHashMap.values()) );
             }
         });
-
-
-        myFirebaseData = new MyFirebaseData(getActivity(), progressDialog);
     }
 
     @Override
@@ -136,6 +132,7 @@ public class RidesFragment extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         fragView = inflater.inflate(R.layout.ride_recyclerview, container, false);
+        myFirebaseData.fillFieldsRiders();
 
         rv = (RecyclerView) fragView.findViewById(R.id.rides_recyclerview);
         rv.setHasFixedSize(true);
@@ -155,10 +152,6 @@ public class RidesFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-
-
-
-
 
         myFirebaseData.fillFieldsRiders();
     }
