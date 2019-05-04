@@ -155,14 +155,14 @@ public class Order implements Serializable {
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 if(dataSnapshot.exists())
                     restaurantName[0] = dataSnapshot.child("Name").getValue().toString();
-                    List<Dish> dish= new ArrayList<>();
+                    List<Dish> selectedDishes= new ArrayList<>();
                     String name, notes;
                     int quantity;
                     for(Food f : dishes){
                         name= f.getName();
                         quantity= f.getSelectedQuantity();
                         notes= f.getCustomerNotes();
-                        dish.add(new Dish(name, quantity, notes));
+                        selectedDishes.add(new Dish(name, quantity, notes));
                     }
                     DecimalFormat df = new DecimalFormat("#.00");
                     String price = df.format(totalPrice);
@@ -170,7 +170,7 @@ public class Order implements Serializable {
                     Reservation reservation= new Reservation(orderID, restaurantName[0], date, time, price);
                     DatabaseReference referenceCustomer= FirebaseDatabase.getInstance().getReference("customers").child(customerID);
                     referenceCustomer.child("reservations").child(orderID).setValue(reservation);
-                    referenceCustomer.child("reservations").child(orderID).child("dishes").setValue(dish);
+                    referenceCustomer.child("reservations").child(orderID).child("dishes").setValue(selectedDishes);
             }
 
             @Override

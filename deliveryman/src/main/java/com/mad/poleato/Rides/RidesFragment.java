@@ -94,9 +94,6 @@ public class RidesFragment extends Fragment {
             progressDialog = ProgressDialog.show(getActivity(), "", "Loading");
         }
 
-
-
-
         /** Listeners to update UI Expandable list from VIEW_MODEL list child */
         model = ViewModelProviders.of(getActivity()).get(MyViewModel.class);
         model.getListR().observe(this, new Observer<HashMap<String, Ride>>() {
@@ -106,7 +103,6 @@ public class RidesFragment extends Fragment {
                     ridesAdapter.setAllRiders(new ArrayList<Ride>(stringRideHashMap.values()) );
             }
         });
-
 
         myFirebaseData = new MyFirebaseData(getActivity(), progressDialog);
     }
@@ -155,10 +151,6 @@ public class RidesFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-
-
-
-
 
         myFirebaseData.fillFieldsRiders();
     }

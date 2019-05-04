@@ -10,6 +10,7 @@
     <string name="save"><font size="18">Apply</font></string>
     <string name="phone"><font size="18">Phone number</font></string>
     <string name="ch_pass"><font size="18">Change password(max 12 char)</font></string>
+    <string name="password"><font size="18">Password</font></string>
     <string name="old_pass"><font size="18">Insert old password</font></string>
     <string name="new_pass"><font size="18">Insert new password</font></string>
     <string name="re_new_pass"><font size="18">Re-insert new password</font></string>

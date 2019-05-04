@@ -123,7 +123,13 @@ public class MainProfile extends Fragment {
                 // it is fixed to the first record (customer)
                 // when the sign in and log in procedures will be handled, it will be the proper one
 
-                if (dataSnapshot.exists()) {
+                if (dataSnapshot.exists() &&
+                        issue.hasChild("Name") &&
+                        issue.hasChild("Surname") &&
+                        issue.hasChild("Address") &&
+                        issue.hasChild("Email") &&
+                        issue.hasChild("Phone") &&
+                        issue.hasChild("ID")) {
                     // dataSnapshot is the "issue" node with all children
                     tvNameField.setText(issue.child("Name").getValue().toString());
                     tvSurnameField.setText(issue.child("Surname").getValue().toString());

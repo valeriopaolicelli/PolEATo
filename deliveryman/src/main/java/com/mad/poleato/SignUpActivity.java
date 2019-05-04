@@ -35,7 +35,7 @@ public class SignUpActivity extends AppCompatActivity {
         setContentView(R.layout.signup_layout);
         myToast = Toast.makeText(this, "", Toast.LENGTH_SHORT);
         mAuth = FirebaseAuth.getInstance();
-        dbReference = FirebaseDatabase.getInstance().getReference("users");
+        dbReference = FirebaseDatabase.getInstance().getReference();
 
         //search for the views
         edPassword = (EditText) findViewById(R.id.edPassword);
@@ -77,7 +77,13 @@ public class SignUpActivity extends AppCompatActivity {
                             // Sign in success, update UI with the signed-in user's information
                             Log.d("matte", "createUserWithEmail:success");
                             FirebaseUser user = mAuth.getCurrentUser();
-                            dbReference.child(user.getUid()).setValue("deliveryman");
+                            dbReference.child("users").child(user.getUid()).setValue("deliveryman");
+                            dbReference.child("deliveryman").child(user.getUid()).child("Name").setValue("");
+                            dbReference.child("deliveryman").child(user.getUid()).child("Surname").setValue("");
+                            dbReference.child("deliveryman").child(user.getUid()).child("Address").setValue("");
+                            dbReference.child("deliveryman").child(user.getUid()).child("Email").setValue("");
+                            dbReference.child("deliveryman").child(user.getUid()).child("Phone").setValue("");
+                            dbReference.child("deliveryman").child(user.getUid()).child("ID").setValue(user.getUid());
                             myToast.setText(getString(R.string.creation_succ));
                             myToast.show();
                             access();
