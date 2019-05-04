@@ -43,6 +43,8 @@ import android.widget.Toast;
 
 import androidx.navigation.Navigation;
 
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -83,18 +85,15 @@ public class EditProfile extends Fragment {
     private boolean isSwitchedByApp;
 
     private ProgressDialog progressDialog;
-    Handler handler = new Handler() {
+    private Handler handler = new Handler() {
         @Override
         public void handleMessage(Message msg) {
             progressDialog.dismiss();
         }
     };
 
-
-    String localeShort;
-    View transparentView;
-
-    String loggedID;
+    private String currentUserID;
+    private FirebaseAuth mAuth;
 
     public EditProfile() {
         // Required empty public constructor
@@ -104,6 +103,10 @@ public class EditProfile extends Fragment {
     public void onCreate(@Nullable Bundle savedInstanceState) {
         setHasOptionsMenu(true);
         super.onCreate(savedInstanceState);
+
+        mAuth = FirebaseAuth.getInstance();
+        FirebaseUser currentUser = mAuth.getCurrentUser();
+        currentUserID = currentUser.getUid();
     }
 
     @Override
@@ -339,7 +342,7 @@ public class EditProfile extends Fragment {
         reference.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                DataSnapshot issue= dataSnapshot.child("D00");
+                DataSnapshot issue= dataSnapshot.child(currentUserID);
                 // TODO when log in and sign in will be enabled
                 // it is fixed to the first record (customer)
                 // when the sign in and log in procedures will be handled, it will be the proper one
@@ -476,7 +479,7 @@ public class EditProfile extends Fragment {
         if(!wrongField){
             for (int i = 0; i < fieldName.length; i++) {
                 EditText field = editTextFields.get(fieldName[i]);
-                reference.child("D00").child(fieldName[i]).setValue(field.getText().toString()); //TODO when the log in will be enabled,
+                reference.child(currentUserID).child(fieldName[i]).setValue(field.getText().toString()); //TODO when the log in will be enabled,
             }
             // TODO save image into DB
 

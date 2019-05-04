@@ -8,6 +8,8 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.FragmentActivity;
 import android.util.Log;
 
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -27,9 +29,16 @@ public class MyFirebaseData {
     private Handler handler;
     private ProgressDialog progressDialog;
 
+    private String currentUserID;
+    private FirebaseAuth mAuth;
+
     public MyFirebaseData(Activity activity, ProgressDialog progressDialog) {
         this.activity = activity;
         this.progressDialog = progressDialog;
+
+        mAuth = FirebaseAuth.getInstance();
+        FirebaseUser currentUser = mAuth.getCurrentUser();
+        currentUserID = currentUser.getUid();
     }
 
     public void fillFieldsRiders() {
@@ -38,7 +47,7 @@ public class MyFirebaseData {
 
         model.initChild();
 
-        DatabaseReference dbReferece = FirebaseDatabase.getInstance().getReference("deliveryman").child("D00").child("reservations");
+        DatabaseReference dbReferece = FirebaseDatabase.getInstance().getReference("deliveryman").child(currentUserID+"/reservations");
 
         dbReferece.addValueEventListener(new ValueEventListener() {
             @Override
@@ -76,7 +85,8 @@ public class MyFirebaseData {
                     Double totalPrice = Double.parseDouble(dataSnapshot.child("totalPrice").getValue().toString());
                     Integer numberOfDishes = Integer.parseInt(dataSnapshot.child("numberOfDishes").getValue().toString());
 
-                    Ride rideObj = new Ride(orderID, surnameCustomer, addressCustomer, nameRestaurant, addressRestaurant, totalPrice, numberOfDishes);
+                    Ride rideObj = new Ride(orderID, surnameCustomer, addressCustomer, nameRestaurant,
+                            addressRestaurant, totalPrice, numberOfDishes);
 
                     model.insertChild(orderID, rideObj);
                 }
@@ -101,7 +111,8 @@ public class MyFirebaseData {
                     Double totalPrice = Double.parseDouble(dataSnapshot.child("totalPrice").toString());
                     Integer numberOfDishes = Integer.parseInt(dataSnapshot.child("numberOfDishes").toString());
 
-                    Ride rideObj = new Ride(orderID, surnameCustomer, addressCustomer, nameRestaurant, addressRestaurant, totalPrice, numberOfDishes);
+                    Ride rideObj = new Ride(orderID, surnameCustomer, addressCustomer, nameRestaurant,
+                            addressRestaurant, totalPrice, numberOfDishes);
 
                     model.insertChild(orderID, rideObj);
                 }

@@ -1,6 +1,5 @@
 package com.mad.poleato.View.ViewModel;
 
-import android.app.Activity;
 import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.MutableLiveData;
 import android.arch.lifecycle.ViewModel;
@@ -11,6 +10,8 @@ import android.graphics.BitmapFactory;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -22,14 +23,12 @@ import com.mad.poleato.DailyOffer.Food;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.TreeMap;
 
 public class MyViewModel extends ViewModel {
     private MutableLiveData<List<String>> _listDataGroup = new MutableLiveData<>(); // header titles
     private MutableLiveData<HashMap<String, List<Food>>> _listDataChild = new MutableLiveData<>(); // child data in format of header title, child title
     private boolean flag = false;
 
-    private String loggedID = "R05";
 
     public LiveData<HashMap<String, List<Food>>> getListC() {
         return _listDataChild;
@@ -84,10 +83,13 @@ public class MyViewModel extends ViewModel {
 
     public void downloadMenu(final Context context){
 
+        FirebaseAuth mAuth = FirebaseAuth.getInstance();
+        String currentUserID = mAuth.getCurrentUser().getUid();
+
         initGroup(context);
         initChild();
 
-        DatabaseReference reference = FirebaseDatabase.getInstance().getReference("restaurants/"+loggedID+"/Menu");
+        DatabaseReference reference = FirebaseDatabase.getInstance().getReference("restaurants/"+ currentUserID +"/Menu");
 
         reference.addChildEventListener(new ChildEventListener() {
             @Override

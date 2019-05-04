@@ -7,6 +7,7 @@ import android.graphics.BitmapFactory;
 import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.util.Base64;
 import android.util.Log;
@@ -20,6 +21,8 @@ import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -46,10 +49,22 @@ public class MainProfile extends Fragment {
     private CircleImageView profileImage; //TODO retrieve image from DB
     private DatabaseReference reference;
 
+    private String currentUserID;
+    private FirebaseAuth mAuth;
+
     public MainProfile() {
         // Required empty public constructor
     }
 
+
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+
+        mAuth = FirebaseAuth.getInstance();
+        FirebaseUser currentUser = mAuth.getCurrentUser();
+        currentUserID = currentUser.getUid();
+    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -73,23 +88,13 @@ public class MainProfile extends Fragment {
         fillFields();
     }
 
-//    public boolean onCreateOptionsMenu(Menu menu) {
-//        // Inflate the menu items for use in the action bar
-//        MenuInflater inflater = getMenuInflater();
-//        inflater.inflate(R.menu.my_menu, menu);
-//        return super.onCreateOptionsMenu(menu);
-//    }
-
     public void fillFields(){
         reference= FirebaseDatabase.getInstance().getReference("customers");
 
         reference.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                DataSnapshot issue= dataSnapshot.child("C00");
-                // TODO when log in and sign in will be enabled
-                // it is fixed to the first record (customer)
-                // when the sign in and log in procedures will be handled, it will be the proper one
+                DataSnapshot issue= dataSnapshot.child(currentUserID);
 
                 if (dataSnapshot.exists()) {
                     // dataSnapshot is the "issue" node with all children

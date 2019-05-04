@@ -20,7 +20,6 @@ import android.os.Message;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.constraint.ConstraintLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
@@ -28,7 +27,6 @@ import android.support.v4.content.FileProvider;
 import android.support.v7.widget.PopupMenu;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.util.Base64;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -36,14 +34,11 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.animation.AlphaAnimation;
-import android.view.animation.Animation;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.ScrollView;
 import android.widget.Switch;
 import android.widget.Toast;
@@ -52,6 +47,8 @@ import androidx.navigation.Navigation;
 
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -111,11 +108,11 @@ public class EditProfileFragment extends Fragment {
         }
     };
 
+    private String localeShort;
+    private boolean priceRangeUninitialized;
 
-    String localeShort;
-    View transparentView;
-
-    String loggedID;
+    String currentUserID;
+    private FirebaseAuth mAuth;
 
 
     // TODO: Rename parameter arguments, choose names that match
@@ -161,6 +158,8 @@ public class EditProfileFragment extends Fragment {
             mParam2 = getArguments().getString(ARG_PARAM2);
         }
 
+        priceRangeUninitialized = false;
+
         //download Type base on the current active Locale
         String locale = Locale.getDefault().toString();
         Log.d("matte", "LOCALE: "+locale);
@@ -177,7 +176,9 @@ public class EditProfileFragment extends Fragment {
         checkedTypes = new HashSet<>();
         imageButtons = new HashMap<>();
 
-        loggedID = "R00";
+        mAuth = FirebaseAuth.getInstance();
+        FirebaseUser currentUser = mAuth.getCurrentUser();
+        currentUserID = currentUser.getUid();
         
     }
 
@@ -305,12 +306,15 @@ public class EditProfileFragment extends Fragment {
     private void fillFields(){
 
         //Download text infos
-        reference = FirebaseDatabase.getInstance().getReference("restaurants/"+loggedID);
+        reference = FirebaseDatabase.getInstance().getReference("restaurants/"+ currentUserID);
 
         reference.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
 
+                //if not set upload it at the end (set it to 0)
+                if(!dataSnapshot.hasChild("PriceRange"))
+                    priceRangeUninitialized = true;
 
                 if(dataSnapshot.hasChild("DeliveryCost") &&
                         dataSnapshot.hasChild("IsActive") &&
@@ -322,6 +326,11 @@ public class EditProfileFragment extends Fragment {
                     // it is setted to the first record (restaurant)
                     // when the sign in and log in procedures will be handled, it will be the proper one
                     if (dataSnapshot.exists()) {
+
+                        //if already set do not touch it during upload phase
+                        if(dataSnapshot.hasChild("PriceRange"))
+                            priceRangeUninitialized = false;
+
                         // dataSnapshot is the "issue" node with all children
                         for (DataSnapshot snap : dataSnapshot.getChildren()) {
                             if (editTextFields.containsKey(snap.getKey())) {
@@ -357,7 +366,7 @@ public class EditProfileFragment extends Fragment {
 
         //Download the profile pic
         StorageReference storageReference = FirebaseStorage.getInstance().getReference();
-        StorageReference photoReference= storageReference.child(loggedID+"/ProfileImage/img.jpg");
+        StorageReference photoReference= storageReference.child(currentUserID +"/ProfileImage/img.jpg");
 
         final long ONE_MEGABYTE = 1024 * 1024;
         photoReference.getBytes(ONE_MEGABYTE).addOnSuccessListener(new OnSuccessListener<byte[]>() {
@@ -398,20 +407,6 @@ public class EditProfileFragment extends Fragment {
 
     }
 
-    @Override
-    public void onActivityCreated(Bundle savedInstanceState) {
-        super.onActivityCreated(savedInstanceState);
-
-        final ScrollView mScrollView = v.findViewById(R.id.editScrollView);
-        //restoring scrollview position
-//        final int[] position = savedInstanceState.getIntArray("ARTICLE_SCROLL_POSITION");
-//        if(position != null)
-//            mScrollView.post(new Runnable() {
-//                public void run() {
-//                    mScrollView.scrollTo(position[0], position[1]);
-//                }
-//            });
-    }
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -599,7 +594,8 @@ public class EditProfileFragment extends Fragment {
             EditText ed = editTextFields.get(fieldName);
             if(ed != null){
                 if(ed.getText().toString().equals("")){
-                    Toast.makeText(getContext(), "All fields must be filled", Toast.LENGTH_LONG).show();
+                    myToast.setText("All fields must be filled");
+                    myToast.show();
                     ed.setBackground(ContextCompat.getDrawable(getContext(), R.drawable.border_wrong_field));
                     wrongField = true;
                 }
@@ -631,12 +627,14 @@ public class EditProfileFragment extends Fragment {
 
         if (!editTextFields.get("Name").getText().toString().matches(nameRegex)) {
             wrongField = true;
-            Toast.makeText(getContext(), "The name must start with letters and must end with letters. Space are allowed. Numbers are not allowed", Toast.LENGTH_LONG).show();
+            myToast.setText("The name must start with letters and must end with letters. Space are allowed. Numbers are not allowed");
+            myToast.show();
             editTextFields.get("Name").setBackground(ContextCompat.getDrawable(getContext(), R.drawable.border_wrong_field));
         }
         if (!editTextFields.get("Info").getText().toString().matches(textRegex)) {
             wrongField = true;
-            Toast.makeText(getContext(), "The description must start with letters and must end with letters. Space are allowed. Numbers are not allowed", Toast.LENGTH_LONG).show();
+            myToast.setText("The description must start with letters and must end with letters. Space are allowed. Numbers are not allowed");
+            myToast.show();
             editTextFields.get("Info").setBackground(ContextCompat.getDrawable(getContext(), R.drawable.border_wrong_field));
         }
         else{
@@ -662,20 +660,21 @@ public class EditProfileFragment extends Fragment {
 
         if (!editTextFields.get("Email").getText().toString().matches(emailRegex)) {
             wrongField = true;
-            Toast.makeText(getContext(), "Invalid Email", Toast.LENGTH_LONG).show();
+            myToast.setText("Invalid Email");
+            myToast.show();
             editTextFields.get("Email").setBackground(ContextCompat.getDrawable(getContext(), R.drawable.border_wrong_field));
         }
         if (!editTextFields.get("DeliveryCost").getText().toString().matches(priceRegex)) {
             wrongField = true;
-            Toast.makeText(getContext(), "Invalid Price", Toast.LENGTH_LONG).show();
-            editTextFields.get("Price").setBackground(ContextCompat.getDrawable(getContext(), R.drawable.border_wrong_field));
+            myToast.setText("Invalid Price");
+            myToast.show();
+            editTextFields.get("DeliveryCost").setBackground(ContextCompat.getDrawable(getContext(), R.drawable.border_wrong_field));
         }
 
 
 
         /* --------------- SAVING TO FIREBASE --------------- */
         if(!wrongField){
-            // TODO here save all the data to the DB
 
             String otherLocale = "";
 
@@ -721,6 +720,10 @@ public class EditProfileFragment extends Fragment {
                     reference.child(fieldName).setValue(ed.getText().toString());
             }
 
+            //if already set do not touch it during upload phase. Otherwise set it to 0
+            if(priceRangeUninitialized)
+                reference.child("PriceRange").setValue("0");
+
             // Save profile pic to the DB
             Bitmap img = ((BitmapDrawable) profileImage.getDrawable()).getBitmap();
             /*Navigation controller is moved inside this method. The image must be loaded totally to FireBase
@@ -739,7 +742,7 @@ public class EditProfileFragment extends Fragment {
         final StorageReference storageReference = FirebaseStorage
                 .getInstance()
                 .getReference()
-                .child(loggedID+"/ProfileImage/img.jpg");
+                .child(currentUserID +"/ProfileImage/img.jpg");
 
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         bitmap.compress(Bitmap.CompressFormat.JPEG, 20, baos);
@@ -757,7 +760,7 @@ public class EditProfileFragment extends Fragment {
                                         uri.toString();
                                 FirebaseDatabase.getInstance()
                                         .getReference("restaurants")
-                                        .child(loggedID+"/photoUrl")
+                                        .child(currentUserID +"/photoUrl")
                                         .setValue(downloadUrl);
                             }
                         });

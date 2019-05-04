@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.util.Log;
@@ -17,6 +18,8 @@ import android.widget.Toast;
 
 import androidx.navigation.Navigation;
 
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -43,6 +46,9 @@ public class MainProfile extends Fragment {
     private DatabaseReference reference;
     private FloatingActionButton buttEdit;
 
+    private String currentUserID;
+    private FirebaseAuth mAuth;
+
     private ProgressDialog progressDialog;
     Handler handler = new Handler() {
         @Override
@@ -56,6 +62,14 @@ public class MainProfile extends Fragment {
         // Required empty public constructor
     }
 
+
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        mAuth = FirebaseAuth.getInstance();
+        FirebaseUser currentUser = mAuth.getCurrentUser();
+        currentUserID = currentUser.getUid();
+    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -105,7 +119,7 @@ public class MainProfile extends Fragment {
         reference.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                DataSnapshot issue= dataSnapshot.child("D00");
+                DataSnapshot issue= dataSnapshot.child(currentUserID);
                 // TODO when log in and sign in will be enabled
                 // it is fixed to the first record (customer)
                 // when the sign in and log in procedures will be handled, it will be the proper one

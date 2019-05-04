@@ -19,6 +19,8 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -49,20 +51,29 @@ public class CartActivity extends AppCompatActivity implements Interface {
     private EditText time, date;
     private Toast myToast;
 
+    private String currentUserID;
+    private FirebaseAuth mAuth;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_cart_layout);
+
+        mAuth = FirebaseAuth.getInstance();
+        FirebaseUser currentUser = mAuth.getCurrentUser();
+        currentUserID = currentUser.getUid();
+
         myToast = Toast.makeText(this, "", Toast.LENGTH_SHORT);
-/*
-OneSignal is used to send notifications between applications
- */
+
+
+        // OneSignal is used to send notifications between applications
+
         OneSignal.startInit(this)
                 .inFocusDisplaying(OneSignal.OSInFocusDisplayOption.Notification)
                 .unsubscribeWhenNotificationsAreDisabled(true)
                 .init();
 
-        OneSignal.sendTag("User_ID", "C00");
+        OneSignal.sendTag("User_ID", currentUserID);
 
         order = (Order) getIntent().getSerializableExtra("order");
 
@@ -173,7 +184,7 @@ OneSignal is used to send notifications between applications
                     String send_email;
 
                     //This is a Simple Logic to Send Notification different Device Programmatically....
-                    send_email= "R00";
+                    send_email= "R00"; //TODO
 
                     try {
                         String jsonResponse;

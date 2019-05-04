@@ -7,7 +7,7 @@
     android:layout_height="wrap_content"
     android:padding="16dp"
     android:orientation="vertical"
-    tools:context=".MainActivity">
+    tools:context=".NavigatorActivity">
 
     <!-- Name and surname client -->
     <android.support.constraint.ConstraintLayout

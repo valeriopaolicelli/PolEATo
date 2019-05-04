@@ -2,9 +2,9 @@ package com.mad.poleato.Account;
 
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -14,10 +14,12 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
-import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -25,6 +27,8 @@ import androidx.navigation.Navigation;
 
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -32,9 +36,10 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
+import com.mad.poleato.NavigatorActivity;
 import com.mad.poleato.R;
+import com.mad.poleato.SignInActivity;
 
-import java.text.DecimalFormat;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
@@ -50,7 +55,7 @@ public class AccountFragment extends Fragment {
     private ImageView profileImage;
 
     private ProgressDialog progressDialog;
-    Handler handler = new Handler() {
+    private Handler handler = new Handler() {
         @Override
         public void handleMessage(Message msg) {
             progressDialog.dismiss();
@@ -58,12 +63,16 @@ public class AccountFragment extends Fragment {
     };
 
 
-    String localeShort;
+    private String localeShort;
 
-    String loggedID;
+    private String currentUserID;
+    private FirebaseAuth mAuth;
+
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
+        //in order to create the logout menu (don't move!)
+        setHasOptionsMenu(true);
         super.onCreate(savedInstanceState);
         if(getActivity() != null)
         myToast = Toast.makeText(getActivity(), "", Toast.LENGTH_LONG);
@@ -73,14 +82,35 @@ public class AccountFragment extends Fragment {
         Log.d("matte", "LOCALE: "+locale);
         localeShort = locale.substring(0, 2);
 
-
-        loggedID = "R00";
+        mAuth = FirebaseAuth.getInstance();
+        FirebaseUser currentUser = mAuth.getCurrentUser();
+        currentUserID = currentUser.getUid();
     }
 
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
 
+    }
+
+    //TODO michelangelo
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        menu.clear();
+        // Inflate the menu; this adds items to the action bar if it is present.
+        inflater.inflate(R.menu.popup_account_settings, menu);
+        menu.findItem(R.id.logout).setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
+            @Override
+            public boolean onMenuItemClick(MenuItem item) {
+                //logout
+                Log.d("matte", "Logout");
+                FirebaseAuth.getInstance().signOut();
+                //Intent myIntent = new Intent(NavigatorActivity.this, SignInActivity.class);
+                //NavigatorActivity.this.startActivity(myIntent);
+                return true;
+            }
+        });
+        super.onCreateOptionsMenu(menu,inflater);
     }
 
     @Override
@@ -130,7 +160,7 @@ public class AccountFragment extends Fragment {
 
     public void fillFields() {
 
-        DatabaseReference reference = FirebaseDatabase.getInstance().getReference("restaurants/"+loggedID);
+        DatabaseReference reference = FirebaseDatabase.getInstance().getReference("restaurants/"+ currentUserID);
 
         reference.addValueEventListener(new ValueEventListener() {
             @Override
@@ -190,7 +220,7 @@ public class AccountFragment extends Fragment {
 
         //Download the profile pic
         StorageReference storageReference = FirebaseStorage.getInstance().getReference();
-        StorageReference photoReference= storageReference.child(loggedID+"/ProfileImage/img.jpg");
+        StorageReference photoReference= storageReference.child(currentUserID +"/ProfileImage/img.jpg");
 
         final long ONE_MEGABYTE = 1024 * 1024;
         photoReference.getBytes(ONE_MEGABYTE).addOnSuccessListener(new OnSuccessListener<byte[]>() {

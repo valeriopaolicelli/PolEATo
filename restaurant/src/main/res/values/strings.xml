@@ -124,4 +124,16 @@
     <string name="american_cooking">American</string>
     <string name="mexican_cooking">Mexican</string>
 
+
+    <!-- Login string -->
+    <string name="signin">Sign in</string>
+    <string name="signup">Sign up</string>
+    <string name="logout">Logout</string>
+    <string name="void_fields">Void fields</string>
+    <string name="login_succ">Logged in!</string>
+    <string name="login_fail">Authentication failed.</string>
+    <string name="creation_succ">Account created!</string>
+    <string name="creation_fail">Account creation failed! Email must be valid and password composed by at least 6 characters</string>
+
+
 </resources>

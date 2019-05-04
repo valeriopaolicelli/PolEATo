@@ -1,16 +1,18 @@
 package com.mad.poleato.Reservation;
 
 import android.app.ProgressDialog;
-import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
-import android.provider.ContactsContract;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 
@@ -22,6 +24,8 @@ import android.widget.ExpandableListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -29,8 +33,11 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+import com.mad.poleato.NavigatorActivity;
 import com.mad.poleato.R;
 import com.mad.poleato.Reservation.ReservationListManagement.ReservationExpandableListAdapter;
+import com.mad.poleato.SignInActivity;
+import com.mad.poleato.SignUpActivity;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -45,6 +52,7 @@ import java.util.Locale;
  */
 public class ReservationFragment extends Fragment {
 
+    Toast myToast;
     private ExpandableListView lv;
     private ReservationExpandableListAdapter listAdapter;
     private List<Reservation> reservations;
@@ -53,11 +61,13 @@ public class ReservationFragment extends Fragment {
     private Display display;
     private Point size;
     private int width;
-    String loggedID; //TODO set the proper one (login)
+
+    private FirebaseAuth mAuth;
+    private String currentUserID;
     private String localeShort;
 
     private ProgressDialog progressDialog;
-    Handler handler = new Handler() {
+    private Handler handler = new Handler() {
         @Override
         public void handleMessage(Message msg) {
             progressDialog.dismiss();
@@ -101,11 +111,15 @@ public class ReservationFragment extends Fragment {
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
+        //in order to create the logout menu (don't move!)
+        setHasOptionsMenu(true);
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
             mParam1 = getArguments().getString(ARG_PARAM1);
             mParam2 = getArguments().getString(ARG_PARAM2);
         }
+        myToast = Toast.makeText(getActivity(), "", Toast.LENGTH_SHORT);
+
         Locale locale= Locale.getDefault();
         localeShort = locale.toString().substring(0, 2);
         /** Calculate position of ExpandableListView indicator. */
@@ -113,8 +127,32 @@ public class ReservationFragment extends Fragment {
         size = new Point();
         display.getSize(size);
         width = size.x;
-        loggedID = "R00";
+
+        mAuth = FirebaseAuth.getInstance();
+        FirebaseUser currentUser = mAuth.getCurrentUser();
+        currentUserID = currentUser.getUid();
     }
+
+
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        menu.clear();
+        // Inflate the menu; this adds items to the action bar if it is present.
+        inflater.inflate(R.menu.popup_account_settings, menu);
+        menu.findItem(R.id.logout).setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
+            @Override
+            public boolean onMenuItemClick(MenuItem item) {
+                //logout
+                Log.d("matte", "Logout");
+                FirebaseAuth.getInstance().signOut();
+                //Intent myIntent = new Intent(NavigatorActivity.this, SignInActivity.class);
+                //NavigatorActivity.this.startActivity(myIntent);
+                return true;
+            }
+        });
+        super.onCreateOptionsMenu(menu,inflater);
+    }
+
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
@@ -158,7 +196,7 @@ public class ReservationFragment extends Fragment {
         customerDetails= new ArrayList<>();
 
         DatabaseReference reference = FirebaseDatabase.getInstance().getReference("restaurants")
-                .child(loggedID).child("reservations");
+                .child(currentUserID).child("reservations");
 
 
 
@@ -352,6 +390,8 @@ public class ReservationFragment extends Fragment {
             public void onCancelled(@NonNull DatabaseError databaseError) {
                 Log.d("matte", "onCancelled | ERROR: " + databaseError.getDetails() +
                         " | MESSAGE: " + databaseError.getMessage());
+                myToast.setText(databaseError.getMessage());
+                myToast.show();
             }
         });
     }
@@ -414,7 +454,8 @@ public class ReservationFragment extends Fragment {
             public void onCancelled(@NonNull DatabaseError databaseError) {
                 Log.d("matte", "onCancelled | ERROR: " + databaseError.getDetails() +
                         " | MESSAGE: " + databaseError.getMessage());
-                Toast.makeText(getContext(), databaseError.getMessage().toString(), Toast.LENGTH_SHORT);
+                myToast.setText(databaseError.getMessage());
+                myToast.show();
             }
         };
 

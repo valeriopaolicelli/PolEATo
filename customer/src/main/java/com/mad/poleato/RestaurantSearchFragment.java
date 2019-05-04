@@ -19,6 +19,8 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
@@ -30,6 +32,7 @@ import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -92,6 +95,8 @@ public class RestaurantSearchFragment extends Fragment {
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
+        //in order to create the logout menu (don't move!)
+        setHasOptionsMenu(true);
         super.onCreate(savedInstanceState);
 
         restaurantMap = new HashMap<>();
@@ -104,6 +109,25 @@ public class RestaurantSearchFragment extends Fragment {
 
         fillFields();
 
+    }
+
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        menu.clear();
+        // Inflate the menu; this adds items to the action bar if it is present.
+        inflater.inflate(R.menu.popup_account_settings, menu);
+        menu.findItem(R.id.logout).setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
+            @Override
+            public boolean onMenuItemClick(MenuItem item) {
+                //logout
+                Log.d("matte", "Logout");
+                FirebaseAuth.getInstance().signOut();
+                //Intent myIntent = new Intent(NavigatorActivity.this, SignInActivity.class);
+                //NavigatorActivity.this.startActivity(myIntent);
+                return true;
+            }
+        });
+        super.onCreateOptionsMenu(menu,inflater);
     }
 
     @Override
@@ -211,7 +235,7 @@ public class RestaurantSearchFragment extends Fragment {
                 if(dataSnapshot.hasChild("Name") &&
                     dataSnapshot.hasChild("Type") &&
                     dataSnapshot.child("Type").hasChild("it") &&
-                        dataSnapshot.child("Type").hasChild("en") &&
+                    dataSnapshot.child("Type").hasChild("en") &&
                     dataSnapshot.hasChild("IsActive") &&
                     //dataSnapshot.hasChild("PriceRange") &&
                     dataSnapshot.hasChild("DeliveryCost") &&

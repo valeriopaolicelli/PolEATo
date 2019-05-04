@@ -2,6 +2,7 @@ package com.mad.poleato.DailyOffer;
 
 import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
+import android.content.Intent;
 import android.graphics.BitmapFactory;
 import android.graphics.Point;
 import android.os.Bundle;
@@ -9,16 +10,23 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.Display;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ExpandableListView;
 
 import androidx.navigation.Navigation;
 
+import com.google.firebase.auth.FirebaseAuth;
 import com.mad.poleato.DailyOffer.ExpandableListManagement.ExpandableListAdapter;
+import com.mad.poleato.NavigatorActivity;
 import com.mad.poleato.R;
+import com.mad.poleato.SignInActivity;
 import com.mad.poleato.View.ViewModel.MyViewModel;
 
 import java.util.ArrayList;
@@ -79,6 +87,8 @@ public class DailyOfferFragment extends Fragment {
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
+        //in order to create the logout menu (don't move!)
+        setHasOptionsMenu(true);
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
             mParam1 = getArguments().getString(ARG_PARAM1);
@@ -114,6 +124,25 @@ public class DailyOfferFragment extends Fragment {
 
 
 
+    }
+
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        menu.clear();
+        // Inflate the menu; this adds items to the action bar if it is present.
+        inflater.inflate(R.menu.popup_account_settings, menu);
+        menu.findItem(R.id.logout).setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
+            @Override
+            public boolean onMenuItemClick(MenuItem item) {
+                //logout
+                Log.d("matte", "Logout");
+                FirebaseAuth.getInstance().signOut();
+                //Intent myIntent = new Intent(NavigatorActivity.this, SignInActivity.class);
+                //NavigatorActivity.this.startActivity(myIntent);
+                return true;
+            }
+        });
+        super.onCreateOptionsMenu(menu,inflater);
     }
 
 
@@ -168,8 +197,7 @@ public class DailyOfferFragment extends Fragment {
             }
         });
 
-        /** PREPARE ELEMENT LIST OF EXPANDABLE LIST (da modificare per avere la lista vuota)*/
-        //model.prepareListData(getContext());
+        //download the menu to display
         model.downloadMenu(getActivity());
 
     }

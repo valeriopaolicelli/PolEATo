@@ -167,7 +167,9 @@ public class MenuFragment extends Fragment {
 
 
     public void setList(){
-        DatabaseReference reference = FirebaseDatabase.getInstance().getReference("restaurants").child(restaurantID).child("Menu");
+        DatabaseReference reference = FirebaseDatabase.getInstance().getReference("restaurants")
+                                        .child(restaurantID)
+                                        .child("Menu");
         listDataGroup = new ArrayList<>();
         listDataChild = new HashMap<>();
         reference.addChildEventListener(new ChildEventListener() {
