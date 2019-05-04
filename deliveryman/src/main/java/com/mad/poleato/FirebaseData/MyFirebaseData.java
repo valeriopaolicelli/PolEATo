@@ -36,6 +36,8 @@ public class MyFirebaseData {
 
         model = ViewModelProviders.of((FragmentActivity) activity).get(MyViewModel.class);
 
+        model.initChild();
+
         DatabaseReference dbReferece = FirebaseDatabase.getInstance().getReference("deliveryman").child("D00").child("reservations");
 
         dbReferece.addValueEventListener(new ValueEventListener() {

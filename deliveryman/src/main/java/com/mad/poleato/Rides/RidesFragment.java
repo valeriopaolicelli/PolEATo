@@ -98,7 +98,7 @@ public class RidesFragment extends Fragment {
             @Override
             public void onChanged(@Nullable HashMap<String, Ride> stringRideHashMap) {
                 if(stringRideHashMap.values() != null)
-                    ridesAdapter.setAllRiders((ArrayList<Ride>) stringRideHashMap.values());
+                    ridesAdapter.setAllRiders(new ArrayList<Ride>(stringRideHashMap.values()) );
             }
         });
 
