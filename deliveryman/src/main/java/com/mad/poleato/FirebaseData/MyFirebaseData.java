@@ -58,34 +58,51 @@ public class MyFirebaseData {
             @Override
             public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
                 Log.d("fabio", "onChildAdded | PREVIOUS CHILD" + s);
-                String orderID = dataSnapshot.getKey();
-                String addressCustomer = dataSnapshot.child("addressCustomer").getValue().toString();
-                String addressRestaurant = dataSnapshot.child("addressRestaurant").getValue().toString();
-                String nameRestaurant = dataSnapshot.child("nameRestaurant").getValue().toString();
-                String surnameCustomer = dataSnapshot.child("surnameCustomer").getValue().toString();
-                Double totalPrice = Double.parseDouble(dataSnapshot.child("totalPrice").getValue().toString());
-                Integer numberOfDishes = Integer.parseInt(dataSnapshot.child("numberOfDishes").getValue().toString());
+                if(dataSnapshot.hasChild("orderID") &&
+                    dataSnapshot.hasChild("addressCustomer") &&
+                    dataSnapshot.hasChild("surnameCustomer") &&
+                    dataSnapshot.hasChild("nameRestaurant") &&
+                    dataSnapshot.hasChild("addressRestaurant") &&
+                    dataSnapshot.hasChild("totalPrice") &&
+                    dataSnapshot.hasChild("numberOfDishes")) {
 
-                Ride rideObj = new Ride(orderID, surnameCustomer, addressCustomer, nameRestaurant, addressRestaurant, totalPrice, numberOfDishes);
+                    String orderID = dataSnapshot.child("orderID").getValue().toString();
+                    String addressCustomer = dataSnapshot.child("addressCustomer").getValue().toString();
+                    String addressRestaurant = dataSnapshot.child("addressRestaurant").getValue().toString();
+                    String nameRestaurant = dataSnapshot.child("nameRestaurant").getValue().toString();
+                    String surnameCustomer = dataSnapshot.child("surnameCustomer").getValue().toString();
+                    Double totalPrice = Double.parseDouble(dataSnapshot.child("totalPrice").getValue().toString());
+                    Integer numberOfDishes = Integer.parseInt(dataSnapshot.child("numberOfDishes").getValue().toString());
 
-                model.insertChild(orderID, rideObj);
+                    Ride rideObj = new Ride(orderID, surnameCustomer, addressCustomer, nameRestaurant, addressRestaurant, totalPrice, numberOfDishes);
+
+                    model.insertChild(orderID, rideObj);
+                }
             }
 
             @Override
             public void onChildChanged(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
                 Log.d("fabio", "onChildAdded | PREVIOUS CHILD" + s);
-                String orderID = dataSnapshot.getKey();
-                String addressCustomer = dataSnapshot.child("addressCustomer").toString();
-                String addressRestaurant = dataSnapshot.child("addressRestaurant").toString();
-                String nameRestaurant = dataSnapshot.child("nameRestaurant").toString();
-                String surnameCustomer = dataSnapshot.child("surnameCustomer").toString();
-                Double totalPrice = Double.parseDouble(dataSnapshot.child("totalPrice").toString());
-                Integer numberOfDishes = Integer.parseInt(dataSnapshot.child("numberOfDishes").toString());
+                if(dataSnapshot.hasChild("orderID") &&
+                        dataSnapshot.hasChild("addressCustomer") &&
+                        dataSnapshot.hasChild("surnameCustomer") &&
+                        dataSnapshot.hasChild("nameRestaurant") &&
+                        dataSnapshot.hasChild("addressRestaurant") &&
+                        dataSnapshot.hasChild("totalPrice") &&
+                        dataSnapshot.hasChild("numberOfDishes")) {
 
-                Ride rideObj = new Ride(orderID, surnameCustomer, addressCustomer, nameRestaurant, addressRestaurant, totalPrice, numberOfDishes);
+                    String orderID = dataSnapshot.getKey();
+                    String addressCustomer = dataSnapshot.child("addressCustomer").toString();
+                    String addressRestaurant = dataSnapshot.child("addressRestaurant").toString();
+                    String nameRestaurant = dataSnapshot.child("nameRestaurant").toString();
+                    String surnameCustomer = dataSnapshot.child("surnameCustomer").toString();
+                    Double totalPrice = Double.parseDouble(dataSnapshot.child("totalPrice").toString());
+                    Integer numberOfDishes = Integer.parseInt(dataSnapshot.child("numberOfDishes").toString());
 
-                model.insertChild(orderID, rideObj);
+                    Ride rideObj = new Ride(orderID, surnameCustomer, addressCustomer, nameRestaurant, addressRestaurant, totalPrice, numberOfDishes);
 
+                    model.insertChild(orderID, rideObj);
+                }
             }
 
             @Override
