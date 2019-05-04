@@ -23,6 +23,7 @@ import androidx.navigation.NavDirections;
 import androidx.navigation.Navigation;
 
 import com.mad.poleato.DailyOffer.DailyOfferFragmentDirections;
+import com.mad.poleato.DailyOffer.DishCategoryTranslator;
 import com.mad.poleato.DailyOffer.EditFood.EditFoodFragment;
 import com.mad.poleato.DailyOffer.EditFood.EditFoodFragmentDirections;
 import com.mad.poleato.DailyOffer.Food;
@@ -33,6 +34,7 @@ import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 
 
 public class ExpandableListAdapter extends BaseExpandableListAdapter {
@@ -41,7 +43,9 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
     private final LayoutInflater inf;
     private List<String> _listDataGroup; // header titles
     private HashMap<String, List<Food>> _listDataChild; // child data in format of header title, child title
-    private Button button_delete;
+    private String localeShort;
+    private DishCategoryTranslator translator;
+
 
     public ExpandableListAdapter(Activity host) {
 
@@ -51,6 +55,12 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
         this._listDataChild = new HashMap<>();
         Log.d("matte", "[Init]headers:" + _listDataGroup.toString());
         Log.d("matte", "[Init]childs:" + _listDataChild.toString());
+
+        String locale = Locale.getDefault().toString();
+        Log.d("matte", "LOCALE: "+locale);
+        localeShort = locale.substring(0, 2);
+
+        translator = new DishCategoryTranslator();
     }
 
     public void setAllGroup(List<String> strings) {
@@ -171,6 +181,9 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
         ViewHolder holder; //recycler view pattern
 
         String groupTitle = (String) getGroup(groupPosition);
+        //if italian translate before printing
+        if(localeShort.equals("it"))
+            groupTitle = translator.translate(groupTitle);
 
         if (convertView == null) {
             convertView = inf.inflate(R.layout.layout_menu_group, parent, false);

@@ -112,18 +112,8 @@ public class DailyOfferFragment extends Fragment {
             @Override
             public void onChanged(@Nullable HashMap<String, List<Food>> stringListHashMap) {
                 listAdapter.setAllChild(stringListHashMap);
-                //upload menu on FireBase
-                uploadMenu();
             }
         });
-
-
-    }
-
-    public void uploadMenu(){
-
-
-
 
 
     }

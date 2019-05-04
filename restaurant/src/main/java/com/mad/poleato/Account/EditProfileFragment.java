@@ -452,7 +452,6 @@ public class EditProfileFragment extends Fragment {
     }
 
     // create Intent with photoFile
-
     private void dispatchTakePictureIntent() {
         Uri photoURI;
         Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
@@ -478,7 +477,6 @@ public class EditProfileFragment extends Fragment {
     }
 
     // Function to create image file with ExternalFilesDir
-
     private File createImageFile() throws IOException {
         // Create an image file name
         //String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
@@ -496,9 +494,11 @@ public class EditProfileFragment extends Fragment {
         return image;
     }
 
+
     public void removeProfileImage(){
         profileImage.setImageResource(R.drawable.plate_fork);
     }
+
 
     private void setPic(String currentPhotoPath) {
         // Get the dimensions of the View
@@ -874,7 +874,7 @@ public class EditProfileFragment extends Fragment {
 
 
 
-
+/*
     public void changeImage(View view) {
         android.support.v7.widget.PopupMenu popup = new android.support.v7.widget.PopupMenu(view.getContext(), change_im);
         popup.getMenuInflater().inflate(
@@ -904,7 +904,7 @@ public class EditProfileFragment extends Fragment {
         });
         popup.show();
     }
-
+*/
 
 
 

@@ -182,7 +182,8 @@ public class MainProfile extends Fragment {
                                     else
                                         tvFields.get(snap.getKey()).setText(getString(R.string.inactive_status));
                                 }
-                                tvFields.get(snap.getKey()).setText(snap.getValue().toString());
+                                else
+                                    tvFields.get(snap.getKey()).setText(snap.getValue().toString());
                             }
                         } //end for
                     } //end if

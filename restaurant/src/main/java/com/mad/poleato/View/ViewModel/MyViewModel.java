@@ -22,23 +22,23 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
+import com.mad.poleato.DailyOffer.DishCategoryTranslator;
 import com.mad.poleato.R;
 import com.mad.poleato.DailyOffer.Food;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 
 public class MyViewModel extends ViewModel {
     private MutableLiveData<List<String>> _listDataGroup = new MutableLiveData<>(); // header titles
     private MutableLiveData<HashMap<String, List<Food>>> _listDataChild = new MutableLiveData<>(); // child data in format of header title, child title
-    private boolean flag = false;
 
 
     public LiveData<HashMap<String, List<Food>>> getListC() {
         return _listDataChild;
     }
-
     public LiveData<List<String>> getListG() {
         return _listDataGroup;
     }
@@ -46,6 +46,12 @@ public class MyViewModel extends ViewModel {
     public void setData(List<String> listDataGroup, HashMap<String, List<Food>> listDataChild) {
         _listDataGroup.setValue(listDataGroup);
         _listDataChild.postValue(listDataChild);
+    }
+
+    public void setImg(String groupTag, int idx, Bitmap img){
+
+        _listDataChild.getValue().get(groupTag).get(idx).setImg(img);
+
     }
 
 
@@ -61,18 +67,42 @@ public class MyViewModel extends ViewModel {
         this._listDataChild.getValue().get(getGroup(groupPosition).toString()).remove(childPosition);
     }
 
+    public void removeChild(String groupTag, final int childPosition){
+        this._listDataChild.getValue().get(groupTag).remove(childPosition);
+
+    }
+
     public Object getGroup(int groupPosition) {
         return this._listDataGroup.getValue().get(groupPosition);
+    }
+
+    /**
+     * Used to establish the priceRange for the restaurant
+     * @return The mean price
+     */
+    public double getMeanPrice(){
+
+        double sum = 0;
+        int count = 0;
+
+        for(String s : _listDataChild.getValue().keySet()){
+
+            for(Food f : _listDataChild.getValue().get(s)){
+                sum += f.getPrice();
+                count ++;
+            }
+        }
+        return sum/count;
     }
 
 
     private void initGroup(Context context){
         List<String> l = new ArrayList<>();
-        l.add(context.getString(R.string.starters));
-        l.add(context.getString(R.string.firsts));
-        l.add(context.getString(R.string.seconds));
-        l.add(context.getString(R.string.desserts));
-        l.add(context.getString(R.string.drinks));
+        l.add("Starters");
+        l.add("Firsts");
+        l.add("Seconds");
+        l.add("Desserts");
+        l.add("Drinks");
 
         _listDataGroup.setValue(l);
     }
@@ -121,8 +151,8 @@ public class MyViewModel extends ViewModel {
                     final String imageUrl = dataSnapshot.child("photoUrl").getValue().toString();
 
                     Food f = new Food(id, img, name, description, price, quantity);
-                    _listDataChild.getValue().get(category).add(f);
-                    final int curr_index = _listDataChild.getValue().get(category).size();
+                    insertChild(category, f);
+                    final int curr_index = _listDataChild.getValue().get(category).size() - 1;
 
                     StorageReference photoReference = FirebaseStorage.getInstance().getReferenceFromUrl(imageUrl);
                     final long ONE_MEGABYTE = 1024 * 1024;
@@ -132,8 +162,7 @@ public class MyViewModel extends ViewModel {
                             String s = imageUrl;
                             Log.d("matte", "onSuccess");
                             Bitmap bmp = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
-                            _listDataChild.getValue().get(category).get(curr_index).setImg(bmp);
-                            //recyclerAdapter.notifyDataSetChanged();
+                            setImg(category, curr_index, bmp);
                         }
                     }).addOnFailureListener(new OnFailureListener() {
                         @Override
@@ -194,16 +223,20 @@ public class MyViewModel extends ViewModel {
                     final String category = dataSnapshot.child("Category").getValue().toString();
                     final String imageUrl = dataSnapshot.child("photoUrl").getValue().toString();
 
-                    for(Food f : _listDataChild.getValue().get(category)){
-                        //if food is already present remove it and replace
-                        if(f.getId().equals(id)){
-                            _listDataChild.getValue().get(category).remove(f);
+                    int toDelete = -1;
+                    for(int idx = 0; idx < _listDataChild.getValue().get(category).size(); idx ++){
+                        if(_listDataChild.getValue().get(category).get(idx).getId().equals(id)){
+                            toDelete = idx;
+                            break;
                         }
                     }
+                    if(toDelete != -1)
+                        removeChild(category, toDelete);
+
 
                     Food f = new Food(id, img, name, description, price, quantity);
-                    _listDataChild.getValue().get(category).add(f);
-                    final int curr_index = _listDataChild.getValue().get(category).size();
+                    insertChild(category, f);
+                    final int curr_index = _listDataChild.getValue().get(category).size()-1;
 
                     StorageReference photoReference = FirebaseStorage.getInstance().getReferenceFromUrl(imageUrl);
                     final long ONE_MEGABYTE = 1024 * 1024;
@@ -213,8 +246,7 @@ public class MyViewModel extends ViewModel {
                             String s = imageUrl;
                             Log.d("matte", "onSuccess");
                             Bitmap bmp = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
-                            _listDataChild.getValue().get(category).get(curr_index).setImg(bmp);
-                            //recyclerAdapter.notifyDataSetChanged();
+                            setImg(category, curr_index, bmp);
                         }
                     }).addOnFailureListener(new OnFailureListener() {
                         @Override
@@ -258,12 +290,16 @@ public class MyViewModel extends ViewModel {
                 if(dataSnapshot.hasChild("Category")){
                     String category = dataSnapshot.child("Category").getValue().toString();
                     String id = dataSnapshot.getKey();
-                    for(Food f : _listDataChild.getValue().get(category)){
-                        //if food is already present remove it and replace
-                        if(f.getId().equals(id)){
-                            _listDataChild.getValue().get(category).remove(f);
+
+                    int toDelete = -1;
+                    for(int idx = 0; idx < _listDataChild.getValue().get(category).size(); idx ++){
+                        if(_listDataChild.getValue().get(category).get(idx).getId().equals(id)){
+                            toDelete = idx;
+                            break;
                         }
                     }
+                    if(toDelete != -1)
+                        removeChild(category, toDelete);
                 }
 
                 /*List<Food> l = new ArrayList<>();
