@@ -3,12 +3,16 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".holder_history">
+    tools:context=".Holder_history">
 
-    <!-- TODO: Update blank fragment layout -->
-    <TextView
+    <ExpandableListView
+        android:id="@+id/reservationslv"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:text="@string/hello_blank_fragment" />
+        android:divider="#cccccc"
+        android:layout_marginBottom="?attr/actionBarSize"
+        android:dividerHeight="10dp"
+        android:padding="3dp"
+        android:childDivider="#cccccc" />
 
 </FrameLayout>

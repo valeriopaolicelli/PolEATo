@@ -21,9 +21,6 @@
     <string name="edit">Edit Profile</string>
 
     <string name="title_activity_main">MainActivity</string>
-    <string name="title_home">Home</string>
-    <string name="title_dashboard">Dashboard</string>
-    <string name="title_notifications">Notifications</string>
 
 
     <string name="title_bottombar_deliveryRide">Rides</string>
@@ -36,8 +33,20 @@
     <string name="title_actionbar_account">Account</string>
     <string name="title_actionbar_edit_account">Edit Account</string>
 
+
+    <string name="loading">Loading</string>
+    <string name="failure">Something goes wrong</string>
+    <string name="saved">Saved</string>
+    <string name="saving">Saving changes</string>
+
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
+
+    <string name="customer_surname">Surname: </string>
+    <string name="restaurant_name">Restaurant: </string>
+    <string name="address_label">Address: </string>
+    <string name="total">Total: </string>
+    <string name="dishes">#Dishes</string>
 
     <!-- Login string -->
     <string name="signin">Sign in</string>

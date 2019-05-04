@@ -5,15 +5,6 @@
     android:layout_height="match_parent"
     tools:context=".Reservation.ReservationFragment">
 
-    <!-- TODO: Update blank fragment layout -->
-    <LinearLayout
-        xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:tools="http://schemas.android.com/tools"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="vertical"
-        tools:context=".NavigatorActivity">
-
         <ExpandableListView
             android:id="@+id/reservationslv"
             android:layout_width="match_parent"
@@ -24,6 +15,5 @@
             android:padding="3dp"
             android:childDivider="#cccccc"
             />
-    </LinearLayout>
 
 </FrameLayout>

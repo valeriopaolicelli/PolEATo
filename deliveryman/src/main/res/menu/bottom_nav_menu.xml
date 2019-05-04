@@ -12,7 +12,7 @@
         android:title="@string/title_bottombar_deliveryRoutes" />
 
     <item
-        android:id="@+id/navigation_notifications"
+        android:id="@+id/mainProfile_id"
         android:icon="@drawable/ic_baseline_person_24px"
         android:title="@string/title_bottombar_account" />
 

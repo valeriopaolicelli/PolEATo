@@ -63,6 +63,7 @@
     <string name="error_format_price">Il prezzo deve essere un numero</string>
     <string name="error_format_quantity">La quantità deve essere un numero intero</string>
 
+    <string name="plate_type">Tipo di piatto</string>
     <string-array name="plates_array">
         <item>Antipasti</item>
         <item>Primi</item>
@@ -70,6 +71,8 @@
         <item>Dolci</item>
         <item>Bevande</item>
     </string-array>
+    <string name="description">Descrizione</string>
+    <string name="price">Prezzo</string>
 
     <string name="dishes">Piatto</string>
     <string name="quantity">Quantità</string>

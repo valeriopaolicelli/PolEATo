@@ -36,7 +36,7 @@
     <string name="cooking">Cooking</string>
     <string name="delivery">Delivering</string>
     <string name="reject">Rejected</string>
-
+    <string name="restaurant">Restaurant</string>
     <string name="closed_restaurant">Restaurant is closed at the moment</string>
 
     <string name="italian_cooking">Italian</string>
@@ -67,6 +67,10 @@
     <string name="confirm">Confirm</string>
     <string name="cancel">Cancel</string>
 
+    <string name="dishes">Dish</string>
+    <string name="quantity">Quantity</string>
+    <string name="note">Notes</string>
+    <string name="total_price">Total price</string>
 
     <string name="specify_date">Specify the date to receive the order</string>
     <string name="specify_time">Specify the time to receive the order</string>

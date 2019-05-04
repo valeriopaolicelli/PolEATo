@@ -36,33 +36,33 @@ public class OrderActivity extends AppCompatActivity implements Interface {
     private DatabaseReference dbReferece;
 
     /* *************************
-    ********* FRAGMENTS ********
-    *************************** */
+     ********* FRAGMENTS ********
+     *************************** */
 
     private MenuFragment menuFragment;
     private InfoFragment infoFragment;
 
-    private void addFragmentToAdapter(Bundle bundle){
+    private void addFragmentToAdapter(Bundle bundle) {
         infoFragment = null;
         menuFragment = null;
 
         FragmentManager fm = getSupportFragmentManager();
         adapter = new PageAdapter(fm);
         List<Fragment> fragmentList = fm.getFragments();
-        if(fragmentList != null){
-            for (int idx = 0; idx < fragmentList.size(); idx++){
+        if (fragmentList != null) {
+            for (int idx = 0; idx < fragmentList.size(); idx++) {
 
-                if( fragmentList.get(idx) instanceof MenuFragment)
+                if (fragmentList.get(idx) instanceof MenuFragment)
                     menuFragment = (MenuFragment) fragmentList.get(idx);
-                if( fragmentList.get(idx) instanceof InfoFragment)
+                if (fragmentList.get(idx) instanceof InfoFragment)
                     infoFragment = (InfoFragment) fragmentList.get(idx);
             }
         }
-        if(menuFragment == null){
+        if (menuFragment == null) {
             menuFragment = new MenuFragment();
             menuFragment.setArguments(bundle);
         }
-        if(infoFragment == null){
+        if (infoFragment == null) {
             infoFragment = new InfoFragment();
             infoFragment.setArguments(bundle);
         }
@@ -72,6 +72,7 @@ public class OrderActivity extends AppCompatActivity implements Interface {
         onViewPager.setAdapter(adapter);
 
     }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -91,16 +92,25 @@ public class OrderActivity extends AppCompatActivity implements Interface {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 String id = dataSnapshot.getKey();
-                Bitmap img = BitmapFactory.decodeResource(getResources(), R.drawable.image_empty); // TODO: make it dynamic
-                String name = dataSnapshot.child("Name").getValue().toString();
-                String type = dataSnapshot.child("Type").child(localeShort).getValue().toString();
-                Boolean isOpen = (Boolean) dataSnapshot.child("IsActive").getValue();
-                int priceRange = Integer.parseInt(dataSnapshot.child("PriceRange").getValue().toString());
-                double deliveryCost = Double.parseDouble(dataSnapshot.child("DeliveryCost").getValue().toString().replace(",", "."));
+                if (dataSnapshot.hasChild("Name") &&
+                        dataSnapshot.hasChild("Type") &&
+                        dataSnapshot.child("Type").hasChild("it") &&
+                        dataSnapshot.child("Type").hasChild("en") &&
+                        dataSnapshot.hasChild("IsActive") &&
+                        //dataSnapshot.hasChild("PriceRange") &&
+                        dataSnapshot.hasChild("DeliveryCost")
+                ) {
+                    Bitmap img = BitmapFactory.decodeResource(getResources(), R.drawable.plate_fork); // TODO: make it dynamic
+                    String name = dataSnapshot.child("Name").getValue().toString();
+                    String type = dataSnapshot.child("Type").child(localeShort).getValue().toString();
+                    Boolean isOpen = (Boolean) dataSnapshot.child("IsActive").getValue();
+                    int priceRange = Integer.parseInt(dataSnapshot.child("PriceRange").getValue().toString());
+                    double deliveryCost = Double.parseDouble(dataSnapshot.child("DeliveryCost").getValue().toString().replace(",", "."));
 
-                Restaurant resObj = new Restaurant(id, img, name, type, isOpen, priceRange, deliveryCost);
+                    Restaurant resObj = new Restaurant(id, img, name, type, isOpen, priceRange, deliveryCost);
 
-                order.setR(resObj);
+                    order.setR(resObj);
+                }
             }
 
             @Override
@@ -119,13 +129,26 @@ public class OrderActivity extends AppCompatActivity implements Interface {
             Log.d("Error", "getSupportActionBar is null");
             finish();
         }
+
         onViewPager = findViewById(R.id.container);
         addFragmentToAdapter(bundle);
 
         tabLayout.setupWithViewPager(onViewPager);
     }
 
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                /**CONTROLLARE NEL CASO DI PERDITA DI DATI*/
+                onBackPressed();
+                finish();
+                return true;
 
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+    }
 
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu items for use in the action bar
@@ -135,26 +158,26 @@ public class OrderActivity extends AppCompatActivity implements Interface {
     }
 
     public void goToCart(MenuItem item) {
-        Intent intent = new Intent(this,CartActivity.class);
-        intent.putExtra("order",order);
+        Intent intent = new Intent(this, CartActivity.class);
+        intent.putExtra("order", order);
 
-        startActivityForResult(intent,1);
+        startActivityForResult(intent, 1);
     }
 
 
     @Override
-    protected void onActivityResult(int requestCode, int resultCode,  Intent data) {
-        if(requestCode ==1){
-            if(resultCode == Activity.RESULT_OK)
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (requestCode == 1) {
+            if (resultCode == Activity.RESULT_OK)
                 finish();
-            else if(resultCode == Activity.RESULT_CANCELED){
+            else if (resultCode == Activity.RESULT_CANCELED) {
                 order = (Order) data.getExtras().getSerializable("old_order");
             }
         }
     }
 
-    public void setOrder(Order order){
-        this.order=order;
+    public void setOrder(Order order) {
+        this.order = order;
     }
 
     @Override

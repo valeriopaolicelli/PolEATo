@@ -179,9 +179,10 @@ public class RestaurantSearchFragment extends Fragment {
 
                 if(dataSnapshot.hasChild("Name") &&
                         dataSnapshot.hasChild("Type") &&
-                        dataSnapshot.child("Type").hasChild(localeShort) &&
+                        dataSnapshot.child("Type").hasChild("it") &&
+                        dataSnapshot.child("Type").hasChild("en") &&
                         dataSnapshot.hasChild("IsActive") &&
-                        dataSnapshot.hasChild("PriceRange") &&
+                        //dataSnapshot.hasChild("PriceRange") &&
                         dataSnapshot.hasChild("DeliveryCost") &&
                         dataSnapshot.hasChild("photoUrl")
                 )

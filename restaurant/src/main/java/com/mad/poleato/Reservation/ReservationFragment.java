@@ -225,7 +225,8 @@ public class ReservationFragment extends Fragment {
                         dataSnapshot.hasChild("totalPrice") &&
                         dataSnapshot.hasChild("time") &&
                         dataSnapshot.hasChild("status") &&
-                        dataSnapshot.child("status").hasChild(localeShort) &&
+                        dataSnapshot.child("status").hasChild("it") &&
+                        dataSnapshot.child("status").hasChild("en") &&
                         dataSnapshot.hasChild("date") &&
                         dataSnapshot.hasChild("dishes")
                 )
@@ -237,7 +238,7 @@ public class ReservationFragment extends Fragment {
                     final String date= dataSnapshot.child("date").getValue().toString();
                     final String time= dataSnapshot.child("time").getValue().toString();
                     final String status = dataSnapshot.child("status").child(localeShort).getValue().toString();
-
+                    final String totalPrice= dataSnapshot.child("totalPrice").getValue().toString();
 
 
                     //TODO update with proper date, time and notes
@@ -265,7 +266,7 @@ public class ReservationFragment extends Fragment {
 
                     // fields setted to null only because they will be setted later in the call back of FB
                     r = new Reservation(order_id, null, null, null, date, time,
-                            status, null, getActivity().getApplicationContext());
+                            status, null, totalPrice, getActivity().getApplicationContext());
                     reservations.add(r);
 
                     //and for each customer (reservation) retrieve the list of dishes
@@ -278,6 +279,7 @@ public class ReservationFragment extends Fragment {
                         nameDish = dish.child("name").getValue().toString();
                         quantity = Integer.parseInt(dish.child("selectedQuantity").getValue().toString());
                         note= dish.child("customerNotes").getValue().toString();
+
                         d = new Dish(nameDish, quantity, note);
                         r.addDishtoReservation(d);
                     }
@@ -297,7 +299,8 @@ public class ReservationFragment extends Fragment {
                         dataSnapshot.hasChild("totalPrice") &&
                         dataSnapshot.hasChild("time") &&
                         dataSnapshot.hasChild("status") &&
-                        dataSnapshot.child("status").hasChild(localeShort) &&
+                        dataSnapshot.child("status").hasChild("it") &&
+                        dataSnapshot.child("status").hasChild("en") &&
                         dataSnapshot.hasChild("date") &&
                         dataSnapshot.hasChild("dishes")
                 )
@@ -307,6 +310,7 @@ public class ReservationFragment extends Fragment {
                     final String date= dataSnapshot.child("date").getValue().toString();
                     final String time= dataSnapshot.child("time").getValue().toString();
                     final String status = dataSnapshot.child("status").child(localeShort).getValue().toString();
+                    final String totalPrice= dataSnapshot.child("totalPrice").getValue().toString();
                     String note= null;
                     ArrayList<Dish> dishes= new ArrayList<>();
 
@@ -345,15 +349,18 @@ public class ReservationFragment extends Fragment {
                     }
 
                     Reservation r = new Reservation(order_id, null, null, null, date, time,
-                            status, null, getActivity());
+                            status, null, totalPrice, getActivity());
 
                     // if the status is changed (onclick listener) the order must change only and not re-added
+                    listHash.put(order_id, dishes);
                     if(!listHash.containsKey(order_id)){
-                        listHash.put(order_id, dishes);
                         reservations.add(r);
                     }
-                    else
-                        r.setStat(status, getActivity());
+                    else{
+                        for(Reservation res : reservations)
+                            if(res.getOrder_id().equals(order_id))
+                                res.setStat(status, getActivity());
+                    }
 
                     listAdapter.notifyDataSetChanged();
 

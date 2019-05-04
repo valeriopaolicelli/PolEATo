@@ -6,7 +6,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/colorBodyPrimary"
-    tools:context=".MainProfile">
+    tools:context=".MainProfile2">
 
     <android.support.constraint.ConstraintLayout
         android:layout_width="match_parent"
@@ -23,6 +23,21 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             tools:ignore="ContentDescription" />
+
+        <android.support.design.widget.FloatingActionButton
+            android:id="@+id/buttEdit"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:clickable="true"
+            android:focusable="true"
+            android:src="@drawable/ic_baseline_edit_24px"
+            app:backgroundTint="@color/colorPanelPrimary"
+            app:layout_constraintBottom_toBottomOf="@id/ivBackground"
+            app:layout_constraintEnd_toEndOf="@id/ivBackground"
+            app:layout_constraintHorizontal_bias="0.954"
+            app:layout_constraintStart_toStartOf="@id/ivBackground"
+            app:layout_constraintTop_toTopOf="@id/ivBackground"
+            app:layout_constraintVertical_bias="0.944" />
 
         <de.hdodenhof.circleimageview.CircleImageView
             android:id="@+id/profile_image"

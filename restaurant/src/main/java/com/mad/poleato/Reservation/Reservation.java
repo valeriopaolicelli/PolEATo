@@ -20,6 +20,8 @@ public class Reservation {
     private String buttonText;
     private String phone;
     private boolean checked;
+    private String totalPrice;
+
 
     private ArrayList<Dish>dishes = new ArrayList<>();
 
@@ -31,7 +33,7 @@ public class Reservation {
 
     public Reservation(String order_id, String name, String surname,
                        String address, String date, String time,
-                       String status, String phone, Context context) {
+                       String status, String phone, String totalPrice, Context context) {
         this.order_id = order_id;
         this.name = name;
         this.surname = surname;
@@ -41,6 +43,7 @@ public class Reservation {
         this.stat = status;
         if(stat!=null && (!stat.equals("")))
             setStat(status, context);
+        this.totalPrice= totalPrice;
         this.buttonText= context.getString(R.string.button_reservation);
         this.phone= phone;
     }
@@ -50,6 +53,10 @@ public class Reservation {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public String getTotalPrice() {
+        return totalPrice;
     }
 
     public String getSurname() {
@@ -131,6 +138,8 @@ public class Reservation {
     public ArrayList<Dish> getDishes() {
         return dishes;
     }
+
+    public int getNumberOfDishes(){ return dishes.size(); }
 
     public void setDishes(ArrayList<Dish> dishes) {
         this.dishes = dishes;

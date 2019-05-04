@@ -21,6 +21,33 @@
     <string name="gallery">Galleria</string>
     <string name="edit">Modifica profilo</string>
 
+    <string name="title_activity_main">MainActivity</string>
+
+
+    <string name="title_bottombar_deliveryRide">Corse</string>
+    <string name="title_actionbar_deliveryRide">Corse</string>
+
+    <string name="title_bottombar_deliveryRoutes">Percorsi</string>
+    <string name="title_actionbar_deliveryRoutes">Percorsi</string>
+
+    <string name="title_bottombar_account">Account</string>
+    <string name="title_actionbar_account">Account</string>
+    <string name="title_actionbar_edit_account">Edit Account</string>
+
+
+    <string name="loading">Caricamento</string>
+    <string name="failure">Qualcosa è andato storto</string>
+    <string name="saved">Salvato</string>
+    <string name="saving">Salvataggio</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="customer_surname">Cognome: </string>
+    <string name="restaurant_name">Ristorante: </string>
+    <string name="address_label">Indirizzo: </string>
+    <string name="total">Totale: </string>
+    <string name="dishes">#Piatti</string>
+
 
     <!-- Login strings -->
     <string name="signin">Accedi</string>

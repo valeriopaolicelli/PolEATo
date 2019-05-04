@@ -189,7 +189,6 @@ public class EditProfileFragment extends Fragment {
                              Bundle savedInstanceState) {
         v = inflater.inflate(R.layout.edit_account_layout, container, false);
 
-
         editTextFields.put("Name",(EditText) v.findViewById(R.id.editTextName));
         editTextFields.put("Info",(EditText) v.findViewById(R.id.editTextInfo));
         editTextFields.put("Open",(EditText) v.findViewById(R.id.editTextOpen));
@@ -416,8 +415,9 @@ public class EditProfileFragment extends Fragment {
         if (requestCode == REQUEST_TAKE_PHOTO) {
             if (resultCode == RESULT_OK) {
                 setPic(currentPhotoPath);
-            } else
-                profileImage.setImageBitmap(image);
+            }
+//            else
+//                profileImage.setImageBitmap(image);
         }
         if (requestCode == RESULT_LOAD_IMG) {
             if (resultCode == RESULT_OK) {
@@ -434,8 +434,9 @@ public class EditProfileFragment extends Fragment {
                     }
                 }
 
-            } else
-                profileImage.setImageBitmap(image); //TODO back pressed on gallery
+            }
+//            else
+//                profileImage.setImageBitmap(image); //TODO back pressed on gallery
         }
     }
 
@@ -487,7 +488,7 @@ public class EditProfileFragment extends Fragment {
             // Continue only if the File was successfully created
             if (photoFile != null) {
                 photoURI = FileProvider.getUriForFile(getContext(),
-                        "com.example.android.fileproviderFood",
+                        "com.example.android.fileproviderR",
                         photoFile);
                 takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI);
                 startActivityForResult(takePictureIntent, REQUEST_TAKE_PHOTO);
