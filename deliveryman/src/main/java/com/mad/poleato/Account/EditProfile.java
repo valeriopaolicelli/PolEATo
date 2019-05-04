@@ -343,7 +343,6 @@ public class EditProfile extends Fragment {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 DataSnapshot issue= dataSnapshot.child(currentUserID);
-                // TODO when log in and sign in will be enabled
                 // it is fixed to the first record (customer)
                 // when the sign in and log in procedures will be handled, it will be the proper one
 
@@ -479,7 +478,7 @@ public class EditProfile extends Fragment {
         if(!wrongField){
             for (int i = 0; i < fieldName.length; i++) {
                 EditText field = editTextFields.get(fieldName[i]);
-                reference.child(currentUserID).child(fieldName[i]).setValue(field.getText().toString()); //TODO when the log in will be enabled,
+                reference.child(currentUserID).child(fieldName[i]).setValue(field.getText().toString());
             }
             // TODO save image into DB
 

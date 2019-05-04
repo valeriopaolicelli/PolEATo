@@ -120,7 +120,6 @@ public class MainProfile extends Fragment {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 DataSnapshot issue= dataSnapshot.child(currentUserID);
-                // TODO when log in and sign in will be enabled
                 // it is fixed to the first record (customer)
                 // when the sign in and log in procedures will be handled, it will be the proper one
 
