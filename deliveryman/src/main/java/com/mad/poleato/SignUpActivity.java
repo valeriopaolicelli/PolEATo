@@ -16,10 +16,13 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 
 public class SignUpActivity extends AppCompatActivity {
 
     private FirebaseAuth mAuth;
+    private DatabaseReference dbReference;
     private Toast myToast;
 
     private EditText edPassword, edEmail;
@@ -32,6 +35,7 @@ public class SignUpActivity extends AppCompatActivity {
         setContentView(R.layout.signup_layout);
         myToast = Toast.makeText(this, "", Toast.LENGTH_SHORT);
         mAuth = FirebaseAuth.getInstance();
+        dbReference = FirebaseDatabase.getInstance().getReference("users");
 
         //search for the views
         edPassword = (EditText) findViewById(R.id.edPassword);
@@ -73,6 +77,7 @@ public class SignUpActivity extends AppCompatActivity {
                             // Sign in success, update UI with the signed-in user's information
                             Log.d("matte", "createUserWithEmail:success");
                             FirebaseUser user = mAuth.getCurrentUser();
+                            dbReference.child(user.getUid()).setValue("deliveryman");
                             myToast.setText(getString(R.string.creation_succ));
                             myToast.show();
                             access();
