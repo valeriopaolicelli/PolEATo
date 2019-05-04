@@ -14,9 +14,10 @@ import android.view.Display;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.ExpandableListView;
 
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -50,7 +51,10 @@ public class Holder_history extends Fragment {
         }
     };
 
-    String loggedID; //TODO set the proper one (login)
+    private String currentUserID;
+    private FirebaseAuth mAuth;
+
+
     public Holder_history() {
         // Required empty public constructor
     }
@@ -58,11 +62,15 @@ public class Holder_history extends Fragment {
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        mAuth = FirebaseAuth.getInstance();
+        FirebaseUser currentUser = mAuth.getCurrentUser();
+        currentUserID = currentUser.getUid();
+
         display = getActivity().getWindowManager().getDefaultDisplay();
         size = new Point();
         display.getSize(size);
         width = size.x;
-        loggedID= "C00";
     }
 
     @Override
@@ -91,7 +99,7 @@ public class Holder_history extends Fragment {
         listHash = new HashMap<>();
 
         DatabaseReference reference = FirebaseDatabase.getInstance().getReference("customers")
-                .child(loggedID).child("reservations");
+                .child(currentUserID).child("reservations");
 
         reference.addValueEventListener(new ValueEventListener() {
             @Override

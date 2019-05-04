@@ -13,6 +13,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.mad.poleato.R;
 
 
@@ -20,6 +21,11 @@ import com.mad.poleato.R;
  * A simple {@link Fragment} subclass.
  */
 public class Routes extends Fragment {
+
+
+    private String currentUserID;
+    private FirebaseAuth mAuth;
+
 
 
     public Routes() {
@@ -31,6 +37,10 @@ public class Routes extends Fragment {
         //in order to create the logout menu (don't move!)
         setHasOptionsMenu(true);
         super.onCreate(savedInstanceState);
+
+        mAuth = FirebaseAuth.getInstance();
+        FirebaseUser currentUser = mAuth.getCurrentUser();
+        currentUserID = currentUser.getUid();
     }
 
     @Override

@@ -16,6 +16,8 @@ import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -40,10 +42,18 @@ public class MainProfile2 extends AppCompatActivity {
     private CircleImageView profileImage;
     private DatabaseReference reference;
 
+    private String currentUserID;
+    private FirebaseAuth mAuth;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.fragment_profile);
+
+        mAuth = FirebaseAuth.getInstance();
+        FirebaseUser currentUser = mAuth.getCurrentUser();
+        currentUserID = currentUser.getUid();
+
         tvNameField = findViewById(R.id.tvNameField);
         tvSurnameField= findViewById(R.id.tvSurnameField);
         tvAddressField= findViewById(R.id.tvAddressField);
@@ -78,7 +88,7 @@ public class MainProfile2 extends AppCompatActivity {
         reference.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                DataSnapshot issue= dataSnapshot.child("D00");
+                DataSnapshot issue= dataSnapshot.child(currentUserID);
                 // TODO when log in and sign in will be enabled
                 // it is fixed to the first record (customer)
                 // when the sign in and log in procedures will be handled, it will be the proper one

@@ -47,7 +47,9 @@ public class MyViewModel extends ViewModel {
 
 //    public void fillFields() {
 //
-//        DatabaseReference dbReferece = FirebaseDatabase.getInstance().getReference("deliveryman").child("D00").child("reservations");
+//        DatabaseReference dbReferece = FirebaseDatabase.getInstance()
+//                              .getReference("deliveryman")
+//                               .child(currentUserID+"/reservations");
 //
 //        dbReferece.addValueEventListener(new ValueEventListener() {
 //            @Override

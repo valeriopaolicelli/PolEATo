@@ -40,11 +40,11 @@
             android:windowSoftInputMode="adjustPan"/>
 
         <activity
-            android:name=".MainProfile"
+            android:name=".MainProfile2"
             android:windowSoftInputMode="adjustPan"/>
 
         <activity
-            android:name=".EditProfile"
+            android:name=".EditProfile2"
             android:windowSoftInputMode="adjustPan"/>
 
 

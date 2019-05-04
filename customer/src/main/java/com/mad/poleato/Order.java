@@ -120,7 +120,9 @@ public class Order implements Serializable {
          */
 
         DatabaseReference dbReferenceRestaurant = FirebaseDatabase.getInstance().getReference("restaurants");
-        DatabaseReference reservationRestaurant =  dbReferenceRestaurant.child(this.getRestaurantID()).child("reservations").push();
+        DatabaseReference reservationRestaurant =  dbReferenceRestaurant.child(this.getRestaurantID())
+                                                        .child("reservations")
+                                                        .push();
 
         Order o = new Order();
 

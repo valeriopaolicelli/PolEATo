@@ -22,7 +22,7 @@ public class ReservationExpandableListAdapter extends BaseExpandableListAdapter 
         this.context = context;
         this.reservations = reservations;
         this.listHashMap = listHashMap;
-        this.loggedID= "R00";
+        this.loggedID= "R00"; //TODO
     }
 
     @Override
