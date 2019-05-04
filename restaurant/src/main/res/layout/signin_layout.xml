@@ -112,7 +112,7 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
                 android:layout_weight=".5"
-                android:text="Sign in"
+                android:text="@string/signin"
                 android:layout_marginStart="16dp"
                 android:layout_marginEnd="16dp"/>
 
@@ -122,7 +122,7 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
                 android:layout_weight=".5"
-                android:text="Sign up"
+                android:text="@string/signup"
                 android:layout_marginEnd="16dp" />
 
         </LinearLayout>

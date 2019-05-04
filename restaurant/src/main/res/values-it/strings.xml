@@ -122,11 +122,13 @@
 
 
     <!-- Login strings -->
+    <string name="signin">Accedi</string>
+    <string name="signup">Registrati</string>
     <string name="logout">Esci</string>
     <string name="void_fields">Campi vuoti</string>
     <string name="login_succ">Utente riconosciuto!</string>
-    <string name="login_fail">Authentication failed.</string>
-    <string name="creation_succ">Account creatod!</string>
+    <string name="login_fail">Autenticazione fallita.</string>
+    <string name="creation_succ">Account creato!</string>
     <string name="creation_fail">Creazione account fallita! Devi inserire una mail valida e una password di almeno 6 caratteri</string>
 
 

@@ -124,6 +124,8 @@
 
 
     <!-- Login string -->
+    <string name="signin">Sign in</string>
+    <string name="signup">Sign up</string>
     <string name="logout">Logout</string>
     <string name="void_fields">Void fields</string>
     <string name="login_succ">Logged in!</string>
