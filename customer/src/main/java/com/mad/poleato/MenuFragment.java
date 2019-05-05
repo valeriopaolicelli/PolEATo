@@ -262,6 +262,9 @@ public class MenuFragment extends Fragment {
                             String s = imageUrl;
                             Log.d("matte", "onFailure() : excp -> "+exception.getMessage()
                                     +"| restaurantID: "+id);
+
+                            SerialBitmap bmp = new SerialBitmap(BitmapFactory.decodeResource(getResources(), R.drawable.plate_fork));
+                            setImg(category, curr_index, bmp);
                         }
                     });
 

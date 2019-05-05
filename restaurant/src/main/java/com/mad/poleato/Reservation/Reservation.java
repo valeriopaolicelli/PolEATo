@@ -21,6 +21,7 @@ public class Reservation {
     private String phone;
     private boolean checked;
     private String totalPrice;
+    private Context context;
 
 
     private ArrayList<Dish>dishes = new ArrayList<>();
@@ -41,8 +42,9 @@ public class Reservation {
         this.date = date;
         this.time= time;
         this.stat = status;
+        this.context= context;
         if(stat!=null && (!stat.equals("")))
-            setStat(status, context);
+            setStat(status);
         this.totalPrice= totalPrice;
         this.buttonText= context.getString(R.string.button_reservation);
         this.phone= phone;
@@ -97,7 +99,7 @@ public class Reservation {
         return stat;
     }
 
-    public void setStat(String stat, Context context) {
+    public void setStat(String stat) {
         this.stat= stat;
         if(stat.equals(context.getString(R.string.new_order)))
             this.status= Status.ACCEPTANCE;

@@ -1,6 +1,9 @@
 package com.mad.poleato;
 
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -15,15 +18,24 @@ import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.Toast;
 
+import androidx.navigation.Navigation;
+
 import com.google.android.gms.common.SignInButton;
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
+import com.google.firebase.storage.UploadTask;
+import com.mad.poleato.DailyOffer.Food;
 
+import java.io.ByteArrayOutputStream;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -228,7 +240,7 @@ public class SignUpActivity extends AppCompatActivity {
                             reference.child("Email").setValue(email);
                             reference.child("Address").setValue(address);
                             reference.child("Phone").setValue(editTextFields.get("Phone").getText().toString());
-                            reference.child("photoUrl").setValue("");
+                            uploadFile(user.getUid());
                             reference.child("DeliveryCost").setValue("0");
                             reference.child("IsActive").setValue(true);
                             reference.child("Info").setValue("");
@@ -244,6 +256,55 @@ public class SignUpActivity extends AppCompatActivity {
                         }
 
                         // ...
+                    }
+                });
+    }
+
+    private void uploadFile(final String currentUserID) {
+        final StorageReference storageReference = FirebaseStorage
+                .getInstance()
+                .getReference()
+                .child( currentUserID +"/ProfileImage/"+currentUserID+".jpg");
+
+        Bitmap bitmap= BitmapFactory.decodeResource(getResources(), R.drawable.empty_background);
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        bitmap.compress(Bitmap.CompressFormat.JPEG, 20, baos);
+        byte[] data = baos.toByteArray();
+
+        UploadTask uploadTask = storageReference.putBytes(data);
+        uploadTask
+                .addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                    @Override
+                    public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                        storageReference.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+                            @Override
+                            public void onSuccess(Uri uri) {
+                                //save the link to the image
+                                final String downloadUrl =
+                                        uri.toString();
+                                FirebaseDatabase.getInstance()
+                                        .getReference("restaurants")
+                                        .child(currentUserID + "/photoUrl")
+                                        .setValue(downloadUrl);
+                            }
+                        });
+                        // taskSnapshot.getMetadata() contains file metadata such as size, content-type, and download URL.
+                        Uri downloadUrl = taskSnapshot.getUploadSessionUri();
+
+                        String s = taskSnapshot.getMetadata().getReference().getDownloadUrl().toString();
+                        Log.d("matte", "downloadUrl-->" + downloadUrl);
+
+                        myToast.setText(getString(R.string.saved));
+                        myToast.show();
+                    }
+                })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception exception) {
+                        // Handle unsuccessful uploads
+                        Log.d("matte", "Upload failed");
+                        myToast.setText(getString(R.string.failure));
+                        myToast.show();
                     }
                 });
     }
