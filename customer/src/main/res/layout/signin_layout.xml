@@ -74,7 +74,7 @@
             android:layout_height="56dp"
             android:layout_marginStart="32dp"
             android:layout_marginTop="24dp"
-            android:layout_marginBottom="32dp"
+            android:layout_marginBottom="16dp"
             android:theme="@style/FloatLabelSignInUp"
             app:layout_constraintBottom_toTopOf="@id/tiPassword"
             app:layout_constraintEnd_toStartOf="@id/cancel_email"
