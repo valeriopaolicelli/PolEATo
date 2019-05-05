@@ -89,7 +89,6 @@ public class AddFoodFragment extends Fragment {
     //price ranges
     private int firstRange = 7;
     private int secondRange = 15;
-    private int thirdRange = 24;
 
     private String localeShort;
     private String currentUserID;
@@ -300,7 +299,7 @@ public class AddFoodFragment extends Fragment {
             reference.child("Category").setValue(category);
 
 
-            Food f = new Food(id, null, name, description, Double.parseDouble(priceString), Integer.parseInt(quantity), category);
+            Food f = new Food(id, null, name, description, Double.parseDouble(priceString), Integer.parseInt(quantity));
 
             // Save profile pic to the DB
             /*Navigation controller is moved inside this method. The image must be loaded totally to FireBase
@@ -371,7 +370,7 @@ public class AddFoodFragment extends Fragment {
                             reference.setValue(1);
                         else if(meanPrice < secondRange)
                             reference.setValue(2);
-                        else if(meanPrice < thirdRange)
+                        else
                             reference.setValue(3);
 
                         if(progressDialog.isShowing())
@@ -413,7 +412,7 @@ public class AddFoodFragment extends Fragment {
                             reference.setValue(1);
                         else if(meanPrice < secondRange)
                             reference.setValue(2);
-                        else if(meanPrice < thirdRange)
+                        else
                             reference.setValue(3);
 
 

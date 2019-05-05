@@ -153,23 +153,25 @@
             android:id="@+id/ButtonSignIn"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:text="@string/signin"
             android:layout_marginStart="16dp"
             android:layout_marginEnd="16dp"
-            app:layout_constraintTop_toBottomOf="@id/tiPassword"
-            app:layout_constraintStart_toStartOf="parent"
+            android:layout_marginBottom="16dp"
+            android:text="@string/signin"
+            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toStartOf="@id/ButtonSignUp"
-            app:layout_constraintBottom_toBottomOf="parent"/>
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/tiPassword" />
 
         <Button
             android:id="@+id/ButtonSignUp"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:text="@string/signup"
             android:layout_marginEnd="16dp"
-            app:layout_constraintStart_toEndOf="@id/ButtonSignIn"
+            android:layout_marginBottom="16dp"
+            android:text="@string/signup"
+            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="@id/ButtonSignIn"
-            app:layout_constraintBottom_toBottomOf="parent"/>
+            app:layout_constraintStart_toEndOf="@id/ButtonSignIn"
+            app:layout_constraintTop_toTopOf="@id/ButtonSignIn" />
     </android.support.constraint.ConstraintLayout>
 </ScrollView>

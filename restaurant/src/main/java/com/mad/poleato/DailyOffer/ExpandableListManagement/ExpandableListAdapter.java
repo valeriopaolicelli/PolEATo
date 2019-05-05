@@ -168,7 +168,8 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
                                         DailyOfferFragmentDirections
                                                 .actionDailyOfferIdToEditFoodFragmentId("ID", "Category");
                         action.setId(f.getId());
-                        action.setCategory(f.getCategory());
+                        String category = _listDataGroup.get(groupPosition);
+                        action.setCategory(category);
                         Navigation.findNavController(finalConvertView).navigate(action);
 
                         return false;
@@ -199,7 +200,7 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
                         final StorageReference storageReference = FirebaseStorage
                                 .getInstance()
                                 .getReference()
-                                .child(currentUserID +"/FoodImages/"+toRemove.getId()+".jpeg");
+                                .child(currentUserID +"/FoodImages/"+toRemove.getId()+".jpg");
                         storageReference.delete().addOnSuccessListener(new OnSuccessListener<Void>() {
                             @Override
                             public void onSuccess(Void aVoid) {

@@ -1,10 +1,14 @@
 package com.mad.poleato;
 
 import android.app.Activity;
+import android.app.ProgressDialog;
 import android.content.Context;
+import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Point;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -15,11 +19,16 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ExpandableListView;
 
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -44,6 +53,14 @@ public class MenuFragment extends Fragment {
     private Interface listener;
 
     private SortMenu sortMenu;
+
+    private ProgressDialog progressDialog;
+    private Handler handler = new Handler() {
+        @Override
+        public void handleMessage(Message msg) {
+            progressDialog.dismiss();
+        }
+    };
 
     private enum groupType{
         STARTERS,
@@ -172,6 +189,191 @@ public class MenuFragment extends Fragment {
                                         .child("Menu");
         listDataGroup = new ArrayList<>();
         listDataChild = new HashMap<>();
+/*
+        if(getActivity().getApplicationContext() != null)
+            progressDialog = ProgressDialog.show(getActivity().getApplicationContext(), "", getActivity().getApplicationContext().getString(R.string.loading));
+
+        //This is called after the OnChildAdded so it notify the end of downloads
+        reference.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                if(progressDialog.isShowing())
+                    handler.sendEmptyMessage(0);
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+                if(progressDialog.isShowing())
+                    handler.sendEmptyMessage(0);
+            }
+        });
+        */
+
+        reference.addChildEventListener(new ChildEventListener() {
+                     @Override
+            public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+
+                if(dataSnapshot.hasChild("Name") &&
+                        dataSnapshot.hasChild("Quantity") &&
+                        dataSnapshot.hasChild("Description") &&
+                        dataSnapshot.hasChild("Price") &&
+                        dataSnapshot.hasChild("Category") &&
+                        dataSnapshot.hasChild("photoUrl"))
+                {
+                    //set default image initially, then change if download is successful
+                    final String id = dataSnapshot.getKey();
+                    SerialBitmap img = new SerialBitmap(BitmapFactory.decodeResource(getResources(),R.drawable.plate_fork));
+                    String name = dataSnapshot.child("Name").getValue().toString();
+                    int quantity = Integer.parseInt(dataSnapshot.child("Quantity").getValue().toString());
+                    String description = dataSnapshot.child("Description").getValue().toString();
+                    double price = Double.parseDouble(dataSnapshot.child("Price")
+                            .getValue()
+                            .toString()
+                            .replace(",", "."));
+                    final String category = dataSnapshot.child("Category").getValue().toString();
+                    final String imageUrl = dataSnapshot.child("photoUrl").getValue().toString();
+
+                    Food f = new Food(id, img, name, description, price, quantity);
+
+                    if(!listDataGroup.contains(category))
+                        listDataGroup.add(category);
+                    if(!listDataChild.containsKey(category)){
+                        listDataChild.put(category,new ArrayList<Food>());
+                    }
+                    listDataChild.get(category).add(f);
+
+                    /*
+                     * download food image
+                     */
+                    final int curr_index = listDataChild.get(category).size() - 1;
+                    StorageReference photoReference = FirebaseStorage.getInstance().getReferenceFromUrl(imageUrl);
+                    final long ONE_MEGABYTE = 1024 * 1024;
+                    photoReference.getBytes(ONE_MEGABYTE).addOnSuccessListener(new OnSuccessListener<byte[]>() {
+                        @Override
+                        public void onSuccess(byte[] bytes) {
+                            String s = imageUrl;
+                            Log.d("matte", "onSuccess");
+                            SerialBitmap bmp = new SerialBitmap(BitmapFactory.decodeByteArray(bytes, 0, bytes.length));
+                            setImg(category, curr_index, bmp);
+                        }
+                    }).addOnFailureListener(new OnFailureListener() {
+                        @Override
+                        public void onFailure(@NonNull Exception exception) {
+                            String s = imageUrl;
+                            Log.d("matte", "onFailure() : excp -> "+exception.getMessage()
+                                    +"| restaurantID: "+id);
+
+                            SerialBitmap bmp = new SerialBitmap(BitmapFactory.decodeResource(getResources(), R.drawable.plate_fork));
+                            setImg(category, curr_index, bmp);
+                        }
+                    });
+
+                    listAdapter.notifyDataSetChanged();
+                }
+            }
+
+            @Override
+            public void onChildChanged(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+
+                if(dataSnapshot.hasChild("Name") &&
+                        dataSnapshot.hasChild("Quantity") &&
+                        dataSnapshot.hasChild("Description") &&
+                        dataSnapshot.hasChild("Price") &&
+                        dataSnapshot.hasChild("Category") &&
+                        dataSnapshot.hasChild("photoUrl")){
+
+                    final String id = dataSnapshot.getKey();
+                    SerialBitmap img = new SerialBitmap(BitmapFactory.decodeResource(getResources(),R.drawable.plate_fork));
+                    String name = dataSnapshot.child("Name").getValue().toString();
+                    int quantity = Integer.parseInt(dataSnapshot.child("Quantity").getValue().toString());
+                    String description = dataSnapshot.child("Description").getValue().toString();
+                    double price = Double.parseDouble(dataSnapshot.child("Price")
+                            .getValue()
+                            .toString()
+                            .replace(",", "."));
+                    final String category = dataSnapshot.child("Category").getValue().toString();
+                    final String imageUrl = dataSnapshot.child("photoUrl").getValue().toString();
+
+                    int toDelete = -1;
+                    for(int idx = 0; idx < listDataChild.get(category).size(); idx ++){
+                        if(listDataChild.get(category).get(idx).getFoodID().equals(id)){
+                            toDelete = idx;
+                            break;
+                        }
+                    }
+                    if(toDelete != -1)
+                        listDataChild.get(category).remove(toDelete);
+
+                    Food f = new Food(id, img, name, description, price, quantity);
+
+                    if(!listDataGroup.contains(category))
+                        listDataGroup.add(category);
+                    if(!listDataChild.containsKey(category)){
+                        listDataChild.put(category,new ArrayList<Food>());
+                    }
+                    listDataChild.get(category).add(f);
+
+                    final int curr_index = listDataChild.get(category).size()-1;
+
+                    StorageReference photoReference = FirebaseStorage.getInstance().getReferenceFromUrl(imageUrl);
+                    final long ONE_MEGABYTE = 1024 * 1024;
+                    photoReference.getBytes(ONE_MEGABYTE).addOnSuccessListener(new OnSuccessListener<byte[]>() {
+                        @Override
+                        public void onSuccess(byte[] bytes) {
+                            String s = imageUrl;
+                            Log.d("matte", "onSuccess");
+                            SerialBitmap bmp = new SerialBitmap(BitmapFactory.decodeByteArray(bytes, 0, bytes.length));
+                            setImg(category, curr_index, bmp);
+
+                        }
+                    }).addOnFailureListener(new OnFailureListener() {
+                        @Override
+                        public void onFailure(@NonNull Exception exception) {
+                            String s = imageUrl;
+                            Log.d("matte", "onFailure() : excp -> "+exception.getMessage()
+                                    +"| restaurantID: "+id);
+                        }
+                    });
+
+                    listAdapter.notifyDataSetChanged();
+                }
+            }
+
+            @Override
+            public void onChildRemoved(@NonNull DataSnapshot dataSnapshot) {
+
+                if(dataSnapshot.hasChild("Category")){
+                    String category = dataSnapshot.child("Category").getValue().toString();
+                    String id = dataSnapshot.getKey();
+
+                    int toDelete = -1;
+                    for(int idx = 0; idx < listDataChild.get(category).size(); idx ++){
+                        if(listDataChild.get(category).get(idx).getFoodID().equals(id)){
+                            toDelete = idx;
+                            break;
+                        }
+                    }
+                    if(toDelete != -1)
+                        listDataChild.get(category).remove(toDelete);
+                }
+            }
+
+            @Override
+            public void onChildMoved(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+
+
+
+
+
+        /*
         reference.addChildEventListener(new ChildEventListener() {
             List<Food>childItem;
             @Override
@@ -179,11 +381,11 @@ public class MenuFragment extends Fragment {
                 listDataGroup.add(dataSnapshot.getKey());
                 childItem = new ArrayList<>();
 
-                for(DataSnapshot ds : dataSnapshot.getChildren()){
+                for(DataSnapshot ds : dataSnapshot.child(dataSnapshot.getKey()).getChildren()){
                     String foodName = ds.getKey();
                     // TODO: Make it dynamic with image
                     SerialBitmap img = new SerialBitmap(BitmapFactory.decodeResource(getResources(),R.drawable.image_empty));
-                    Food f = new Food(img, foodName,ds.child("Description").getValue().toString(),
+                    Food f = new Food(dataSnapshot.getKey(), img, foodName,ds.child("Description").getValue().toString(),
                             Double.parseDouble(ds.child("Price").getValue().toString()),
                             Integer.parseInt(ds.child("Quantity").getValue().toString()));
                     childItem.add(f);
@@ -201,7 +403,7 @@ public class MenuFragment extends Fragment {
                     String foodName = ds.getKey();
                     // TODO: Make it dynamic with image
                     SerialBitmap img = new SerialBitmap(BitmapFactory.decodeResource(getResources(),R.drawable.image_empty));
-                    Food f = new Food(img, foodName,ds.child("Description").getValue().toString(),
+                    Food f = new Food(dataSnapshot.getKey(), img, foodName,ds.child("Description").getValue().toString(),
                             Double.parseDouble(ds.child("Price").getValue().toString()),
                             Integer.parseInt(ds.child("Quantity").getValue().toString()));
                     childItem.add(f);
@@ -221,7 +423,7 @@ public class MenuFragment extends Fragment {
                     String foodName = ds.getKey();
                     // TODO: Make it dynamic with image
                     SerialBitmap img = new SerialBitmap(BitmapFactory.decodeResource(getResources(),R.drawable.image_empty));
-                    Food f = new Food(img, foodName,ds.child("Description").getValue().toString(),
+                    Food f = new Food(dataSnapshot.getKey(), img, foodName,ds.child("Description").getValue().toString(),
                             Double.parseDouble(ds.child("Price").getValue().toString()),
                             Integer.parseInt(ds.child("Quantity").getValue().toString()));
                     childItem.add(f);
@@ -241,8 +443,13 @@ public class MenuFragment extends Fragment {
             public void onCancelled(@NonNull DatabaseError databaseError) {
 
             }
-        });
+        }); */
 
+    }
+
+
+    public void setImg(String category, int idx, SerialBitmap img){
+        listDataChild.get(category).get(idx).setImg(img);
     }
 
     private class SortMenu implements Comparator<String>{
