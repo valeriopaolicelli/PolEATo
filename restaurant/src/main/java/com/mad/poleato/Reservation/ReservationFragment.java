@@ -282,13 +282,14 @@ public class ReservationFragment extends Fragment {
                     String nameDish;
                     int quantity;
                     Dish d;
+                    String foodID;
 
                     for (DataSnapshot dish : dishesOfReservation.getChildren()) {
                         nameDish = dish.child("name").getValue().toString();
                         quantity = Integer.parseInt(dish.child("selectedQuantity").getValue().toString());
                         note= dish.child("customerNotes").getValue().toString();
-
-                        d = new Dish(nameDish, quantity, note);
+                        foodID= dish.child("foodID").getValue().toString();
+                        d = new Dish(nameDish, quantity, note, foodID);
                         r.addDishtoReservation(d);
                     }
                     listHash.put(r.getOrder_id(), r.getDishes());
@@ -355,11 +356,13 @@ public class ReservationFragment extends Fragment {
                     String nameDish;
                     int quantity;
                     Dish d;
+                    String foodID;
 
                     for (DataSnapshot dish : dishesOfReservation.getChildren()) {
                         nameDish = dish.child("name").getValue().toString();
                         quantity = Integer.parseInt(dish.child("selectedQuantity").getValue().toString());
-                        d = new Dish(nameDish, quantity, note);
+                        foodID= dish.child("foodID").getValue().toString();
+                        d = new Dish(nameDish, quantity, note, foodID);
                         dishes.add(d);
                     }
 
