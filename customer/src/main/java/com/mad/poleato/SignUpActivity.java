@@ -216,11 +216,11 @@ public class SignUpActivity extends AppCompatActivity {
                             /*
                              * Capitalize first letter, clear spaces and store into db
                              */
-                            String name= editTextFields.get("Name").getText().toString().substring(0,1).toLowerCase() +
+                            String name= editTextFields.get("Name").getText().toString().substring(0,1).toUpperCase() +
                                                 editTextFields.get("Name").getText().toString().substring(1);
                             name= name.trim().replaceAll(" +", " ");
 
-                            String surname= editTextFields.get("Surname").getText().toString().substring(0,1).toLowerCase() +
+                            String surname= editTextFields.get("Surname").getText().toString().substring(0,1).toUpperCase() +
                                                 editTextFields.get("Surname").getText().toString().substring(1);
                             surname= surname.trim().replaceAll(" +", " ");
 
@@ -235,6 +235,7 @@ public class SignUpActivity extends AppCompatActivity {
                             reference.child("Email").setValue(email);
                             reference.child("Address").setValue(address);
                             reference.child("Phone").setValue(editTextFields.get("Phone").getText().toString());
+                            reference.child("photoUrl").setValue("");
 
                             access();
                         } else {

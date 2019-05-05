@@ -200,24 +200,22 @@ public class SignUpActivity extends AppCompatActivity {
                             // Sign in success, update UI with the signed-in user's information
                             Log.d("matte", "createUserWithEmail:success");
                             FirebaseUser user = mAuth.getCurrentUser();
-                            dbReference.child(user.getUid()).setValue("customer");
+                            dbReference.child(user.getUid()).setValue("deliveryman");
                             myToast.setText(getString(R.string.creation_succ));
                             myToast.show();
 
                             /*
                              * save account details
                              */
-                            DatabaseReference reference= FirebaseDatabase.getInstance()
-                                    .getReference("customers")
-                                    .child(user.getUid());
+                            DatabaseReference reference= FirebaseDatabase.getInstance().getReference("deliveryman");
                             /*
                              * Capitalize first letter, clear spaces and store into db
                              */
-                            String name= editTextFields.get("Name").getText().toString().substring(0,1).toLowerCase() +
+                            String name= editTextFields.get("Name").getText().toString().substring(0,1).toUpperCase() +
                                     editTextFields.get("Name").getText().toString().substring(1);
                             name= name.trim().replaceAll(" +", " ");
 
-                            String surname= editTextFields.get("Surname").getText().toString().substring(0,1).toLowerCase() +
+                            String surname= editTextFields.get("Surname").getText().toString().substring(0,1).toUpperCase() +
                                     editTextFields.get("Surname").getText().toString().substring(1);
                             surname= surname.trim().replaceAll(" +", " ");
 
@@ -227,11 +225,13 @@ public class SignUpActivity extends AppCompatActivity {
                             String email= editTextFields.get("Email").getText().toString()
                                     .trim().replaceAll(" +", "");
 
-                            reference.child("Name").setValue(name);
-                            reference.child("Surname").setValue(surname);
-                            reference.child("Email").setValue(email);
-                            reference.child("Address").setValue(address);
-                            reference.child("Phone").setValue(editTextFields.get("Phone").getText().toString());
+                            reference.child(user.getUid()).child("Name").setValue(name);
+                            reference.child(user.getUid()).child("Surname").setValue(surname);
+                            reference.child(user.getUid()).child("Email").setValue(email);
+                            reference.child(user.getUid()).child("Address").setValue(address);
+                            reference.child(user.getUid()).child("Phone").setValue(editTextFields.get("Phone").getText().toString());
+                            reference.child(user.getUid()).child("isActive").setValue("true");
+                            reference.child(user.getUid()).child("photoUrl").setValue("");
 
                             access();
                         } else {
