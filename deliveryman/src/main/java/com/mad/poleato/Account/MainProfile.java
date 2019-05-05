@@ -64,7 +64,7 @@ public class MainProfile extends Fragment {
 
 
     private String localeShort;
-
+    private View view;
     private String currentUserID;
     private FirebaseAuth mAuth;
 
@@ -93,7 +93,6 @@ public class MainProfile extends Fragment {
 
     }
 
-    //TODO michelangelo
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         menu.clear();
@@ -105,8 +104,13 @@ public class MainProfile extends Fragment {
                 //logout
                 Log.d("matte", "Logout");
                 FirebaseAuth.getInstance().signOut();
-                //Intent myIntent = new Intent(NavigatorActivity.this, SignInActivity.class);
-                //NavigatorActivity.this.startActivity(myIntent);
+
+                /**
+                 *  GO TO LOGIN ****
+                 */
+
+                Navigation.findNavController(view).navigate(R.id.action_mainProfile_id_to_signInActivity);
+                getActivity().finish();
                 return true;
             }
         });
@@ -115,7 +119,7 @@ public class MainProfile extends Fragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_profile, container, false);
+        view = inflater.inflate(R.layout.fragment_profile, container, false);
 
         // Retrieve all fields (restaurant details) in the xml file
         tvFields = new HashMap<>();

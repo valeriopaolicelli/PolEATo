@@ -129,6 +129,7 @@ public class SignInActivity extends AppCompatActivity {
     public void access(){
         Intent myIntent = new Intent(SignInActivity.this, NavigatorActivity.class);
         SignInActivity.this.startActivity(myIntent);
+        finish();
     }
 
 

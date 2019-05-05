@@ -386,7 +386,7 @@ public class EditProfile extends Fragment {
             // Continue only if the File was successfully created
             if (photoFile != null) {
                 photoURI = FileProvider.getUriForFile(getContext(),
-                        "com.example.android.fileproviderR",
+                        "com.example.android.fileproviderD",
                         photoFile);
                 takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI);
                 startActivityForResult(takePictureIntent, REQUEST_TAKE_PHOTO);

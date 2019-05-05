@@ -9,7 +9,11 @@
         android:id="@+id/rides_id"
         android:name="com.mad.poleato.Rides.RidesFragment"
         android:label="@string/title_actionbar_deliveryRide"
-        tools:layout="@layout/ride_recyclerview" />
+        tools:layout="@layout/ride_recyclerview" >
+        <action
+            android:id="@+id/action_rides_id_to_signInActivity"
+            app:destination="@id/signInActivity" />
+    </fragment>
 
 
 
@@ -17,7 +21,11 @@
         android:id="@+id/routes_id"
         android:name="com.mad.poleato.Routes.Routes"
         android:label="@string/title_actionbar_deliveryRoutes"
-        tools:layout="@layout/fragment_routes" />
+        tools:layout="@layout/fragment_routes" >
+        <action
+            android:id="@+id/action_routes_id_to_signInActivity"
+            app:destination="@id/signInActivity" />
+    </fragment>
 
 
 
@@ -28,7 +36,14 @@
         tools:layout="@layout/fragment_profile">
         <action
             android:id="@+id/action_mainProfile_id_to_editProfile_id"
-            app:destination="@id/editProfile_id" />
+            app:destination="@id/editProfile_id"
+            app:enterAnim="@anim/fui_slide_in_right"
+            app:popExitAnim="@anim/nav_default_pop_exit_anim" />
+        <action
+            android:id="@+id/action_mainProfile_id_to_signInActivity"
+            app:destination="@id/signInActivity"
+            app:popUpTo="@+id/signInActivity"
+            app:popUpToInclusive="true" />
     </fragment>
     <fragment
         android:id="@+id/editProfile_id"
@@ -39,7 +54,12 @@
             android:id="@+id/action_editProfile_id_to_mainProfile_id"
             app:destination="@id/mainProfile_id"
             app:popUpTo="@+id/mainProfile_id"
-            app:popUpToInclusive="true"/>
+            app:popUpToInclusive="true" />
     </fragment>
+    <activity
+        android:id="@+id/signInActivity"
+        android:name="com.mad.poleato.SignInActivity"
+        android:label="signin_layout"
+        tools:layout="@layout/signin_layout" />
 
 </navigation>
