@@ -12,6 +12,8 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 
+import androidx.navigation.Navigation;
+
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.mad.poleato.R;
@@ -22,10 +24,9 @@ import com.mad.poleato.R;
  */
 public class Routes extends Fragment {
 
-
+    private View view;
     private String currentUserID;
     private FirebaseAuth mAuth;
-
 
 
     public Routes() {
@@ -54,19 +55,24 @@ public class Routes extends Fragment {
                 //logout
                 Log.d("matte", "Logout");
                 FirebaseAuth.getInstance().signOut();
-                //Intent myIntent = new Intent(NavigatorActivity.this, SignInActivity.class);
-                //NavigatorActivity.this.startActivity(myIntent);
+                /**
+                 *  GO TO LOGIN ****
+                 */
+
+                Navigation.findNavController(view).navigate(R.id.action_routes_id_to_signInActivity);
+                getActivity().finish();
                 return true;
             }
         });
-        super.onCreateOptionsMenu(menu,inflater);
+        super.onCreateOptionsMenu(menu, inflater);
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+        view = inflater.inflate(R.layout.fragment_routes, container, false);
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_routes, container, false);
+        return view;
     }
 
 }

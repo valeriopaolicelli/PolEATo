@@ -24,6 +24,8 @@ import android.widget.ExpandableListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.navigation.Navigation;
+
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.ChildEventListener;
@@ -58,6 +60,7 @@ public class ReservationFragment extends Fragment {
     private List<Reservation> reservations;
     private HashMap<String, List<Dish>> listHash = new HashMap<>();
     private List<String> customerDetails;
+    private View view;
     private Display display;
     private Point size;
     private int width;
@@ -145,8 +148,13 @@ public class ReservationFragment extends Fragment {
                 //logout
                 Log.d("matte", "Logout");
                 FirebaseAuth.getInstance().signOut();
-                //Intent myIntent = new Intent(NavigatorActivity.this, SignInActivity.class);
-                //NavigatorActivity.this.startActivity(myIntent);
+
+                /**
+                 *  GO TO LOGIN ****
+                 */
+
+                Navigation.findNavController(view).navigate(R.id.action_reservation_id_to_signInActivity);
+                getActivity().finish();
                 return true;
             }
         });
@@ -157,7 +165,7 @@ public class ReservationFragment extends Fragment {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.reservation_frag_layout, container, false);
+        view = inflater.inflate(R.layout.reservation_frag_layout, container, false);
 
         if(getActivity() != null)
             progressDialog = ProgressDialog.show(getActivity(), "", getString(R.string.loading));
