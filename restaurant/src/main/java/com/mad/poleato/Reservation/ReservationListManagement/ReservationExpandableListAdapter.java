@@ -266,28 +266,32 @@ public class ReservationExpandableListAdapter extends BaseExpandableListAdapter 
                                         @NonNull
                                         @Override
                                         public Transaction.Result doTransaction(@NonNull MutableData mutableData) {
-                                            String foodID = mutableData.getKey();
-                                            if(foodID == null)
+                                            if(mutableData.getChildrenCount() == 0)
                                                 return Transaction.success(mutableData);
-                                            Integer quantity= Integer.parseInt(mutableData.child(foodID).child("Quantity").getValue().toString());
-
-                                            for( Dish d : c.getDishes()){
-                                                if(d.getID().equals(foodID)){
-                                                    if(d.getQuantity() - quantity < 0 ){
-                                                        Toast.makeText(context, "Not enough quantity, please update", Toast.LENGTH_SHORT).show();
-                                                        return Transaction.success(mutableData);
+                                            for(MutableData m : mutableData.getChildren()){
+                                                String foodID= m.getKey();
+                                                Integer quantity= Integer.parseInt(mutableData.child(foodID).child("Quantity").getValue().toString());
+                                                int count= 0;
+                                                for( Dish d : c.getDishes()){
+                                                    if(d.getID().equals(foodID)){
+                                                        if(quantity - d.getQuantity()< 0 ){
+                                                            Toast.makeText(context, "Not enough quantity, please update", Toast.LENGTH_SHORT).show();
+                                                            return Transaction.success(mutableData);
+                                                        }
+                                                        count++;
                                                     }
-                                                    mutableData.child(foodID).child("Quantity").setValue(d.getQuantity()-quantity);
-                                                    c.setStatus(Status.COOKING, context);
-                                                    FirebaseDatabase.getInstance().getReference("restaurants").child(loggedID).child("reservations").child(c.getOrder_id()).child("status").child("en").setValue("Cooking");
-                                                    FirebaseDatabase.getInstance().getReference("restaurants").child(loggedID).child("reservations").child(c.getOrder_id()).child("status").child("it").setValue("Preparazione");
-                                                    holder.button.setText(context.getString(R.string.title_deliver));
-                                                    c.setButtonText(context.getString(R.string.title_deliver));
-                                                    notifyDataSetChanged();
-                                                    return Transaction.success(mutableData);
                                                 }
+                                                m.child("Quantity").setValue((quantity-count));
+                                                //TODO update quantity in food of reservation (list of reservations -> dishes)
                                             }
-                                            return null;
+                                            c.setStatus(Status.COOKING, context);
+                                            FirebaseDatabase.getInstance().getReference("restaurants").child(loggedID).child("reservations").child(c.getOrder_id()).child("status").child("en").setValue("Cooking");
+                                            FirebaseDatabase.getInstance().getReference("restaurants").child(loggedID).child("reservations").child(c.getOrder_id()).child("status").child("it").setValue("Preparazione");
+                                     //TODO next instruction produce error
+                                            //       holder.button.setText(context.getString(R.string.title_deliver));
+                                            c.setButtonText(context.getString(R.string.title_deliver));
+
+                                            return Transaction.success(mutableData);
                                         }
 
                                         @Override
@@ -295,6 +299,7 @@ public class ReservationExpandableListAdapter extends BaseExpandableListAdapter 
                                             Log.d("Fabio", "Transaction completed");
                                         }
                                     });
+                                    notifyDataSetChanged();
                                 }
                             });
                             builder.setNegativeButton(context.getString(R.string.choice_reject), new DialogInterface.OnClickListener() {
