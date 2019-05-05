@@ -21,6 +21,13 @@
     </style>
 
     <style name="FloatLabel" parent="Theme.AppCompat.Light.DarkActionBar">
+        <item name="colorPrimary">@color/colorPanelPrimary</item>
+        <item name="colorError">@color/colorBodyPrimary</item>
+        <item name="android:textColorHint">@color/colorPanelPrimary</item>
+        <item name="android:textSize">20sp</item>
+    </style>
+
+    <style name="FloatLabelSignInUp" parent="Theme.AppCompat.Light.DarkActionBar">
         <item name="colorPrimary">@color/colorBodyPrimary</item>
         <item name="colorError">@color/colorPanelPrimary</item>
         <item name="android:textColorHint">@color/colorBodyPrimary</item>
@@ -29,6 +36,7 @@
         <item name="colorControlNormal">@color/colorBodyPrimary</item>
         <item name="colorControlActivated">@color/colorBodyPrimary</item>
     </style>
+
 
     <style name = "FullScreenDialog" parent = "Theme.MaterialComponents.DialogWhenLarge">
         <item name="android:statusBarColor">@color/colorPrimaryDark</item>
