@@ -83,14 +83,12 @@ public class SignUpActivity extends AppCompatActivity {
 
     public void collectFields(){
         editTextFields.put("Name",(EditText)findViewById(R.id.edName));
-        editTextFields.put("Surname",(EditText)findViewById(R.id.edSurname));
         editTextFields.put("Address",(EditText)findViewById(R.id.edAddress));
         editTextFields.put("Email",(EditText)findViewById(R.id.edEmail));
         editTextFields.put("Phone",(EditText)findViewById(R.id.edPhone));
         editTextFields.put("Password",(EditText)findViewById(R.id.edPassword));
 
         imageButtons.put("Name", (ImageButton)findViewById(R.id.cancel_name));
-        imageButtons.put("Surname", (ImageButton)findViewById(R.id.cancel_surname));
         imageButtons.put("Address", (ImageButton)findViewById(R.id.cancel_address));
         imageButtons.put("Email", (ImageButton)findViewById(R.id.cancel_email));
         imageButtons.put("Phone", (ImageButton)findViewById(R.id.cancel_phone));
@@ -105,8 +103,6 @@ public class SignUpActivity extends AppCompatActivity {
             editTextFields.get("Password").setText("");
         else if (view.getId() == R.id.cancel_name)
             editTextFields.get("Name").setText("");
-        else if(view.getId() == R.id.cancel_surname)
-            editTextFields.get("Surname").setText("");
         else if(view.getId() == R.id.cancel_address)
             editTextFields.get("Address").setText("");
         else if(view.getId() == R.id.cancel_phone)
