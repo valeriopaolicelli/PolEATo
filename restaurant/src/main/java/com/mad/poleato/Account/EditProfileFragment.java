@@ -171,7 +171,6 @@ public class EditProfileFragment extends Fragment {
         imageButtons = new HashMap<>();
         checkBoxes = new HashMap<>();
         checkedTypes = new HashSet<>();
-        imageButtons = new HashMap<>();
 
         mAuth = FirebaseAuth.getInstance();
         FirebaseUser currentUser = mAuth.getCurrentUser();
