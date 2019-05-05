@@ -1,7 +1,5 @@
 package com.mad.poleato;
 
-import android.graphics.Bitmap;
-
 
 import com.google.firebase.database.Exclude;
 
@@ -17,16 +15,26 @@ public class Food implements Serializable {
     private Integer quantity;
     private Integer selectedQuantity;
     private String customerNotes;
+    private String foodID;
 
 
-    Food(SerialBitmap img, String name, String description, Double price, int quantity){
+    Food(String foodID, SerialBitmap img, String name, String description, Double price, int quantity){
 
         this.img = img;
         this.name = name;
         this.description = description;
         this.price = price;
         this.quantity = quantity;
+        this.foodID = foodID;
         this.selectedQuantity = 0;
+    }
+
+    public String getFoodID() {
+        return foodID;
+    }
+
+    public void setFoodID(String foodID) {
+        this.foodID = foodID;
     }
 
     @Exclude

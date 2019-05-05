@@ -174,9 +174,6 @@ public class MyViewModel extends ViewModel {
             }
         });
 
-
-
-
         reference.addChildEventListener(new ChildEventListener() {
             @Override
             public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
@@ -321,11 +318,6 @@ public class MyViewModel extends ViewModel {
 
             }
         });
-
-
-
-
-
     }
 
 }
