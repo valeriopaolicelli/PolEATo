@@ -233,7 +233,8 @@ public class SignUpActivity extends AppCompatActivity {
                             reference.child("IsActive").setValue("true");
                             reference.child("Info").setValue("");
                             reference.child("PriceRange").setValue("");
-                            reference.child("Type").setValue("");
+                            reference.child("Type").child("it").setValue("");
+                            reference.child("Type").child("en").setValue("");
 
                             access();
                         } else {
