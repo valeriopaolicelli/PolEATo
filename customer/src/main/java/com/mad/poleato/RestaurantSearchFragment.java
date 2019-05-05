@@ -260,15 +260,32 @@ public class RestaurantSearchFragment extends Fragment {
                     double deliveryCost = Double.parseDouble(dataSnapshot.child("DeliveryCost").getValue().toString().replace(",", "."));
                     String imageUrl = dataSnapshot.child("photoUrl").getValue().toString();
 
-                    Restaurant resObj = restaurantMap.get(id);
-                    resObj.setName(name);
-                    resObj.setType(type);
-                    resObj.setIsOpen(isOpen);
-                    resObj.setPriceRange(priceRange);
-                    resObj.setDeliveryCost(deliveryCost);
-                    //insert the element by keeping the actual order after checking the filter
-                    if (isValidToDisplay(resObj))
-                        recyclerAdapter.updateLayout();
+                    Restaurant resObj;
+                    if(restaurantMap.containsKey(id)) {
+                        resObj = restaurantMap.get(id);
+                        resObj.setName(name);
+                        resObj.setType(type);
+                        resObj.setIsOpen(isOpen);
+                        resObj.setPriceRange(priceRange);
+                        resObj.setDeliveryCost(deliveryCost);
+                        //recyclerAdapter.updateLayout();
+                        //insert the element by keeping the actual order after checking the filter
+                        if (isValidToDisplay(resObj)) {
+                            if(!currDisplayedList.contains(resObj))
+                                addToDisplay(resObj);
+                            else
+                                recyclerAdapter.updateLayout();
+                        }
+                        else if(currDisplayedList.contains(resObj))
+                            removeFromDisplay(resObj);
+                    }
+                    else {
+                        resObj= new Restaurant(id, null, name, type, isOpen, priceRange, deliveryCost);
+                        restaurantMap.put(id, resObj);
+                        restaurantList.add(resObj);
+                        if (isValidToDisplay(resObj))
+                            addToDisplay(resObj);
+                    }
 
                     //check the new image
                     StorageReference photoReference = FirebaseStorage.getInstance().getReferenceFromUrl(imageUrl);

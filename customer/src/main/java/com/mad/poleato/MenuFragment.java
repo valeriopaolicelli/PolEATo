@@ -247,7 +247,7 @@ public class MenuFragment extends Fragment {
                      */
                     final int curr_index = listDataChild.get(category).size() - 1;
                     StorageReference photoReference = FirebaseStorage.getInstance().getReferenceFromUrl(imageUrl);
-                    final long ONE_MEGABYTE = 1024 * 1024;
+                    final long ONE_MEGABYTE = 256 * 256;
                     photoReference.getBytes(ONE_MEGABYTE).addOnSuccessListener(new OnSuccessListener<byte[]>() {
                         @Override
                         public void onSuccess(byte[] bytes) {
@@ -293,7 +293,7 @@ public class MenuFragment extends Fragment {
                             .replace(",", "."));
                     final String category = dataSnapshot.child("Category").getValue().toString();
                     final String imageUrl = dataSnapshot.child("photoUrl").getValue().toString();
-
+/*
                     int toDelete = -1;
                     for(int idx = 0; idx < listDataChild.get(category).size(); idx ++){
                         if(listDataChild.get(category).get(idx).getFoodID().equals(id)){
@@ -303,7 +303,7 @@ public class MenuFragment extends Fragment {
                     }
                     if(toDelete != -1)
                         listDataChild.get(category).remove(toDelete);
-
+*/
                     Food f = new Food(id, img, name, description, price, quantity);
 
                     if(!listDataGroup.contains(category))
@@ -316,7 +316,7 @@ public class MenuFragment extends Fragment {
                     final int curr_index = listDataChild.get(category).size()-1;
 
                     StorageReference photoReference = FirebaseStorage.getInstance().getReferenceFromUrl(imageUrl);
-                    final long ONE_MEGABYTE = 1024 * 1024;
+                    final long ONE_MEGABYTE = 256 * 256;
                     photoReference.getBytes(ONE_MEGABYTE).addOnSuccessListener(new OnSuccessListener<byte[]>() {
                         @Override
                         public void onSuccess(byte[] bytes) {

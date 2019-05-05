@@ -367,15 +367,15 @@ public class ReservationFragment extends Fragment {
                             status, null, totalPrice, getActivity().getApplicationContext());
 
                     // if the status is changed (onclick listener) the order must change only and not re-added
-                    listHash.put(order_id, dishes);
                     if(!listHash.containsKey(order_id)){
                         reservations.add(r);
                     }
-                    else{
-                        for(Reservation res : reservations)
+                    listHash.put(order_id, dishes);
+
+                    for(Reservation res : reservations)
                             if(res.getOrder_id().equals(order_id))
                                 res.setStat(status);
-                    }
+
                     listAdapter.notifyDataSetChanged();
 
                 }
