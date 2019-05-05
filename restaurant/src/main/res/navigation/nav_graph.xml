@@ -42,21 +42,11 @@
             android:id="@+id/action_editFoodFragment_id_to_daily_offer_id"
             app:destination="@id/daily_offer_id" />
         <argument
-            android:name="name"
-            app:argType="string"
-            app:nullable="true" />
+            android:name="id"
+            app:argType="string" />
         <argument
-            android:name="description"
-            app:argType="string"
-            app:nullable="true" />
-        <argument
-            android:name="price"
-            app:argType="string"
-            app:nullable="true" />
-        <argument
-            android:name="quantity"
-            app:argType="string"
-            app:nullable="true" />
+            android:name="category"
+            app:argType="string" />
     </fragment>
 
 
