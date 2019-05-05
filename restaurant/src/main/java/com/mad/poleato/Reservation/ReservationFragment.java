@@ -240,9 +240,6 @@ public class ReservationFragment extends Fragment {
                     final String status = dataSnapshot.child("status").child(localeShort).getValue().toString();
                     final String totalPrice= dataSnapshot.child("totalPrice").getValue().toString();
 
-
-                    //TODO update with proper date, time and notes
-
                     //Retrieve through customerID the details of the customer
                     customer= FirebaseDatabase.getInstance().getReference("customers").child(customer_id);
 
@@ -272,6 +269,7 @@ public class ReservationFragment extends Fragment {
                     //and for each customer (reservation) retrieve the list of dishes
                     DataSnapshot dishesOfReservation = dataSnapshot.child("dishes");
                     String nameDish;
+                    String foodID;
                     int quantity;
                     Dish d;
 
@@ -279,8 +277,9 @@ public class ReservationFragment extends Fragment {
                         nameDish = dish.child("name").getValue().toString();
                         quantity = Integer.parseInt(dish.child("selectedQuantity").getValue().toString());
                         note= dish.child("customerNotes").getValue().toString();
+                        foodID = dish.child("foodID").getValue().toString();
 
-                        d = new Dish(nameDish, quantity, note);
+                        d = new Dish(foodID, nameDish, quantity, note);
                         r.addDishtoReservation(d);
                     }
                     listHash.put(r.getOrder_id(), r.getDishes());
@@ -314,8 +313,6 @@ public class ReservationFragment extends Fragment {
                     String note= null;
                     ArrayList<Dish> dishes= new ArrayList<>();
 
-                    //TODO update with proper date, time and notes
-
                     //Retrieve through customerID the details of the customer
                     customer= FirebaseDatabase.getInstance().getReference("customers").child(customer_id);
                     readData(new FirebaseCallBack() {
@@ -338,13 +335,15 @@ public class ReservationFragment extends Fragment {
                     //and for each customer (reservation) retrieve the list of dishes
                     DataSnapshot dishesOfReservation = dataSnapshot.child("dishes");
                     String nameDish;
+                    String foodID;
                     int quantity;
                     Dish d;
 
                     for (DataSnapshot dish : dishesOfReservation.getChildren()) {
                         nameDish = dish.child("name").getValue().toString();
                         quantity = Integer.parseInt(dish.child("selectedQuantity").getValue().toString());
-                        d = new Dish(nameDish, quantity, note);
+                        foodID = dish.child("foodID").getValue().toString();
+                        d = new Dish(foodID,nameDish, quantity, note);
                         dishes.add(d);
                     }
 
