@@ -7,7 +7,7 @@
     android:layout_height="match_parent"
     android:background="@color/colorBodyPrimary"
     android:id="@+id/editScrollView"
-    tools:context=".EditProfile">
+    tools:context=".EditProfile2">
     <android.support.constraint.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
@@ -75,6 +75,7 @@
             android:id="@+id/input_layout_name"
             android:layout_width="0dp"
             android:layout_height="56dp"
+            android:layout_marginTop="12dp"
             android:layout_marginBottom="8dp"
             android:theme="@style/FloatLabel"
             app:layout_constraintBottom_toTopOf="@id/input_layout_surname"

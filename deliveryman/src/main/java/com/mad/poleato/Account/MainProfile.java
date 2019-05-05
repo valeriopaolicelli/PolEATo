@@ -93,7 +93,6 @@ public class MainProfile extends Fragment {
 
     }
 
-    //TODO michelangelo
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         menu.clear();
