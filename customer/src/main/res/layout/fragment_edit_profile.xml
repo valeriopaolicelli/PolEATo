@@ -348,7 +348,7 @@
             android:checked="false"
             android:gravity="start"
             android:text="@string/ch_pass"
-            android:textColor="@color/colorTextSubField"
+            android:textColor="@color/colorPanelPrimary"
             app:layout_constraintBottom_toTopOf="@id/input_layout_old_password"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toEndOf="@id/password_icon"

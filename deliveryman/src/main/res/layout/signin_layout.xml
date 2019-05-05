@@ -16,7 +16,7 @@
             android:id="@+id/app_icon"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="24dp"
+            android:layout_marginTop="8dp"
             android:background="@color/colorPanelPrimary"
             android:src="@mipmap/delivery_icon"
             app:layout_constraintBottom_toTopOf="@id/tvTitle"
@@ -29,15 +29,15 @@
             android:id="@+id/tvTitle"
             android:layout_width="wrap_content"
             android:layout_height="108dp"
+            android:layout_marginBottom="40dp"
             android:text="PolEATo"
             android:textColor="#ffffff"
-            android:layout_marginBottom="50dp"
             android:textSize="80sp"
             android:textStyle="italic|bold"
-            app:layout_constraintTop_toBottomOf="@id/app_icon"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintBottom_toTopOf="@id/google_button"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/app_icon"
             tools:ignore="HardcodedText" />
 
         <com.google.android.gms.common.SignInButton
@@ -75,7 +75,7 @@
             android:layout_marginStart="32dp"
             android:layout_marginTop="24dp"
             android:layout_marginBottom="32dp"
-            android:theme="@style/FloatLabel"
+            android:theme="@style/FloatLabelSignInUp"
             app:layout_constraintBottom_toTopOf="@id/tiPassword"
             app:layout_constraintEnd_toStartOf="@id/cancel_email"
             app:layout_constraintStart_toStartOf="parent"
@@ -91,7 +91,7 @@
                 android:inputType="textEmailAddress"
                 android:maxLength="40"
                 android:singleLine="true"
-                android:textColor="@color/colorTextSubField"
+                android:textColor="@color/colorBodyPrimary"
                 tools:ignore="Autofill" />
         </android.support.design.widget.TextInputLayout>
 
@@ -115,7 +115,7 @@
             android:layout_height="56dp"
             android:layout_marginBottom="32dp"
             android:layout_marginStart="32dp"
-            android:theme="@style/FloatLabel"
+            android:theme="@style/FloatLabelSignInUp"
             app:layout_constraintTop_toBottomOf="@id/tiEmail"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toStartOf="@id/cancel_password"
