@@ -63,6 +63,7 @@
 
 
     <!-- Login strings -->
+    <string name="password"><font size="18">Password</font></string>
     <string name="signin">Accedi</string>
     <string name="signup">Registrati</string>
     <string name="logout">Esci</string>

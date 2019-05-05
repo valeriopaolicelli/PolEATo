@@ -314,10 +314,11 @@ public class ReservationExpandableListAdapter extends BaseExpandableListAdapter 
                             //TODO retrieve real user id of rider from db
                             String childID = riderIDs.get(selectedRider);
                             DatabaseReference reservationRider = referenceRider.child(childID).child("reservations").push();
-                            String reservationRiderID = reservationRider.getKey();
+
                             if (dataSnapshotRestaurant.exists() &&
                                     dataSnapshotRestaurant.hasChild("Address") &&
                                     dataSnapshotRestaurant.hasChild("Name")) {
+
                                 addressRestaurant[0] = dataSnapshotRestaurant.child("Address").getValue().toString();
                                 nameRestaurant[0] = dataSnapshotRestaurant.child("Name").getValue().toString();
                                 if (notify) {

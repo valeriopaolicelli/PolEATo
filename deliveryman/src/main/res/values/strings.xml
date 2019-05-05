@@ -63,6 +63,7 @@
     <string name="no">No</string>
 
     <!-- Login string -->
+    <string name="password"><font size="18">Password</font></string>
     <string name="signin">Sign in</string>
     <string name="signup">Sign up</string>
     <string name="logout">Logout</string>

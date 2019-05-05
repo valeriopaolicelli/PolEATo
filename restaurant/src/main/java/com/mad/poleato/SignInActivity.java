@@ -6,10 +6,13 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.Toast;
 
 import com.facebook.login.widget.LoginButton;
@@ -34,8 +37,8 @@ public class SignInActivity extends AppCompatActivity {
     private FirebaseAuth mAuth;
     private GoogleSignInClient mGoogleSignInClient;
 
-
     private EditText edPassword, edEmail;
+    private ImageButton cancPassword, cancEmail;
     private Button signInButton, signUpButton;
     private SignInButton googleButton;
     private LoginButton facebookButton;
@@ -63,7 +66,10 @@ public class SignInActivity extends AppCompatActivity {
 
         //search for the views
         edPassword = (EditText) findViewById(R.id.edPassword);
+        cancPassword= (ImageButton) findViewById(R.id.cancel_password);
         edEmail = (EditText) findViewById(R.id.edEmail);
+        cancEmail= (ImageButton) findViewById(R.id.cancel_email);
+
         googleButton = (SignInButton) findViewById(R.id.google_button);
         googleButton.setSize(SignInButton.SIZE_STANDARD);
         facebookButton = (LoginButton) findViewById(R.id.facebook_button);
@@ -76,6 +82,14 @@ public class SignInActivity extends AppCompatActivity {
         signInButton.setOnClickListener(signInRoutine);
         signUpButton.setOnClickListener(signInRoutine);
 
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+        handleButton();
+        buttonListener();
     }
 
     @Override
@@ -223,7 +237,103 @@ public class SignInActivity extends AppCompatActivity {
                 });
     }
 
+    public void clearText(View view) {
+        if(view.getId() == R.id.cancel_email)
+            edEmail.setText("");
+        else if(view.getId() == R.id.cancel_password)
+            edPassword.setText("");
+    }
 
 
+    public void handleButton(){
+        cancEmail.setVisibility(View.INVISIBLE);
+        cancPassword.setVisibility(View.INVISIBLE);
 
+        edEmail.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+            @Override
+            public void onFocusChange(View view, boolean hasFocus) {
+                if (hasFocus)
+                    showButton(edEmail, cancEmail);
+                else
+                    hideButton(cancEmail);
+            }
+        });
+
+        edEmail.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                showButton(edEmail, cancEmail);
+            }
+        });
+
+        edPassword.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+            @Override
+            public void onFocusChange(View view, boolean hasFocus) {
+                if (hasFocus)
+                    showButton(edPassword, cancPassword);
+                else
+                    hideButton(cancPassword);
+            }
+        });
+
+        edPassword.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                showButton(edPassword, cancPassword);
+            }
+        });
+    }
+
+    public void buttonListener(){
+        edEmail.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+                if(edEmail.isFocused())
+                    showButton(edEmail, cancEmail);
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                if(edEmail.isFocused())
+                    showButton(edEmail, cancEmail);
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                if(edEmail.isFocused())
+                    showButton(edEmail, cancEmail);
+            }
+        });
+
+        edPassword.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+                if(edPassword.isFocused())
+                    showButton(edPassword, cancPassword);
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                if(edPassword.isFocused())
+                    showButton(edPassword, cancPassword);
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                if(edPassword.isFocused())
+                    showButton(edPassword, cancPassword);
+            }
+        });
+    }
+
+    public void showButton(EditText field, ImageButton button){
+        if(field.getText().toString().length()>0)
+            button.setVisibility(View.VISIBLE);
+        else
+            button.setVisibility(View.INVISIBLE);
+    }
+
+    public void hideButton(ImageButton button){
+        button.setVisibility(View.INVISIBLE);
+    }
 }

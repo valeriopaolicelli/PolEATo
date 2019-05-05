@@ -349,7 +349,7 @@ public class ReservationFragment extends Fragment {
                     }
 
                     Reservation r = new Reservation(order_id, null, null, null, date, time,
-                            status, null, totalPrice, getActivity());
+                            status, null, totalPrice, getActivity().getApplicationContext());
 
                     // if the status is changed (onclick listener) the order must change only and not re-added
                     listHash.put(order_id, dishes);
