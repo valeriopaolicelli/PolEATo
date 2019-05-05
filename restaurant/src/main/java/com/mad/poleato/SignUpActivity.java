@@ -262,7 +262,7 @@ public class SignUpActivity extends AppCompatActivity {
                 .getReference()
                 .child( currentUserID +"/ProfileImage/"+currentUserID+".jpg");
 
-        Bitmap bitmap= BitmapFactory.decodeResource(getResources(), R.drawable.empty_background);
+        Bitmap bitmap= BitmapFactory.decodeResource(getResources(), R.drawable.plate_fork);
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         bitmap.compress(Bitmap.CompressFormat.JPEG, 20, baos);
         byte[] data = baos.toByteArray();
