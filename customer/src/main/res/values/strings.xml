@@ -31,7 +31,6 @@
     <string name="free_delivery">Free</string>
     <string name="date">Date</string>
     <string name="time">Time</string>
-    <string name="loading">Loading</string>
     <string name="status">Status</string>
     <string name="new_order">New order</string>
     <string name="cooking">Cooking</string>
@@ -77,7 +76,6 @@
     <string name="specify_time">Specify the time to receive the order</string>
 
 
-
     <string name="active_status"><font size="18">Active</font></string>
     <string name="inactive_status"><font size="18">Inactive</font></string>
     <string name="current_status"><font size="18">Your status</font></string>
@@ -89,25 +87,28 @@
 
     <string name="title_bottombar_historyOrder">Orders</string>
     <string name="title_actionbar_historyOrder">Orders</string>
-    <string name="title_actionbar_add_food">Add food</string>
-    <string name="title_actionbar_edit_food">Edit food</string>
+
 
     <string name="title_bottombar_account">Account</string>
     <string name="title_actionbar_account">Account</string>
     <string name="title_actionbar_edit_account">Edit Account</string>
 
+    <string name="loading">Loading</string>
+    <string name="failure">Something goes wrong</string>
+    <string name="saved">Saved</string>
+    <string name="saving">Saving changes</string>
+
 
     <!-- Login string -->
     <string name="signin">Sign in</string>
     <string name="signup">Sign up</string>
-    <string name="failure">Something goes wrong</string>
-    <string name="saved">Saved</string>
     <string name="logout">Logout</string>
     <string name="void_fields">Void fields</string>
     <string name="login_succ">Logged in!</string>
     <string name="login_fail">Authentication failed.</string>
     <string name="creation_succ">Account created!</string>
     <string name="creation_fail">Account creation failed! Email must be valid and password composed by at least 6 characters</string>
+
 
 
 </resources>
