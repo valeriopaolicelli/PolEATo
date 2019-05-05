@@ -230,9 +230,9 @@ public class SignUpActivity extends AppCompatActivity {
                             reference.child("Phone").setValue(editTextFields.get("Phone").getText().toString());
                             reference.child("photoUrl").setValue("");
                             reference.child("DeliveryCost").setValue("0");
-                            reference.child("IsActive").setValue("true");
+                            reference.child("IsActive").setValue(true);
                             reference.child("Info").setValue("");
-                            reference.child("PriceRange").setValue("");
+                            reference.child("PriceRange").setValue("0");
                             reference.child("Type").child("it").setValue("");
                             reference.child("Type").child("en").setValue("");
 

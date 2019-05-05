@@ -200,7 +200,7 @@ public class SignUpActivity extends AppCompatActivity {
                             // Sign in success, update UI with the signed-in user's information
                             Log.d("matte", "createUserWithEmail:success");
                             FirebaseUser user = mAuth.getCurrentUser();
-                            dbReference.child(user.getUid()).setValue("deliveryman");
+                            dbReference.child("users").child(user.getUid()).setValue("deliveryman");
                             myToast.setText(getString(R.string.creation_succ));
                             myToast.show();
 
@@ -230,7 +230,7 @@ public class SignUpActivity extends AppCompatActivity {
                             reference.child(user.getUid()).child("Email").setValue(email);
                             reference.child(user.getUid()).child("Address").setValue(address);
                             reference.child(user.getUid()).child("Phone").setValue(editTextFields.get("Phone").getText().toString());
-                            reference.child(user.getUid()).child("isActive").setValue("true");
+                            reference.child(user.getUid()).child("IsActive").setValue(true);
                             reference.child(user.getUid()).child("photoUrl").setValue("");
 
                             access();
