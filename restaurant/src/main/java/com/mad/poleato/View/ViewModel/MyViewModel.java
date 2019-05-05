@@ -62,7 +62,9 @@ public class MyViewModel extends ViewModel {
     }
 
     public void setImg(String groupTag, int idx, Bitmap img){
+
         _listDataChild.getValue().get(groupTag).get(idx).setImg(img);
+
     }
 
     public Food getChild(final int groupPosition, final int childPosition){
@@ -85,6 +87,18 @@ public class MyViewModel extends ViewModel {
     public void removeChild(String groupTag, final int childPosition){
         this._listDataChild.getValue().get(groupTag).remove(childPosition);
 
+    }
+
+    public void removeChild(String groupTag, String childID){
+        int toRemove = 0;
+        for(Food f : _listDataChild.getValue().get(groupTag)){
+            if(f.getId().equals(childID)){
+                break;
+            }
+            toRemove ++;
+        }
+
+        removeChild(groupTag, toRemove);
     }
 
     public Object getGroup(int groupPosition) {
@@ -184,7 +198,7 @@ public class MyViewModel extends ViewModel {
                     final String category = dataSnapshot.child("Category").getValue().toString();
                     final String imageUrl = dataSnapshot.child("photoUrl").getValue().toString();
 
-                    Food f = new Food(id, img, name, description, price, quantity);
+                    Food f = new Food(id, img, name, description, price, quantity, category);
                     insertChild(category, f);
                     final int curr_index = _listDataChild.getValue().get(category).size() - 1;
 
@@ -209,6 +223,8 @@ public class MyViewModel extends ViewModel {
 
 
                 }
+
+
             }
 
             @Override
@@ -244,7 +260,7 @@ public class MyViewModel extends ViewModel {
                         removeChild(category, toDelete);
 
 
-                    Food f = new Food(id, img, name, description, price, quantity);
+                    Food f = new Food(id, img, name, description, price, quantity, category);
                     insertChild(category, f);
                     final int curr_index = _listDataChild.getValue().get(category).size()-1;
 
@@ -269,6 +285,7 @@ public class MyViewModel extends ViewModel {
                     });
 
                 }
+
             }
 
             @Override
@@ -288,6 +305,7 @@ public class MyViewModel extends ViewModel {
                     if(toDelete != -1)
                         removeChild(category, toDelete);
                 }
+
             }
 
             @Override
@@ -301,4 +319,5 @@ public class MyViewModel extends ViewModel {
             }
         });
     }
+
 }

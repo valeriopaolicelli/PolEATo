@@ -166,11 +166,9 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
                          */
                         DailyOfferFragmentDirections.ActionDailyOfferIdToEditFoodFragmentId action =
                                         DailyOfferFragmentDirections
-                                                .actionDailyOfferIdToEditFoodFragmentId("name", "description", "price", "quantity");
-                        action.setName(holder.name.getText().toString());
-                        action.setDescription(holder.description.getText().toString());
-                        action.setPrice(holder.price.getText().toString());
-                        action.setQuantity(holder.quantity.getText().toString());
+                                                .actionDailyOfferIdToEditFoodFragmentId("ID", "Category");
+                        action.setId(f.getId());
+                        action.setCategory(f.getCategory());
                         Navigation.findNavController(finalConvertView).navigate(action);
 
                         return false;
