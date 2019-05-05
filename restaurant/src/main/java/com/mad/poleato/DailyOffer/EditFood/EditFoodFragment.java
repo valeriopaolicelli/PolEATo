@@ -1,6 +1,7 @@
 package com.mad.poleato.DailyOffer.EditFood;
 
 import android.app.Dialog;
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -10,6 +11,8 @@ import android.media.ExifInterface;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
+import android.os.Handler;
+import android.os.Message;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -26,16 +29,31 @@ import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.Spinner;
 import android.widget.Toast;
 
 import androidx.navigation.NavDirections;
 import androidx.navigation.Navigation;
 
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
 import com.mad.poleato.DailyOffer.DailyOfferFragmentDirections;
+import com.mad.poleato.DailyOffer.DishCategoryTranslator;
 import com.mad.poleato.DailyOffer.Food;
 import com.mad.poleato.R;
 
@@ -44,6 +62,9 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.HashMap;
+import java.util.Locale;
+import java.util.Map;
 import java.util.TreeMap;
 
 
@@ -52,22 +73,356 @@ import static android.app.Activity.RESULT_OK;
 
 public class EditFoodFragment extends DialogFragment {
 
+    private Toast myToast;
+
     private static final int REQUEST_TAKE_PHOTO = 1;
     private static final int RESULT_LOAD_IMG = 2;
     private String currentPhotoPath;
+    private View v; //this view
 
 
     private FloatingActionButton change_im;
     private ImageView imageFood;
-    private String image;
+    private Spinner spinnerFood;
+    private String dishCategory;
 
-    private TreeMap<String, ImageButton> imageButtons= new TreeMap<>();
-    private TreeMap<String,EditText> editTextFields= new TreeMap<>();
+    private Map<String, ImageButton> imageButtons;
+    private Map<String,EditText> editTextFields;
 
     private Button buttonSave;
+    private DishCategoryTranslator translator;
 
-    private Food toModify;
-    private Bundle bundle;
+    //price ranges
+    private int firstRange = 7;
+    private int secondRange = 15;
+    private int thirdRange = 24;
+
+    private DatabaseReference reference;
+    private String localeShort;
+    private String currentUserID;
+    private FirebaseAuth mAuth;
+
+    private ProgressDialog progressDialog;
+    private Handler handler = new Handler() {
+        @Override
+        public void handleMessage(Message msg) {
+            progressDialog.dismiss();
+        }
+    };
+
+    //to map each category name to the position inside the spinner
+    private Map<String, Integer> spinnerCategoryPosition;
+
+
+
+
+    /* ***********************************
+     ********   ANDROID CALLBACKS   ****
+     *********************************** */
+
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        myToast = Toast.makeText(getActivity(), "", Toast.LENGTH_SHORT);
+
+        //translate the food Category based on the current active Locale
+        String locale = Locale.getDefault().toString();
+        Log.d("matte", "LOCALE: "+locale);
+        localeShort = locale.substring(0, 2);
+
+        translator = new DishCategoryTranslator();
+        spinnerCategoryPosition = new HashMap<>();
+        spinnerCategoryPosition.put("Starters", 0);
+        spinnerCategoryPosition.put("Firsts", 1);
+        spinnerCategoryPosition.put("Seconds", 2);
+        spinnerCategoryPosition.put("Desserts", 3);
+        spinnerCategoryPosition.put("Drinks", 4);
+
+        mAuth = FirebaseAuth.getInstance();
+        FirebaseUser currentUser = mAuth.getCurrentUser();
+        currentUserID = currentUser.getUid();
+
+
+    }
+
+
+
+    @Override
+    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
+                             @Nullable Bundle savedInstanceState) {
+        v = inflater.inflate(R.layout.edit_food_fragment, container, false);
+
+        //collects the editText
+        editTextFields = new HashMap<>();
+        editTextFields.put("Name", (EditText) v.findViewById(R.id.nameFood));
+        editTextFields.put("Description", (EditText) v.findViewById(R.id.editDescription));
+        editTextFields.put("Price", (EditText) v.findViewById(R.id.editPrice));
+        editTextFields.put("Quantity", (EditText) v.findViewById(R.id.editQuantity));
+
+        //collects the X imageButtons
+        imageButtons = new HashMap<>();
+        imageButtons.put("Name", (ImageButton) v.findViewById(R.id.cancel_name));
+        imageButtons.put("Description", (ImageButton) v.findViewById(R.id.cancel_description));
+        imageButtons.put("Price", (ImageButton) v.findViewById(R.id.cancel_price));
+        imageButtons.put("Quantity", (ImageButton) v.findViewById(R.id.cancel_quantity));
+
+        //set the listener for the X imageButtons to clear the text
+        for (ImageButton b : imageButtons.values()) {
+            b.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    clearText(v);
+                }
+            });
+        }
+
+
+        //retrieve the spinnerFood for the category
+        spinnerFood = (Spinner) v.findViewById(R.id.spinnerFood);
+        /** Create an ArrayAdapter using the string array and a default spinner layout */
+        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(getContext(),
+                R.array.plates_array, android.R.layout.simple_spinner_item);
+        /** Specify the layout to use when the list of choices appears */
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        /** Apply the adapter to the spinner */
+        spinnerFood.setAdapter(adapter);
+        spinnerFood.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                //if italian then translate to eng before push to the DB
+                if(localeShort.equals("it"))
+                    dishCategory = translator.translate(parent.getItemAtPosition(position).toString());
+                else
+                    dishCategory = parent.getItemAtPosition(position).toString();
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+
+            }
+        });
+
+        change_im = v.findViewById(R.id.frag_change_im);
+        imageFood = v.findViewById(R.id.imageFood);
+        buttonSave = v.findViewById(R.id.button_frag_save);
+
+
+        handleButton();
+        buttonListener();
+        // Set listener to send DATA to main activity that sends them to DailyOfferFragment
+
+        //set the listener for the X imageButtons to clear the text
+        for (ImageButton b : imageButtons.values()) {
+            b.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    clearText(v);
+                }
+            });
+        }
+
+        //set the listener to change the image
+        change_im.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                changeImage(v);
+            }
+        });
+
+        //fill the fields with initial values (uses FireBase)
+        if(getActivity() != null)
+            progressDialog = ProgressDialog.show(getActivity(), "", getString(R.string.loading));
+
+        fillFields();
+
+        return v;
+    }
+
+
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        handleButton();
+        buttonListener();
+    }
+
+
+
+    private void fillFields(){
+
+        //Download text infos
+        reference = FirebaseDatabase.getInstance().getReference("restaurants/"+currentUserID+"/Menu/"+toModifyID);
+
+        reference.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+
+                if(dataSnapshot.hasChild("Name") &&
+                        dataSnapshot.hasChild("Description") &&
+                        dataSnapshot.hasChild("Price") &&
+                        dataSnapshot.hasChild("Quantity") &&
+                        dataSnapshot.hasChild("Category") &&
+                        dataSnapshot.hasChild("photoUrl"))
+                {
+                    // it is setted to the first record (restaurant)
+                    // when the sign in and log in procedures will be handled, it will be the proper one
+                    if (dataSnapshot.exists()) {
+
+                        // dataSnapshot is the "issue" node with all children
+                        for (DataSnapshot snap : dataSnapshot.getChildren()) {
+
+                            if(editTextFields.containsKey(snap.getKey())) {
+                                editTextFields.get(snap.getKey()).setText(snap.getValue().toString());
+                            }
+                            else if(snap.getKey().equals("Category")){
+                                //set the correct spinner item
+                             spinnerFood.setSelection(spinnerCategoryPosition.get(snap.getValue().toString()));
+                            }
+                        } //for end
+
+                    }
+                } //end if
+
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+                Log.d("matte", "onCancelled | ERROR: " + databaseError.getDetails() +
+                        " | MESSAGE: " + databaseError.getMessage());
+                myToast.setText(databaseError.getMessage().toString());
+                myToast.show();
+            }
+        });
+
+
+        //Download the profile pic
+        StorageReference storageReference = FirebaseStorage.getInstance().getReference();
+        StorageReference photoReference= storageReference.child(currentUserID +"/ProfileImage/img.jpg");
+
+        final long ONE_MEGABYTE = 1024 * 1024;
+        photoReference.getBytes(ONE_MEGABYTE).addOnSuccessListener(new OnSuccessListener<byte[]>() {
+            @Override
+            public void onSuccess(byte[] bytes) {
+                Bitmap bmp = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
+                profileImage.setImageBitmap(bmp);
+                if(progressDialog.isShowing())
+                    handler.sendEmptyMessage(0);
+
+            }
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception exception) {
+                Log.d("matte", "No image found. Default img setting");
+                //set default image if no image was set
+                profileImage.setImageResource(R.drawable.plate_fork);
+                if(progressDialog.isShowing())
+                    handler.sendEmptyMessage(0);
+            }
+        });
+
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    private void saveChanges(){
+
+        boolean wrongField= false;
+        String[] fieldName = {"Name", "Description", "Price", "Quantity"};
+        for (int i = 0; i < fieldName.length; i++) {
+            EditText field = editTextFields.get(fieldName[i]);
+            if(field != null){
+                if (field.getText().toString().equals("")) {
+                    Toast.makeText(getContext(), getContext().getString(R.string.empty_field), Toast.LENGTH_LONG).show();
+                    field.setBackground(ContextCompat.getDrawable(getContext(), R.drawable.border_wrong_field));
+                    wrongField = true;
+                } else
+                    field.setBackground(ContextCompat.getDrawable(getContext(), R.drawable.border_right_field));
+            }
+            else
+                return;
+        }
+        if(!editTextFields.get("Price").getText().toString().matches("[0-9]+([\\.\\,][0-9]+)?") ){
+            Toast.makeText(getContext(), getContext().getString(R.string.error_format_price), Toast.LENGTH_LONG).show();
+            editTextFields.get("Price").setBackground(ContextCompat.getDrawable(getContext(), R.drawable.border_wrong_field));
+            wrongField = true;
+        }
+        if(!editTextFields.get("Quantity").getText().toString().matches("[0-9]+") ){
+            Toast.makeText(getContext(), getContext().getString(R.string.error_format_quantity), Toast.LENGTH_LONG).show();
+            editTextFields.get("Quantity").setBackground(ContextCompat.getDrawable(getContext(), R.drawable.border_wrong_field));
+            wrongField = true;
+        }
+        if(!wrongField){
+                    /*Food food = new Food(((BitmapDrawable) imageFood.getDrawable()).getBitmap()
+                            , editTextFields.get("Name").getText().toString()
+                            , editTextFields.get("Description").getText().toString()
+                            , Double.valueOf(editTextFields.get("Price").getText().toString())
+                            , Integer.valueOf(editTextFields.get("Quantity").getText().toString()));*/
+
+            toModify.setImg(((BitmapDrawable) imageFood.getDrawable()).getBitmap());
+            toModify.setName(editTextFields.get("Name").getText().toString());
+            toModify.setDescription(editTextFields.get("Description").getText().toString());
+
+            String priceString = editTextFields.get("Price").getText().toString();
+            priceString = priceString.replaceAll(",", ".");
+            toModify.setPrice(Double.valueOf(priceString));
+            toModify.setQuantity(Integer.valueOf(editTextFields.get("Quantity").getText().toString()));
+
+            /**
+             * GO TO DAILY_OFFER_FRAGMENT
+             */
+//                    Bundle bundle = new Bundle();
+//                    bundle.putString("name", editTextFields.get("Name").getText().toString());
+//                    bundle.putString("description", editTextFields.get("Description").getText().toString());
+//                    bundle.putString("Price", priceString);
+//                    bundle.putString("Price", editTextFields.get("Quantity").getText().toString());
+
+            Navigation.findNavController(v).navigate(R.id.action_editFoodFragment_id_to_daily_offer_id);
+        }
+
+
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -190,120 +545,9 @@ public class EditFoodFragment extends DialogFragment {
 
 
 
-    /* ***********************************
-     ********   ANDROID CALLBACKS   ****
-     *********************************** */
-
-    @Override
-    public void onCreate(@Nullable Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-
-        Log.d("matte", "Inside EditFoodFragment");
-
-//        bundle = getArguments();
-//
-//        toModify = (Food) bundle.getSerializable("foodToModify");
-
-
-    }
-
-    @Override
-    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
-                             @Nullable Bundle savedInstanceState) {
-        View v = inflater.inflate(R.layout.edit_food_fragment, container, false);
 
 
 
-        change_im = v.findViewById(R.id.frag_change_im);
-        imageFood = v.findViewById(R.id.imageFood);
-        buttonSave = v.findViewById(R.id.button_frag_save);
-        collectFields(v);
-        handleButton();
-        buttonListener();
-
-//        imageFood.setImageBitmap(toModify.getImg());
-
-//        editTextFields.get("Name").setText(toModify.getName());
-//        editTextFields.get("Description").setText(toModify.getDescription());
-
-
-//        DecimalFormat decimalFormat = new DecimalFormat("#.00"); //two decimal
-//        final String priceStr = decimalFormat.format(toModify.getPrice());
-//        editTextFields.get("Price").setText(priceStr);
-//
-//
-//        editTextFields.get("Quantity").setText(String.valueOf(toModify.getQuantity()));
-
-
-
-        // Set listener to send DATA to main activity that sends them to DailyOfferFragment
-        buttonSave.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                boolean wrongField= false;
-                String[] fieldName = {"Name", "Description", "Price", "Quantity"};
-                for (int i = 0; i < fieldName.length; i++) {
-                    EditText field = editTextFields.get(fieldName[i]);
-                    if(field != null){
-                        if (field.getText().toString().equals("")) {
-                            Toast.makeText(getContext(), getContext().getString(R.string.empty_field), Toast.LENGTH_LONG).show();
-                            field.setBackground(ContextCompat.getDrawable(getContext(), R.drawable.border_wrong_field));
-                            wrongField = true;
-                        } else
-                            field.setBackground(ContextCompat.getDrawable(getContext(), R.drawable.border_right_field));
-                    }
-                    else
-                        return;
-                }
-                if(!editTextFields.get("Price").getText().toString().matches("[0-9]+([\\.\\,][0-9]+)?") ){
-                    Toast.makeText(getContext(), getContext().getString(R.string.error_format_price), Toast.LENGTH_LONG).show();
-                    editTextFields.get("Price").setBackground(ContextCompat.getDrawable(getContext(), R.drawable.border_wrong_field));
-                    wrongField = true;
-                }
-                if(!editTextFields.get("Quantity").getText().toString().matches("[0-9]+") ){
-                    Toast.makeText(getContext(), getContext().getString(R.string.error_format_quantity), Toast.LENGTH_LONG).show();
-                    editTextFields.get("Quantity").setBackground(ContextCompat.getDrawable(getContext(), R.drawable.border_wrong_field));
-                    wrongField = true;
-                }
-                if(!wrongField){
-                    /*Food food = new Food(((BitmapDrawable) imageFood.getDrawable()).getBitmap()
-                            , editTextFields.get("Name").getText().toString()
-                            , editTextFields.get("Description").getText().toString()
-                            , Double.valueOf(editTextFields.get("Price").getText().toString())
-                            , Integer.valueOf(editTextFields.get("Quantity").getText().toString()));*/
-
-                    toModify.setImg(((BitmapDrawable) imageFood.getDrawable()).getBitmap());
-                    toModify.setName(editTextFields.get("Name").getText().toString());
-                    toModify.setDescription(editTextFields.get("Description").getText().toString());
-
-                    String priceString = editTextFields.get("Price").getText().toString();
-                    priceString = priceString.replaceAll(",", ".");
-                    toModify.setPrice(Double.valueOf(priceString));
-                    toModify.setQuantity(Integer.valueOf(editTextFields.get("Quantity").getText().toString()));
-
-                    /**
-                     * GO TO DAILY_OFFER_FRAGMENT
-                     */
-//                    Bundle bundle = new Bundle();
-//                    bundle.putString("name", editTextFields.get("Name").getText().toString());
-//                    bundle.putString("description", editTextFields.get("Description").getText().toString());
-//                    bundle.putString("Price", priceString);
-//                    bundle.putString("Price", editTextFields.get("Quantity").getText().toString());
-
-                    Navigation.findNavController(v).navigate(R.id.action_editFoodFragment_id_to_daily_offer_id);
-                }
-            }
-        });
-
-        change_im.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                changeImage(v);
-            }
-        });
-
-        return v;
-    }
 
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
@@ -312,19 +556,6 @@ public class EditFoodFragment extends DialogFragment {
         image = fields.getString("BackgroundTmpE", encodeTobase64());
         imageFood.setImageBitmap(decodeBase64(image));*/
 
-    }
-
-    @Override
-    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
-        super.onViewCreated(view, savedInstanceState);
-        String name = EditFoodFragmentArgs.fromBundle(getArguments()).getName();
-        String description = EditFoodFragmentArgs.fromBundle(getArguments()).getDescription();
-        String price = EditFoodFragmentArgs.fromBundle(getArguments()).getPrice();
-        String quantity = EditFoodFragmentArgs.fromBundle(getArguments()).getQuantity();
-        editTextFields.get("Name").setText(name);
-        editTextFields.get("Description").setText(description);
-        editTextFields.get("Price").setText(price);
-        editTextFields.get("Quantity").setText(quantity);
     }
 
 //    @Override

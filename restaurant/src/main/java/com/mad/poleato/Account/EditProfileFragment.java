@@ -92,8 +92,7 @@ public class EditProfileFragment extends Fragment {
     private Set<String> checkedTypes;
     private DatabaseReference reference;
 
-    private View v;
-    private Bitmap image;
+    private View v; //this view
     private FloatingActionButton change_im;
     private ImageView profileImage;
     private Switch statusSwitch;
@@ -158,7 +157,7 @@ public class EditProfileFragment extends Fragment {
 
         priceRangeUninitialized = false;
 
-        //download Type base on the current active Locale
+        //download Type based on the current active Locale
         String locale = Locale.getDefault().toString();
         Log.d("matte", "LOCALE: "+locale);
         localeShort = locale.substring(0, 2);
@@ -363,8 +362,8 @@ public class EditProfileFragment extends Fragment {
             public void onSuccess(byte[] bytes) {
                 Bitmap bmp = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
                 profileImage.setImageBitmap(bmp);
-                image = bmp;
-                handler.sendEmptyMessage(0);
+                if(progressDialog.isShowing())
+                    handler.sendEmptyMessage(0);
 
             }
         }).addOnFailureListener(new OnFailureListener() {
@@ -373,7 +372,8 @@ public class EditProfileFragment extends Fragment {
                 Log.d("matte", "No image found. Default img setting");
                 //set default image if no image was set
                 profileImage.setImageResource(R.drawable.plate_fork);
-                handler.sendEmptyMessage(0);
+                if(progressDialog.isShowing())
+                    handler.sendEmptyMessage(0);
             }
         });
 
@@ -563,6 +563,10 @@ public class EditProfileFragment extends Fragment {
         // TODO HERE MAKE UI NON RESPONSIVE
 
 
+        if(getActivity() != null)
+            progressDialog = ProgressDialog.show(getActivity(), "", getActivity().getString(R.string.loading));
+
+
         boolean wrongField = false;
         if(getActivity() != null){
             myToast.setText(getString(R.string.saving));
@@ -712,6 +716,9 @@ public class EditProfileFragment extends Fragment {
             uploadFile(img);
 
 
+        }else{
+            if(progressDialog.isShowing())
+                handler.sendEmptyMessage(0);
         }
     }
 
@@ -740,6 +747,8 @@ public class EditProfileFragment extends Fragment {
                                         .getReference("restaurants")
                                         .child(currentUserID +"/photoUrl")
                                         .setValue(downloadUrl);
+                                if(progressDialog.isShowing())
+                                    handler.sendEmptyMessage(0);
                             }
                         });
                         // taskSnapshot.getMetadata() contains file metadata such as size, content-type, and download URL.
@@ -769,6 +778,9 @@ public class EditProfileFragment extends Fragment {
                         if(getActivity() != null){
                             myToast.setText(getString(R.string.failure));
                             myToast.show();
+
+                            if(progressDialog.isShowing())
+                                handler.sendEmptyMessage(0);
                         }
                         /**
                          * GO TO ACCOUNT_FRAGMENT

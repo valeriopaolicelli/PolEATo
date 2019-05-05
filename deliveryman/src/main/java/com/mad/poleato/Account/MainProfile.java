@@ -210,7 +210,8 @@ public class MainProfile extends Fragment {
                 Bitmap bmp = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
                 profileImage.setImageBitmap(bmp);
                 //send message to main thread
-                handler.sendEmptyMessage(0);
+                if(progressDialog.isShowing())
+                    handler.sendEmptyMessage(0);
             }
         }).addOnFailureListener(new OnFailureListener() {
             @Override
@@ -219,7 +220,8 @@ public class MainProfile extends Fragment {
                 //set predefined image
                 profileImage.setImageResource(R.drawable.image_empty);
                 //send message to main thread
-                handler.sendEmptyMessage(0);
+                if(progressDialog.isShowing())
+                    handler.sendEmptyMessage(0);
             }
         });
 

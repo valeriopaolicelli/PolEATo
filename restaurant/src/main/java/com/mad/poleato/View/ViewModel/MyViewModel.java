@@ -1,5 +1,6 @@
 package com.mad.poleato.View.ViewModel;
 
+import android.app.ProgressDialog;
 import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.MutableLiveData;
 import android.arch.lifecycle.ViewModel;
@@ -7,6 +8,8 @@ import android.content.Context;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.os.Handler;
+import android.os.Message;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.util.Log;
@@ -20,6 +23,7 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.mad.poleato.DailyOffer.DishCategoryTranslator;
@@ -34,6 +38,15 @@ import java.util.Locale;
 public class MyViewModel extends ViewModel {
     private MutableLiveData<List<String>> _listDataGroup = new MutableLiveData<>(); // header titles
     private MutableLiveData<HashMap<String, List<Food>>> _listDataChild = new MutableLiveData<>(); // child data in format of header title, child title
+
+
+    private ProgressDialog progressDialog;
+    private Handler handler = new Handler() {
+        @Override
+        public void handleMessage(Message msg) {
+            progressDialog.dismiss();
+        }
+    };
 
 
     public LiveData<HashMap<String, List<Food>>> getListC() {
@@ -52,6 +65,10 @@ public class MyViewModel extends ViewModel {
 
         _listDataChild.getValue().get(groupTag).get(idx).setImg(img);
 
+    }
+
+    public Food getChild(final int groupPosition, final int childPosition){
+        return this._listDataChild.getValue().get(getGroup(groupPosition).toString()).get(childPosition);
     }
 
 
@@ -125,6 +142,28 @@ public class MyViewModel extends ViewModel {
         initChild();
 
         DatabaseReference reference = FirebaseDatabase.getInstance().getReference("restaurants/"+ currentUserID +"/Menu");
+
+        if(context != null)
+            progressDialog = ProgressDialog.show(context, "", context.getString(R.string.loading));
+
+
+        //This is called after the OnChildAdded so it notify the end of downloads
+        reference.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                if(progressDialog.isShowing())
+                    handler.sendEmptyMessage(0);
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+                if(progressDialog.isShowing())
+                    handler.sendEmptyMessage(0);
+            }
+        });
+
+
+
 
         reference.addChildEventListener(new ChildEventListener() {
             @Override
@@ -247,6 +286,7 @@ public class MyViewModel extends ViewModel {
                             Log.d("matte", "onSuccess");
                             Bitmap bmp = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
                             setImg(category, curr_index, bmp);
+
                         }
                     }).addOnFailureListener(new OnFailureListener() {
                         @Override

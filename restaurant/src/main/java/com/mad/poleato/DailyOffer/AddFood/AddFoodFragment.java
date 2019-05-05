@@ -1,5 +1,6 @@
 package com.mad.poleato.DailyOffer.AddFood;
 
+import android.app.ProgressDialog;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -10,6 +11,8 @@ import android.media.ExifInterface;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
+import android.os.Handler;
+import android.os.Message;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -92,6 +95,14 @@ public class AddFoodFragment extends Fragment {
     private String currentUserID;
     private FirebaseAuth mAuth;
 
+    private ProgressDialog progressDialog;
+    private Handler handler = new Handler() {
+        @Override
+        public void handleMessage(Message msg) {
+            progressDialog.dismiss();
+        }
+    };
+
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -104,9 +115,6 @@ public class AddFoodFragment extends Fragment {
         localeShort = locale.substring(0, 2);
 
         translator = new DishCategoryTranslator();
-
-        //price ranges
-
 
         mAuth = FirebaseAuth.getInstance();
         FirebaseUser currentUser = mAuth.getCurrentUser();
@@ -175,8 +183,7 @@ public class AddFoodFragment extends Fragment {
         buttonSave = v.findViewById(R.id.button_frag_save);
 
 
-        handleButton();
-        buttonListener();
+
         // Set listener to send DATA to main activity that sends them to DailyOfferFragment
 
         buttonSave.setOnClickListener(new View.OnClickListener() {
@@ -198,10 +205,17 @@ public class AddFoodFragment extends Fragment {
         return v;
     }
 
-
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        handleButton();
+        buttonListener();
+    }
 
     private void saveChanges(){
 
+        if(getActivity() != null)
+            progressDialog = ProgressDialog.show(getActivity(), "", getActivity().getString(R.string.loading));
 
         boolean wrongField = false;
 
@@ -289,6 +303,10 @@ public class AddFoodFragment extends Fragment {
             uploadFile(img, f);
 
         }
+        else{
+            if(progressDialog.isShowing())
+                handler.sendEmptyMessage(0);
+        }
     }
 
 
@@ -352,6 +370,9 @@ public class AddFoodFragment extends Fragment {
                         else if(meanPrice < thirdRange)
                             reference.setValue(3);
 
+                        if(progressDialog.isShowing())
+                            handler.sendEmptyMessage(0);
+
                         /**
                          * GO TO DAILY_OFFER_FRAGMENT
                          */
@@ -367,6 +388,9 @@ public class AddFoodFragment extends Fragment {
                             myToast.setText(getString(R.string.failure));
                             myToast.show();
                         }
+
+                        if(progressDialog.isShowing())
+                            handler.sendEmptyMessage(0);
                         /**
                          * GO TO ACCOUNT_FRAGMENT
                          */

@@ -484,6 +484,10 @@ public class EditProfile extends Fragment {
         // TODO HERE MAKE UI NON RESPONSIVE
 
 
+        if(getActivity() != null)
+            progressDialog = ProgressDialog.show(getActivity(), "", getActivity().getString(R.string.loading));
+
+
         boolean wrongField = false;
         if(getActivity() != null){
             myToast.setText(getString(R.string.saving));
@@ -608,6 +612,9 @@ public class EditProfile extends Fragment {
                 before come back to the AccountFragment. This is due to the fact that the image download is async */
             uploadFile(img);
 
+        }else{
+            if(progressDialog.isShowing())
+                handler.sendEmptyMessage(0);
         }
     }
 
@@ -636,6 +643,9 @@ public class EditProfile extends Fragment {
                                         .getReference("deliveryman")
                                         .child(currentUserID +"/photoUrl")
                                         .setValue(downloadUrl);
+
+                                if(progressDialog.isShowing())
+                                    handler.sendEmptyMessage(0);
                             }
                         });
                         // taskSnapshot.getMetadata() contains file metadata such as size, content-type, and download URL.
@@ -665,6 +675,9 @@ public class EditProfile extends Fragment {
                         if(getActivity() != null){
                             myToast.setText(getString(R.string.failure));
                             myToast.show();
+
+                            if(progressDialog.isShowing())
+                                handler.sendEmptyMessage(0);
                         }
                         /**
                          * GO TO ACCOUNT_FRAGMENT

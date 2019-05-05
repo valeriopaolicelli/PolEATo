@@ -1,9 +1,14 @@
 package com.mad.poleato.DailyOffer.ExpandableListManagement;
 
 import android.app.Activity;
+import android.app.ProgressDialog;
 import android.arch.lifecycle.ViewModelProviders;
 import android.graphics.Path;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
+import android.support.annotation.NonNull;
+import android.support.v4.app.DialogFragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v7.widget.PopupMenu;
 import android.util.Log;
@@ -22,6 +27,14 @@ import android.widget.TextView;
 import androidx.navigation.NavDirections;
 import androidx.navigation.Navigation;
 
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
 import com.mad.poleato.DailyOffer.DailyOfferFragmentDirections;
 import com.mad.poleato.DailyOffer.DishCategoryTranslator;
 import com.mad.poleato.DailyOffer.EditFood.EditFoodFragment;
@@ -46,6 +59,18 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
     private String localeShort;
     private DishCategoryTranslator translator;
 
+    private ProgressDialog progressDialog;
+    private Handler handler = new Handler() {
+        @Override
+        public void handleMessage(Message msg) {
+            progressDialog.dismiss();
+        }
+    };
+
+
+    private String currentUserID;
+    private FirebaseAuth mAuth;
+
 
     public ExpandableListAdapter(Activity host) {
 
@@ -61,6 +86,10 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
         localeShort = locale.substring(0, 2);
 
         translator = new DishCategoryTranslator();
+
+        mAuth = FirebaseAuth.getInstance();
+        FirebaseUser currentUser = mAuth.getCurrentUser();
+        currentUserID = currentUser.getUid();
     }
 
     public void setAllGroup(List<String> strings) {
@@ -153,10 +182,43 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
                     @Override
                     public boolean onMenuItemClick(MenuItem item) {
 
+                        if(host != null)
+                            progressDialog = ProgressDialog.show(host, "", host.getString(R.string.loading));
+
+
+
                         Log.d("matte", item.getTitle().toString());
                         MyViewModel model = ViewModelProviders.of((FragmentActivity) host).get(MyViewModel.class);
+
+                        //firstly remove the food from Firebase database
+                        DatabaseReference reference = FirebaseDatabase.getInstance()
+                                                        .getReference("restaurants/"+currentUserID+
+                                                                "/Menu");
+                        Food toRemove = model.getChild(groupPosition, childPosition);
+                        reference.child(toRemove.getId()).removeValue();
+
+                        //then remove it from the Storage
+                        final StorageReference storageReference = FirebaseStorage
+                                .getInstance()
+                                .getReference()
+                                .child(currentUserID +"/FoodImages/"+toRemove.getId()+".jpeg");
+                        storageReference.delete().addOnSuccessListener(new OnSuccessListener<Void>() {
+                            @Override
+                            public void onSuccess(Void aVoid) {
+                                handler.sendEmptyMessage(0);
+                            }
+                        }).addOnFailureListener(new OnFailureListener() {
+                            @Override
+                            public void onFailure(@NonNull Exception e) {
+                                Log.d("matte", "Failure in image remove");
+                                handler.sendEmptyMessage(0);
+                            }
+                        });
+
+
+                        //lastly remove it from the list
                         model.removeChild(groupPosition, childPosition);
-                        notifyDataSetChanged();
+                        notifyDataSetChanged(); //todo why it is needed even with the view model?
                         return true;
                     }
                 });
