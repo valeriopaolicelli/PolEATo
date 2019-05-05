@@ -30,6 +30,8 @@ import android.widget.SearchView;
 import android.widget.Toast;
 
 
+import androidx.navigation.Navigation;
+
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
@@ -122,8 +124,13 @@ public class RestaurantSearchFragment extends Fragment {
                 //logout
                 Log.d("matte", "Logout");
                 FirebaseAuth.getInstance().signOut();
-                //Intent myIntent = new Intent(NavigatorActivity.this, SignInActivity.class);
-                //NavigatorActivity.this.startActivity(myIntent);
+
+                /**
+                 *  GO TO LOGIN ****
+                 */
+
+                Navigation.findNavController(fragView).navigate(R.id.action_restaurantSearchFragment_id_to_signInActivity);
+                getActivity().finish();
                 return true;
             }
         });
