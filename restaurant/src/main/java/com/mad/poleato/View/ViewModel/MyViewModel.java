@@ -89,6 +89,18 @@ public class MyViewModel extends ViewModel {
 
     }
 
+    public void removeChild(String groupTag, String childID){
+        int toRemove = 0;
+        for(Food f : _listDataChild.getValue().get(groupTag)){
+            if(f.getId().equals(childID)){
+                break;
+            }
+            toRemove ++;
+        }
+
+        removeChild(groupTag, toRemove);
+    }
+
     public Object getGroup(int groupPosition) {
         return this._listDataGroup.getValue().get(groupPosition);
     }
@@ -162,9 +174,6 @@ public class MyViewModel extends ViewModel {
             }
         });
 
-
-
-
         reference.addChildEventListener(new ChildEventListener() {
             @Override
             public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
@@ -189,7 +198,7 @@ public class MyViewModel extends ViewModel {
                     final String category = dataSnapshot.child("Category").getValue().toString();
                     final String imageUrl = dataSnapshot.child("photoUrl").getValue().toString();
 
-                    Food f = new Food(id, img, name, description, price, quantity);
+                    Food f = new Food(id, img, name, description, price, quantity, category);
                     insertChild(category, f);
                     final int curr_index = _listDataChild.getValue().get(category).size() - 1;
 
@@ -215,28 +224,6 @@ public class MyViewModel extends ViewModel {
 
                 }
 
-                /*List<Food> l = new ArrayList<>();
-                for(DataSnapshot snap : dataSnapshot.getChildren()){
-                    String name = snap.getKey();
-                    String ingredients = snap.child("Description").getValue().toString();
-                    double price = Double.parseDouble(snap.child("Price")
-                            .getValue()
-                            .toString()
-                            .replace(",", "."));
-                    int quantity = Integer.parseInt(snap.child("Quantity").getValue().toString());
-                    //TODO make image dynamic
-                    Bitmap img = BitmapFactory.decodeResource(context.getResources(), R.drawable.plate_fork);
-                    l.add(new Food(img, name, ingredients, price, quantity));
-                }
-
-                if(dataSnapshot.getKey().equals("Drinks"))
-                    _listDataChild.getValue().put(context.getString(R.string.drinks), l);
-                else if(dataSnapshot.getKey().equals("Firsts"))
-                    _listDataChild.getValue().put(context.getString(R.string.firsts), l);
-                else if(dataSnapshot.getKey().equals("Seconds"))
-                    _listDataChild.getValue().put(context.getString(R.string.seconds), l);
-                else if(dataSnapshot.getKey().equals("Starters"))
-                    _listDataChild.getValue().put(context.getString(R.string.starters), l);*/
 
             }
 
@@ -273,7 +260,7 @@ public class MyViewModel extends ViewModel {
                         removeChild(category, toDelete);
 
 
-                    Food f = new Food(id, img, name, description, price, quantity);
+                    Food f = new Food(id, img, name, description, price, quantity, category);
                     insertChild(category, f);
                     final int curr_index = _listDataChild.getValue().get(category).size()-1;
 
@@ -299,29 +286,6 @@ public class MyViewModel extends ViewModel {
 
                 }
 
-                /*List<Food> l = new ArrayList<>();
-                for(DataSnapshot snap : dataSnapshot.getChildren()){
-                    String name = snap.getKey();
-                    String ingredients = snap.child("Description").getValue().toString();
-                    double price = Double.parseDouble(snap.child("Price")
-                            .getValue()
-                            .toString()
-                            .replace(",", "."));
-                    int quantity = Integer.parseInt(snap.child("Quantity").getValue().toString());
-                    //TODO make image dynamic
-                    Bitmap img = BitmapFactory.decodeResource(context.getResources(), R.drawable.plate_fork);
-                    l.add(new Food(img, name, ingredients, price, quantity));
-                }
-
-                if(dataSnapshot.getKey().equals("Drinks"))
-                    _listDataChild.getValue().put(context.getString(R.string.drinks), l);
-                else if(dataSnapshot.getKey().equals("Firsts"))
-                    _listDataChild.getValue().put(context.getString(R.string.firsts), l);
-                else if(dataSnapshot.getKey().equals("Seconds"))
-                    _listDataChild.getValue().put(context.getString(R.string.seconds), l);
-                else if(dataSnapshot.getKey().equals("Starters"))
-                    _listDataChild.getValue().put(context.getString(R.string.starters), l);*/
-
             }
 
             @Override
@@ -342,29 +306,6 @@ public class MyViewModel extends ViewModel {
                         removeChild(category, toDelete);
                 }
 
-                /*List<Food> l = new ArrayList<>();
-                for(DataSnapshot snap : dataSnapshot.getChildren()){
-                    String name = snap.getKey();
-                    String ingredients = snap.child("Description").getValue().toString();
-                    double price = Double.parseDouble(snap.child("Price")
-                            .getValue()
-                            .toString()
-                            .replace(",", "."));
-                    int quantity = Integer.parseInt(snap.child("Quantity").getValue().toString());
-                    //TODO make image dynamic
-                    Bitmap img = BitmapFactory.decodeResource(context.getResources(), R.drawable.plate_fork);
-                    l.add(new Food(img, name, ingredients, price, quantity));
-                }
-
-                if(dataSnapshot.getKey().equals("Drinks"))
-                    _listDataChild.getValue().put(context.getString(R.string.drinks), l);
-                else if(dataSnapshot.getKey().equals("Firsts"))
-                    _listDataChild.getValue().put(context.getString(R.string.firsts), l);
-                else if(dataSnapshot.getKey().equals("Seconds"))
-                    _listDataChild.getValue().put(context.getString(R.string.seconds), l);
-                else if(dataSnapshot.getKey().equals("Starters"))
-                    _listDataChild.getValue().put(context.getString(R.string.starters), l);*/
-
             }
 
             @Override
@@ -377,68 +318,6 @@ public class MyViewModel extends ViewModel {
 
             }
         });
-
-
-
-
-
     }
-
-    /*public void prepareListData(Context context) {
-
-        if (flag == false) {
-
-            flag = true;
-            List<String> listDataGroup = new ArrayList<String>();
-            HashMap<String, List<Food>> listDataChild = new HashMap<String, List<Food>>();
-
-            // Adding child data
-            listDataGroup.add(context.getString(R.string.starters));
-            listDataGroup.add(context.getString(R.string.firsts));
-            listDataGroup.add(context.getString(R.string.seconds));
-            listDataGroup.add(context.getString(R.string.desserts));
-            listDataGroup.add(context.getString(R.string.drinks));
-
-            // Adding child data
-            List<Food> starters = new ArrayList<Food>();
-            starters.add(new Food(BitmapFactory.decodeResource(context.getResources(), R.drawable.caprese),
-                    "Caprese", "Pomodori, mozzarella, olio e basilico", 2.50, 10));
-            starters.add(new Food(BitmapFactory.decodeResource(Resources.getSystem(), R.drawable.bruschette),
-                    "Bruschette", "Pane, pomodori, olio e basilico", 1.80, 10));
-
-
-            List<Food> firsts = new ArrayList<Food>();
-            firsts.add(new Food(BitmapFactory.decodeResource(context.getResources(), R.drawable.carbonara),
-                    "Carbonara", "Spaghetti, guanciale, uovo, pepe e pecorino", 5.00, 10));
-            firsts.add(new Food(BitmapFactory.decodeResource(context.getResources(), R.drawable.amatriciana),
-                    "Amatriciana", "Pasta, pancetta, pomodoro, peperoncino", 3.50, 10));
-            firsts.add(new Food(BitmapFactory.decodeResource(context.getResources(), R.drawable.lasagna),
-                    "Lasagna", "Pomodoro, formaggio e basilico", 6.00, 5));
-            firsts.add(new Food(BitmapFactory.decodeResource(context.getResources(), R.drawable.gamberetti),
-                    "Gamberetti", "Pomodoro, gamberetti e melanzane", 7.00, 7));
-
-            List<Food> seconds = new ArrayList<Food>();
-            seconds.add(new Food(BitmapFactory.decodeResource(context.getResources(), R.drawable.pollo),
-                    "Pollo al forno", "Pollo, patate e pomodoro", 8.00, 10));
-
-            List<Food> desserts = new ArrayList<Food>();
-            desserts.add(new Food(BitmapFactory.decodeResource(context.getResources(), R.drawable.tiramisu),
-                    "Tiramisu", "Caffè, savoiardi, mascarpone e cacao", 2.00, 10));
-
-            List<Food> drinks = new ArrayList<Food>();
-            drinks.add(new Food(BitmapFactory.decodeResource(context.getResources(), R.drawable.poretti),
-                    "Poretti 33cl", "Birra", 2.00, 10));
-
-
-            listDataChild.put(listDataGroup.get(0), starters); // Header, Child data
-            listDataChild.put(listDataGroup.get(1), firsts);
-            listDataChild.put(listDataGroup.get(2), seconds);
-            listDataChild.put(listDataGroup.get(3), desserts);
-            listDataChild.put(listDataGroup.get(4), drinks);
-
-
-            setData(listDataGroup, listDataChild);
-        }
-    }*/
 
 }

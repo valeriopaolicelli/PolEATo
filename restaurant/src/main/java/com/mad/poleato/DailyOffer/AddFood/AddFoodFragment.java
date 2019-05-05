@@ -95,6 +95,8 @@ public class AddFoodFragment extends Fragment {
     private String currentUserID;
     private FirebaseAuth mAuth;
 
+    private MyViewModel model;
+
     private ProgressDialog progressDialog;
     private Handler handler = new Handler() {
         @Override
@@ -115,6 +117,8 @@ public class AddFoodFragment extends Fragment {
         localeShort = locale.substring(0, 2);
 
         translator = new DishCategoryTranslator();
+
+        model = ViewModelProviders.of(getActivity()).get(MyViewModel.class);
 
         mAuth = FirebaseAuth.getInstance();
         FirebaseUser currentUser = mAuth.getCurrentUser();
@@ -295,12 +299,14 @@ public class AddFoodFragment extends Fragment {
             reference.child("Price").setValue(priceString);
             reference.child("Category").setValue(category);
 
-            Food f = new Food(id, null, name, description, Double.parseDouble(priceString), Integer.parseInt(quantity));
+
+            Food f = new Food(id, null, name, description, Double.parseDouble(priceString), Integer.parseInt(quantity), category);
 
             // Save profile pic to the DB
             /*Navigation controller is moved inside this method. The image must be loaded totally to FireBase
                 before come back to the AccountFragment. This is due to the fact that the image download is async */
             uploadFile(img, f);
+
 
         }
         else{
@@ -315,7 +321,7 @@ public class AddFoodFragment extends Fragment {
         final StorageReference storageReference = FirebaseStorage
                 .getInstance()
                 .getReference()
-                .child(currentUserID +"/FoodImages/"+f.getId()+".jpeg");
+                .child(currentUserID +"/FoodImages/"+f.getId()+".jpg");
 
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         bitmap.compress(Bitmap.CompressFormat.JPEG, 20, baos);
@@ -353,13 +359,11 @@ public class AddFoodFragment extends Fragment {
                         /**
                          * SAVE ON MODEL_VIEW
                          */
-                        MyViewModel model = ViewModelProviders.of(getActivity()).get(MyViewModel.class);
-
                         model.insertChild(dishCategory, f);
 
-                        //set the priceRange for the restaurant
+                        //set the priceRange for the restaurant after the insertion
                         DatabaseReference reference = FirebaseDatabase.getInstance().getReference()
-                                                        .child("restaurants/"+currentUserID+"/PriceRange");
+                                .child("restaurants/"+currentUserID+"/PriceRange");
                         double meanPrice = model.getMeanPrice();
                         if(meanPrice == 0)
                             reference.setValue(0);
@@ -388,6 +392,30 @@ public class AddFoodFragment extends Fragment {
                             myToast.setText(getString(R.string.failure));
                             myToast.show();
                         }
+
+
+                        /**
+                         * SAVE ON MODEL_VIEW
+                         */
+                        //save anyway but with the default image
+                        Bitmap bmp = BitmapFactory.decodeResource(getResources(), R.drawable.plate_fork);
+                        f.setImg(bmp);
+                        //here insert new food even without image
+                        model.insertChild(dishCategory, f);
+
+                        //set the priceRange for the restaurant after the insertion
+                        DatabaseReference reference = FirebaseDatabase.getInstance().getReference()
+                                .child("restaurants/"+currentUserID+"/PriceRange");
+                        double meanPrice = model.getMeanPrice();
+                        if(meanPrice == 0)
+                            reference.setValue(0);
+                        else if(meanPrice < firstRange)
+                            reference.setValue(1);
+                        else if(meanPrice < secondRange)
+                            reference.setValue(2);
+                        else if(meanPrice < thirdRange)
+                            reference.setValue(3);
+
 
                         if(progressDialog.isShowing())
                             handler.sendEmptyMessage(0);

@@ -283,10 +283,17 @@ public class ReservationFragment extends Fragment {
                         r.addDishtoReservation(d);
                     }
                     listHash.put(r.getOrder_id(), r.getDishes());
+                    if(!listHash.containsKey(order_id)){
+                        reservations.add(r);
+                    }
+                    else{
+                        for(Reservation res : reservations)
+                            if(res.getOrder_id().equals(order_id))
+                                res.setStat(status);
+                    }
+
                     listAdapter.notifyDataSetChanged();
                 }
-
-
             }
 
             @Override
@@ -358,9 +365,8 @@ public class ReservationFragment extends Fragment {
                     else{
                         for(Reservation res : reservations)
                             if(res.getOrder_id().equals(order_id))
-                                res.setStat(status, getActivity());
+                                res.setStat(status);
                     }
-
                     listAdapter.notifyDataSetChanged();
 
                 }
@@ -424,7 +430,7 @@ public class ReservationFragment extends Fragment {
             if (statusPersistence != null && buttonTextPersistence != null)
                 if (statusPersistence.size() > 0 && buttonTextPersistence.size() > 0) {
                     for (int i = 0; i < listAdapter.getGroupCount(); i++) {
-                        reservations.get(i).setStat(statusPersistence.get(i), getContext());
+                        reservations.get(i).setStat(statusPersistence.get(i));
                         reservations.get(i).setButtonText(buttonTextPersistence.get(i));
                     }
                 }
