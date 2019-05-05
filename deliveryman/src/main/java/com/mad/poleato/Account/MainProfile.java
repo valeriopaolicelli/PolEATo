@@ -207,7 +207,7 @@ public class MainProfile extends Fragment {
         //Download the profile pic
         StorageReference storageReference = FirebaseStorage.getInstance().getReference();
         StorageReference photoReference= storageReference.child(currentUserID +"/ProfileImage/img.jpg");
-
+        
         final long ONE_MEGABYTE = 1024 * 1024;
         photoReference.getBytes(ONE_MEGABYTE).addOnSuccessListener(new OnSuccessListener<byte[]>() {
             @Override
