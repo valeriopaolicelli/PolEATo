@@ -24,6 +24,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
+import androidx.navigation.Navigation;
+
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
@@ -118,8 +120,12 @@ public class RidesFragment extends Fragment {
                 //logout
                 Log.d("matte", "Logout");
                 FirebaseAuth.getInstance().signOut();
-                //Intent myIntent = new Intent(NavigatorActivity.this, SignInActivity.class);
-                //NavigatorActivity.this.startActivity(myIntent);
+                /**
+                 *  GO TO LOGIN ****
+                 */
+
+                Navigation.findNavController(fragView).navigate(R.id.action_rides_id_to_signInActivity);
+                getActivity().finish();
                 return true;
             }
         });

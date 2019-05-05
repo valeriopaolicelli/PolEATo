@@ -198,7 +198,7 @@ public class MyViewModel extends ViewModel {
                     final String category = dataSnapshot.child("Category").getValue().toString();
                     final String imageUrl = dataSnapshot.child("photoUrl").getValue().toString();
 
-                    Food f = new Food(id, img, name, description, price, quantity, category);
+                    Food f = new Food(id, img, name, description, price, quantity);
                     insertChild(category, f);
                     final int curr_index = _listDataChild.getValue().get(category).size() - 1;
 
@@ -260,7 +260,7 @@ public class MyViewModel extends ViewModel {
                         removeChild(category, toDelete);
 
 
-                    Food f = new Food(id, img, name, description, price, quantity, category);
+                    Food f = new Food(id, img, name, description, price, quantity);
                     insertChild(category, f);
                     final int curr_index = _listDataChild.getValue().get(category).size()-1;
 

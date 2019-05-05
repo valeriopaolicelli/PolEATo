@@ -21,6 +21,8 @@ import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.navigation.Navigation;
+
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -48,6 +50,7 @@ public class MainProfile extends Fragment {
     private TextView tvPhoneField;
     private CircleImageView profileImage; //TODO retrieve image from DB
     private DatabaseReference reference;
+    private View view;
 
     private String currentUserID;
     private FirebaseAuth mAuth;
@@ -59,6 +62,8 @@ public class MainProfile extends Fragment {
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
+        //in order to create the logout menu (don't move!)
+        setHasOptionsMenu(true);
         super.onCreate(savedInstanceState);
 
         mAuth = FirebaseAuth.getInstance();
@@ -67,10 +72,34 @@ public class MainProfile extends Fragment {
     }
 
     @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        menu.clear();
+        // Inflate the menu; this adds items to the action bar if it is present.
+        inflater.inflate(R.menu.popup_account_settings, menu);
+        menu.findItem(R.id.logout).setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
+            @Override
+            public boolean onMenuItemClick(MenuItem item) {
+                //logout
+                Log.d("matte", "Logout");
+                FirebaseAuth.getInstance().signOut();
+
+                /**
+                 *  GO TO LOGIN ****
+                 */
+
+                Navigation.findNavController(view).navigate(R.id.action_mainProfile_id_to_signInActivity);
+                getActivity().finish();
+                return true;
+            }
+        });
+        super.onCreateOptionsMenu(menu,inflater);
+    }
+
+    @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         /** Inflate the layout for this fragment */
-        View view = inflater.inflate(R.layout.fragment_main_profile, container, false);
+        view = inflater.inflate(R.layout.fragment_main_profile, container, false);
 
         tvNameField = view.findViewById(R.id.tvNameField);
         tvSurnameField= view.findViewById(R.id.tvSurnameField);
@@ -108,7 +137,7 @@ public class MainProfile extends Fragment {
 
             @Override
             public void onCancelled(@NonNull DatabaseError databaseError) {
-                Toast.makeText(getContext(), databaseError.getMessage().toString(), Toast.LENGTH_SHORT);
+//                Toast.makeText(getActivity(), databaseError.getMessage(), Toast.LENGTH_SHORT);
             }
         });
     }

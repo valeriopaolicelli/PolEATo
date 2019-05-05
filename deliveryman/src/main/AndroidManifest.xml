@@ -39,14 +39,6 @@
             android:name=".NavigatorActivity"
             android:windowSoftInputMode="adjustPan"/>
 
-        <activity
-            android:name=".MainProfile2"
-            android:windowSoftInputMode="adjustPan"/>
-
-        <activity
-            android:name=".EditProfile2"
-            android:windowSoftInputMode="adjustPan"/>
-
 
         <provider
             android:name="android.support.v4.content.FileProvider"

@@ -83,14 +83,12 @@ public class SignUpActivity extends AppCompatActivity {
 
     public void collectFields(){
         editTextFields.put("Name",(EditText)findViewById(R.id.edName));
-        editTextFields.put("Surname",(EditText)findViewById(R.id.edSurname));
         editTextFields.put("Address",(EditText)findViewById(R.id.edAddress));
         editTextFields.put("Email",(EditText)findViewById(R.id.edEmail));
         editTextFields.put("Phone",(EditText)findViewById(R.id.edPhone));
         editTextFields.put("Password",(EditText)findViewById(R.id.edPassword));
 
         imageButtons.put("Name", (ImageButton)findViewById(R.id.cancel_name));
-        imageButtons.put("Surname", (ImageButton)findViewById(R.id.cancel_surname));
         imageButtons.put("Address", (ImageButton)findViewById(R.id.cancel_address));
         imageButtons.put("Email", (ImageButton)findViewById(R.id.cancel_email));
         imageButtons.put("Phone", (ImageButton)findViewById(R.id.cancel_phone));
@@ -105,8 +103,6 @@ public class SignUpActivity extends AppCompatActivity {
             editTextFields.get("Password").setText("");
         else if (view.getId() == R.id.cancel_name)
             editTextFields.get("Name").setText("");
-        else if(view.getId() == R.id.cancel_surname)
-            editTextFields.get("Surname").setText("");
         else if(view.getId() == R.id.cancel_address)
             editTextFields.get("Address").setText("");
         else if(view.getId() == R.id.cancel_phone)
@@ -266,7 +262,7 @@ public class SignUpActivity extends AppCompatActivity {
                 .getReference()
                 .child( currentUserID +"/ProfileImage/"+currentUserID+".jpg");
 
-        Bitmap bitmap= BitmapFactory.decodeResource(getResources(), R.drawable.empty_background);
+        Bitmap bitmap= BitmapFactory.decodeResource(getResources(), R.drawable.plate_fork);
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         bitmap.compress(Bitmap.CompressFormat.JPEG, 20, baos);
         byte[] data = baos.toByteArray();
@@ -365,12 +361,6 @@ public class SignUpActivity extends AppCompatActivity {
         String emailRegex = new String("^.+@[^\\.].*\\.[a-z]{2,}$");
 
         if (!editTextFields.get("Name").getText().toString().matches(nameRegex)) {
-            wrongField = true;
-            myToast.setText("The name must start with letters and must end with letters. Space are allowed. Numbers are not allowed");
-            myToast.show();
-            editTextFields.get("Name").setBackground(ContextCompat.getDrawable(getApplicationContext(), R.drawable.border_wrong_field));
-        }
-        if (!editTextFields.get("Surname").getText().toString().matches(nameRegex)) {
             wrongField = true;
             myToast.setText("The name must start with letters and must end with letters. Space are allowed. Numbers are not allowed");
             myToast.show();

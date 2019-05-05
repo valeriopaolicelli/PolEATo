@@ -140,8 +140,12 @@ public class DailyOfferFragment extends Fragment {
                 //logout
                 Log.d("matte", "Logout");
                 FirebaseAuth.getInstance().signOut();
-                //Intent myIntent = new Intent(NavigatorActivity.this, SignInActivity.class);
-                //NavigatorActivity.this.startActivity(myIntent);
+                /**
+                 *  GO TO LOGIN ****
+                 */
+
+                Navigation.findNavController(fragView).navigate(R.id.action_daily_offer_id_to_signInActivity);
+                getActivity().finish();
                 return true;
             }
         });
