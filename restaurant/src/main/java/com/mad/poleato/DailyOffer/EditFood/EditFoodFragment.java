@@ -2,6 +2,7 @@ package com.mad.poleato.DailyOffer.EditFood;
 
 import android.app.Dialog;
 import android.app.ProgressDialog;
+import android.arch.lifecycle.ViewModelProviders;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -40,6 +41,7 @@ import android.widget.Toast;
 
 import androidx.navigation.NavDirections;
 import androidx.navigation.Navigation;
+import androidx.navigation.Navigator;
 
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -52,10 +54,13 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
+import com.google.firebase.storage.UploadTask;
 import com.mad.poleato.DailyOffer.DailyOfferFragmentDirections;
 import com.mad.poleato.DailyOffer.DishCategoryTranslator;
 import com.mad.poleato.DailyOffer.Food;
+import com.mad.poleato.NavigatorActivity;
 import com.mad.poleato.R;
+import com.mad.poleato.View.ViewModel.MyViewModel;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -102,6 +107,8 @@ public class EditFoodFragment extends DialogFragment {
     private String currentUserID;
     private FirebaseAuth mAuth;
 
+    private MyViewModel model;
+
     private ProgressDialog progressDialog;
     private Handler handler = new Handler() {
         @Override
@@ -109,6 +116,8 @@ public class EditFoodFragment extends DialogFragment {
             progressDialog.dismiss();
         }
     };
+
+    private String toModifyID, toModifyCategory;
 
     //to map each category name to the position inside the spinner
     private Map<String, Integer> spinnerCategoryPosition;
@@ -137,6 +146,12 @@ public class EditFoodFragment extends DialogFragment {
         spinnerCategoryPosition.put("Seconds", 2);
         spinnerCategoryPosition.put("Desserts", 3);
         spinnerCategoryPosition.put("Drinks", 4);
+
+        model = ViewModelProviders.of(getActivity()).get(MyViewModel.class);
+
+
+        toModifyID = EditFoodFragmentArgs.fromBundle(getArguments()).getId();
+        toModifyCategory = EditFoodFragmentArgs.fromBundle(getArguments()).getCategory();
 
         mAuth = FirebaseAuth.getInstance();
         FirebaseUser currentUser = mAuth.getCurrentUser();
@@ -207,19 +222,13 @@ public class EditFoodFragment extends DialogFragment {
         buttonSave = v.findViewById(R.id.button_frag_save);
 
 
-        handleButton();
-        buttonListener();
-        // Set listener to send DATA to main activity that sends them to DailyOfferFragment
+        buttonSave.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
 
-        //set the listener for the X imageButtons to clear the text
-        for (ImageButton b : imageButtons.values()) {
-            b.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    clearText(v);
-                }
-            });
-        }
+                saveChanges();
+            }
+        });
 
         //set the listener to change the image
         change_im.setOnClickListener(new View.OnClickListener() {
@@ -280,6 +289,33 @@ public class EditFoodFragment extends DialogFragment {
                             }
                         } //for end
 
+                        //Download the food pic
+                        StorageReference storageReference = FirebaseStorage.getInstance().getReference();
+                        StorageReference photoReference= storageReference
+                                .child(currentUserID +"/FoodImages/"+
+                                        toModifyID+".jpg");
+
+                        final long ONE_MEGABYTE = 1024 * 1024;
+                        photoReference.getBytes(ONE_MEGABYTE).addOnSuccessListener(new OnSuccessListener<byte[]>() {
+                            @Override
+                            public void onSuccess(byte[] bytes) {
+                                Bitmap bmp = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
+                                imageFood.setImageBitmap(bmp);
+                                if(progressDialog.isShowing())
+                                    handler.sendEmptyMessage(0);
+
+                            }
+                        }).addOnFailureListener(new OnFailureListener() {
+                            @Override
+                            public void onFailure(@NonNull Exception exception) {
+                                Log.d("matte", "No image found. Default img setting");
+                                //set default image if no image was set
+                                imageFood.setImageResource(R.drawable.plate_fork);
+                                if(progressDialog.isShowing())
+                                    handler.sendEmptyMessage(0);
+                            }
+                        });
+
                     }
                 } //end if
 
@@ -294,65 +330,14 @@ public class EditFoodFragment extends DialogFragment {
             }
         });
 
-
-        //Download the profile pic
-        StorageReference storageReference = FirebaseStorage.getInstance().getReference();
-        StorageReference photoReference= storageReference.child(currentUserID +"/ProfileImage/img.jpg");
-
-        final long ONE_MEGABYTE = 1024 * 1024;
-        photoReference.getBytes(ONE_MEGABYTE).addOnSuccessListener(new OnSuccessListener<byte[]>() {
-            @Override
-            public void onSuccess(byte[] bytes) {
-                Bitmap bmp = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
-                profileImage.setImageBitmap(bmp);
-                if(progressDialog.isShowing())
-                    handler.sendEmptyMessage(0);
-
-            }
-        }).addOnFailureListener(new OnFailureListener() {
-            @Override
-            public void onFailure(@NonNull Exception exception) {
-                Log.d("matte", "No image found. Default img setting");
-                //set default image if no image was set
-                profileImage.setImageResource(R.drawable.plate_fork);
-                if(progressDialog.isShowing())
-                    handler.sendEmptyMessage(0);
-            }
-        });
-
     }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
     private void saveChanges(){
 
         boolean wrongField= false;
-        String[] fieldName = {"Name", "Description", "Price", "Quantity"};
-        for (int i = 0; i < fieldName.length; i++) {
-            EditText field = editTextFields.get(fieldName[i]);
+        for (String fieldName : editTextFields.keySet()) {
+            EditText field = editTextFields.get(fieldName);
             if(field != null){
                 if (field.getText().toString().equals("")) {
                     Toast.makeText(getContext(), getContext().getString(R.string.empty_field), Toast.LENGTH_LONG).show();
@@ -375,33 +360,155 @@ public class EditFoodFragment extends DialogFragment {
             wrongField = true;
         }
         if(!wrongField){
-                    /*Food food = new Food(((BitmapDrawable) imageFood.getDrawable()).getBitmap()
-                            , editTextFields.get("Name").getText().toString()
-                            , editTextFields.get("Description").getText().toString()
-                            , Double.valueOf(editTextFields.get("Price").getText().toString())
-                            , Integer.valueOf(editTextFields.get("Quantity").getText().toString()));*/
 
-            toModify.setImg(((BitmapDrawable) imageFood.getDrawable()).getBitmap());
-            toModify.setName(editTextFields.get("Name").getText().toString());
-            toModify.setDescription(editTextFields.get("Description").getText().toString());
+            //retrieve the inserted data
+            String name = editTextFields.get("Name").getText().toString();
+            String description = editTextFields.get("Description").getText().toString();
+            String quantity = editTextFields.get("Quantity").getText().toString();
+            String priceString = editTextFields.get("Price").getText().toString().replace(",", ".");
+            String category = dishCategory;
+            Bitmap img = ((BitmapDrawable) imageFood.getDrawable()).getBitmap();
 
-            String priceString = editTextFields.get("Price").getText().toString();
-            priceString = priceString.replaceAll(",", ".");
-            toModify.setPrice(Double.valueOf(priceString));
-            toModify.setQuantity(Integer.valueOf(editTextFields.get("Quantity").getText().toString()));
+            //insert the data into the DB
+            reference.child("Name").setValue(name);
+            reference.child("Description").setValue(description);
+            reference.child("Quantity").setValue(quantity);
+            reference.child("Price").setValue(priceString);
+            reference.child("Category").setValue(category);
+
+
+            //todo check if this food is present in another category (category changed)
+            if(!toModifyCategory.equals(dishCategory))
+                model.removeChild(toModifyCategory, toModifyID);
+            Food f = new Food(toModifyID, null, name, description,
+                                Double.parseDouble(priceString), Integer.parseInt(quantity), category);
+
+            uploadFile(img, f);
 
             /**
              * GO TO DAILY_OFFER_FRAGMENT
              */
-//                    Bundle bundle = new Bundle();
-//                    bundle.putString("name", editTextFields.get("Name").getText().toString());
-//                    bundle.putString("description", editTextFields.get("Description").getText().toString());
-//                    bundle.putString("Price", priceString);
-//                    bundle.putString("Price", editTextFields.get("Quantity").getText().toString());
-
             Navigation.findNavController(v).navigate(R.id.action_editFoodFragment_id_to_daily_offer_id);
         }
 
+
+    }
+
+
+
+
+
+    private void uploadFile(final Bitmap bitmap, final Food f) {
+        final StorageReference storageReference = FirebaseStorage
+                .getInstance()
+                .getReference()
+                .child(currentUserID +"/FoodImages/"+f.getId()+".jpg");
+
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        bitmap.compress(Bitmap.CompressFormat.JPEG, 20, baos);
+        byte[] data = baos.toByteArray();
+
+        UploadTask uploadTask = storageReference.putBytes(data);
+        uploadTask
+                .addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                    @Override
+                    public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                        storageReference.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+                            @Override
+                            public void onSuccess(Uri uri) {
+                                //save the link to the image
+                                final String downloadUrl =
+                                        uri.toString();
+                                FirebaseDatabase.getInstance()
+                                        .getReference("restaurants")
+                                        .child(currentUserID +"/Menu/"+f.getId()+"/photoUrl")
+                                        .setValue(downloadUrl);
+                                //set the image on the object
+                                f.setImg(bitmap);
+                            }
+                        });
+                        // taskSnapshot.getMetadata() contains file metadata such as size, content-type, and download URL.
+                        Uri downloadUrl = taskSnapshot.getUploadSessionUri();
+
+                        String s = taskSnapshot.getMetadata().getReference().getDownloadUrl().toString();
+                        Log.d("matte", "downloadUrl-->" + downloadUrl);
+                        if(getActivity() != null){
+                            myToast.setText(getString(R.string.saved));
+                            myToast.show();
+                        }
+
+                        /**
+                         * SAVE ON MODEL_VIEW
+                         */
+                        model.insertChild(dishCategory, f);
+
+                        //set the priceRange for the restaurant after the insertion
+                        DatabaseReference reference = FirebaseDatabase.getInstance().getReference()
+                                .child("restaurants/"+currentUserID+"/PriceRange");
+                        double meanPrice = model.getMeanPrice();
+                        if(meanPrice == 0)
+                            reference.setValue(0);
+                        else if(meanPrice < firstRange)
+                            reference.setValue(1);
+                        else if(meanPrice < secondRange)
+                            reference.setValue(2);
+                        else if(meanPrice < thirdRange)
+                            reference.setValue(3);
+
+                        if(progressDialog.isShowing())
+                            handler.sendEmptyMessage(0);
+
+                        /**
+                         * GO TO DAILY_OFFER_FRAGMENT
+                         */
+                        Navigation.findNavController(v).navigate(R.id.action_addFoodFragment_to_daily_offer);
+                    }
+                })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception exception) {
+                        // Handle unsuccessful uploads
+                        Log.d("matte", "Upload failed");
+                        if(getActivity() != null){
+                            myToast.setText(getString(R.string.failure));
+                            myToast.show();
+                        }
+
+
+                        /**
+                         * SAVE ON MODEL_VIEW
+                         */
+                        //save anyway but with the default image
+                        Bitmap bmp = BitmapFactory.decodeResource(getResources(), R.drawable.plate_fork);
+                        f.setImg(bmp);
+                        //here insert new food even without image
+                        model.insertChild(dishCategory, f);
+
+                        //set the priceRange for the restaurant after the insertion
+                        DatabaseReference reference = FirebaseDatabase.getInstance().getReference()
+                                .child("restaurants/"+currentUserID+"/PriceRange");
+                        double meanPrice = model.getMeanPrice();
+                        if(meanPrice == 0)
+                            reference.setValue(0);
+                        else if(meanPrice < firstRange)
+                            reference.setValue(1);
+                        else if(meanPrice < secondRange)
+                            reference.setValue(2);
+                        else if(meanPrice < thirdRange)
+                            reference.setValue(3);
+
+
+                        if(progressDialog.isShowing())
+                            handler.sendEmptyMessage(0);
+                        /**
+                         * GO TO ACCOUNT_FRAGMENT
+                         */
+                        Navigation.findNavController(v).navigate(R.id.action_addFoodFragment_to_daily_offer);
+                        /**
+                         *
+                         */
+                    }
+                });
 
     }
 

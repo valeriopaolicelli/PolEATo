@@ -12,8 +12,9 @@ public class Food implements Serializable {
     private String description;
     private Double price;
     private int quantity;
+    private String category;
 
-    public Food(String id, Bitmap img, String name, String description, Double price, int quantity){
+    public Food(String id, Bitmap img, String name, String description, Double price, int quantity, String category){
 
         this.id = id;
         this.img = img;
@@ -21,6 +22,7 @@ public class Food implements Serializable {
         this.description = description;
         this.price = price;
         this.quantity = quantity;
+        this.category = category;
     }
 
     public String getId() {
@@ -45,6 +47,10 @@ public class Food implements Serializable {
 
     public int getQuantity() { return quantity; }
 
+    public String getCategory() {
+        return category;
+    }
+
     public void setId(String id) {
         this.id = id;
     }
@@ -59,7 +65,9 @@ public class Food implements Serializable {
 
     public void setQuantity(int quantity){ this.quantity = quantity; }
 
-
+    public void setCategory(String category) {
+        this.category = category;
+    }
 
     public boolean validation() {
         if(img != null && name.length() > 0 && description.length() > 0 && price > 0 && quantity > 0){
