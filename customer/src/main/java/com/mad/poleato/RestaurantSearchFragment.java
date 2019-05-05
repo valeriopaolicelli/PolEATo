@@ -210,7 +210,7 @@ public class RestaurantSearchFragment extends Fragment {
                     restaurantList.add(resObj);
 
                     StorageReference photoReference = FirebaseStorage.getInstance().getReferenceFromUrl(imageUrl);
-                    final long ONE_MEGABYTE = 1024 * 1024;
+                    final long ONE_MEGABYTE = 256 * 256;
                     photoReference.getBytes(ONE_MEGABYTE).addOnSuccessListener(new OnSuccessListener<byte[]>() {
                         @Override
                         public void onSuccess(byte[] bytes) {
@@ -272,7 +272,7 @@ public class RestaurantSearchFragment extends Fragment {
 
                     //check the new image
                     StorageReference photoReference = FirebaseStorage.getInstance().getReferenceFromUrl(imageUrl);
-                    final long ONE_MEGABYTE = 10*1024 * 1024;
+                    final long ONE_MEGABYTE = 10*256 * 256;
                     photoReference.getBytes(ONE_MEGABYTE).addOnSuccessListener(new OnSuccessListener<byte[]>() {
                         @Override
                         public void onSuccess(byte[] bytes) {

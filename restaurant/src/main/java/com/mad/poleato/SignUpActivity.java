@@ -348,7 +348,7 @@ public class SignUpActivity extends AppCompatActivity {
 
         // REGEX FOR FIELDS VALIDATION BEFORE COMMIT
         String accentedCharacters = new String("àèìòùÀÈÌÒÙáéíóúýÁÉÍÓÚÝâêîôûÂÊÎÔÛãñõÃÑÕäëïöüÿÄËÏÖÜŸçÇßØøÅåÆæœ");
-        String accentedString = new String("[a-zA-Z"+accentedCharacters+"]+");
+        String accentedString = new String("[a-zA-Z"+accentedCharacters+"0-9]+");
         // regex for compound name (e.g. L'acqua)
         String compoundName = new String(accentedString+"((\\s)?'"+"(\\s)?"+accentedString+")?");
         //strings separated by space. Start with string and end with string.
