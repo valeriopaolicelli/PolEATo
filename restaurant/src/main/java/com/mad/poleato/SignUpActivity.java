@@ -366,12 +366,6 @@ public class SignUpActivity extends AppCompatActivity {
             myToast.show();
             editTextFields.get("Name").setBackground(ContextCompat.getDrawable(getApplicationContext(), R.drawable.border_wrong_field));
         }
-        if (!editTextFields.get("Surname").getText().toString().matches(nameRegex)) {
-            wrongField = true;
-            myToast.setText("The name must start with letters and must end with letters. Space are allowed. Numbers are not allowed");
-            myToast.show();
-            editTextFields.get("Name").setBackground(ContextCompat.getDrawable(getApplicationContext(), R.drawable.border_wrong_field));
-        }
         if (!editTextFields.get("Email").getText().toString().matches(emailRegex)) {
             wrongField = true;
             myToast.setText("Invalid Email");
