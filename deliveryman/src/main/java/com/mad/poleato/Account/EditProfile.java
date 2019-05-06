@@ -247,11 +247,10 @@ public class EditProfile extends Fragment {
 
                         for (DataSnapshot snap : dataSnapshot.getChildren()) {
                             if (editTextFields.containsKey(snap.getKey())) {
-
-                                if (snap.getKey().equals("IsActive")) {
-                                    statusSwitch.setChecked((Boolean) snap.getValue());
-                                } else
-                                    editTextFields.get(snap.getKey()).setText(snap.getValue().toString());
+                                editTextFields.get(snap.getKey()).setText(snap.getValue().toString());
+                            }
+                            if (snap.getKey().equals("IsActive")) {
+                                statusSwitch.setChecked((Boolean) snap.getValue());
                             }
                         } //end for
                     }
