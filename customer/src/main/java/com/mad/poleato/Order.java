@@ -68,10 +68,10 @@ public class Order implements Serializable {
     }
 
     public void addFoodToOrder(Food f){
-        this.selectedFoods.put(f.getName(),f);
+        this.selectedFoods.put(f.getFoodID(),f);
     }
     public void removeFoodFromOrder(Food f){
-        this.selectedFoods.remove(f.getName());
+        this.selectedFoods.remove(f.getFoodID());
     }
 
     @Exclude

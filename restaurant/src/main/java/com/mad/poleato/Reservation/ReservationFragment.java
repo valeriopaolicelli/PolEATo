@@ -282,13 +282,14 @@ public class ReservationFragment extends Fragment {
                     String nameDish;
                     int quantity;
                     Dish d;
+                    String foodID;
 
                     for (DataSnapshot dish : dishesOfReservation.getChildren()) {
                         nameDish = dish.child("name").getValue().toString();
                         quantity = Integer.parseInt(dish.child("selectedQuantity").getValue().toString());
                         note= dish.child("customerNotes").getValue().toString();
-
-                        d = new Dish(nameDish, quantity, note);
+                        foodID= dish.child("foodID").getValue().toString();
+                        d = new Dish(nameDish, quantity, note, foodID);
                         r.addDishtoReservation(d);
                     }
                     listHash.put(r.getOrder_id(), r.getDishes());
@@ -355,11 +356,13 @@ public class ReservationFragment extends Fragment {
                     String nameDish;
                     int quantity;
                     Dish d;
+                    String foodID;
 
                     for (DataSnapshot dish : dishesOfReservation.getChildren()) {
                         nameDish = dish.child("name").getValue().toString();
                         quantity = Integer.parseInt(dish.child("selectedQuantity").getValue().toString());
-                        d = new Dish(nameDish, quantity, note);
+                        foodID= dish.child("foodID").getValue().toString();
+                        d = new Dish(nameDish, quantity, note, foodID);
                         dishes.add(d);
                     }
 
@@ -367,15 +370,15 @@ public class ReservationFragment extends Fragment {
                             status, null, totalPrice, getActivity().getApplicationContext());
 
                     // if the status is changed (onclick listener) the order must change only and not re-added
-                    listHash.put(order_id, dishes);
                     if(!listHash.containsKey(order_id)){
                         reservations.add(r);
                     }
-                    else{
-                        for(Reservation res : reservations)
+                    listHash.put(order_id, dishes);
+
+                    for(Reservation res : reservations)
                             if(res.getOrder_id().equals(order_id))
                                 res.setStat(status);
-                    }
+
                     listAdapter.notifyDataSetChanged();
 
                 }
