@@ -260,11 +260,6 @@ public class ReservationExpandableListAdapter extends BaseExpandableListAdapter 
                                             .child("restaurants")
                                             .child(loggedID)
                                             .child("Menu");
-                                    try {
-                                        Thread.sleep(5000);
-                                    } catch (InterruptedException e) {
-                                        e.printStackTrace();
-                                    }
                                     //TODO: Aggiornare quantità menù
                                     dbReference.runTransaction(new Transaction.Handler() {
                                         @NonNull
@@ -288,7 +283,7 @@ public class ReservationExpandableListAdapter extends BaseExpandableListAdapter 
                                                 for( Dish d : c.getDishes()){
                                                     if(d.getID().equals(foodID)){
                                                         if(quantity - d.getQuantity()< 0 ){
-                                                            Toast.makeText(context, "Not enough quantity, please update", Toast.LENGTH_SHORT).show();
+                                                            Toast.makeText(context, "Not enough quantity, please update", Toast.LENGTH_LONG).show();
                                                             return Transaction.success(mutableData);
                                                         }
                                                         m.child("Quantity").setValue((quantity-d.getQuantity()));

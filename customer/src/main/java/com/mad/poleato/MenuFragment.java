@@ -279,12 +279,27 @@ public class MenuFragment extends Fragment {
                     if(!listDataChild.containsKey(category)){
                         listDataChild.put(category,new ArrayList<Food>());
                     }
-                    listDataChild.get(category).add(f);
+
+                    int lenght= listDataChild.get(category).size();
+                    boolean found= false;
+                    int i;
+                    for(i=0; i < lenght; i++){
+                        if(listDataChild.get(category).get(i).getFoodID().equals(id)) {
+                            found = true;
+                            break;
+                        }
+                    }
+
+                    if(found){
+                        listDataChild.get(category).set(i, f);
+                    }
+                    else
+                        listDataChild.get(category).add(f);
 
                     final int curr_index = listDataChild.get(category).size()-1;
 
                     StorageReference photoReference = FirebaseStorage.getInstance().getReferenceFromUrl(imageUrl);
-                    final long ONE_MEGABYTE = 256 * 256;
+                    final long ONE_MEGABYTE = 1024 * 1024;
                     photoReference.getBytes(ONE_MEGABYTE).addOnSuccessListener(new OnSuccessListener<byte[]>() {
                         @Override
                         public void onSuccess(byte[] bytes) {
@@ -324,6 +339,11 @@ public class MenuFragment extends Fragment {
                     }
                     if(toDelete != -1)
                         listDataChild.get(category).remove(toDelete);
+                    if(listDataChild.get(category).size()==0){
+                        listDataChild.remove(category);
+                        listDataGroup.remove(category);
+                    }
+                    listAdapter.notifyDataSetChanged();
                 }
             }
 
