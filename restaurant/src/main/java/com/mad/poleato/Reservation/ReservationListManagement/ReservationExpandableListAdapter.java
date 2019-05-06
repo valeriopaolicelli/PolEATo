@@ -268,30 +268,45 @@ public class ReservationExpandableListAdapter extends BaseExpandableListAdapter 
                                         public Transaction.Result doTransaction(@NonNull MutableData mutableData) {
                                             if(mutableData.getChildrenCount() == 0)
                                                 return Transaction.success(mutableData);
+                                            int updated= 0;
                                             for(MutableData m : mutableData.getChildren()){
+                                /*
+                                 * In m there are all plates of restaurant menu;
+                                 * in c.getDishes() there are all plates of reservation;
+                                 * so for each plate of menu (m) it searches if is contained in the reservation;
+                                 * whenever it is found, the quantity is checked and eventually updated in the menu.
+                                 * When al plates of reservation are found (counter: int updated),
+                                 * the reservation status and the button text are updated,
+                                 * then the scanning of menu foods is stopped (pruning).
+                                 */
                                                 String foodID= m.getKey();
                                                 Integer quantity= Integer.parseInt(mutableData.child(foodID).child("Quantity").getValue().toString());
-                                                int count= 0;
                                                 for( Dish d : c.getDishes()){
                                                     if(d.getID().equals(foodID)){
                                                         if(quantity - d.getQuantity()< 0 ){
                                                             Toast.makeText(context, "Not enough quantity, please update", Toast.LENGTH_SHORT).show();
                                                             return Transaction.success(mutableData);
                                                         }
-                                                        count++;
+                                                        m.child("Quantity").setValue((quantity-d.getQuantity()));
+                                                        Transaction.success(mutableData);
+                                                        updated++;
+                                                        /*
+                                                         * pruning
+                                                         */
+                                                        if(updated==c.getNumberOfDishes()){
+                                                            c.setStatus(Status.COOKING, context);
+                                                            FirebaseDatabase.getInstance().getReference("restaurants").child(loggedID).child("reservations").child(c.getOrder_id()).child("status").child("en").setValue("Cooking");
+                                                            FirebaseDatabase.getInstance().getReference("restaurants").child(loggedID).child("reservations").child(c.getOrder_id()).child("status").child("it").setValue("Preparazione");
+                                                            //TODO next instruction produces error
+                                                            //       holder.button.setText(context.getString(R.string.title_deliver));
+                                                            c.setButtonText(context.getString(R.string.title_deliver));
+                                                            return Transaction.success(mutableData);
+                                                        }
                                                     }
                                                 }
-                                                m.child("Quantity").setValue((quantity-count));
                                                 //TODO update quantity in food of reservation (list of reservations -> dishes)
                                             }
-                                            c.setStatus(Status.COOKING, context);
-                                            FirebaseDatabase.getInstance().getReference("restaurants").child(loggedID).child("reservations").child(c.getOrder_id()).child("status").child("en").setValue("Cooking");
-                                            FirebaseDatabase.getInstance().getReference("restaurants").child(loggedID).child("reservations").child(c.getOrder_id()).child("status").child("it").setValue("Preparazione");
-                                     //TODO next instruction produce error
-                                            //       holder.button.setText(context.getString(R.string.title_deliver));
-                                            c.setButtonText(context.getString(R.string.title_deliver));
-
-                                            return Transaction.success(mutableData);
+                                            return null;
                                         }
 
                                         @Override
