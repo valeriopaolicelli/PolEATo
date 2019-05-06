@@ -284,7 +284,7 @@ public class MenuFragment extends Fragment {
                     final int curr_index = listDataChild.get(category).size()-1;
 
                     StorageReference photoReference = FirebaseStorage.getInstance().getReferenceFromUrl(imageUrl);
-                    final long ONE_MEGABYTE = 256 * 256;
+                    final long ONE_MEGABYTE = 1024 * 1024;
                     photoReference.getBytes(ONE_MEGABYTE).addOnSuccessListener(new OnSuccessListener<byte[]>() {
                         @Override
                         public void onSuccess(byte[] bytes) {
