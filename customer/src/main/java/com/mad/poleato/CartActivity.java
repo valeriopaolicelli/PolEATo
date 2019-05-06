@@ -198,7 +198,6 @@ public class CartActivity extends AppCompatActivity implements Interface {
                         con.setRequestProperty("Content-Type", "application/json; charset=UTF-8");
                         con.setRequestProperty("Authorization", "Basic YjdkNzQzZWQtYTlkYy00MmIzLTg0NDUtZmQ3MDg0ODc4YmQ1");
                         con.setRequestMethod("POST");
-
                         String strJsonBody = "{"
                                 + "\"app_id\": \"a2d0eb0d-4b93-4b96-853e-dcfe6c34778e\","
 
