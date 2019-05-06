@@ -64,5 +64,9 @@ public class NavigatorActivity extends AppCompatActivity {
 
     }
 
+    @Override
+    public boolean onSupportNavigateUp() {
+        return navController.navigateUp();
+    }
 
 }
