@@ -283,7 +283,6 @@ public class ReservationFragment extends Fragment {
                     String foodID;
                     int quantity;
                     Dish d;
-                    String foodID;
 
                     for (DataSnapshot dish : dishesOfReservation.getChildren()) {
                         nameDish = dish.child("name").getValue().toString();
@@ -364,7 +363,7 @@ public class ReservationFragment extends Fragment {
                         nameDish = dish.child("name").getValue().toString();
                         quantity = Integer.parseInt(dish.child("selectedQuantity").getValue().toString());
                         foodID = dish.child("foodID").getValue().toString();
-                        d = new Dish(foodID,nameDish, quantity, note);
+                        d = new Dish(foodID, nameDish, quantity, note);
 
                         dishes.add(d);
                     }

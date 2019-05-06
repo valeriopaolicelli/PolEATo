@@ -9,10 +9,10 @@
         android:id="@+id/reservationslv"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:divider="#cccccc"
+
         android:layout_marginBottom="?attr/actionBarSize"
-        android:dividerHeight="10dp"
+        android:dividerHeight="2dp"
         android:padding="3dp"
-        android:childDivider="#cccccc" />
+        tools:listitem="@layout/layout_reservation_group"/>
 
 </FrameLayout>
