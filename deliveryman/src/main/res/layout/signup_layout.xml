@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:layout_height="wrap_content"
-    android:layout_width="match_parent">
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
     <android.support.constraint.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="match_parent"
         android:background="@color/colorPanelPrimary"
         tools:context=".SignUpActivity">
 
@@ -27,12 +27,12 @@
             android:id="@+id/tvTitle"
             android:layout_width="wrap_content"
             android:layout_height="108dp"
-            android:layout_marginBottom="50dp"
+            android:layout_marginBottom="16dp"
             android:text="PolEATo"
             android:textColor="#ffffff"
-            android:textSize="80sp"
+            android:textSize="70sp"
             android:textStyle="italic|bold"
-            app:layout_constraintBottom_toTopOf="@id/tiEmail"
+            app:layout_constraintBottom_toTopOf="@+id/tiEmail"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/app_icon"
@@ -245,7 +245,6 @@
             android:layout_width="0dp"
             android:layout_height="56dp"
             android:layout_marginTop="8dp"
-            android:layout_marginBottom="16dp"
             android:theme="@style/FloatLabelSignInUp"
             app:layout_constraintBottom_toTopOf="@id/ButtonSignUp"
             app:layout_constraintEnd_toStartOf="@id/cancel_phone"
@@ -280,7 +279,6 @@
             app:layout_constraintStart_toEndOf="@id/tiPhone"
             app:layout_constraintTop_toTopOf="@id/tiPhone" />
 
-
         <Button
             android:id="@+id/ButtonSignIn"
             android:layout_width="0dp"
@@ -288,7 +286,10 @@
             android:layout_marginStart="16dp"
             android:layout_marginTop="16dp"
             android:layout_marginEnd="16dp"
+            android:layout_marginBottom="16dp"
+            android:background="@drawable/ripple"
             android:text="@string/signin"
+            android:textColor="@color/colorBodyPrimary"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toStartOf="@id/ButtonSignUp"
             app:layout_constraintStart_toStartOf="parent"
@@ -300,10 +301,12 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
             android:layout_marginEnd="16dp"
+            android:layout_marginBottom="16dp"
+            android:background="@drawable/ripple"
             android:text="@string/signup"
+            android:textColor="@color/colorBodyPrimary"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toEndOf="@id/ButtonSignIn"
-            app:layout_constraintTop_toTopOf="@id/ButtonSignIn" />
+            app:layout_constraintStart_toEndOf="@id/ButtonSignIn" />
     </android.support.constraint.ConstraintLayout>
 </ScrollView>
