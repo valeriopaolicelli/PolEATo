@@ -38,6 +38,7 @@
     <string name="failure">Something goes wrong</string>
     <string name="saved">Saved</string>
     <string name="saving">Saving changes</string>
+    <string name="no_account">Don\'t have an account?</string>
 
     <string name="hello_blank_fragment">Work in progress</string>
 
