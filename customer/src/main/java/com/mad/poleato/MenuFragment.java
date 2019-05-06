@@ -233,7 +233,7 @@ public class MenuFragment extends Fragment {
                     final String category = dataSnapshot.child("Category").getValue().toString();
                     final String imageUrl = dataSnapshot.child("photoUrl").getValue().toString();
 
-                    Food f = new Food(id, img, name, description, price, quantity);
+                    Food f = new Food(id, imageUrl, name, description, price, quantity);
 
                     if(!listDataGroup.contains(category))
                         listDataGroup.add(category);
@@ -247,14 +247,14 @@ public class MenuFragment extends Fragment {
                      */
                     final int curr_index = listDataChild.get(category).size() - 1;
                     StorageReference photoReference = FirebaseStorage.getInstance().getReferenceFromUrl(imageUrl);
-                    final long ONE_MEGABYTE = 1024 * 1024;
+                    final long ONE_MEGABYTE = 1024*1024;
                     photoReference.getBytes(ONE_MEGABYTE).addOnSuccessListener(new OnSuccessListener<byte[]>() {
                         @Override
                         public void onSuccess(byte[] bytes) {
                             String s = imageUrl;
                             Log.d("matte", "onSuccess");
-                            SerialBitmap bmp = new SerialBitmap(BitmapFactory.decodeByteArray(bytes, 0, bytes.length));
-                            setImg(category, curr_index, bmp);
+                            //SerialBitmap bmp = new SerialBitmap(BitmapFactory.decodeByteArray(bytes, 0, bytes.length));
+                            setImg(category, curr_index, s);
                         }
                     }).addOnFailureListener(new OnFailureListener() {
                         @Override
@@ -263,8 +263,8 @@ public class MenuFragment extends Fragment {
                             Log.d("matte", "onFailure() : excp -> "+exception.getMessage()
                                     +"| restaurantID: "+id);
 
-                            SerialBitmap bmp = new SerialBitmap(BitmapFactory.decodeResource(getResources(), R.drawable.plate_fork));
-                            setImg(category, curr_index, bmp);
+                           // SerialBitmap bmp = new SerialBitmap(BitmapFactory.decodeResource(getResources(), R.drawable.plate_fork));
+                            //setImg(category, curr_index, bmp);
                         }
                     });
 
@@ -293,7 +293,7 @@ public class MenuFragment extends Fragment {
                             .replace(",", "."));
                     final String category = dataSnapshot.child("Category").getValue().toString();
                     final String imageUrl = dataSnapshot.child("photoUrl").getValue().toString();
-
+/*
                     int toDelete = -1;
                     for(int idx = 0; idx < listDataChild.get(category).size(); idx ++){
                         if(listDataChild.get(category).get(idx).getFoodID().equals(id)){
@@ -303,8 +303,8 @@ public class MenuFragment extends Fragment {
                     }
                     if(toDelete != -1)
                         listDataChild.get(category).remove(toDelete);
-
-                    Food f = new Food(id, img, name, description, price, quantity);
+*/
+                    Food f = new Food(id, imageUrl, name, description, price, quantity);
 
                     if(!listDataGroup.contains(category))
                         listDataGroup.add(category);
@@ -316,14 +316,14 @@ public class MenuFragment extends Fragment {
                     final int curr_index = listDataChild.get(category).size()-1;
 
                     StorageReference photoReference = FirebaseStorage.getInstance().getReferenceFromUrl(imageUrl);
-                    final long ONE_MEGABYTE = 1024 * 1024;
+                    final long ONE_MEGABYTE = 256 * 256;
                     photoReference.getBytes(ONE_MEGABYTE).addOnSuccessListener(new OnSuccessListener<byte[]>() {
                         @Override
                         public void onSuccess(byte[] bytes) {
                             String s = imageUrl;
                             Log.d("matte", "onSuccess");
-                            SerialBitmap bmp = new SerialBitmap(BitmapFactory.decodeByteArray(bytes, 0, bytes.length));
-                            setImg(category, curr_index, bmp);
+                           // SerialBitmap bmp = new SerialBitmap(BitmapFactory.decodeByteArray(bytes, 0, bytes.length));
+                          //  setImg(category, curr_index, bmp);
 
                         }
                     }).addOnFailureListener(new OnFailureListener() {
@@ -448,7 +448,7 @@ public class MenuFragment extends Fragment {
     }
 
 
-    public void setImg(String category, int idx, SerialBitmap img){
+    public void setImg(String category, int idx, String img){
         listDataChild.get(category).get(idx).setImg(img);
     }
 

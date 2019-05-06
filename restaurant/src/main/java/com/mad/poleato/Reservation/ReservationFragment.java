@@ -248,6 +248,9 @@ public class ReservationFragment extends Fragment {
                     final String status = dataSnapshot.child("status").child(localeShort).getValue().toString();
                     final String totalPrice= dataSnapshot.child("totalPrice").getValue().toString();
 
+
+                    //TODO update with proper date, time and notes
+
                     //Retrieve through customerID the details of the customer
                     customer= FirebaseDatabase.getInstance().getReference("customers").child(customer_id);
 
@@ -280,14 +283,14 @@ public class ReservationFragment extends Fragment {
                     String foodID;
                     int quantity;
                     Dish d;
+                    String foodID;
 
                     for (DataSnapshot dish : dishesOfReservation.getChildren()) {
                         nameDish = dish.child("name").getValue().toString();
                         quantity = Integer.parseInt(dish.child("selectedQuantity").getValue().toString());
                         note= dish.child("customerNotes").getValue().toString();
-                        foodID = dish.child("foodID").getValue().toString();
-
-                        d = new Dish(foodID, nameDish, quantity, note);
+                        foodID= dish.child("foodID").getValue().toString();
+                        d = new Dish(nameDish, quantity, note, foodID);
                         r.addDishtoReservation(d);
                     }
                     listHash.put(r.getOrder_id(), r.getDishes());
@@ -328,6 +331,8 @@ public class ReservationFragment extends Fragment {
                     String note= null;
                     ArrayList<Dish> dishes= new ArrayList<>();
 
+                    //TODO update with proper date, time and notes
+
                     //Retrieve through customerID the details of the customer
                     customer= FirebaseDatabase.getInstance().getReference("customers").child(customer_id);
                     readData(new FirebaseCallBack() {
@@ -353,12 +358,14 @@ public class ReservationFragment extends Fragment {
                     String foodID;
                     int quantity;
                     Dish d;
+                    String foodID;
 
                     for (DataSnapshot dish : dishesOfReservation.getChildren()) {
                         nameDish = dish.child("name").getValue().toString();
                         quantity = Integer.parseInt(dish.child("selectedQuantity").getValue().toString());
                         foodID = dish.child("foodID").getValue().toString();
                         d = new Dish(foodID,nameDish, quantity, note);
+
                         dishes.add(d);
                     }
 
@@ -366,15 +373,15 @@ public class ReservationFragment extends Fragment {
                             status, null, totalPrice, getActivity().getApplicationContext());
 
                     // if the status is changed (onclick listener) the order must change only and not re-added
-                    listHash.put(order_id, dishes);
                     if(!listHash.containsKey(order_id)){
                         reservations.add(r);
                     }
-                    else{
-                        for(Reservation res : reservations)
+                    listHash.put(order_id, dishes);
+
+                    for(Reservation res : reservations)
                             if(res.getOrder_id().equals(order_id))
                                 res.setStat(status);
-                    }
+
                     listAdapter.notifyDataSetChanged();
 
                 }

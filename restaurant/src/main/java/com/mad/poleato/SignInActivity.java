@@ -141,20 +141,38 @@ public class SignInActivity extends AppCompatActivity {
                             // Sign in success, update UI with the signed-in user's information
                             Log.d("matte", "signInWithEmail:success");
                             FirebaseUser user = mAuth.getCurrentUser();
-                            myToast.setText(getString(R.string.login_succ));
-                            myToast.show();
-                            access();
+                            if(user != null) {
+                                DatabaseReference reference = FirebaseDatabase.getInstance().getReference("users").child(user.getUid());
+                                reference.addValueEventListener(new ValueEventListener() {
+                                    @Override
+                                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                                        if (dataSnapshot.exists())
+                                            if (dataSnapshot.getValue().toString().equals("restaurant")){
+                                                myToast.setText(getString(R.string.login_succ));
+                                                myToast.show();
+                                                access();
+                                            }
+                                            else{
+                                                myToast.setText(getString(R.string.login_fail));
+                                                myToast.show();
+                                            }
+                                    }
+
+                                    @Override
+                                    public void onCancelled(@NonNull DatabaseError databaseError) {
+                                        Log.d("Valerio", "SignIn restaurant -> onStart -> onCancelled: " + databaseError.getMessage());
+                                    }
+                                });
+                            }
                         } else {
                             // If sign in fails, display a message to the user.
                             Log.d("matte", "signInWithEmail:failure", task.getException());
                             myToast.setText(getString(R.string.login_fail));
                             myToast.show();
                         }
-
                         // ...
                     }
                 });
-
     }
 
 
@@ -199,9 +217,6 @@ public class SignInActivity extends AppCompatActivity {
                     Intent myIntent = new Intent(SignInActivity.this, SignUpActivity.class);
                     SignInActivity.this.startActivity(myIntent);
                     break;
-
-
-
             }
         }
     };

@@ -178,7 +178,7 @@ public class InfoFragment extends Fragment {
         StorageReference storageReference = FirebaseStorage.getInstance().getReference();
         StorageReference photoReference= storageReference.child(restaurantID+"/ProfileImage/img.jpg");
 
-        final long ONE_MEGABYTE = 1024 * 1024;
+        final long ONE_MEGABYTE = 256 * 256;
         photoReference.getBytes(ONE_MEGABYTE).addOnSuccessListener(new OnSuccessListener<byte[]>() {
             @Override
             public void onSuccess(byte[] bytes) {

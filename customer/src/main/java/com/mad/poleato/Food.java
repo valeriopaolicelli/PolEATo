@@ -8,7 +8,7 @@ import java.io.Serializable;
 
 public class Food implements Serializable {
 
-    private SerialBitmap img;
+    private String img;
     private String name;
     private String description;
     private Double price;
@@ -18,7 +18,7 @@ public class Food implements Serializable {
     private String foodID;
 
 
-    Food(String foodID, SerialBitmap img, String name, String description, Double price, int quantity){
+    Food(String foodID, String img, String name, String description, Double price, int quantity){
 
         this.img = img;
         this.name = name;
@@ -38,7 +38,7 @@ public class Food implements Serializable {
     }
 
     @Exclude
-    public SerialBitmap getImg() {
+    public String getImg() {
         return img;
     }
 
@@ -56,7 +56,7 @@ public class Food implements Serializable {
 
     public Integer getQuantity() { return quantity; }
 
-    public void setImg(SerialBitmap img){ this.img = img; }
+    public void setImg(String img){ this.img = img; }
 
     public void setName(String name){ this.name = name; }
 

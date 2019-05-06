@@ -7,7 +7,8 @@
     android:layout_height="match_parent"
     android:background="@color/colorPanelPrimary"
     android:orientation="vertical"
-    tools:context=".NavigatorActivity">
+    tools:context=".NavigatorActivity"
+    android:layout_marginBottom="?attr/actionBarSize">
 
 
     <ScrollView
@@ -545,7 +546,7 @@
                     android:layout_marginStart="16dp"
                     android:layout_marginTop="8dp"
                     android:contentDescription="@string/delivery_cost"
-                    android:src="@drawable/phone_icon"
+                    android:src="@drawable/ic_baseline_directions_bike_24px"
                     app:layout_constraintBottom_toTopOf="@id/empty_view"
                     app:layout_constraintEnd_toStartOf="@id/input_layout_delivery"
                     app:layout_constraintStart_toStartOf="parent"

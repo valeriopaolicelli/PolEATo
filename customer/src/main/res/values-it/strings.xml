@@ -35,7 +35,6 @@
     <string name="price">Prezzo: </string>
     <string name="date">Data</string>
     <string name="time">Orario</string>
-    <string name="loading">Caricamento</string>
     <string name="status">Status</string>
     <string name="total_price">Totale ordine</string>
     <string name="dishes">Piatto</string>
@@ -89,12 +88,10 @@
 
     <string name="title_bottombar_historyOrder">Ordini</string>
     <string name="title_actionbar_historyOrder">Ordini</string>
-    <string name="title_actionbar_add_food">Add food</string>
-    <string name="title_actionbar_edit_food">Edit food</string>
 
     <string name="title_bottombar_account">Account</string>
     <string name="title_actionbar_account">Account</string>
-    <string name="title_actionbar_edit_account">Edit Account</string>
+    <string name="title_actionbar_edit_account">Modifica Account</string>
 
 
     <!-- Login strings -->
@@ -107,7 +104,9 @@
     <string name="creation_succ">Account creato!</string>
     <string name="creation_fail">Creazione account fallita! Devi inserire una mail valida e una password di almeno 6 caratteri</string>
 
+    <string name="loading">Caricamento</string>
     <string name="failure">Qualcosa è andato storto</string>
     <string name="saved">Salvato</string>
+    <string name="saving">Salvataggio</string>
 
 </resources>

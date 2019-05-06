@@ -3,11 +3,19 @@ package com.mad.poleato.Reservation;
 public class Dish {
 
     // REFERENCE TO FOOD CLASS
-    private String ID;
     private String name;
     private Integer quantity;
     private String notes;
     private boolean checked;
+    private String id;
+
+    public String getID() {
+        return id;
+    }
+
+    public void setID(String id) {
+        this.id = id;
+    }
 
     public String getName() {
         return name;
@@ -25,12 +33,12 @@ public class Dish {
         return notes;
     }
 
-    public Dish(String foodID, String name, int quantity, String notes) {
-        this.ID = foodID;
+    public Dish(String name, int quantity, String notes, String foodID) {
         this.name = name;
         this.quantity = quantity;
         this.notes = notes;
         checked= false;
+        this.id= foodID;
     }
 
     public boolean isChecked() {
@@ -39,13 +47,5 @@ public class Dish {
 
     public void setChecked(boolean checked) {
         this.checked = checked;
-    }
-
-    public String getID() {
-        return ID;
-    }
-
-    public void setID(String ID) {
-        this.ID = ID;
     }
 }

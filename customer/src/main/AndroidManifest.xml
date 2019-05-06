@@ -20,9 +20,6 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
 
-        <!--<activity-->
-        <!--android:name=".EditProfile"-->
-        <!--android:windowSoftInputMode="stateAlwaysVisible|stateHidden" />-->
         <activity
             android:name=".SignInActivity"
             android:windowSoftInputMode="adjustPan">
@@ -53,7 +50,7 @@
 
         <provider
             android:name="android.support.v4.content.FileProvider"
-            android:authorities="com.example.android.mad.fileprovicer"
+            android:authorities="com.example.android.fileproviderC"
             android:exported="false"
             android:grantUriPermissions="true">
             <meta-data

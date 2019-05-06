@@ -12,6 +12,8 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.squareup.picasso.Picasso;
+
 import java.text.DecimalFormat;
 import java.util.HashMap;
 import java.util.List;
@@ -51,8 +53,8 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
     public void updateLitDataChild(){
         for(String s: _listDataChild.keySet()){
             for(Food f : _listDataChild.get(s)){
-                if(order.getSelectedFoods().containsKey(f.getName()))
-                    f.setSelectedQuantity(order.getSelectedFoods().get(f.getName()).getSelectedQuantity());
+                if(order.getSelectedFoods().containsKey(f.getFoodID()))
+                    f.setSelectedQuantity(order.getSelectedFoods().get(f.getFoodID()).getSelectedQuantity());
                 else
                     f.setSelectedQuantity(0);
             }
@@ -90,7 +92,8 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
 
         final Food  food = getChild(groupPosition,childPosition);
 
-        holder.img.setImageBitmap(food.getImg().getBitmap());
+       // holder.img.setImageBitmap(food.getImg().getBitmap());
+        Picasso.with(host.getApplicationContext()).load(food.getImg()).into(holder.img);
         holder.name.setText(food.getName());
         holder.description.setText(food.getDescription());
         //price and currency
@@ -113,10 +116,10 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
                 //check if restaurant has enough quantity requested
                 if(selectedQuantity<quantity) {
                     food.increaseSelectedQuantity();
-                    if(!order.getSelectedFoods().containsKey(food.getName())) {
+                    if(!order.getSelectedFoods().containsKey(food.getFoodID())) {
                         order.addFoodToOrder(food);
                     }
-                    order.getSelectedFoods().get(food.getName()).setSelectedQuantity(food.getSelectedQuantity());
+                    order.getSelectedFoods().get(food.getFoodID()).setSelectedQuantity(food.getSelectedQuantity());
                     order.updateTotalPrice();
                     //((OrderActivity)host).setOrder(order); //works but it's bad programming => better use interfaces
                     Log.d("fabio", "new total price: "+ order.getTotalPrice());
@@ -138,7 +141,7 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
                         order.removeFoodFromOrder(food);
                     }
                     else
-                        order.getSelectedFoods().get(food.getName()).setSelectedQuantity(food.getSelectedQuantity());
+                        order.getSelectedFoods().get(food.getFoodID()).setSelectedQuantity(food.getSelectedQuantity());
 
                     order.updateTotalPrice();
                     Log.d("fabio", "new total price: "+ order.getTotalPrice());

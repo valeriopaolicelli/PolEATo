@@ -137,7 +137,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="5dp"
-                android:hint="@string/name"
+                android:hint="@string/restaurant_name"
                 android:imeOptions="actionDone"
                 android:inputType="text"
                 android:maxLength="40"

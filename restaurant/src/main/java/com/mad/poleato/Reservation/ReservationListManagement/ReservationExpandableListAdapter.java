@@ -7,6 +7,7 @@ import android.content.DialogInterface;
 import android.os.AsyncTask;
 import android.os.StrictMode;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -15,11 +16,14 @@ import android.widget.BaseExpandableListAdapter;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.MutableData;
+import com.google.firebase.database.Transaction;
 import com.google.firebase.database.ValueEventListener;
 import com.mad.poleato.R;
 import com.mad.poleato.Reservation.Dish;
@@ -252,13 +256,67 @@ public class ReservationExpandableListAdapter extends BaseExpandableListAdapter 
                                 @Override
                                 public void onClick(DialogInterface dialogInterface, int i) {
                                     // Change button text
-                                    c.setStatus(Status.COOKING, context);
-                                    FirebaseDatabase.getInstance().getReference("restaurants").child(loggedID).child("reservations").child(c.getOrder_id()).child("status").child("en").setValue("Cooking");
-                                    FirebaseDatabase.getInstance().getReference("restaurants").child(loggedID).child("reservations").child(c.getOrder_id()).child("status").child("it").setValue("Preparazione");
-                                    holder.button.setText(context.getString(R.string.title_deliver));
-                                    c.setButtonText(context.getString(R.string.title_deliver));
-                                    notifyDataSetChanged();
+                                    DatabaseReference dbReference = FirebaseDatabase.getInstance().getReference()
+                                            .child("restaurants")
+                                            .child(loggedID)
+                                            .child("Menu");
+                                    try {
+                                        Thread.sleep(5000);
+                                    } catch (InterruptedException e) {
+                                        e.printStackTrace();
+                                    }
                                     //TODO: Aggiornare quantità menù
+                                    dbReference.runTransaction(new Transaction.Handler() {
+                                        @NonNull
+                                        @Override
+                                        public Transaction.Result doTransaction(@NonNull MutableData mutableData) {
+                                            if(mutableData.getChildrenCount() == 0)
+                                                return Transaction.success(mutableData);
+                                            int updated= 0;
+                                            for(MutableData m : mutableData.getChildren()){
+                                /*
+                                 * In m there are all plates of restaurant menu;
+                                 * in c.getDishes() there are all plates of reservation;
+                                 * so for each plate of menu (m) it searches if is contained in the reservation;
+                                 * whenever it is found, the quantity is checked and eventually updated in the menu.
+                                 * When al plates of reservation are found (counter: int updated),
+                                 * the reservation status and the button text are updated,
+                                 * then the scanning of menu foods is stopped (pruning).
+                                 */
+                                                String foodID= m.getKey();
+                                                Integer quantity= Integer.parseInt(mutableData.child(foodID).child("Quantity").getValue().toString());
+                                                for( Dish d : c.getDishes()){
+                                                    if(d.getID().equals(foodID)){
+                                                        if(quantity - d.getQuantity()< 0 ){
+                                                            Toast.makeText(context, "Not enough quantity, please update", Toast.LENGTH_SHORT).show();
+                                                            return Transaction.success(mutableData);
+                                                        }
+                                                        m.child("Quantity").setValue((quantity-d.getQuantity()));
+                                                        Transaction.success(mutableData);
+                                                        updated++;
+                                                        /*
+                                                         * pruning
+                                                         */
+                                                        if(updated==c.getNumberOfDishes()){
+                                                            c.setStatus(Status.COOKING, context);
+                                                            FirebaseDatabase.getInstance().getReference("restaurants").child(loggedID).child("reservations").child(c.getOrder_id()).child("status").child("en").setValue("Cooking");
+                                                            FirebaseDatabase.getInstance().getReference("restaurants").child(loggedID).child("reservations").child(c.getOrder_id()).child("status").child("it").setValue("Preparazione");
+                                                            c.setButtonText(context.getString(R.string.title_deliver));
+                                                            return Transaction.success(mutableData);
+                                                        }
+                                                    }
+                                                }
+                                                //TODO update quantity in food of reservation (list of reservations -> dishes)
+                                            }
+                                            return null;
+                                        }
+
+                                        @Override
+                                        public void onComplete(@Nullable DatabaseError databaseError, boolean b, @Nullable DataSnapshot dataSnapshot) {
+                                            Log.d("Fabio", "Transaction completed");
+                                        }
+                                    });
+                                    notifyDataSetChanged();
                                 }
                             });
                             builder.setNegativeButton(context.getString(R.string.choice_reject), new DialogInterface.OnClickListener() {
