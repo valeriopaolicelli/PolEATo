@@ -194,7 +194,6 @@ public class RestaurantSearchFragment extends Fragment {
                         dataSnapshot.hasChild("photoUrl")
                 )
                 {
-                    Bitmap img = BitmapFactory.decodeResource(getResources(), R.drawable.plate_fork);
                     final String id = dataSnapshot.getKey();
                     String name = dataSnapshot.child("Name").getValue().toString();
                     String type = dataSnapshot.child("Type").child(localeShort).getValue().toString();
@@ -204,7 +203,7 @@ public class RestaurantSearchFragment extends Fragment {
                     final String imageUrl = dataSnapshot.child("photoUrl").getValue().toString();
                     //insert before the download because otherwise it can happen that the download finish before
                     //  and the put raise exception
-                    Restaurant resObj = new Restaurant(id, img, name, type, isOpen, priceRange, deliveryCost);
+                    Restaurant resObj = new Restaurant(id, "", name, type, isOpen, priceRange, deliveryCost);
                     //add to the original list
                     restaurantMap.put(id, resObj);
                     restaurantList.add(resObj);
@@ -216,14 +215,14 @@ public class RestaurantSearchFragment extends Fragment {
                         public void onSuccess(byte[] bytes) {
                             String s = imageUrl;
                             Log.d("matte", "onSuccess | restaurantID: "+id);
-                            Bitmap bmp = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
-                            restaurantMap.get(id).setImage(bmp);
+                           // Bitmap bmp = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
+                            restaurantMap.get(id).setImage(s);
                             recyclerAdapter.notifyDataSetChanged();
                         }
                     }).addOnFailureListener(new OnFailureListener() {
                         @Override
                         public void onFailure(@NonNull Exception exception) {
-                            String s = imageUrl;
+                            String s = "";
                             Log.d("matte", "onFailure() : excp -> "+exception.getMessage()
                                     +"| restaurantID: "+id);
                         }
@@ -258,7 +257,7 @@ public class RestaurantSearchFragment extends Fragment {
                     Boolean isOpen = (Boolean) dataSnapshot.child("IsActive").getValue();
                     int priceRange = Integer.parseInt(dataSnapshot.child("PriceRange").getValue().toString());
                     double deliveryCost = Double.parseDouble(dataSnapshot.child("DeliveryCost").getValue().toString().replace(",", "."));
-                    String imageUrl = dataSnapshot.child("photoUrl").getValue().toString();
+                    final String imageUrl = dataSnapshot.child("photoUrl").getValue().toString();
 
                     Restaurant resObj;
                     if(restaurantMap.containsKey(id)) {
@@ -280,7 +279,7 @@ public class RestaurantSearchFragment extends Fragment {
                             removeFromDisplay(resObj);
                     }
                     else {
-                        resObj= new Restaurant(id, null, name, type, isOpen, priceRange, deliveryCost);
+                        resObj= new Restaurant(id, "", name, type, isOpen, priceRange, deliveryCost);
                         restaurantMap.put(id, resObj);
                         restaurantList.add(resObj);
                         if (isValidToDisplay(resObj))
@@ -295,13 +294,14 @@ public class RestaurantSearchFragment extends Fragment {
                         public void onSuccess(byte[] bytes) {
                             Log.d("matte", "onSuccess");
                             Bitmap bmp = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
-                            restaurantMap.get(id).setImage(bmp);
+                            restaurantMap.get(id).setImage(imageUrl);
                             recyclerAdapter.notifyDataSetChanged();
                         }
                     }).addOnFailureListener(new OnFailureListener() {
                         @Override
                         public void onFailure(@NonNull Exception exception) {
                             Log.d("matte", "onFailure() : excp -> "+exception.getMessage());
+                            restaurantMap.get(id).setImage("");
                         }
                     });
 

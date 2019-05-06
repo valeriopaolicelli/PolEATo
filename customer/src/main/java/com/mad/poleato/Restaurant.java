@@ -7,14 +7,14 @@ import java.io.Serializable;
 public class Restaurant implements Serializable {
 
     String id;
-    SerialBitmap image;
+    String image;
     String name;
     String type;
     Boolean isOpen;
     Integer priceRange;
     Double deliveryCost;
 
-    public Restaurant(String id, Bitmap img, String name, String type, Boolean isOpen, int priceRange, double deliveryCost){
+    public Restaurant(String id, String img, String name, String type, Boolean isOpen, int priceRange, double deliveryCost){
         setId(id);
         setImage(img);
         setIsOpen(isOpen);
@@ -32,8 +32,8 @@ public class Restaurant implements Serializable {
         this.id = id;
     }
 
-    public void setImage(Bitmap image) {
-        this.image = new SerialBitmap(image);
+    public void setImage(String image) {
+        this.image = image;
     }
 
     public void setName(String name) {
@@ -60,8 +60,8 @@ public class Restaurant implements Serializable {
         return id;
     }
 
-    public Bitmap getImage() {
-        return image.getBitmap();
+    public String getImage() {
+        return image;
     }
 
     public Boolean getIsOpen() {

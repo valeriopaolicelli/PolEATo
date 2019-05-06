@@ -38,6 +38,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
+import com.squareup.picasso.Picasso;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -56,7 +57,7 @@ public class MainProfile extends Fragment {
     private Toast myToast;
 
     private FloatingActionButton buttEdit;
-    private CircleImageView profileImage; //TODO retrieve image from DB
+    private CircleImageView profileImage;
     private DatabaseReference reference;
     private Map<String, TextView> tvFields;
     private View view;
@@ -71,10 +72,6 @@ public class MainProfile extends Fragment {
 
     private String currentUserID;
     private FirebaseAuth mAuth;
-
-    public MainProfile() {
-        // Required empty public constructor
-    }
 
 
     @Override
@@ -190,14 +187,15 @@ public class MainProfile extends Fragment {
 
         //Download the profile pic
         StorageReference storageReference = FirebaseStorage.getInstance().getReference();
-        StorageReference photoReference= storageReference.child(currentUserID +"/ProfileImage/img.jpg");
+        final StorageReference photoReference= storageReference.child(currentUserID +"/ProfileImage/img.jpg");
 
         final long ONE_MEGABYTE = 1024 * 1024;
         photoReference.getBytes(ONE_MEGABYTE).addOnSuccessListener(new OnSuccessListener<byte[]>() {
             @Override
             public void onSuccess(byte[] bytes) {
                 Bitmap bmp = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
-                profileImage.setImageBitmap(bmp);
+                Picasso.with(getActivity().getApplicationContext()).load(photoReference.toString()).into(profileImage);
+                //profileImage.setImageBitmap(bmp);
                 //send message to main thread
                 if(progressDialog.isShowing())
                     handler.sendEmptyMessage(0);
@@ -207,7 +205,7 @@ public class MainProfile extends Fragment {
             public void onFailure(@NonNull Exception exception) {
                 Log.d("matte", "No image found. Default img setting");
                 //set predefined image
-                profileImage.setImageResource(R.drawable.image_empty);
+                Picasso.with(getActivity().getApplicationContext()).load(R.drawable.image_empty).into(profileImage);
                 //send message to main thread
                 if(progressDialog.isShowing())
                     handler.sendEmptyMessage(0);
