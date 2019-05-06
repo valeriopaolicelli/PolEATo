@@ -189,25 +189,6 @@ public class MenuFragment extends Fragment {
                                         .child("Menu");
         listDataGroup = new ArrayList<>();
         listDataChild = new HashMap<>();
-/*
-        if(getActivity().getApplicationContext() != null)
-            progressDialog = ProgressDialog.show(getActivity().getApplicationContext(), "", getActivity().getApplicationContext().getString(R.string.loading));
-
-        //This is called after the OnChildAdded so it notify the end of downloads
-        reference.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                if(progressDialog.isShowing())
-                    handler.sendEmptyMessage(0);
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
-                if(progressDialog.isShowing())
-                    handler.sendEmptyMessage(0);
-            }
-        });
-        */
 
         reference.addChildEventListener(new ChildEventListener() {
                      @Override
@@ -222,7 +203,6 @@ public class MenuFragment extends Fragment {
                 {
                     //set default image initially, then change if download is successful
                     final String id = dataSnapshot.getKey();
-                    SerialBitmap img = new SerialBitmap(BitmapFactory.decodeResource(getResources(),R.drawable.plate_fork));
                     String name = dataSnapshot.child("Name").getValue().toString();
                     int quantity = Integer.parseInt(dataSnapshot.child("Quantity").getValue().toString());
                     String description = dataSnapshot.child("Description").getValue().toString();
@@ -259,12 +239,10 @@ public class MenuFragment extends Fragment {
                     }).addOnFailureListener(new OnFailureListener() {
                         @Override
                         public void onFailure(@NonNull Exception exception) {
-                            String s = imageUrl;
+                            String s = "";
                             Log.d("matte", "onFailure() : excp -> "+exception.getMessage()
                                     +"| restaurantID: "+id);
-
-                           // SerialBitmap bmp = new SerialBitmap(BitmapFactory.decodeResource(getResources(), R.drawable.plate_fork));
-                            //setImg(category, curr_index, bmp);
+                            setImg(category, curr_index, s);
                         }
                     });
 
@@ -293,17 +271,7 @@ public class MenuFragment extends Fragment {
                             .replace(",", "."));
                     final String category = dataSnapshot.child("Category").getValue().toString();
                     final String imageUrl = dataSnapshot.child("photoUrl").getValue().toString();
-/*
-                    int toDelete = -1;
-                    for(int idx = 0; idx < listDataChild.get(category).size(); idx ++){
-                        if(listDataChild.get(category).get(idx).getFoodID().equals(id)){
-                            toDelete = idx;
-                            break;
-                        }
-                    }
-                    if(toDelete != -1)
-                        listDataChild.get(category).remove(toDelete);
-*/
+
                     Food f = new Food(id, imageUrl, name, description, price, quantity);
 
                     if(!listDataGroup.contains(category))
@@ -323,15 +291,16 @@ public class MenuFragment extends Fragment {
                             String s = imageUrl;
                             Log.d("matte", "onSuccess");
                            // SerialBitmap bmp = new SerialBitmap(BitmapFactory.decodeByteArray(bytes, 0, bytes.length));
-                          //  setImg(category, curr_index, bmp);
+                            setImg(category, curr_index, s);
 
                         }
                     }).addOnFailureListener(new OnFailureListener() {
                         @Override
                         public void onFailure(@NonNull Exception exception) {
-                            String s = imageUrl;
+                            String s = "";
                             Log.d("matte", "onFailure() : excp -> "+exception.getMessage()
                                     +"| restaurantID: "+id);
+                            setImg(category,curr_index,s);
                         }
                     });
 
@@ -368,82 +337,6 @@ public class MenuFragment extends Fragment {
 
             }
         });
-
-
-
-
-
-        /*
-        reference.addChildEventListener(new ChildEventListener() {
-            List<Food>childItem;
-            @Override
-            public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
-                listDataGroup.add(dataSnapshot.getKey());
-                childItem = new ArrayList<>();
-
-                for(DataSnapshot ds : dataSnapshot.child(dataSnapshot.getKey()).getChildren()){
-                    String foodName = ds.getKey();
-                    // TODO: Make it dynamic with image
-                    SerialBitmap img = new SerialBitmap(BitmapFactory.decodeResource(getResources(),R.drawable.image_empty));
-                    Food f = new Food(dataSnapshot.getKey(), img, foodName,ds.child("Description").getValue().toString(),
-                            Double.parseDouble(ds.child("Price").getValue().toString()),
-                            Integer.parseInt(ds.child("Quantity").getValue().toString()));
-                    childItem.add(f);
-                }
-                Collections.sort(listDataGroup,new SortMenu());
-                listDataChild.put(dataSnapshot.getKey(), childItem);
-                listAdapter.notifyDataSetChanged();
-            }
-
-            @Override
-            public void onChildChanged(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
-                childItem = new ArrayList<>();
-
-                for(DataSnapshot ds : dataSnapshot.getChildren()){
-                    String foodName = ds.getKey();
-                    // TODO: Make it dynamic with image
-                    SerialBitmap img = new SerialBitmap(BitmapFactory.decodeResource(getResources(),R.drawable.image_empty));
-                    Food f = new Food(dataSnapshot.getKey(), img, foodName,ds.child("Description").getValue().toString(),
-                            Double.parseDouble(ds.child("Price").getValue().toString()),
-                            Integer.parseInt(ds.child("Quantity").getValue().toString()));
-                    childItem.add(f);
-                }
-                Collections.sort(listDataGroup,new SortMenu());
-                listDataChild.put(dataSnapshot.getKey(), childItem);
-                listAdapter.notifyDataSetChanged();
-            }
-
-            @Override
-            public void onChildRemoved(@NonNull DataSnapshot dataSnapshot) {
-                listDataGroup.remove(dataSnapshot.getKey());
-                childItem = new ArrayList<>();
-                Log.d("fabio", "Removed child" + dataSnapshot.getKey());
-
-                for(DataSnapshot ds : dataSnapshot.getChildren()){
-                    String foodName = ds.getKey();
-                    // TODO: Make it dynamic with image
-                    SerialBitmap img = new SerialBitmap(BitmapFactory.decodeResource(getResources(),R.drawable.image_empty));
-                    Food f = new Food(dataSnapshot.getKey(), img, foodName,ds.child("Description").getValue().toString(),
-                            Double.parseDouble(ds.child("Price").getValue().toString()),
-                            Integer.parseInt(ds.child("Quantity").getValue().toString()));
-                    childItem.add(f);
-                }
-                Collections.sort(listDataGroup,new SortMenu());
-                listDataChild.put(dataSnapshot.getKey(), childItem);
-                listAdapter.notifyDataSetChanged();
-
-            }
-
-            @Override
-            public void onChildMoved(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
-
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
-
-            }
-        }); */
 
     }
 

@@ -14,6 +14,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 
+import com.squareup.picasso.Picasso;
+
 import java.text.DecimalFormat;
 import java.util.Collection;
 import java.util.Collections;
@@ -107,7 +109,11 @@ public class RestaurantRecyclerViewAdapter extends RecyclerView.Adapter<Restaura
         // - replace the contents of the view with that element
         holder.title.setText(list.get(position).getName());
         holder.type.setText(list.get(position).getType());
-        holder.img.setImageBitmap(list.get(position).getImage());
+        if(list.get(position).getImage().equals("")){
+            Picasso.with(context).load(R.drawable.plate_fork).into(holder.img);
+        }
+        else
+            Picasso.with(context).load(list.get(position).getImage()).into(holder.img);
         DecimalFormat decimalFormat = new DecimalFormat("#.00"); //two decimal
         double deliveryCost = list.get(position).getDeliveryCost();
         if(deliveryCost < 0.1)

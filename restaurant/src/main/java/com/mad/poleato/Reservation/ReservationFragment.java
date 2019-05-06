@@ -280,6 +280,7 @@ public class ReservationFragment extends Fragment {
                     //and for each customer (reservation) retrieve the list of dishes
                     DataSnapshot dishesOfReservation = dataSnapshot.child("dishes");
                     String nameDish;
+                    String foodID;
                     int quantity;
                     Dish d;
                     String foodID;
@@ -354,6 +355,7 @@ public class ReservationFragment extends Fragment {
                     //and for each customer (reservation) retrieve the list of dishes
                     DataSnapshot dishesOfReservation = dataSnapshot.child("dishes");
                     String nameDish;
+                    String foodID;
                     int quantity;
                     Dish d;
                     String foodID;
@@ -361,8 +363,9 @@ public class ReservationFragment extends Fragment {
                     for (DataSnapshot dish : dishesOfReservation.getChildren()) {
                         nameDish = dish.child("name").getValue().toString();
                         quantity = Integer.parseInt(dish.child("selectedQuantity").getValue().toString());
-                        foodID= dish.child("foodID").getValue().toString();
-                        d = new Dish(nameDish, quantity, note, foodID);
+                        foodID = dish.child("foodID").getValue().toString();
+                        d = new Dish(foodID,nameDish, quantity, note);
+
                         dishes.add(d);
                     }
 

@@ -93,7 +93,11 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
         final Food  food = getChild(groupPosition,childPosition);
 
        // holder.img.setImageBitmap(food.getImg().getBitmap());
-        Picasso.with(host.getApplicationContext()).load(food.getImg()).into(holder.img);
+        if(food.getImg().equals("")){
+            Picasso.with(host.getApplicationContext()).load(R.drawable.plate_fork).into(holder.img);
+        }else
+            Picasso.with(host.getApplicationContext()).load(food.getImg()).into(holder.img);
+
         holder.name.setText(food.getName());
         holder.description.setText(food.getDescription());
         //price and currency
