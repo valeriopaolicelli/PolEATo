@@ -103,6 +103,7 @@
     <string name="login_fail">Autenticazione fallita.</string>
     <string name="creation_succ">Account creato!</string>
     <string name="creation_fail">Creazione account fallita! Devi inserire una mail valida e una password di almeno 6 caratteri</string>
+    <string name="no_account">Non sei registrato?</string>
 
     <string name="loading">Caricamento</string>
     <string name="failure">Qualcosa è andato storto</string>
