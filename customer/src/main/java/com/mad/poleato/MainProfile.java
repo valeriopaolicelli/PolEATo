@@ -181,10 +181,10 @@ public class MainProfile extends Fragment {
 
             @Override
             public void onCancelled(@NonNull DatabaseError databaseError) {
-                Log.d("matte", "onCancelled | ERROR: " + databaseError.getDetails() +
-                        " | MESSAGE: " + databaseError.getMessage());
-                myToast.setText(databaseError.getMessage().toString());
-                myToast.show();
+//                Log.d("matte", "onCancelled | ERROR: " + databaseError.getDetails() +
+//                        " | MESSAGE: " + databaseError.getMessage());
+//                myToast.setText(databaseError.getMessage().toString());
+//                myToast.show();
             }
         });
 
