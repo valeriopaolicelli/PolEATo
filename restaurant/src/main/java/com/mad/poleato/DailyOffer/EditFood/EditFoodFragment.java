@@ -302,12 +302,6 @@ public class EditFoodFragment extends DialogFragment {
         //strings separated by space. Start with string and end with string.
         String nameRegex = new String(compoundName+"(\\s("+compoundName+"\\s)*"+compoundName+")?");
 
-        //as above with the addition punctuation
-        //String punctuationRegex = new String("[\\.,\\*\\:\\'\\(\\)]");
-        String textRegex = new String("[^=&\\/\\s]+([^=&\\/]+)?[^=&\\/\\s]+");
-
-        String emailRegex = new String("^.+@[^\\.].*\\.[a-z]{2,}$");
-
         for (String fieldName : editTextFields.keySet()) {
             EditText field = editTextFields.get(fieldName);
             if(field != null){
@@ -326,12 +320,6 @@ public class EditFoodFragment extends DialogFragment {
             myToast.setText("The name must start with letters and must end with letters. Space are allowed. Numbers are not allowed");
             myToast.show();
             editTextFields.get("Name").setBackground(ContextCompat.getDrawable(getActivity(), R.drawable.border_wrong_field));
-        }
-        if (!editTextFields.get("Email").getText().toString().matches(emailRegex)) {
-            wrongField = true;
-            myToast.setText("Invalid Email");
-            myToast.show();
-            editTextFields.get("Email").setBackground(ContextCompat.getDrawable(getActivity(), R.drawable.border_wrong_field));
         }
         if(!editTextFields.get("Price").getText().toString().matches("[0-9]+([\\.\\,][0-9]+)?") ){
             Toast.makeText(getContext(), getContext().getString(R.string.error_format_price), Toast.LENGTH_LONG).show();
@@ -362,10 +350,7 @@ public class EditFoodFragment extends DialogFragment {
                                 Double.parseDouble(priceString), Integer.parseInt(quantity));
 
             uploadFile(img, f);
-
         }
-
-
     }
 
 

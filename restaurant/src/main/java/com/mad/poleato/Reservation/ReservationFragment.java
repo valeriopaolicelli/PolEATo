@@ -274,7 +274,7 @@ public class ReservationFragment extends Fragment {
 
                     // fields setted to null only because they will be setted later in the call back of FB
                     r = new Reservation(order_id, null, null, null, date, time,
-                            status, null, totalPrice, getActivity().getApplicationContext());
+                            status, null, totalPrice, getActivity());
                     reservations.add(r);
 
                     //and for each customer (reservation) retrieve the list of dishes
@@ -283,7 +283,6 @@ public class ReservationFragment extends Fragment {
                     String foodID;
                     int quantity;
                     Dish d;
-                    String foodID;
 
                     for (DataSnapshot dish : dishesOfReservation.getChildren()) {
                         nameDish = dish.child("name").getValue().toString();
@@ -358,19 +357,18 @@ public class ReservationFragment extends Fragment {
                     String foodID;
                     int quantity;
                     Dish d;
-                    String foodID;
 
                     for (DataSnapshot dish : dishesOfReservation.getChildren()) {
                         nameDish = dish.child("name").getValue().toString();
                         quantity = Integer.parseInt(dish.child("selectedQuantity").getValue().toString());
                         foodID = dish.child("foodID").getValue().toString();
-                        d = new Dish(foodID,nameDish, quantity, note);
+                        d = new Dish(nameDish, quantity, note, foodID);
 
                         dishes.add(d);
                     }
 
                     Reservation r = new Reservation(order_id, null, null, null, date, time,
-                            status, null, totalPrice, getActivity().getApplicationContext());
+                            status, null, totalPrice, getContext());
 
                     // if the status is changed (onclick listener) the order must change only and not re-added
                     if(!listHash.containsKey(order_id)){

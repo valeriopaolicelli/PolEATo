@@ -62,8 +62,8 @@ public class MyViewModel extends ViewModel {
     }
 
     public void setImg(String groupTag, int idx, Bitmap img){
-
-        _listDataChild.getValue().get(groupTag).get(idx).setImg(img);
+        if(idx < _listDataChild.getValue().get(groupTag).size())
+            _listDataChild.getValue().get(groupTag).get(idx).setImg(img);
 
     }
 
