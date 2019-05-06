@@ -260,7 +260,11 @@ public class ReservationExpandableListAdapter extends BaseExpandableListAdapter 
                                             .child("restaurants")
                                             .child(loggedID)
                                             .child("Menu");
-
+                                    try {
+                                        Thread.sleep(5000);
+                                    } catch (InterruptedException e) {
+                                        e.printStackTrace();
+                                    }
                                     //TODO: Aggiornare quantità menù
                                     dbReference.runTransaction(new Transaction.Handler() {
                                         @NonNull
@@ -297,8 +301,6 @@ public class ReservationExpandableListAdapter extends BaseExpandableListAdapter 
                                                             c.setStatus(Status.COOKING, context);
                                                             FirebaseDatabase.getInstance().getReference("restaurants").child(loggedID).child("reservations").child(c.getOrder_id()).child("status").child("en").setValue("Cooking");
                                                             FirebaseDatabase.getInstance().getReference("restaurants").child(loggedID).child("reservations").child(c.getOrder_id()).child("status").child("it").setValue("Preparazione");
-                                                            //TODO next instruction produces error
-                                                            //       holder.button.setText(context.getString(R.string.title_deliver));
                                                             c.setButtonText(context.getString(R.string.title_deliver));
                                                             return Transaction.success(mutableData);
                                                         }
