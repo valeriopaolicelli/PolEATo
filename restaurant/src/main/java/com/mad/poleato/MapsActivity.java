@@ -2,6 +2,8 @@ package com.mad.poleato;
 
 import android.Manifest;
 import android.content.pm.PackageManager;
+import android.location.Address;
+import android.location.Geocoder;
 import android.location.Location;
 
 import com.firebase.geofire.GeoFire;
@@ -31,7 +33,9 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
+import java.io.IOException;
 import java.security.PrivilegedAction;
+import java.util.List;
 
 public class MapsActivity extends FragmentActivity implements OnMapReadyCallback,
                     GoogleApiClient.ConnectionCallbacks,
@@ -56,6 +60,9 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     GeoFire geoFire;
     Marker mCurrent;
 
+    double latitude;
+    double longitude;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -69,6 +76,27 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         geoFire= new GeoFire(ref);
 
         setUpLocation();
+
+
+
+
+        Geocoder geocoder = new Geocoder(this);
+        List<Address> addresses;
+        try {
+            addresses = geocoder.getFromLocationName("Via Corsica, 44, Guglionesi", 5);
+
+            if(addresses.size() > 0) {
+                latitude= addresses.get(0).getLatitude();
+                longitude= addresses.get(0).getLongitude();
+            }
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+
+
+
     }
 
     private void setUpLocation() {
@@ -99,6 +127,10 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             final double latitude= mLastLocation.getLatitude();
             final double longitude= mLastLocation.getLongitude();
 
+            Marker position2 = mMap.addMarker(new MarkerOptions()
+                    .position(new LatLng(this.latitude, this.longitude))
+                    .title("tryPos"));
+
             //Update to firebase
             geoFire.setLocation("myPosition", new GeoLocation(latitude, longitude), new GeoFire.CompletionListener() {
                 @Override
@@ -112,7 +144,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                                                 .title("myPosition"));
 
                     //Move camera to this position
-                    mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(latitude, longitude), 12.0f));
+                    mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(latitude, longitude), 55.0f));
 
                 }
             });
