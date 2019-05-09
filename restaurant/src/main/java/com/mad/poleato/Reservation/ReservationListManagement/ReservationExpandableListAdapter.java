@@ -229,7 +229,6 @@ public class ReservationExpandableListAdapter extends BaseExpandableListAdapter 
                                 @Override
                                 public void onClick(DialogInterface dialogInterface, int i) {
 
-                                //TODO when log in will be enabled, change the R00 child, with the proper one
                                 FirebaseDatabase.getInstance().getReference("restaurants").child(loggedID).child("reservations").child(c.getOrder_id()).child("status").child("en").setValue("Delivering");
                                 FirebaseDatabase.getInstance().getReference("restaurants").child(loggedID).child("reservations").child(c.getOrder_id()).child("status").child("it").setValue("In consegna");
                                 c.setStatus(Status.DELIVERY, context);
