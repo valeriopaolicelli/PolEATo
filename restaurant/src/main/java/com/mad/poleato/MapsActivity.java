@@ -29,9 +29,15 @@ import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseAuthRecentLoginRequiredException;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.ChildEventListener;
+import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 import java.io.IOException;
 import java.security.PrivilegedAction;
@@ -59,31 +65,36 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     DatabaseReference ref;
     GeoFire geoFire;
     Marker mCurrent;
+    private String restaurant_name;
+    private double latitude;
+    private double longitude;
 
-    double latitude;
-    double longitude;
+    private String currentUserID;
+    private FirebaseAuth mAuth;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_maps);
+
+        mAuth = FirebaseAuth.getInstance();
+        FirebaseUser currentUser = mAuth.getCurrentUser();
+        currentUserID = currentUser.getUid();
+
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
 
-        ref= FirebaseDatabase.getInstance().getReference("users/myLocation");
+        ref= FirebaseDatabase.getInstance().getReference("restaurants");
         geoFire= new GeoFire(ref);
 
         setUpLocation();
 
-
-
-
         Geocoder geocoder = new Geocoder(this);
         List<Address> addresses;
         try {
-            addresses = geocoder.getFromLocationName("Via Corsica, 44, Guglionesi", 5);
+            addresses = geocoder.getFromLocationName("Via Corsica, 44, Guglionesi", 1);
 
             if(addresses.size() > 0) {
                 latitude= addresses.get(0).getLatitude();
@@ -93,9 +104,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         } catch (IOException e) {
             e.printStackTrace();
         }
-
-
-
 
     }
 
@@ -124,33 +132,40 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         }
         mLastLocation= LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
         if(mLastLocation != null){
-            final double latitude= mLastLocation.getLatitude();
-            final double longitude= mLastLocation.getLongitude();
+            latitude= mLastLocation.getLatitude();
+            longitude= mLastLocation.getLongitude();
 
-            Marker position2 = mMap.addMarker(new MarkerOptions()
-                    .position(new LatLng(this.latitude, this.longitude))
-                    .title("tryPos"));
-
-            //Update to firebase
-            geoFire.setLocation("myPosition", new GeoLocation(latitude, longitude), new GeoFire.CompletionListener() {
+            ref.addValueEventListener(new ValueEventListener() {
                 @Override
-                public void onComplete(String key, DatabaseError error) {
-                    //Add marker
-                    if(mCurrent != null)
-                        mCurrent.remove();
+                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                    restaurant_name= dataSnapshot.child(currentUserID).child("Name").getValue().toString();
+                    latitude= Double.parseDouble(dataSnapshot.child(currentUserID).child("Latitude").getValue().toString());
+                    longitude= Double.parseDouble(dataSnapshot.child(currentUserID).child("Longitude").getValue().toString());
 
-                    mCurrent= mMap.addMarker(new MarkerOptions()
-                                                .position(new LatLng(latitude, longitude))
-                                                .title("myPosition"));
+                    //Update to firebase
+                    geoFire.setLocation(restaurant_name, new GeoLocation(latitude, longitude), new GeoFire.CompletionListener() {
+                        @Override
+                        public void onComplete(String key, DatabaseError error) {
+                            //Add marker
+                            if(mCurrent != null)
+                                mCurrent.remove();
 
-                    //Move camera to this position
-                    mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(latitude, longitude), 55.0f));
+                            mCurrent= mMap.addMarker(new MarkerOptions()
+                                    .position(new LatLng(latitude, longitude))
+                                    .title(restaurant_name));
 
+                            //Move camera to this position
+                            mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(latitude, longitude), 55.0f));
+
+                        }
+                    });
+                }
+
+                @Override
+                public void onCancelled(@NonNull DatabaseError databaseError) {
+                    Log.d("Valerio", "Firebase onCancelled in MapsActivity");
                 }
             });
-
-
-
 
             Log.d( "Valerio", String.format("Your location was changed: %f / %f",latitude,longitude));
         }

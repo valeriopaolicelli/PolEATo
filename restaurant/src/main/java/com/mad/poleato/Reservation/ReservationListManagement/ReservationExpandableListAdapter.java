@@ -4,6 +4,7 @@ import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.StrictMode;
 import android.support.annotation.NonNull;
@@ -25,6 +26,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.MutableData;
 import com.google.firebase.database.Transaction;
 import com.google.firebase.database.ValueEventListener;
+import com.mad.poleato.MapsActivity;
 import com.mad.poleato.R;
 import com.mad.poleato.Reservation.Dish;
 import com.mad.poleato.Reservation.Reservation;
@@ -229,7 +231,9 @@ public class ReservationExpandableListAdapter extends BaseExpandableListAdapter 
                                 @Override
                                 public void onClick(DialogInterface dialogInterface, int i) {
 
-                                //TODO when log in will be enabled, change the R00 child, with the proper one
+                                Intent mapsActivity= new Intent(context, MapsActivity.class);
+                                context.startActivity(mapsActivity);
+                              /*
                                 FirebaseDatabase.getInstance().getReference("restaurants").child(loggedID).child("reservations").child(c.getOrder_id()).child("status").child("en").setValue("Delivering");
                                 FirebaseDatabase.getInstance().getReference("restaurants").child(loggedID).child("reservations").child(c.getOrder_id()).child("status").child("it").setValue("In consegna");
                                 c.setStatus(Status.DELIVERY, context);
@@ -237,7 +241,7 @@ public class ReservationExpandableListAdapter extends BaseExpandableListAdapter 
                                 c.setButtonText(context.getString(R.string.order_info));
                                 notify = true;
                                 notifyRandomRider(c);
-                                notifyDataSetChanged();
+                                notifyDataSetChanged();*/
                                 }
                             });
                             builder.setNegativeButton(context.getString(R.string.choice_cancel), new DialogInterface.OnClickListener() {
