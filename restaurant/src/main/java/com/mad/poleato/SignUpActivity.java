@@ -3,6 +3,8 @@ package com.mad.poleato;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.location.Address;
+import android.location.Geocoder;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -36,7 +38,9 @@ import com.google.firebase.storage.UploadTask;
 import com.mad.poleato.DailyOffer.Food;
 
 import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class SignUpActivity extends AppCompatActivity {
@@ -48,6 +52,9 @@ public class SignUpActivity extends AppCompatActivity {
     private Map<String, ImageButton> imageButtons;
     private Map<String, EditText> editTextFields;
     private Button signIn, signUp;
+
+    private double latitude;
+    private double longitude;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -243,6 +250,8 @@ public class SignUpActivity extends AppCompatActivity {
                             reference.child("PriceRange").setValue("0");
                             reference.child("Type").child("it").setValue("");
                             reference.child("Type").child("en").setValue("");
+                            reference.child("Latitude").setValue(latitude);
+                            reference.child("Longitude").setValue(longitude);
 
                             access();
                         } else {
@@ -355,10 +364,6 @@ public class SignUpActivity extends AppCompatActivity {
         //strings separated by space. Start with string and end with string.
         String nameRegex = new String(compoundName+"(\\s("+compoundName+"\\s)*"+compoundName+")?");
 
-        //as above with the addition punctuation
-        //String punctuationRegex = new String("[\\.,\\*\\:\\'\\(\\)]");
-        String textRegex = new String("[^=&\\/\\s]+([^=&\\/]+)?[^=&\\/\\s]+");
-
         String emailRegex = new String("^.+@[^\\.].*\\.[a-z]{2,}$");
 
         if (!editTextFields.get("Name").getText().toString().matches(nameRegex)) {
@@ -372,6 +377,34 @@ public class SignUpActivity extends AppCompatActivity {
             myToast.setText("Invalid Email");
             myToast.show();
             editTextFields.get("Email").setBackground(ContextCompat.getDrawable(getApplicationContext(), R.drawable.border_wrong_field));
+        }
+
+
+        /*
+         * retrieve latitude and longitude of inserted address
+         */
+
+        String address= editTextFields.get("Address").getText().toString()
+                .trim().replaceAll(" +", " ");
+
+        Geocoder geocoder = new Geocoder(this);
+        List<Address> addresses;
+        try {
+            addresses = geocoder.getFromLocationName(address, 1);
+
+            if(addresses.size() > 0) {
+                if(addresses.get(0).getThoroughfare() == null)
+                    wrongField= true;
+                else {
+                    latitude = addresses.get(0).getLatitude();
+                    longitude = addresses.get(0).getLongitude();
+                }
+            }
+            else
+                wrongField= true;
+
+        } catch (IOException e) {
+            e.printStackTrace();
         }
         return wrongField;
     }
