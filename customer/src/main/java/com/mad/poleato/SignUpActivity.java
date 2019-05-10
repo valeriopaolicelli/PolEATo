@@ -182,15 +182,15 @@ public class SignUpActivity extends AppCompatActivity {
         button.setVisibility(View.INVISIBLE);
     }
 
-    @Override
-    protected void onStart() {
-        super.onStart();
-
-        // Check if user is signed in (non-null) and update UI accordingly.
-        FirebaseUser currentUser = mAuth.getCurrentUser();
-        if(currentUser != null)
-            access();
-    }
+//    @Override
+//    protected void onStart() {
+//        super.onStart();
+//
+//        // Check if user is signed in (non-null) and update UI accordingly.
+//        FirebaseUser currentUser = mAuth.getCurrentUser();
+//        if(currentUser != null)
+//            access();
+//    }
 
     //access to the app
     public void access(){

@@ -321,7 +321,7 @@
                     android:layout_marginTop="8dp"
                     android:contentDescription="@string/open"
                     android:src="@drawable/open_icon"
-                    app:layout_constraintBottom_toTopOf="@id/input_layout_address"
+                    app:layout_constraintBottom_toTopOf="@id/input_layout_close"
                     app:layout_constraintEnd_toStartOf="@id/input_layout_open"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@id/input_layout_info" />
@@ -333,7 +333,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="16dp"
                     android:theme="@style/FloatLabel"
-                    app:layout_constraintBottom_toTopOf="@id/input_layout_address"
+                    app:layout_constraintBottom_toTopOf="@id/input_layout_close"
                     app:layout_constraintEnd_toStartOf="@id/cancel_open"
                     app:layout_constraintStart_toEndOf="@id/open_icon"
                     app:layout_constraintTop_toBottomOf="@id/input_layout_info">
@@ -344,18 +344,20 @@
                         android:layout_height="wrap_content"
                         android:layout_marginStart="5dp"
                         android:gravity="start"
+                        android:focusable="false"
                         android:hint="@string/open"
                         android:imeOptions="actionNext"
-                        android:inputType="textMultiLine"
-                        android:lines="3"
+                        android:enabled="true"
+                        android:inputType="none"
+                        android:lines="2"
                         android:maxLength="90"
-
                         android:overScrollMode="always"
                         android:scrollbarStyle="insideInset"
                         android:scrollbars="vertical"
 
                         android:textColor="@color/colorTextSubField"
                         tools:ignore="Autofill" />
+
                 </android.support.design.widget.TextInputLayout>
 
 
@@ -369,10 +371,78 @@
                     android:background="@android:color/transparent"
                     android:contentDescription="@string/delete"
                     android:src="@drawable/clear"
-                    app:layout_constraintBottom_toTopOf="@id/input_layout_address"
+                    app:layout_constraintBottom_toTopOf="@id/input_layout_close"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toEndOf="@id/input_layout_open"
                     app:layout_constraintTop_toBottomOf="@id/input_layout_info" />
+
+                <!-- Closing Hour -->
+
+                <ImageView
+                    android:id="@+id/close_icon"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="16dp"
+                    android:layout_marginTop="8dp"
+                    android:contentDescription="@string/open"
+                    android:src="@drawable/open_icon"
+                    app:layout_constraintBottom_toTopOf="@id/input_layout_address"
+                    app:layout_constraintEnd_toStartOf="@id/input_layout_close"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/input_layout_open" />
+
+
+                <android.support.design.widget.TextInputLayout
+                    android:id="@+id/input_layout_close"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="16dp"
+                    android:theme="@style/FloatLabel"
+                    app:layout_constraintBottom_toTopOf="@id/input_layout_address"
+                    app:layout_constraintEnd_toStartOf="@id/cancel_close"
+                    app:layout_constraintStart_toEndOf="@id/close_icon"
+                    app:layout_constraintTop_toBottomOf="@id/input_layout_open">
+
+                    <EditText
+                        android:id="@+id/editTextClose"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="5dp"
+                        android:gravity="start"
+                        android:focusable="false"
+                        android:hint="@string/close"
+                        android:imeOptions="actionNext"
+                        android:enabled="true"
+                        android:inputType="none"
+                        android:lines="2"
+                        android:maxLength="90"
+                        android:overScrollMode="always"
+                        android:scrollbarStyle="insideInset"
+                        android:scrollbars="vertical"
+
+                        android:textColor="@color/colorTextSubField"
+                        tools:ignore="Autofill" />
+
+                </android.support.design.widget.TextInputLayout>
+
+
+                <ImageButton
+                    android:id="@+id/cancel_close"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:layout_marginEnd="8dp"
+                    android:layout_marginBottom="8dp"
+                    android:background="@android:color/transparent"
+                    android:contentDescription="@string/delete"
+                    android:src="@drawable/clear"
+                    app:layout_constraintBottom_toTopOf="@id/input_layout_address"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toEndOf="@id/input_layout_close"
+                    app:layout_constraintTop_toBottomOf="@id/input_layout_open" />
+
+
+
 
                 <!-- Address -->
                 <ImageView
@@ -385,7 +455,7 @@
                     app:layout_constraintBottom_toTopOf="@id/input_layout_email"
                     app:layout_constraintEnd_toStartOf="@id/input_layout_address"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/input_layout_open"
+                    app:layout_constraintTop_toBottomOf="@id/input_layout_close"
                     app:srcCompat="@drawable/address_icon" />
 
                 <android.support.design.widget.TextInputLayout
@@ -397,7 +467,7 @@
                     app:layout_constraintBottom_toTopOf="@id/input_layout_email"
                     app:layout_constraintEnd_toStartOf="@id/cancel_address"
                     app:layout_constraintStart_toEndOf="@id/address_icon"
-                    app:layout_constraintTop_toBottomOf="@id/input_layout_open">
+                    app:layout_constraintTop_toBottomOf="@id/input_layout_close">
 
                     <EditText
                         android:id="@+id/editTextAddress"
@@ -426,7 +496,7 @@
                     app:layout_constraintBottom_toTopOf="@id/input_layout_email"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toEndOf="@id/input_layout_address"
-                    app:layout_constraintTop_toBottomOf="@id/input_layout_open" />
+                    app:layout_constraintTop_toBottomOf="@id/input_layout_close" />
 
                 <!-- Email -->
                 <ImageView

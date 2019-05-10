@@ -5,7 +5,8 @@
     <string name="restaurant_name"><font size="18">Nome locale</font></string>
     <string name="type"><font size="18">Tipo di cucina</font></string>
     <string name="info"><font size="18">Descrizione ristorante</font></string>
-    <string name="open"><font size="18">Orari apertura</font></string>
+    <string name="open"><font size="18">Orario di apertura</font></string>
+    <string name="close"><font size="18">Orario di chiusura</font></string>
     <string name="owner"><font size="18">Titolare attività</font></string>
     <string name="name"><font size="18">Nome</font></string>
     <string name="surname"><font size="18">Cognome</font></string>

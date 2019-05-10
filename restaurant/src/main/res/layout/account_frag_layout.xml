@@ -212,10 +212,54 @@
             android:maxLength="90"
             android:maxLines="7"
             android:textColor="@color/colorTextSubField"
-            app:layout_constraintBottom_toTopOf="@id/addressLabel"
+            app:layout_constraintBottom_toTopOf="@id/closeLabel"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="@id/openLabel"
             app:layout_constraintTop_toBottomOf="@id/openLabel" />
+
+        <!-- Closing Hour -->
+        <ImageView
+            android:id="@+id/close_icon"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="8dp"
+            android:contentDescription="@string/info"
+            android:padding="4dp"
+            android:src="@drawable/open_icon"
+            app:layout_constraintBottom_toTopOf="@id/tvCloseField"
+            app:layout_constraintEnd_toStartOf="@+id/closeLabel"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/tvOpenField" />
+
+        <TextView
+            android:id="@+id/closeLabel"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginEnd="16dp"
+            android:text="@string/close"
+            android:textColor="@color/colorTextField"
+            app:layout_constraintBottom_toTopOf="@id/tvCloseField"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@id/close_icon"
+            app:layout_constraintTop_toBottomOf="@id/tvOpenField" />
+
+        <TextView
+            android:id="@+id/tvCloseField"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="16dp"
+            android:maxLength="90"
+            android:maxLines="7"
+            android:textColor="@color/colorTextSubField"
+            app:layout_constraintBottom_toTopOf="@id/addressLabel"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="@id/closeLabel"
+            app:layout_constraintTop_toBottomOf="@id/closeLabel" />
+
+
 
         <!-- Address -->
         <ImageView
@@ -230,7 +274,7 @@
             app:layout_constraintBottom_toTopOf="@id/tvAddressField"
             app:layout_constraintEnd_toStartOf="@id/addressLabel"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/tvOpenField" />
+            app:layout_constraintTop_toBottomOf="@id/tvCloseField" />
 
         <TextView
             android:id="@+id/addressLabel"
@@ -244,7 +288,7 @@
             app:layout_constraintBottom_toTopOf="@id/tvAddressField"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toEndOf="@id/address_icon"
-            app:layout_constraintTop_toBottomOf="@id/tvOpenField" />
+            app:layout_constraintTop_toBottomOf="@id/tvCloseField" />
 
         <TextView
             android:id="@+id/tvAddressField"

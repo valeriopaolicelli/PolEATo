@@ -41,7 +41,10 @@ import com.mad.poleato.Reservation.ReservationListManagement.ReservationExpandab
 import com.mad.poleato.SignInActivity;
 import com.mad.poleato.SignUpActivity;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
@@ -243,7 +246,11 @@ public class ReservationFragment extends Fragment {
 
                     order_id = dataSnapshot.getKey();
                     customer_id = dataSnapshot.child("customerID").getValue().toString();
-                    final String date= dataSnapshot.child("date").getValue().toString();
+                    final Long dateInMills= Long.parseLong(dataSnapshot.child("date").getValue().toString());
+                    DateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
+                    Calendar calendar = Calendar.getInstance();
+                    calendar.setTimeInMillis(dateInMills);
+                    final String date = formatter.format(calendar.getTime());
                     final String time= dataSnapshot.child("time").getValue().toString();
                     final String status = dataSnapshot.child("status").child(localeShort).getValue().toString();
                     final String totalPrice= dataSnapshot.child("totalPrice").getValue().toString();

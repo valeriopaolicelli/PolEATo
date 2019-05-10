@@ -40,6 +40,8 @@ import com.mad.poleato.NavigatorActivity;
 import com.mad.poleato.R;
 import com.mad.poleato.SignInActivity;
 
+import org.w3c.dom.Text;
+
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
@@ -127,6 +129,7 @@ public class AccountFragment extends Fragment {
         tvFields.put("Type", (TextView)view.findViewById(R.id.tvTypeField));
         tvFields.put("Info", (TextView)view.findViewById(R.id.tvInfoField));
         tvFields.put("Open", (TextView)view.findViewById(R.id.tvOpenField));
+        tvFields.put("Close", (TextView) view.findViewById(R.id.tvCloseField));
         tvFields.put("Address", (TextView)view.findViewById(R.id.tvAddressField));
         tvFields.put("Email", (TextView)view.findViewById(R.id.tvEmailField));
         tvFields.put("Phone", (TextView)view.findViewById(R.id.tvPhoneField));
