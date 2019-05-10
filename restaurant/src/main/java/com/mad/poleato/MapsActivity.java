@@ -2,8 +2,6 @@ package com.mad.poleato;
 
 import android.Manifest;
 import android.content.pm.PackageManager;
-import android.location.Address;
-import android.location.Geocoder;
 import android.location.Location;
 
 import com.firebase.geofire.GeoFire;
