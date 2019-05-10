@@ -73,4 +73,8 @@
     <string name="login_fail">Authentication failed.</string>
     <string name="creation_succ">Account created!</string>
     <string name="creation_fail">Account creation failed! Email must be valid and password composed by at least 6 characters</string>
+
+    <!-- Address convertion -->
+    <string name="no_address">Indirizzo non valido</string>
+
 </resources>

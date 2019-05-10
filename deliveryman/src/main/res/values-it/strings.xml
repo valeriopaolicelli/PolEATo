@@ -74,4 +74,7 @@
     <string name="creation_succ">Account creato!</string>
     <string name="creation_fail">Creazione account fallita! Devi inserire una mail valida e una password di almeno 6 caratteri</string>
 
+    <!-- Address convertion -->
+    <string name="no_address">Indirizzo non valido</string>
+
 </resources>

@@ -39,6 +39,8 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+import java.util.HashMap;
+
 public class MapsActivity extends FragmentActivity implements OnMapReadyCallback,
                     GoogleApiClient.ConnectionCallbacks,
                     GoogleApiClient.OnConnectionFailedListener,
@@ -60,15 +62,10 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
     DatabaseReference ref;
     GeoFire geoFire;
-    Marker mCurrent;
     private String restaurant_name;
     private double latitude;
     private double longitude;
-
-    private String riderID;
-    private double latRider;
-    private double longRider;
-
+    private HashMap<String, Marker> markers;
     private String currentUserID;
     private FirebaseAuth mAuth;
 
@@ -88,6 +85,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
         ref= FirebaseDatabase.getInstance().getReference("restaurants").child(currentUserID);
         geoFire= new GeoFire(ref);
+
+        markers= new HashMap<>();
 
         setUpLocation();
     }
@@ -132,12 +131,12 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                         @Override
                         public void onComplete(String key, DatabaseError error) {
                             //Add marker
-                            if(mCurrent != null)
-                                mCurrent.remove();
+                            if(markers.containsKey(currentUserID))
+                                markers.get(currentUserID).remove();
 
-                            mCurrent= mMap.addMarker(new MarkerOptions()
+                            markers.put(currentUserID, mMap.addMarker(new MarkerOptions()
                                     .position(new LatLng(latitude, longitude))
-                                    .title(restaurant_name));
+                                    .title(restaurant_name)));
 
                             //Move camera to this position
                             mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(latitude, longitude), 15.0f));
@@ -157,21 +156,30 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 @Override
                 public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                     for(DataSnapshot ds : dataSnapshot.getChildren()){
-                        riderID= ds.getKey();
-                        latRider= Double.parseDouble(ds.child("Latitude").getValue().toString());
-                        longRider= Double.parseDouble(ds.child("Longitude").getValue().toString());
+                        if(ds.hasChild("Latitude") &&
+                            ds.hasChild("Longitude")) {
 
-                        Log.d( "Valerio", String.format("Rider %s location was changed: %f / %f", riderID, latitude, longitude));
-                        //Update to firebase
-                        geoFire.setLocation("Map/"+riderID, new GeoLocation(latRider, longRider), new GeoFire.CompletionListener() {
-                            @Override
-                            public void onComplete(String key, DatabaseError error) {
+                            final String riderID = ds.getKey();
+                            final double latRider = Double.parseDouble(ds.child("Latitude").getValue().toString());
+                            final double longRider = Double.parseDouble(ds.child("Longitude").getValue().toString());
 
-                                mCurrent= mMap.addMarker(new MarkerOptions()
-                                        .position(new LatLng(latRider, longRider))
-                                        .title(riderID));
-                            }
-                        });
+
+                            Log.d("Valerio", String.format("Rider %s location was changed: %f / %f", riderID, latRider, longRider));
+                            //Update to firebase
+                            geoFire.setLocation("Map/" + riderID,
+                                        new GeoLocation(latRider, longRider), new GeoFire.CompletionListener() {
+                                @Override
+                                public void onComplete(String key, DatabaseError error) {
+                                    //Add marker
+                                    if(markers.containsKey(riderID))
+                                        markers.get(riderID).remove();
+
+                                    markers.put(riderID, mMap.addMarker(new MarkerOptions()
+                                            .position(new LatLng(latRider, longRider))
+                                            .title(riderID)));
+                                }
+                            });
+                        }
                     }
                 }
 

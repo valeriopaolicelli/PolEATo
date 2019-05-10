@@ -138,4 +138,7 @@
     <string name="creation_fail">Account creation failed! Email must be valid and password composed by at least 6 characters</string>
     <string name="title_activity_maps">Map</string>
 
+    <!-- Address convertion -->
+    <string name="no_address">No valid address</string>
+
 </resources>

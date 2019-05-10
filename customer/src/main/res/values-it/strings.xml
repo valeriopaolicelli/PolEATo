@@ -110,4 +110,8 @@
     <string name="saved">Salvato</string>
     <string name="saving">Salvataggio</string>
 
+
+    <!-- Address convertion -->
+    <string name="no_address">Indirizzo non valido</string>
+
 </resources>
