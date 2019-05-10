@@ -407,7 +407,7 @@
                         android:hint="@string/address"
                         android:imeOptions="actionNext"
                         android:inputType="text"
-                        android:maxLength="25"
+                        android:maxLength="80"
                         android:singleLine="true"
                         android:textColor="@color/colorTextSubField"
                         tools:ignore="Autofill" />
