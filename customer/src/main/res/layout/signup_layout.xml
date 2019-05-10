@@ -220,7 +220,7 @@
                 android:hint="@string/address"
                 android:imeOptions="actionDone"
                 android:inputType="text"
-                android:maxLength="40"
+                android:maxLength="80"
                 android:singleLine="true"
                 android:textColor="@color/colorBodyPrimary"
                 tools:ignore="Autofill" />

@@ -295,7 +295,7 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginEnd="16dp"
-            android:maxLength="25"
+            android:maxLength="80"
             android:singleLine="true"
             android:textColor="@color/colorTextSubField"
             app:layout_constraintBottom_toTopOf="@id/emailLabel"

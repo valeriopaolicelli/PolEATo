@@ -12,6 +12,8 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Matrix;
 import android.graphics.drawable.BitmapDrawable;
+import android.location.Address;
+import android.location.Geocoder;
 import android.media.ExifInterface;
 import android.net.Uri;
 import android.os.Bundle;
@@ -75,6 +77,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
@@ -92,6 +95,9 @@ public class EditProfileFragment extends Fragment implements TimePickerDialog.On
     private static final int RESULT_LOAD_IMG = 2;
     private String currentPhotoPath;
     private Toast myToast;
+
+    private double latitude;
+    private double longitude;
 
     private Map<String, ImageButton> imageButtons;
     private Map<String, EditText> editTextFields;
@@ -711,6 +717,32 @@ public class EditProfileFragment extends Fragment implements TimePickerDialog.On
             editTextFields.get("DeliveryCost").setBackground(ContextCompat.getDrawable(getContext(), R.drawable.border_wrong_field));
         }
 
+        Geocoder geocoder = new Geocoder(getActivity());
+        List<Address> addresses;
+        try {
+            addresses = geocoder.getFromLocationName(editTextFields.get("Address").getText().toString(), 1);
+
+            if(addresses.size() > 0) {
+                if(addresses.get(0).getThoroughfare() == null) {
+                    wrongField = true;
+                    myToast.setText("Invalid Address");
+                    myToast.show();
+                }
+                else {
+                    latitude = addresses.get(0).getLatitude();
+                    longitude = addresses.get(0).getLongitude();
+                }
+            }
+            else{
+                wrongField = true;
+                myToast.setText("Invalid Address");
+                myToast.show();
+            }
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
 
 
         /* --------------- SAVING TO FIREBASE --------------- */
@@ -742,6 +774,12 @@ public class EditProfileFragment extends Fragment implements TimePickerDialog.On
             //insert both it and en
             reference.child("Type").child(localeShort).setValue(types);
             reference.child("Type").child(otherLocale).setValue(translatedTypes);
+
+            /*
+             * save latitude and longitude of inserted address
+             */
+            reference.child("Latitude").setValue(latitude);
+            reference.child("Longitude").setValue(longitude);
 
             reference.child("IsActive").setValue(statusSwitch.isChecked());
             EditText ed;

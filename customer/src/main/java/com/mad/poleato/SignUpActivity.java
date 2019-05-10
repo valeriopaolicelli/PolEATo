@@ -4,6 +4,8 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.drawable.BitmapDrawable;
+import android.location.Address;
+import android.location.Geocoder;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -33,9 +35,11 @@ import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 
 import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.text.DecimalFormat;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 
 public class SignUpActivity extends AppCompatActivity {
@@ -47,6 +51,9 @@ public class SignUpActivity extends AppCompatActivity {
     private Map<String, ImageButton> imageButtons;
     private Map<String, EditText> editTextFields;
     private Button signIn, signUp;
+
+    private double latitude;
+    private double longitude;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -182,15 +189,10 @@ public class SignUpActivity extends AppCompatActivity {
         button.setVisibility(View.INVISIBLE);
     }
 
-//    @Override
-//    protected void onStart() {
-//        super.onStart();
-//
-//        // Check if user is signed in (non-null) and update UI accordingly.
-//        FirebaseUser currentUser = mAuth.getCurrentUser();
-//        if(currentUser != null)
-//            access();
-//    }
+    @Override
+    protected void onStart() {
+        super.onStart();
+    }
 
     //access to the app
     public void access(){
@@ -243,6 +245,8 @@ public class SignUpActivity extends AppCompatActivity {
                             reference.child("Email").setValue(email);
                             reference.child("Address").setValue(address);
                             reference.child("Phone").setValue(editTextFields.get("Phone").getText().toString());
+                            reference.child("Latitude").setValue(latitude);
+                            reference.child("Longitude").setValue(longitude);
                             uploadFile(user.getUid());
 
                             access();
@@ -379,6 +383,33 @@ public class SignUpActivity extends AppCompatActivity {
             myToast.setText("Invalid Email");
             myToast.show();
             editTextFields.get("Email").setBackground(ContextCompat.getDrawable(getApplicationContext(), R.drawable.border_wrong_field));
+        }
+
+        /*
+         * retrieve latitude and longitude of inserted address
+         */
+
+        String address= editTextFields.get("Address").getText().toString()
+                .trim().replaceAll(" +", " ");
+
+        Geocoder geocoder = new Geocoder(this);
+        List<Address> addresses;
+        try {
+            addresses = geocoder.getFromLocationName(address, 1);
+
+            if(addresses.size() > 0) {
+                if(addresses.get(0).getThoroughfare() == null)
+                    wrongField= true;
+                else {
+                    latitude = addresses.get(0).getLatitude();
+                    longitude = addresses.get(0).getLongitude();
+                }
+            }
+            else
+                wrongField= true;
+
+        } catch (IOException e) {
+            e.printStackTrace();
         }
         return wrongField;
     }
