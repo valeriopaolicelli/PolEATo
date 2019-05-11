@@ -1,11 +1,16 @@
 package com.mad.poleato;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
+import android.util.Log;
 
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.Exclude;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ServerValue;
 import com.google.firebase.database.ValueEventListener;
 
 import java.io.Serializable;
@@ -128,14 +133,14 @@ public class Order implements Serializable {
 
         Order o = new Order(customerID);
 
-        o.setDate(this.date);
+       // o.setDate(ServerValue.TIMESTAMP.values());
         o.setTime(this.time);
         o.setTotalPrice(this.totalPrice);
         o.setCustomerID(this.customerID);
         o.setRestaurantID(this.restaurantID);
 
         reservationRestaurant.setValue(o);
-
+        reservationRestaurant.child("date").setValue(ServerValue.TIMESTAMP);
         reservationRestaurant.child("status").child("it").setValue("Nuovo ordine");
         reservationRestaurant.child("status").child("en").setValue("New order");
         reservationRestaurant.child("dishes").setValue(this.getDishes());
@@ -146,7 +151,6 @@ public class Order implements Serializable {
         final String[] restaurantName = new String[1];
         final String orderID= reservationRestaurant.getKey();
         final List<Food> dishes= this.dishes;
-        final String date= this.date;
         final String time= this.time;
         final Double totalPrice= this.totalPrice;
         final String customerID= this.customerID;
@@ -169,9 +173,10 @@ public class Order implements Serializable {
                     DecimalFormat df = new DecimalFormat("#.00");
                     String price = df.format(totalPrice);
 
-                    Reservation reservation= new Reservation(orderID, restaurantName[0], date, time, price);
+                    Reservation reservation= new Reservation(orderID, restaurantName[0], "", time, price);
                     DatabaseReference referenceCustomer= FirebaseDatabase.getInstance().getReference("customers").child(customerID);
                     referenceCustomer.child("reservations").child(orderID).setValue(reservation);
+                    referenceCustomer.child("reservations").child(orderID).child("date").setValue(ServerValue.TIMESTAMP);
                     referenceCustomer.child("reservations").child(orderID).child("dishes").setValue(selectedDishes);
             }
 

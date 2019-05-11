@@ -5,7 +5,8 @@
     <string name="restaurant_name"><font size="18">Restaurant name</font></string>
     <string name="type"><font size="18">Restaurant type</font></string>
     <string name="info"><font size="18">Restaurant description</font></string>
-    <string name="open"><font size="18">Opening hours</font></string>
+    <string name="open"><font size="18">Opening hour</font></string>
+    <string name="close"><font size="18">Closing hour</font></string>
     <string name="owner"><font size="18">Owner</font></string>
     <string name="name"><font size="18">Name</font></string>
     <string name="surname"><font size="18">Surname</font></string>
@@ -136,5 +137,8 @@
     <string name="creation_succ">Account created!</string>
     <string name="creation_fail">Account creation failed! Email must be valid and password composed by at least 6 characters</string>
     <string name="title_activity_maps">Map</string>
+
+    <!-- Address convertion -->
+    <string name="no_address">No valid address</string>
 
 </resources>

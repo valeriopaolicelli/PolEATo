@@ -10,6 +10,8 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Matrix;
 import android.graphics.drawable.BitmapDrawable;
+import android.location.Address;
+import android.location.Geocoder;
 import android.media.ExifInterface;
 import android.net.Uri;
 import android.os.Bundle;
@@ -62,6 +64,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
@@ -99,7 +102,9 @@ public class EditProfile extends Fragment {
 
     private String currentUserID;
     private FirebaseAuth mAuth;
-    private String localeShort;
+
+    private double latitude;
+    private double longitude;
 
 
     public EditProfile() {
@@ -114,13 +119,7 @@ public class EditProfile extends Fragment {
         FirebaseUser currentUser = mAuth.getCurrentUser();
         currentUserID = currentUser.getUid();
 
-        //download Type base on the current active Locale
-        String locale = Locale.getDefault().toString();
-        Log.d("matte", "LOCALE: "+locale);
-        localeShort = locale.substring(0, 2);
-
         myToast = Toast.makeText(getActivity(), "", Toast.LENGTH_SHORT);
-
 
         editTextFields = new HashMap<>();
         imageButtons = new HashMap<>();
@@ -570,6 +569,32 @@ public class EditProfile extends Fragment {
             }
         }
 
+        Geocoder geocoder = new Geocoder(getActivity());
+        List<Address> addresses;
+        try {
+            addresses = geocoder.getFromLocationName(editTextFields.get("Address").getText().toString(), 1);
+
+            if(addresses.size() > 0) {
+                if(addresses.get(0).getThoroughfare() == null) {
+                    wrongField = true;
+                    myToast.setText("Invalid Address");
+                    myToast.show();
+                }
+                else {
+                    latitude = addresses.get(0).getLatitude();
+                    longitude = addresses.get(0).getLongitude();
+                }
+            }
+            else{
+                wrongField = true;
+                myToast.setText("Invalid Address");
+                myToast.show();
+            }
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
 
 
         /* --------------- SAVING TO FIREBASE --------------- */
@@ -584,6 +609,12 @@ public class EditProfile extends Fragment {
                     reference.child(fieldName).setValue(ed.getText().toString());
                 }
             }
+
+            /*
+             * save latitude and longitude of inserted address
+             */
+            reference.child("Latitude").setValue(latitude);
+            reference.child("Longitude").setValue(longitude);
 
             // Save profile pic to the DB
             Bitmap img = ((BitmapDrawable) profileImage.getDrawable()).getBitmap();

@@ -31,51 +31,31 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@id/layout_total">
-        <TextView
-            android:id="@+id/date_label"
-            android:layout_weight="1"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="10dp"
-            android:text="@string/date"
-            android:textColor="@color/colorTextField"
-            android:textSize="20sp"/>
-
-        <EditText
-            android:id="@+id/input_date"
-            android:layout_weight="1"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:inputType="date"
-            android:imeOptions="actionNext"
-            android:maxLength="10"
-            android:hint="gg/mm/aaaa"
-            tools:ignore="Autofill,LabelFor,TextFields"
-            android:textSize="20sp"/>
 
         <TextView
             android:id="@+id/time_label"
-            android:layout_weight="1"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="10dp"
+            android:layout_weight="1"
             android:text="@string/time"
+            android:textAlignment="textEnd"
             android:textColor="@color/colorTextField"
-            android:textSize="20sp"/>
+            android:textSize="20sp" />
 
         <EditText
             android:id="@+id/input_time"
             android:layout_weight="1"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:inputType="time"
-            android:imeOptions="actionDone"
+            android:inputType="none"
+            android:focusable="false"
             android:maxLength="6"
             android:hint="hh:mm"
-            tools:ignore="Autofill,LabelFor,TextFields"
             android:textSize="20sp"
             android:layout_marginEnd="10dp"/>
     </LinearLayout>
+
     <TextView
         android:id="@+id/empty_cart"
         android:layout_width="match_parent"

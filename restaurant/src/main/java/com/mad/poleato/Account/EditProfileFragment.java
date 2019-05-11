@@ -3,6 +3,7 @@ package com.mad.poleato.Account;
 
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
+import android.app.TimePickerDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -23,6 +24,7 @@ import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
+import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.content.FileProvider;
@@ -34,6 +36,7 @@ import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CheckBox;
@@ -43,6 +46,7 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.ScrollView;
 import android.widget.Switch;
+import android.widget.TimePicker;
 import android.widget.Toast;
 
 import androidx.navigation.Navigation;
@@ -68,6 +72,9 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.text.DecimalFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -82,7 +89,7 @@ import static android.app.Activity.RESULT_OK;
  * Use the {@link EditProfileFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class EditProfileFragment extends Fragment {
+public class EditProfileFragment extends Fragment implements TimePickerDialog.OnTimeSetListener {
 
     private static final int REQUEST_TAKE_PHOTO = 1;
     private static final int RESULT_LOAD_IMG = 2;
@@ -116,6 +123,10 @@ public class EditProfileFragment extends Fragment {
 
     private String currentUserID;
     private FirebaseAuth mAuth;
+
+    private int FLAG_OPEN_HOUR = 0;
+    private int FLAG_CLOSE_HOUR = 1;
+    private int FLAG_HOUR;
 
 
     // TODO: Rename parameter arguments, choose names that match
@@ -193,15 +204,18 @@ public class EditProfileFragment extends Fragment {
         editTextFields.put("Name",(EditText) v.findViewById(R.id.editTextName));
         editTextFields.put("Info",(EditText) v.findViewById(R.id.editTextInfo));
         editTextFields.put("Open",(EditText) v.findViewById(R.id.editTextOpen));
+        editTextFields.put("Close",(EditText) v.findViewById(R.id.editTextClose));
         editTextFields.put("Address",(EditText) v.findViewById(R.id.editTextAddress));
         editTextFields.put("Email",(EditText) v.findViewById(R.id.editTextEmail));
         editTextFields.put("Phone",(EditText) v.findViewById(R.id.editTextPhone));
         editTextFields.put("DeliveryCost",(EditText) v.findViewById(R.id.editTextDelivery));
 
 
+
         imageButtons.put("Name", (ImageButton) v.findViewById(R.id.cancel_name));
         imageButtons.put("Info", (ImageButton) v.findViewById(R.id.cancel_info));
         imageButtons.put("Open", (ImageButton) v.findViewById(R.id.cancel_open));
+        imageButtons.put("Close", (ImageButton) v.findViewById(R.id.cancel_close));
         imageButtons.put("Address", (ImageButton) v.findViewById(R.id.cancel_address));
         imageButtons.put("Email", (ImageButton) v.findViewById(R.id.cancel_email));
         imageButtons.put("Phone", (ImageButton) v.findViewById(R.id.cancel_phone));
@@ -248,18 +262,45 @@ public class EditProfileFragment extends Fragment {
 
         // set the line limiter
         EditText edOpen = v.findViewById(R.id.editTextOpen);
+        EditText edClose = v.findViewById(R.id.editTextClose);
         EditText edInfo = v.findViewById(R.id.editTextInfo);
 
-        LineLimiter llOpen = new LineLimiter();
-        llOpen.setView(edOpen);
-        llOpen.setLines(7);
+
+        edOpen.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View view, MotionEvent motionEvent) {
+                if(MotionEvent.ACTION_UP == motionEvent.getAction()){
+                    DialogFragment timePicker = new TimePickerFragment();
+                    ((TimePickerFragment) timePicker).setListener(EditProfileFragment.this);
+                    FLAG_HOUR = FLAG_OPEN_HOUR;
+                    timePicker.show(getActivity().getSupportFragmentManager(), "time picker open");
+                }
+                return false;
+            }
+        });
+
+        edClose.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View view, MotionEvent motionEvent) {
+                if(MotionEvent.ACTION_UP == motionEvent.getAction()){
+                    DialogFragment timePicker = new TimePickerFragment();
+                    ((TimePickerFragment) timePicker).setListener(EditProfileFragment.this);
+                    FLAG_HOUR = FLAG_CLOSE_HOUR;
+                    timePicker.show(getActivity().getSupportFragmentManager(), "time picker close");
+                }
+                return false;
+            }
+        });
+//        LineLimiter llOpen = new LineLimiter();
+//        llOpen.setView(edOpen);
+//        llOpen.setLines(7);
 
         LineLimiter llInfo = new LineLimiter();
         llInfo.setView(edInfo);
         llInfo.setLines(2);
 
 
-        edOpen.addTextChangedListener(llOpen);
+        //edOpen.addTextChangedListener(llOpen);
         edInfo.addTextChangedListener(llInfo);
 
         profileImage = v.findViewById(R.id.ivBackground);
@@ -282,7 +323,11 @@ public class EditProfileFragment extends Fragment {
         menu.findItem(R.id.applyMod).setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
             @Override
             public boolean onMenuItemClick(MenuItem item) {
-                saveChanges();
+                try {
+                    saveChanges();
+                } catch (ParseException e) {
+                    e.printStackTrace();
+                }
                 return true;
             }
         });
@@ -564,7 +609,7 @@ public class EditProfileFragment extends Fragment {
     }
 
 
-    public void saveChanges() {
+    public void saveChanges() throws ParseException {
 
         // TODO HERE MAKE UI NON RESPONSIVE
 
@@ -613,7 +658,7 @@ public class EditProfileFragment extends Fragment {
 
         String emailRegex = new String("^.+@[^\\.].*\\.[a-z]{2,}$");
 
-        String priceRegex = new String("[0-9]+([\\.,][0-9][0.9])?");
+        String priceRegex = new String("\\.?[0-9]+([\\.,][0-9][0.9])?");
 
 
         if (!editTextFields.get("Name").getText().toString().matches(nameRegex)) {
@@ -627,6 +672,16 @@ public class EditProfileFragment extends Fragment {
             myToast.setText("The description must start with letters and must end with letters. Space are allowed. Numbers are not allowed");
             myToast.show();
             editTextFields.get("Info").setBackground(ContextCompat.getDrawable(getContext(), R.drawable.border_wrong_field));
+        }
+        SimpleDateFormat format = new SimpleDateFormat("HH:mm");
+        Date d1 = format.parse(editTextFields.get("Open").getText().toString());
+        Date d2 = format.parse(editTextFields.get("Close").getText().toString());
+        if(d2.getTime()-d1.getTime()<0){
+            wrongField = true;
+            myToast.setText("Opening time can't be less than closing time");
+            myToast.show();
+            editTextFields.get("Open").setBackground(ContextCompat.getDrawable(getContext(), R.drawable.border_wrong_field));
+            editTextFields.get("Close").setBackground(ContextCompat.getDrawable(getContext(), R.drawable.border_wrong_field));
         }
         else{
             /*
@@ -838,6 +893,8 @@ public class EditProfileFragment extends Fragment {
             editTextFields.get("Info").setText("");
         else if(view.getId() == R.id.cancel_open)
             editTextFields.get("Open").setText("");
+        else if(view.getId() == R.id.cancel_close)
+            editTextFields.get("Close").setText("");
         else if(view.getId() == R.id.cancel_address)
             editTextFields.get("Address").setText("");
         else if(view.getId() == R.id.cancel_email)
@@ -917,6 +974,18 @@ public class EditProfileFragment extends Fragment {
 
     public void hideButton(ImageButton button){
         button.setVisibility(View.INVISIBLE);
+    }
+
+    @Override
+    public void onTimeSet(TimePicker timePicker, int hourOfDay, int minute) {
+        if(FLAG_HOUR == 0){
+            EditText editText = (EditText) v.findViewById(R.id.editTextOpen);
+            editText.setText(hourOfDay + ":" + minute);
+        }
+        else{
+            EditText editText = (EditText) v.findViewById(R.id.editTextClose);
+            editText.setText(hourOfDay + ":" + minute);
+        }
     }
 
 

@@ -229,7 +229,7 @@
                     android:layout_marginStart="30dp"
                     android:textColor="@color/colorTextSubField"
                     android:singleLine="true"
-                    android:maxLength="25" />
+                    android:maxLength="80" />
 
                 <Space
                     android:layout_width="423dp"

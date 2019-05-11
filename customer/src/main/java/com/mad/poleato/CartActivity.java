@@ -1,11 +1,13 @@
 package com.mad.poleato;
 
 import android.app.Activity;
+import android.app.TimePickerDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.StrictMode;
 import android.support.annotation.NonNull;
+import android.support.v4.app.DialogFragment;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
@@ -17,6 +19,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.TimePicker;
 import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseAuth;
@@ -37,7 +40,7 @@ import java.util.List;
 
 import java.util.Scanner;
 
-public class CartActivity extends AppCompatActivity implements Interface {
+public class CartActivity extends AppCompatActivity implements Interface,TimePickerDialog.OnTimeSetListener {
 
     private Order order;
     private boolean flag=false;
@@ -48,11 +51,12 @@ public class CartActivity extends AppCompatActivity implements Interface {
     private RecyclerView.LayoutManager layoutManager;
     private static RecyclerView rv;
     private List<Food> foodList;
-    private EditText time, date;
     private Toast myToast;
+    private EditText time;
 
     private String currentUserID;
     private FirebaseAuth mAuth;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -83,7 +87,14 @@ public class CartActivity extends AppCompatActivity implements Interface {
         tvEmptyCart = (TextView) findViewById(R.id.empty_cart);
 
         time= findViewById(R.id.input_time);
-        date= findViewById(R.id.input_date);
+        time.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                DialogFragment timePicker = new TimePickerFragment();
+                ((TimePickerFragment) timePicker).setListener(CartActivity.this);
+                timePicker.show(getSupportFragmentManager(), "time picker");
+            }
+        });
 
         orderBtn = (Button) findViewById(R.id.btn_placeorder);
         rv = (RecyclerView) findViewById(R.id.recycler_cart);
@@ -124,12 +135,7 @@ public class CartActivity extends AppCompatActivity implements Interface {
                     myToast.show();
                     time.setBackground(ContextCompat.getDrawable(getApplicationContext(), R.drawable.border_wrong_field));
                 }
-                if(date.getText().toString().equals("")){
-                    wrongField= true;
-                    myToast.setText(getString(R.string.specify_date));
-                    myToast.show();
-                    date.setBackground(ContextCompat.getDrawable(getApplicationContext(), R.drawable.border_wrong_field));
-                }
+
                 if(!wrongField){
                     AlertDialog.Builder builder = new AlertDialog.Builder(CartActivity.this);
                     builder.setTitle(getString(R.string.confirm_order));
@@ -141,7 +147,6 @@ public class CartActivity extends AppCompatActivity implements Interface {
                              * Add order into restaurant DB and into customer DB (order history)
                              */
                             order.setDishes();
-                            order.setDate(date.getText().toString());
                             order.setTime(time.getText().toString());
                             order.setStatus(getApplicationContext().getString(R.string.new_order));
                             order.uploadOrder();
@@ -274,5 +279,10 @@ public class CartActivity extends AppCompatActivity implements Interface {
             rv.setVisibility(View.VISIBLE);
             tvEmptyCart.setVisibility(View.GONE);
         }
+    }
+
+    @Override
+    public void onTimeSet(TimePicker timePicker, int hourOfDay, int minute) {
+        time.setText(hourOfDay +":"+minute);
     }
 }

@@ -104,13 +104,15 @@ public class SignInActivity extends AppCompatActivity {
         // Check if user is signed in (non-null) and update UI accordingly.
         FirebaseUser currentUser = mAuth.getCurrentUser();
         if(currentUser != null) {
-            DatabaseReference reference = FirebaseDatabase.getInstance().getReference("users").child(currentUser.getUid());
+            final DatabaseReference reference = FirebaseDatabase.getInstance().getReference("users").child(currentUser.getUid());
             reference.addValueEventListener(new ValueEventListener() {
                 @Override
                 public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                     if (dataSnapshot.exists())
                         if (dataSnapshot.getValue().toString().equals("customer"))
                             access();
+                        else
+                            FirebaseAuth.getInstance().signOut();
                 }
 
                 @Override

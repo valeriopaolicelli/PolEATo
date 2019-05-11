@@ -190,11 +190,6 @@ public class SignUpActivity extends AppCompatActivity {
     @Override
     protected void onStart() {
         super.onStart();
-
-        // Check if user is signed in (non-null) and update UI accordingly.
-        FirebaseUser currentUser = mAuth.getCurrentUser();
-        if(currentUser != null)
-            access();
     }
 
     //access to the app
@@ -245,7 +240,7 @@ public class SignUpActivity extends AppCompatActivity {
                             reference.child("Phone").setValue(editTextFields.get("Phone").getText().toString());
                             uploadFile(user.getUid());
                             reference.child("DeliveryCost").setValue("0");
-                            reference.child("IsActive").setValue(true);
+                            reference.child("IsActive").setValue(false);
                             reference.child("Info").setValue("");
                             reference.child("PriceRange").setValue("0");
                             reference.child("Type").child("it").setValue("");
@@ -393,15 +388,21 @@ public class SignUpActivity extends AppCompatActivity {
             addresses = geocoder.getFromLocationName(address, 1);
 
             if(addresses.size() > 0) {
-                if(addresses.get(0).getThoroughfare() == null)
-                    wrongField= true;
+                if(addresses.get(0).getThoroughfare() == null) {
+                    wrongField = true;
+                    myToast.setText(R.string.no_address);
+                    myToast.show();
+                }
                 else {
                     latitude = addresses.get(0).getLatitude();
                     longitude = addresses.get(0).getLongitude();
                 }
             }
-            else
-                wrongField= true;
+            else {
+                wrongField = true;
+                myToast.setText(R.string.no_address);
+                myToast.show();
+            }
 
         } catch (IOException e) {
             e.printStackTrace();
