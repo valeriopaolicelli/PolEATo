@@ -280,7 +280,7 @@ public class ReservationFragment extends Fragment {
 
 
                     // fields setted to null only because they will be setted later in the call back of FB
-                    r = new Reservation(order_id, null, null, null, date, time,
+                    r = new Reservation(order_id, customer_id,null, null, null, date, time,
                             status, null, totalPrice, getActivity());
                     reservations.add(r);
 
@@ -347,6 +347,7 @@ public class ReservationFragment extends Fragment {
                             Log.d("Valerio", customerDetails.toString());
                             for(Reservation r : reservations){
                                 if(order_id.equals(r.getOrder_id())){
+                                    r.setCustomerID(customer_id);
                                     r.setName(customerDetails.get(0));
                                     r.setSurname(customerDetails.get(1));
                                     r.setAddress(customerDetails.get(2));
@@ -374,7 +375,7 @@ public class ReservationFragment extends Fragment {
                         dishes.add(d);
                     }
 
-                    Reservation r = new Reservation(order_id, null, null, null, date, time,
+                    Reservation r = new Reservation(order_id, customer_id, null, null, null, date, time,
                             status, null, totalPrice, getContext());
 
                     // if the status is changed (onclick listener) the order must change only and not re-added

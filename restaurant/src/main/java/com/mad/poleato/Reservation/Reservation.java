@@ -11,6 +11,7 @@ import java.util.ArrayList;
 
 public class Reservation {
     private String order_id;
+    private String customer_id;
     private String name;
     private String surname;
     private String address;
@@ -32,10 +33,11 @@ public class Reservation {
 
     private String time;
 
-    public Reservation(String order_id, String name, String surname,
+    public Reservation(String order_id, String customer_id, String name, String surname,
                        String address, String date, String time,
                        String status, String phone, String totalPrice, Context context) {
         this.order_id = order_id;
+        this.customer_id = customer_id;
         this.name = name;
         this.surname = surname;
         this.address= address;
@@ -55,6 +57,14 @@ public class Reservation {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public String getCustomerID(){
+        return this.customer_id;
+    }
+
+    public void setCustomerID(String customer_id) {
+        this.customer_id = customer_id;
     }
 
     public String getTotalPrice() {

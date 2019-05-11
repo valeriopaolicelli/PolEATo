@@ -231,9 +231,9 @@ public class ReservationExpandableListAdapter extends BaseExpandableListAdapter 
                                 @Override
                                 public void onClick(DialogInterface dialogInterface, int i) {
 
-                                Intent mapsActivity= new Intent(context, MapsActivity.class);
-                                context.startActivity(mapsActivity);
-                              /*
+                                /*Intent mapsActivity= new Intent(context, MapsActivity.class);
+                                context.startActivity(mapsActivity);*/
+
                                 FirebaseDatabase.getInstance().getReference("restaurants").child(loggedID).child("reservations").child(c.getOrder_id()).child("status").child("en").setValue("Delivering");
                                 FirebaseDatabase.getInstance().getReference("restaurants").child(loggedID).child("reservations").child(c.getOrder_id()).child("status").child("it").setValue("In consegna");
                                 c.setStatus(Status.DELIVERY, context);
@@ -241,7 +241,7 @@ public class ReservationExpandableListAdapter extends BaseExpandableListAdapter 
                                 c.setButtonText(context.getString(R.string.order_info));
                                 notify = true;
                                 notifyRandomRider(c);
-                                notifyDataSetChanged();*/
+                                notifyDataSetChanged();
                                 }
                             });
                             builder.setNegativeButton(context.getString(R.string.choice_cancel), new DialogInterface.OnClickListener() {
@@ -379,6 +379,7 @@ public class ReservationExpandableListAdapter extends BaseExpandableListAdapter 
                                 addressRestaurant[0] = dataSnapshotRestaurant.child("Address").getValue().toString();
                                 nameRestaurant[0] = dataSnapshotRestaurant.child("Name").getValue().toString();
                                 if (notify) {
+                                    reservationRider.child("customerID").setValue(c.getCustomerID());
                                     reservationRider.child("surnameCustomer").setValue(c.getSurname());
                                     reservationRider.child("addressCustomer").setValue(c.getAddress());
                                     reservationRider.child("orderID").setValue(c.getOrder_id());
