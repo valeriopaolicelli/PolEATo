@@ -1,6 +1,241 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout
-    xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="match_parent"
-    android:layout_height="match_parent">
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".Delivering.DeliveringActivity"
+    android:weightSum="100"
+    android:orientation="vertical">
 
-</android.support.constraint.ConstraintLayout>
+        <android.support.v7.widget.CardView
+            android:id="@+id/childView"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_gravity="center"
+            android:layout_marginStart="4dp"
+            android:layout_marginTop="4dp"
+            android:layout_marginEnd="4dp"
+            android:layout_marginBottom="8dp"
+            app:cardCornerRadius="10dp"
+            android:layout_weight="20">
+
+
+                <android.support.constraint.ConstraintLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                        <ImageView
+                            android:id="@+id/deliveryCost_icon"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="16dp"
+                            android:layout_marginTop="8dp"
+                            android:layout_marginEnd="8dp"
+                            android:layout_marginBottom="8dp"
+                            android:contentDescription="@string/phone"
+                            android:src="@drawable/ic_baseline_directions_bike_24px"
+                            app:layout_constraintBottom_toTopOf="@id/surname_label"
+                            app:layout_constraintEnd_toStartOf="@id/order_label"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toTopOf="parent" />
+
+                        <TextView
+                            android:id="@+id/order_label"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="16dp"
+                            android:layout_marginEnd="8dp"
+                            android:text="Order ID:"
+                            android:textAlignment="center"
+                            android:textColor="@color/colorPrimaryDark"
+                            android:textSize="15sp"
+                            app:layout_constraintBottom_toBottomOf="@id/deliveryCost_icon"
+                            app:layout_constraintEnd_toStartOf="@id/order_tv"
+                            app:layout_constraintStart_toEndOf="@id/deliveryCost_icon"
+                            app:layout_constraintTop_toTopOf="@id/deliveryCost_icon" />
+
+                        <TextView
+                            android:id="@+id/order_tv"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_marginEnd="8dp"
+                            android:textColor="@color/browser_actions_title_color"
+                            android:textSize="15sp"
+                            app:layout_constraintBottom_toBottomOf="@id/deliveryCost_icon"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintStart_toEndOf="@id/order_label"
+                            app:layout_constraintTop_toTopOf="@id/deliveryCost_icon" />
+
+                        <TextView
+                            android:id="@+id/surname_label"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="8dp"
+                            android:layout_marginEnd="8dp"
+                            android:text="@string/customer_surname"
+                            android:textColor="@color/colorPrimaryDark"
+                            android:textSize="15sp"
+                            app:layout_constraintBottom_toTopOf="@id/restaurantLabel"
+                            app:layout_constraintEnd_toStartOf="@id/surname_tv"
+                            app:layout_constraintHorizontal_bias="0.51"
+                            app:layout_constraintStart_toStartOf="@id/deliveryCost_icon"
+                            app:layout_constraintTop_toBottomOf="@id/deliveryCost_icon" />
+
+                        <TextView
+                            android:id="@+id/surname_tv"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="8dp"
+                            android:textSize="15sp"
+                            android:textColor="@color/browser_actions_title_color"
+                            app:layout_constraintBottom_toBottomOf="@id/surname_label"
+                            app:layout_constraintEnd_toStartOf="@id/addressLabel"
+                            app:layout_constraintStart_toEndOf="@+id/surname_label"
+                            app:layout_constraintTop_toTopOf="@id/surname_label" />
+
+                        <TextView
+                            android:id="@+id/addressLabel"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="8dp"
+                            android:layout_marginEnd="8dp"
+                            android:text="@string/address_label"
+                            android:textColor="@color/colorPrimaryDark"
+                            android:textSize="15sp"
+                            app:layout_constraintBottom_toBottomOf="@id/surname_tv"
+                            app:layout_constraintEnd_toStartOf="@id/deliveryAddress_tv"
+                            app:layout_constraintStart_toEndOf="@id/surname_tv"
+                            app:layout_constraintTop_toTopOf="@id/surname_tv" />
+
+                        <TextView
+                            android:id="@+id/deliveryAddress_tv"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_marginEnd="8dp"
+                            android:textSize="15sp"
+                            android:textColor="@color/browser_actions_title_color"
+                            app:layout_constraintBottom_toBottomOf="@+id/addressLabel"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintStart_toEndOf="@id/addressLabel"
+                            app:layout_constraintTop_toTopOf="@id/addressLabel" />
+
+                        <TextView
+                            android:id="@+id/restaurantLabel"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="16dp"
+                            android:layout_marginEnd="8dp"
+                            android:text="@string/restaurant_name"
+                            android:textColor="@color/colorPrimaryDark"
+                            android:textSize="15sp"
+                            app:layout_constraintBottom_toTopOf="@id/totalPriceLabel"
+                            app:layout_constraintEnd_toStartOf="@+id/restaurant_tv"
+                            app:layout_constraintHorizontal_bias="0.0"
+                            app:layout_constraintStart_toStartOf="@id/surname_label"
+                            app:layout_constraintTop_toBottomOf="@id/surname_label" />
+
+                        <TextView
+                            android:id="@+id/restaurant_tv"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_marginEnd="8dp"
+                            android:textSize="15sp"
+                            android:textColor="@color/browser_actions_title_color"
+                            app:layout_constraintBottom_toBottomOf="@id/restaurantLabel"
+                            app:layout_constraintEnd_toStartOf="@id/restaurantAddressLabel"
+                            app:layout_constraintStart_toStartOf="@id/surname_tv"
+                            app:layout_constraintTop_toTopOf="@id/restaurantLabel" />
+
+                        <TextView
+                            android:id="@+id/restaurantAddressLabel"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginEnd="8dp"
+                            android:text="@string/address_label"
+                            android:textColor="@color/colorPrimaryDark"
+                            android:textSize="15sp"
+                            app:layout_constraintBottom_toBottomOf="@id/restaurant_tv"
+                            app:layout_constraintEnd_toStartOf="@id/restaurantAddress_tv"
+                            app:layout_constraintHorizontal_bias="0.0"
+                            app:layout_constraintStart_toStartOf="@id/addressLabel"
+                            app:layout_constraintTop_toTopOf="@id/restaurant_tv" />
+
+                        <TextView
+                            android:id="@+id/restaurantAddress_tv"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_marginEnd="8dp"
+                            android:textSize="15sp"
+                            android:textColor="@color/browser_actions_title_color"
+                            app:layout_constraintBottom_toBottomOf="@+id/restaurantAddressLabel"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintStart_toStartOf="@+id/deliveryAddress_tv"
+                            app:layout_constraintTop_toTopOf="@id/restaurantAddressLabel" />
+
+                        <TextView
+                            android:id="@+id/totalPriceLabel"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="16dp"
+                            android:layout_marginEnd="8dp"
+                            android:layout_marginBottom="8dp"
+                            android:text="@string/total"
+                            android:textColor="@color/colorPrimaryDark"
+                            android:textSize="15sp"
+                            app:layout_constraintBottom_toBottomOf="parent"
+                            app:layout_constraintEnd_toStartOf="@id/totalPrice_tv"
+                            app:layout_constraintHorizontal_bias="0.0"
+                            app:layout_constraintStart_toStartOf="@id/restaurantLabel"
+                            app:layout_constraintTop_toBottomOf="@id/restaurantLabel" />
+
+                        <TextView
+                            android:id="@+id/totalPrice_tv"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_marginEnd="8dp"
+                            android:textSize="15sp"
+                            android:textColor="@color/browser_actions_title_color"
+                            app:layout_constraintBottom_toBottomOf="@+id/totalPriceLabel"
+                            app:layout_constraintEnd_toStartOf="@id/dishesLabel"
+                            app:layout_constraintStart_toStartOf="@id/restaurant_tv"
+                            app:layout_constraintTop_toTopOf="@id/totalPriceLabel" />
+
+                        <TextView
+                            android:id="@+id/dishesLabel"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginEnd="8dp"
+                            android:text="@string/dishes"
+                            android:textColor="@color/colorPrimaryDark"
+                            android:textSize="15sp"
+                            app:layout_constraintBottom_toBottomOf="@id/totalPrice_tv"
+                            app:layout_constraintEnd_toStartOf="@id/dishes_tv"
+                            app:layout_constraintHorizontal_bias="0.0"
+                            app:layout_constraintStart_toStartOf="@id/restaurantAddressLabel"
+                            app:layout_constraintTop_toTopOf="@id/totalPrice_tv" />
+
+                        <TextView
+                            android:id="@+id/dishes_tv"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_marginEnd="8dp"
+                            android:textSize="15sp"
+                            android:textColor="@color/browser_actions_title_color"
+                            app:layout_constraintBottom_toBottomOf="@id/dishesLabel"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintStart_toStartOf="@id/restaurantAddress_tv"
+                            app:layout_constraintTop_toTopOf="@id/dishesLabel" />
+                </android.support.constraint.ConstraintLayout>
+        </android.support.v7.widget.CardView>
+
+        <fragment
+            xmlns:android="http://schemas.android.com/apk/res/android"
+            android:name="com.google.android.gms.maps.SupportMapFragment"
+            android:id="@+id/map"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="80"/>
+
+</LinearLayout>

@@ -78,6 +78,7 @@ public class MyFirebaseData {
                     dataSnapshot.hasChild("numberOfDishes")) {
 
                     String orderID = dataSnapshot.child("orderID").getValue().toString();
+                    String customerID = dataSnapshot.child("customerID").getValue().toString();
                     String addressCustomer = dataSnapshot.child("addressCustomer").getValue().toString();
                     String addressRestaurant = dataSnapshot.child("addressRestaurant").getValue().toString();
                     String nameRestaurant = dataSnapshot.child("nameRestaurant").getValue().toString();
@@ -85,7 +86,7 @@ public class MyFirebaseData {
                     Double totalPrice = Double.parseDouble(dataSnapshot.child("totalPrice").getValue().toString());
                     Integer numberOfDishes = Integer.parseInt(dataSnapshot.child("numberOfDishes").getValue().toString());
 
-                    Ride rideObj = new Ride(orderID, surnameCustomer, addressCustomer, nameRestaurant,
+                    Ride rideObj = new Ride(orderID, customerID, surnameCustomer, addressCustomer, nameRestaurant,
                             addressRestaurant, totalPrice, numberOfDishes);
 
                     model.insertChild(orderID, rideObj);
@@ -96,6 +97,7 @@ public class MyFirebaseData {
             public void onChildChanged(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
                 Log.d("fabio", "onChildAdded | PREVIOUS CHILD" + s);
                 if(dataSnapshot.hasChild("orderID") &&
+                        dataSnapshot.hasChild("customerID") &&
                         dataSnapshot.hasChild("addressCustomer") &&
                         dataSnapshot.hasChild("surnameCustomer") &&
                         dataSnapshot.hasChild("nameRestaurant") &&
@@ -104,6 +106,7 @@ public class MyFirebaseData {
                         dataSnapshot.hasChild("numberOfDishes")) {
 
                     String orderID = dataSnapshot.child("orderID").getValue().toString();
+                    String customerID = dataSnapshot.child("customerID").getValue().toString();
                     String addressCustomer = dataSnapshot.child("addressCustomer").getValue().toString();
                     String addressRestaurant = dataSnapshot.child("addressRestaurant").getValue().toString();
                     String nameRestaurant = dataSnapshot.child("nameRestaurant").getValue().toString();
@@ -111,7 +114,7 @@ public class MyFirebaseData {
                     Double totalPrice = Double.parseDouble(dataSnapshot.child("totalPrice").getValue().toString());
                     Integer numberOfDishes = Integer.parseInt(dataSnapshot.child("numberOfDishes").getValue().toString());
 
-                    Ride rideObj = new Ride(orderID, surnameCustomer, addressCustomer, nameRestaurant,
+                    Ride rideObj = new Ride(orderID, customerID, surnameCustomer, addressCustomer, nameRestaurant,
                             addressRestaurant, totalPrice, numberOfDishes);
 
                     model.insertChild(orderID, rideObj);

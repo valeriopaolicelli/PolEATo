@@ -1,6 +1,7 @@
 package com.mad.poleato.Rides;
 
 import android.content.Context;
+import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -8,6 +9,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import com.mad.poleato.Delivering.DeliveringActivity;
 import com.mad.poleato.R;
 
 import java.text.DecimalFormat;
@@ -19,7 +21,7 @@ public class RidesRecyclerViewAdapter extends RecyclerView.Adapter<RidesRecycler
     private Context context;
 
     public class RidesViewHolder extends RecyclerView.ViewHolder {
-        public TextView order_tv, surname_tv, deliveryddress_tv;
+        public TextView order_tv, surname_tv, deliveryAddress_tv;
         public TextView restaurant_tv, restaurantAddress_tv,totalPrice_tv, dishes_tv;
         public View itemView;
 
@@ -28,7 +30,7 @@ public class RidesRecyclerViewAdapter extends RecyclerView.Adapter<RidesRecycler
             this.itemView=itemView;
             this.order_tv = (TextView) itemView.findViewById(R.id.order_tv);
             this.surname_tv = (TextView) itemView.findViewById(R.id.surname_tv);
-            this.deliveryddress_tv = (TextView) itemView.findViewById(R.id.deliveryaddress_tv);
+            this.deliveryAddress_tv = (TextView) itemView.findViewById(R.id.deliveryAddress_tv);
             this.restaurant_tv = (TextView) itemView.findViewById(R.id.restaurant_tv);
             this.restaurantAddress_tv = (TextView) itemView.findViewById(R.id.restaurantAddress_tv);
             this.totalPrice_tv = (TextView) itemView.findViewById(R.id.totalPrice_tv);
@@ -57,10 +59,10 @@ public class RidesRecyclerViewAdapter extends RecyclerView.Adapter<RidesRecycler
     }
 
     @Override
-    public void onBindViewHolder(@NonNull RidesViewHolder ridesViewHolder, final int position) {
+    public void onBindViewHolder(@NonNull final RidesViewHolder ridesViewHolder, final int position) {
         ridesViewHolder.order_tv.setText(ridesList.get(position).getOrderID());
         ridesViewHolder.surname_tv.setText(ridesList.get(position).getSurname());
-        ridesViewHolder.deliveryddress_tv.setText(ridesList.get(position).getDeliveryAddress());
+        ridesViewHolder.deliveryAddress_tv.setText(ridesList.get(position).getDeliveryAddress());
         ridesViewHolder.restaurant_tv.setText(ridesList.get(position).getRestaurantName());
         ridesViewHolder.restaurantAddress_tv.setText(ridesList.get(position).getRestaurantAddress());
         DecimalFormat decimalFormat = new DecimalFormat("#.00");
@@ -68,6 +70,14 @@ public class RidesRecyclerViewAdapter extends RecyclerView.Adapter<RidesRecycler
         String priceStr = decimalFormat.format(totalPrice).toString()+"€";
         ridesViewHolder.totalPrice_tv.setText(priceStr);
         ridesViewHolder.dishes_tv.setText(ridesList.get(position).getTotalDishes().toString());
+
+        ridesViewHolder.itemView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent menuIntent = new Intent(context, DeliveringActivity.class);
+                context.startActivity(menuIntent);
+            }
+        });
     }
 
     @Override

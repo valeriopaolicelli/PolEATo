@@ -3,6 +3,7 @@ package com.mad.poleato.Rides;
 public class Ride {
 
     private String orderID;
+    private String customerID;
     private String surname;
     private String deliveryAddress;
     private String restaurantName;
@@ -10,8 +11,9 @@ public class Ride {
     private Double totalPrice;
     private Integer totalDishes;
 
-    public Ride(String orderID, String surname, String deliveryAddress, String restaurantName, String restaurantAddress, Double totalPrice, Integer totalDishes) {
+    public Ride(String orderID, String customerID, String surname, String deliveryAddress, String restaurantName, String restaurantAddress, Double totalPrice, Integer totalDishes) {
         this.orderID = orderID;
+        this.customerID = customerID;
         this.surname = surname;
         this.deliveryAddress = deliveryAddress;
         this.restaurantName = restaurantName;
@@ -26,6 +28,14 @@ public class Ride {
 
     public void setOrderID(String orderID) {
         this.orderID = orderID;
+    }
+
+    public void setCustomerID(String customerID){
+        this.customerID = customerID;
+    }
+
+    public String getCustomerID(){
+        return this.customerID;
     }
 
     public String getSurname() {

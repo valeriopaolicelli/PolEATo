@@ -80,6 +80,13 @@ dependencies {
     implementation 'com.facebook.android:facebook-android-sdk:5.0.0'
 
 
+    /**
+     * Maps
+     */
+    implementation 'com.google.android.gms:play-services-maps:16.0.0'
+    implementation 'com.google.android.gms:play-services-places:16.0.0'
+    implementation 'com.google.android.gms:play-services-location:16.0.0'
+    implementation 'com.firebase:geofire-android:2.3.1'
 
 
 
