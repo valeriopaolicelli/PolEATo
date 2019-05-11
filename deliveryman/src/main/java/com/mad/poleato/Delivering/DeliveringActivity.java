@@ -1,17 +1,24 @@
 package com.mad.poleato.Delivering;
 
+import android.Manifest;
 import android.app.ProgressDialog;
-import android.graphics.Color;
+import android.content.Context;
+import android.content.pm.PackageManager;
 import android.location.Address;
 import android.location.Geocoder;
+import android.location.Location;
+import android.location.LocationListener;
+import android.location.LocationManager;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentActivity;
 import android.util.Log;
 import android.widget.TextView;
 
+import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
@@ -49,8 +56,9 @@ public class DeliveringActivity extends FragmentActivity implements OnMapReadyCa
     private boolean isRunning;
 
     private GoogleMap mMap;
-    private Address CustomerLocation;
+    private LatLng customerPosition;
     private Geocoder geocoder;
+    private LocationManager locationManager;
 
     //auth
     private String currentUserID;
@@ -60,8 +68,6 @@ public class DeliveringActivity extends FragmentActivity implements OnMapReadyCa
     private ProgressDialog progressDialog;
 
     private Map<String, TextView> tv_Fields;
-
-
 
 
     @Override
@@ -79,8 +85,11 @@ public class DeliveringActivity extends FragmentActivity implements OnMapReadyCa
 
         geocoder = new Geocoder(this);
 
+        // Acquire a reference to the system Location Manager
+        locationManager = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
+
         //start the loading dialog
-        progressDialog = ProgressDialog.show(this, "", getString(R.string.loading));
+        //progressDialog = ProgressDialog.show(this, "", getString(R.string.loading));
 
         tv_Fields = new HashMap<>();
         //collects all the TextView inside the HashMap tv_Fields
@@ -90,7 +99,7 @@ public class DeliveringActivity extends FragmentActivity implements OnMapReadyCa
         retrieveOrderInfo();
     }
 
-    private void createMap(){
+    private void createMap() {
 
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
@@ -98,29 +107,30 @@ public class DeliveringActivity extends FragmentActivity implements OnMapReadyCa
     }
 
 
-    private void retrieveOrderInfo(){
+    private void retrieveOrderInfo() {
 
         DatabaseReference reference = FirebaseDatabase.getInstance()
-                                        .getReference("deliveryman/"+currentUserID+"/reservations");
+                .getReference("deliveryman/" + currentUserID + "/reservations");
 
         reference.addChildEventListener(new ChildEventListener() {
             @Override
             public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
-                if(dataSnapshot.exists() &&
-                    !isRunning &&
-                    dataSnapshot.hasChild("addressCustomer") &&
-                    dataSnapshot.hasChild("addressRestaurant") &&
-                    dataSnapshot.hasChild("customerID") &&
-                    dataSnapshot.hasChild("nameRestaurant") &&
-                    dataSnapshot.hasChild("numberOfDishes") &&
-                    dataSnapshot.hasChild("orderID") &&
-                    dataSnapshot.hasChild("surnameCustomer") &&
-                    dataSnapshot.hasChild("totalPrice")){
+                if (dataSnapshot.exists() &&
+                        !isRunning &&
+                        dataSnapshot.hasChild("addressCustomer") &&
+                        dataSnapshot.hasChild("addressRestaurant") &&
+                        dataSnapshot.hasChild("customerID") &&
+                        dataSnapshot.hasChild("nameRestaurant") &&
+                        dataSnapshot.hasChild("numberOfDishes") &&
+                        dataSnapshot.hasChild("orderID") &&
+                        dataSnapshot.hasChild("surnameCustomer") &&
+                        dataSnapshot.hasChild("totalPrice")) {
 
                     String customerAddress = dataSnapshot.child("addressCustomer").toString();
 
                     try {
-                        CustomerLocation = geocoder.getFromLocationName(customerAddress, 1).get(0);
+                        Address customerLocation = geocoder.getFromLocationName(customerAddress, 1).get(0);
+                        customerPosition = new LatLng(customerLocation.getLatitude(), customerLocation.getLongitude());
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
@@ -153,19 +163,17 @@ public class DeliveringActivity extends FragmentActivity implements OnMapReadyCa
     }
 
 
+    private void collectFields() {
 
-    private void collectFields(){
-
-        tv_Fields.put("order_tv", (TextView)findViewById(R.id.order_tv));
-        tv_Fields.put("surname_tv", (TextView)findViewById(R.id.surname_tv));
-        tv_Fields.put("deliveryAddress_tv", (TextView)findViewById(R.id.deliveryAddress_tv));
-        tv_Fields.put("restaurant_tv", (TextView)findViewById(R.id.restaurant_tv));
-        tv_Fields.put("restaurantAddress_tv", (TextView)findViewById(R.id.restaurantAddress_tv));
-        tv_Fields.put("totalPrice_tv", (TextView)findViewById(R.id.totalPrice_tv));
-        tv_Fields.put("dishes_tv", (TextView)findViewById(R.id.dishes_tv));
+        tv_Fields.put("order_tv", (TextView) findViewById(R.id.order_tv));
+        tv_Fields.put("surname_tv", (TextView) findViewById(R.id.surname_tv));
+        tv_Fields.put("deliveryAddress_tv", (TextView) findViewById(R.id.deliveryAddress_tv));
+        tv_Fields.put("restaurant_tv", (TextView) findViewById(R.id.restaurant_tv));
+        tv_Fields.put("restaurantAddress_tv", (TextView) findViewById(R.id.restaurantAddress_tv));
+        tv_Fields.put("totalPrice_tv", (TextView) findViewById(R.id.totalPrice_tv));
+        tv_Fields.put("dishes_tv", (TextView) findViewById(R.id.dishes_tv));
 
     }
-
 
 
     @Override
@@ -174,25 +182,113 @@ public class DeliveringActivity extends FragmentActivity implements OnMapReadyCa
         // and move the map's camera to the same CustomerLocation.
 
         mMap = googleMap;
-        LatLng customerLocation = new LatLng(CustomerLocation.getLatitude(), CustomerLocation.getLongitude());
-        mMap.addMarker(new MarkerOptions().position(customerLocation)
+        mMap.addMarker(new MarkerOptions().position(customerPosition)
                 .title("Customer"));
-        mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(customerLocation, 15.0f));
+        mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(customerPosition, 15.0f));
         //mMap.moveCamera(CameraUpdateFactory.newLatLng(customerLocation));
         mMap.setMapType(GoogleMap.MAP_TYPE_TERRAIN);
         //mMap.setBuildingsEnabled(true);
 
-        // Getting URL to the Google Directions API
-        LatLng origin = new LatLng(45.050938, 7.649423);
+
+
+
+        //check only for Network Provider permissions
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED &&
+                ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+
+            /*ActivityCompat.requestPermissions(this,
+                    new String[]{Manifest.permission.ACCESS_COARSE_LOCATION},
+                    0);*/
+
+            ActivityCompat.requestPermissions(this,
+                    new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
+                    1);
+
+            // TODO: Consider calling
+            //    ActivityCompat#requestPermissions
+            // here to request the missing permissions, and then overriding
+            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+            //                                          int[] grantResults)
+            // to handle the case where the user grants the permission. See the documentation
+            // for ActivityCompat#requestPermissions for more details.
+            return;
+        }
+        //LatLng origin = new LatLng(45.050938, 7.649423);
+
+        Location origin = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+        showDirections(new LatLng(origin.getLatitude(), origin.getLongitude()));
+
+
+        // Register the listener with the Location Manager to receive location updates
+        locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, new LocListener());
+
+
+
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        switch (requestCode) {
+            case 0: {
+                // If request is cancelled, the result arrays are empty.
+                if (grantResults.length > 0
+                        && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    Log.d("matte", "code 0 granted");
+
+                } else {
+
+                    Log.d("matte", "code 0 not granted");
+                    // permission denied, boo! Disable the
+                    // functionality that depends on this permission.
+                }
+                return;
+            }
+            case 1: {
+                if (grantResults.length > 0
+                        && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+
+                    Log.d("matte", "code 1 granted");
+
+                } else {
+                    // permission denied, boo! Disable the
+                    // functionality that depends on this permission.7
+                    Log.d("matte", "code 1 not granted");
+                }
+                return;
+            }
+        }
+
+    }
+
+    // Define a listener that responds to location updates
+    class LocListener implements LocationListener {
+        public void onLocationChanged(Location location) {
+            // Called when a new location is found by the network location provider.
+            mMap.clear();
+            mMap.addMarker(new MarkerOptions().position(customerPosition)
+                    .title("Customer"));
+            showDirections(new LatLng(location.getLatitude(), location.getLongitude()));
+        }
+
+        public void onStatusChanged(String provider, int status, Bundle extras) {}
+
+        public void onProviderEnabled(String provider) {}
+
+        public void onProviderDisabled(String provider) {}
+    };
+
+
+
+
+
+    //uses the Google Direction API
+    private void showDirections(LatLng origin){
 
         // form: http://maps.googleapis.com/maps/api/directions/outputFormat?parameters
         String url = "https://maps.googleapis.com/maps/api/directions/json?origin="+origin.latitude+","+origin.longitude+
-                        "&destination="+customerLocation.latitude+","+customerLocation.longitude+
-                        "&avoid=highways&mode=driving"+
-                        "&key="+getString(R.string.google_maps_key);
-
-        /*String url = "https://www.google.com/maps/dir/?api=1&origin="+origin.latitude+"%2C"+origin.longitude+
-                "&destination="+customerLocation.latitude+"%2C"+customerLocation.longitude+"&travelmode=driving";*/
+                "&destination="+ customerPosition.latitude+","+ customerPosition.longitude+
+                "&avoid=highways&mode=driving"+
+                "&key="+getString(R.string.google_maps_key);
 
         FetchUrl FetchUrl = new FetchUrl();
         // Start downloading json data from Google Directions API
@@ -200,10 +296,6 @@ public class DeliveringActivity extends FragmentActivity implements OnMapReadyCa
         //move map camera
         mMap.moveCamera(CameraUpdateFactory.newLatLng(origin));
         mMap.animateCamera(CameraUpdateFactory.zoomTo(14));
-
-        if(progressDialog.isShowing())
-            progressDialog.dismiss();
-
     }
 
 
@@ -394,6 +486,7 @@ public class DeliveringActivity extends FragmentActivity implements OnMapReadyCa
             return poly;
         }
     }
+
 
 
 
