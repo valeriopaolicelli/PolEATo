@@ -36,7 +36,7 @@
      You need a different API key for each encryption key, including the release key that is used to
      sign the APK for publishing.
      You can define the keys for the debug and release targets in src/debug/ and src/release/.
--->
+        -->
         <uses-library android:name="org.apache.http.legacy" android:required="false"/>
 
         <meta-data

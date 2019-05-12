@@ -4,6 +4,10 @@ import android.Manifest;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.Canvas;
+import android.graphics.drawable.Drawable;
 import android.location.Address;
 import android.location.Geocoder;
 import android.location.Location;
@@ -11,11 +15,16 @@ import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.annotation.DrawableRes;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentActivity;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
+import android.support.v4.content.ContextCompat;
 import android.util.Log;
+import android.view.View;
 import android.widget.TextView;
 
 import com.google.android.gms.location.LocationServices;
@@ -23,6 +32,8 @@ import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.BitmapDescriptor;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.PolylineOptions;
@@ -51,6 +62,11 @@ import java.util.List;
 import java.util.Map;
 
 public class DeliveringActivity extends FragmentActivity implements OnMapReadyCallback {
+
+
+    //two costant for frequency update tuning
+    private static final int MIN_TIME_LOC_UPDATE = 5000;
+    private static final int MIN_DISTANCE_LOC_UPDATE = 5;
 
     //this flag is to avoid multiple order that will override the maps
     private boolean isRunning;
@@ -103,6 +119,10 @@ public class DeliveringActivity extends FragmentActivity implements OnMapReadyCa
 
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
+
+
+        //mapFragment.getView().setVisibility(View.INVISIBLE);
+
         mapFragment.getMapAsync(this);
     }
 
@@ -127,6 +147,13 @@ public class DeliveringActivity extends FragmentActivity implements OnMapReadyCa
                         dataSnapshot.hasChild("totalPrice")) {
 
                     String customerAddress = dataSnapshot.child("addressCustomer").toString();
+                    String nameRestaurant = dataSnapshot.child("nameRestaurant").toString();
+                    String numDishes = dataSnapshot.child("numberOfDishes").toString();
+                    String orderID = dataSnapshot.child("orderID").toString();
+                    String surnameCustomer = dataSnapshot.child("surnameCustomer").toString();
+                    String priceStr = dataSnapshot.child("totalPrice").toString().replace(",", ".");
+
+
 
                     try {
                         Address customerLocation = geocoder.getFromLocationName(customerAddress, 1).get(0);
@@ -178,51 +205,41 @@ public class DeliveringActivity extends FragmentActivity implements OnMapReadyCa
 
     @Override
     public void onMapReady(GoogleMap googleMap) {
-        // Add a marker in Sydney, Australia,
-        // and move the map's camera to the same CustomerLocation.
 
         mMap = googleMap;
-        mMap.addMarker(new MarkerOptions().position(customerPosition)
-                .title("Customer"));
-        mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(customerPosition, 15.0f));
         //mMap.moveCamera(CameraUpdateFactory.newLatLng(customerLocation));
         mMap.setMapType(GoogleMap.MAP_TYPE_TERRAIN);
         //mMap.setBuildingsEnabled(true);
 
-
-
-
-        //check only for Network Provider permissions
-        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED &&
-                ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-
-            /*ActivityCompat.requestPermissions(this,
-                    new String[]{Manifest.permission.ACCESS_COARSE_LOCATION},
-                    0);*/
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED &&
+                ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
 
             ActivityCompat.requestPermissions(this,
-                    new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
-                    1);
+                new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
+                1);
 
-            // TODO: Consider calling
-            //    ActivityCompat#requestPermissions
-            // here to request the missing permissions, and then overriding
-            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
-            //                                          int[] grantResults)
-            // to handle the case where the user grants the permission. See the documentation
-            // for ActivityCompat#requestPermissions for more details.
+            ActivityCompat.requestPermissions(this,
+                    new String[]{Manifest.permission.ACCESS_COARSE_LOCATION},
+                    0);
+
             return;
         }
-        //LatLng origin = new LatLng(45.050938, 7.649423);
 
-        Location origin = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
-        showDirections(new LatLng(origin.getLatitude(), origin.getLongitude()));
+        //the first time the location updates would take times, so we retrieve once the last known location
+        Location lastKnownLocation = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+        if(lastKnownLocation == null){
 
+            Log.d("matte", "GPS returns null, using Network for last known location");
+            lastKnownLocation = locationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
+
+        }
+        LatLng lastKnownLatLng = new LatLng(lastKnownLocation.getLatitude(), lastKnownLocation.getLongitude());
+
+        showDirections(lastKnownLatLng, customerPosition);
 
         // Register the listener with the Location Manager to receive location updates
-        locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, new LocListener());
-
-
+        locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, MIN_TIME_LOC_UPDATE,
+                MIN_DISTANCE_LOC_UPDATE, new LocListener());
 
     }
 
@@ -264,10 +281,9 @@ public class DeliveringActivity extends FragmentActivity implements OnMapReadyCa
     class LocListener implements LocationListener {
         public void onLocationChanged(Location location) {
             // Called when a new location is found by the network location provider.
+            Log.d("matte", "Location changed: "+location.getLatitude()+", "+location.getLongitude());
             mMap.clear();
-            mMap.addMarker(new MarkerOptions().position(customerPosition)
-                    .title("Customer"));
-            showDirections(new LatLng(location.getLatitude(), location.getLongitude()));
+            showDirections(new LatLng(location.getLatitude(), location.getLongitude()), customerPosition);
         }
 
         public void onStatusChanged(String provider, int status, Bundle extras) {}
@@ -278,11 +294,21 @@ public class DeliveringActivity extends FragmentActivity implements OnMapReadyCa
     };
 
 
-
-
-
     //uses the Google Direction API
-    private void showDirections(LatLng origin){
+    private void showDirections(LatLng origin, LatLng destination){
+
+        //add a marker for the destination
+        mMap.addMarker(new MarkerOptions().position(destination)
+                .title("Customer"));
+
+        /*Bitmap icon = BitmapFactory.decodeResource(getResources(),
+                R.mipmap.delivery_icon);*/
+
+        //add customized marker for current position
+        mMap.addMarker(new MarkerOptions().position(origin)
+                .title("You"))//.setIcon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE));
+                .setIcon(bitmapDescriptorFromVector(this, R.drawable.ic_baseline_directions_bike_24px));
+
 
         // form: http://maps.googleapis.com/maps/api/directions/outputFormat?parameters
         String url = "https://maps.googleapis.com/maps/api/directions/json?origin="+origin.latitude+","+origin.longitude+
@@ -295,10 +321,18 @@ public class DeliveringActivity extends FragmentActivity implements OnMapReadyCa
         FetchUrl.execute(url);
         //move map camera
         mMap.moveCamera(CameraUpdateFactory.newLatLng(origin));
-        mMap.animateCamera(CameraUpdateFactory.zoomTo(14));
+        mMap.animateCamera(CameraUpdateFactory.zoomTo(15.0f));
     }
 
 
+    private BitmapDescriptor bitmapDescriptorFromVector(Context context, int vectorResId) {
+        Drawable vectorDrawable = ContextCompat.getDrawable(context, vectorResId);
+        vectorDrawable.setBounds(0, 0, vectorDrawable.getIntrinsicWidth(), vectorDrawable.getIntrinsicHeight());
+        Bitmap bitmap = Bitmap.createBitmap(vectorDrawable.getIntrinsicWidth(), vectorDrawable.getIntrinsicHeight(), Bitmap.Config.ARGB_8888);
+        Canvas canvas = new Canvas(bitmap);
+        vectorDrawable.draw(canvas);
+        return BitmapDescriptorFactory.fromBitmap(bitmap);
+    }
 
 
     private String downloadUrl(String strUrl) throws IOException {
@@ -332,8 +366,6 @@ public class DeliveringActivity extends FragmentActivity implements OnMapReadyCa
     }
 
 
-
-
     private class FetchUrl extends AsyncTask<String, Void, String> {
         @Override
         protected String doInBackground(String[] url) {
@@ -357,7 +389,6 @@ public class DeliveringActivity extends FragmentActivity implements OnMapReadyCa
             parserTask.execute(result);
         }
     }
-
 
 
     private class ParserTask extends AsyncTask<String, Integer, List<List<HashMap<String, String>>>> {
