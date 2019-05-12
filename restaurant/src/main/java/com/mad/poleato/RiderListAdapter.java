@@ -1,7 +1,9 @@
 package com.mad.poleato;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.v4.content.LocalBroadcastManager;
@@ -79,8 +81,28 @@ public class RiderListAdapter extends ArrayAdapter<Rider>
                 @Override
                 public void onClick(View v) {
                     String riderID= holder.riderID_tv.getText().toString();
-                    //TODO return riderID to reservation expandable list adapter
-                    ((Activity) mContext).finish();
+                    final AlertDialog.Builder builder = new AlertDialog.Builder(v.getContext());
+                    builder.setTitle(getContext().getString(R.string.rider_selected));
+
+                    builder.setMessage(getContext().getString(R.string.msg_rider_selected));
+                    builder.setPositiveButton(getContext().getString(R.string.choice_confirm), new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialogInterface, int i) {
+                            ((Activity) mContext).finish();
+                        }
+                    });
+                    builder.setNegativeButton(getContext().getString(R.string.choice_cancel), new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialogInterface, int i) {
+                            dialogInterface.cancel();
+                        }
+                    });
+                    builder.setNeutralButton(getContext().getString(R.string.choice_cancel), new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialogInterface, int i) {
+                            dialogInterface.cancel();
+                        }
+                    });
                 }
             });
 
