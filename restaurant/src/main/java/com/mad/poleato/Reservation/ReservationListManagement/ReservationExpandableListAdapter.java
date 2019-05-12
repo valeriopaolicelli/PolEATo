@@ -245,8 +245,9 @@ public class ReservationExpandableListAdapter extends BaseExpandableListAdapter{
                                      */
                                     ReservationFragmentDirections.ActionReservationIdToMapsFragmentId action =
                                             ReservationFragmentDirections
-                                                    .actionReservationIdToMapsFragmentId("orderID");
-                                    action.setOrderId(r.getOrder_id());
+                                                    .actionReservationIdToMapsFragmentId("loggedID", r);
+                                    action.setReservation(r);
+                                    action.setLoggedId(loggedID);
                                     Navigation.findNavController(finalView1).navigate(action);
 
 //                                    FirebaseDatabase.getInstance().getReference("deliveryman").child(riderSelected).child("Busy").setValue(true);
@@ -314,7 +315,7 @@ public class ReservationExpandableListAdapter extends BaseExpandableListAdapter{
                                                          * pruning
                                                          */
                                                         if(updated==r.getNumberOfDishes()){
-                                                            r.setStatus(Status.COOKING, context);
+                                                            r.setStatus(Status.COOKING);
                                                             FirebaseDatabase.getInstance().getReference("restaurants").child(loggedID).child("reservations").child(r.getOrder_id()).child("status").child("en").setValue("Cooking");
                                                             FirebaseDatabase.getInstance().getReference("restaurants").child(loggedID).child("reservations").child(r.getOrder_id()).child("status").child("it").setValue("Preparazione");
                                                             r.setButtonText(context.getString(R.string.title_deliver));
@@ -338,7 +339,7 @@ public class ReservationExpandableListAdapter extends BaseExpandableListAdapter{
                             builder.setNegativeButton(context.getString(R.string.choice_reject), new DialogInterface.OnClickListener() {
                                 @Override
                                 public void onClick(DialogInterface dialogInterface, int i) {
-                                    r.setStatus(Status.REJECTED, context);
+                                    r.setStatus(Status.REJECTED);
                                     FirebaseDatabase.getInstance().getReference("restaurants").child(loggedID).child("reservations").child(r.getOrder_id()).child("status").child("en").setValue("Rejected");
                                     FirebaseDatabase.getInstance().getReference("restaurants").child(loggedID).child("reservations").child(r.getOrder_id()).child("status").child("it").setValue("Rifiutato");
                                     notifyDataSetChanged();
@@ -362,114 +363,6 @@ public class ReservationExpandableListAdapter extends BaseExpandableListAdapter{
         }
 
         return view;
-    }
-
-    private void notifyRider(final Reservation r, final String riderID) {
-
-        /* retrieve the restaurant information */
-        DatabaseReference referenceRestaurant = FirebaseDatabase.getInstance().getReference("restaurants").child(loggedID);
-        referenceRestaurant.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshotRestaurant) {
-                DatabaseReference referenceRider= FirebaseDatabase.getInstance().getReference("deliveryman").child(riderID);
-                DatabaseReference reservationRider = referenceRider.child("reservations").push();
-
-                if (dataSnapshotRestaurant.exists() &&
-                        dataSnapshotRestaurant.hasChild("Address") &&
-                        dataSnapshotRestaurant.hasChild("Name")) {
-
-                    final String addressRestaurant = dataSnapshotRestaurant.child("Address").getValue().toString();
-                    final String nameRestaurant = dataSnapshotRestaurant.child("Name").getValue().toString();
-                    if (notify) {
-                        reservationRider.child("customerID").setValue(r.getCustomerID());
-                        reservationRider.child("surnameCustomer").setValue(r.getSurname());
-                        reservationRider.child("addressCustomer").setValue(r.getAddress());
-                        reservationRider.child("orderID").setValue(r.getOrder_id());
-                        reservationRider.child("numberOfDishes").setValue(r.getNumberOfDishes());
-                        reservationRider.child("totalPrice").setValue(r.getTotalPrice());
-                        reservationRider.child("time").setValue(r.getTime());
-                        reservationRider.child("addressRestaurant").setValue(addressRestaurant);
-                        reservationRider.child("nameRestaurant").setValue(nameRestaurant);
-                        reservationRider.child("restaurantID").setValue(loggedID);
-                        sendNotification(riderID);
-                        notify = false;
-                    }
-                }
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
-                Log.d("Valerio", "NotifyRandomRider -> retrieve restaurant info: " + databaseError.getMessage());
-            }
-        });
-    }
-
-    private void sendNotification(final String childID) {
-        AsyncTask.execute(new Runnable() {
-            @Override
-            public void run() {
-                int SDK_INT = android.os.Build.VERSION.SDK_INT;
-                if (SDK_INT > 8) {
-                    StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder()
-                            .permitAll().build();
-                    StrictMode.setThreadPolicy(policy);
-                    String send_email;
-
-                    //This is a Simple Logic to Send Notification different Device Programmatically....
-                    send_email= childID;
-
-                    try {
-                        String jsonResponse;
-
-                        URL url = new URL("https://onesignal.com/api/v1/notifications");
-                        HttpURLConnection con = (HttpURLConnection) url.openConnection();
-                        con.setUseCaches(false);
-                        con.setDoOutput(true);
-                        con.setDoInput(true);
-
-                        con.setRequestProperty("Content-Type", "application/json; charset=UTF-8");
-                        con.setRequestProperty("Authorization", "Basic YjdkNzQzZWQtYTlkYy00MmIzLTg0NDUtZmQ3MDg0ODc4YmQ1");
-                        con.setRequestMethod("POST");
-
-                        String strJsonBody = "{"
-                                + "\"app_id\": \"a2d0eb0d-4b93-4b96-853e-dcfe6c34778e\","
-
-                                + "\"filters\": [{\"field\": \"tag\", \"key\": \"User_ID\", \"relation\": \"=\", \"value\": \"" + send_email + "\"}],"
-
-                                + "\"data\": {\"Delivery\": \"New order\"},"
-                                + "\"contents\": {\"en\": \"New order to deliver\"}"
-                                + "}";
-
-
-                        System.out.println("strJsonBody:\n" + strJsonBody);
-
-                        byte[] sendBytes = strJsonBody.getBytes("UTF-8");
-                        con.setFixedLengthStreamingMode(sendBytes.length);
-
-                        OutputStream outputStream = con.getOutputStream();
-                        outputStream.write(sendBytes);
-
-                        int httpResponse = con.getResponseCode();
-                        System.out.println("httpResponse: " + httpResponse);
-
-                        if (httpResponse >= HttpURLConnection.HTTP_OK
-                                && httpResponse < HttpURLConnection.HTTP_BAD_REQUEST) {
-                            Scanner scanner = new Scanner(con.getInputStream(), "UTF-8");
-                            jsonResponse = scanner.useDelimiter("\\A").hasNext() ? scanner.next() : "";
-                            scanner.close();
-                        } else {
-                            Scanner scanner = new Scanner(con.getErrorStream(), "UTF-8");
-                            jsonResponse = scanner.useDelimiter("\\A").hasNext() ? scanner.next() : "";
-                            scanner.close();
-                        }
-                        System.out.println("jsonResponse:\n" + jsonResponse);
-
-                    } catch (Throwable t) {
-                        t.printStackTrace();
-                    }
-                }
-            }
-        });
     }
 
     @Override

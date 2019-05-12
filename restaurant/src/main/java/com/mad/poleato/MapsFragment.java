@@ -13,6 +13,8 @@ import com.firebase.geofire.GeoFire;
 import com.firebase.geofire.GeoLocation;
 import com.google.android.gms.location.LocationListener;
 
+import android.os.AsyncTask;
+import android.os.StrictMode;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
@@ -51,8 +53,13 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.mad.poleato.Reservation.Reservation;
 
+import java.io.OutputStream;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.util.HashMap;
+import java.util.Scanner;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -87,13 +94,15 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback,
     private String currentUserID;
     private FirebaseAuth mAuth;
     private View fragView;
-    private String orderId;
+    private Reservation reservation;
+
+    private String loggedID;
 
     private ListView listView;
     private RiderListAdapter listAdapter;
 
     private FloatingActionButton mapButton;
-    SupportMapFragment mapFragment;
+    private SupportMapFragment mapFragment;
 
 
     public MapsFragment() {
@@ -109,7 +118,9 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback,
         /**
          * Value of Order FROM RESERVATION FRAGMENT
          */
-        orderId = MapsFragmentArgs.fromBundle(getArguments()).getOrderId();
+
+        loggedID = MapsFragmentArgs.fromBundle(getArguments()).getLoggedId();
+        reservation= MapsFragmentArgs.fromBundle(getArguments()).getReservation();
         /**
          *
          */
@@ -118,7 +129,7 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback,
         currentUserID = currentUser.getUid();
 
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
-        SupportMapFragment mapFragment = (SupportMapFragment) getChildFragmentManager()
+        mapFragment = (SupportMapFragment) getChildFragmentManager()
                 .findFragmentById(R.id.map_view);
         mapFragment.getMapAsync(this);
         mapFragment.getView().setVisibility(View.GONE);
@@ -133,7 +144,7 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback,
          */
         riders = new HashMap<>();
         listView = (ListView) fragView.findViewById(R.id.rider_listview);
-        listAdapter = new RiderListAdapter(getContext(), 0);
+        listAdapter = new RiderListAdapter(getContext(), 0, reservation, loggedID);
 
         listView.setAdapter(listAdapter);
 
@@ -302,15 +313,16 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback,
                     @Override
                     public void onComplete(String key, DatabaseError error) {
                         //Add marker
-                        Drawable icon = ContextCompat.getDrawable(getActivity().getApplicationContext(), R.drawable.restaurant_icon);
-                        BitmapDescriptor markerIcon= getMarkerIconFromDrawable(icon);
+//                        Drawable icon = ContextCompat.getDrawable(getContext(), R.drawable.restaurant_icon);
+            //            BitmapDescriptor markerIcon= getMarkerIconFromDrawable(icon);
                         if(restaurantMarker != null)
                             restaurantMarker= null;
 
                         restaurantMarker= mMap.addMarker(new MarkerOptions()
                                 .position(new LatLng(latitudeRest, longitudeRest))
                                 .title(restaurant_name)
-                                .icon(markerIcon));
+                               // .icon(markerIcon)
+                        );
 
                         //Move camera to this position
                         mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(latitudeRest, longitudeRest), 15.0f));
@@ -369,12 +381,13 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback,
                                         if(riders.get(riderID).getMarker() != null)
                                             riders.get(riderID).setMarker(null);
 
-                                        Drawable icon = ContextCompat.getDrawable(getActivity().getApplicationContext(), R.drawable.ic_baseline_directions_bike_24px);
-                                        BitmapDescriptor markerIcon= getMarkerIconFromDrawable(icon);
+                           //             Drawable icon = ContextCompat.getDrawable(getContext(), R.drawable.ic_baseline_directions_bike_24px);
+                                  //      BitmapDescriptor markerIcon= getMarkerIconFromDrawable(icon);
                                         riders.get(riderID).setMarker(mMap.addMarker(new MarkerOptions()
                                                 .position(new LatLng(latRider, longRider))
                                                 .title(riderID)
-                                                .icon(markerIcon)));
+                                             //   .icon(markerIcon)
+                                                ));
                                     }
                                 });
                     }
@@ -403,7 +416,7 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback,
 
     @Override
     public boolean onMarkerClick(Marker marker) {
-        String riderID= marker.getTitle();
+        final String riderID= marker.getTitle();
         final AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
         builder.setTitle(this.getString(R.string.rider_selected));
 
@@ -411,6 +424,11 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback,
         builder.setPositiveButton(this.getString(R.string.choice_confirm), new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
+                FirebaseDatabase.getInstance().getReference("deliveryman").child(riderID).child("Busy").setValue(true);
+                FirebaseDatabase.getInstance().getReference("restaurants").child(loggedID).child("reservations").child(reservation.getOrder_id()).child("status").child("en").setValue("Delivering");
+                FirebaseDatabase.getInstance().getReference("restaurants").child(loggedID).child("reservations").child(reservation.getOrder_id()).child("status").child("it").setValue("In consegna");
+
+                notifyRider(riderID);
                 /**
                  * GO FROM MAPSFRAGMENT to RESERVATION
                  */
@@ -430,6 +448,114 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback,
             }
         });
 
-        return false;
+        AlertDialog dialog = builder.create();
+        dialog.show();
+
+        return true;
+    }
+
+    private void notifyRider(final String riderID) {
+
+        /* retrieve the restaurant information */
+        DatabaseReference referenceRestaurant = FirebaseDatabase.getInstance().getReference("restaurants").child(loggedID);
+        referenceRestaurant.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshotRestaurant) {
+                DatabaseReference referenceRider= FirebaseDatabase.getInstance().getReference("deliveryman").child(riderID);
+                DatabaseReference reservationRider = referenceRider.child("reservations").push();
+
+                if (dataSnapshotRestaurant.exists() &&
+                        dataSnapshotRestaurant.hasChild("Address") &&
+                        dataSnapshotRestaurant.hasChild("Name")) {
+
+                    final String addressRestaurant = dataSnapshotRestaurant.child("Address").getValue().toString();
+                    final String nameRestaurant = dataSnapshotRestaurant.child("Name").getValue().toString();
+                    reservationRider.child("customerID").setValue(reservation.getCustomerID());
+                    reservationRider.child("surnameCustomer").setValue(reservation.getSurname());
+                    reservationRider.child("addressCustomer").setValue(reservation.getAddress());
+                    reservationRider.child("orderID").setValue(reservation.getOrder_id());
+                    reservationRider.child("numberOfDishes").setValue(reservation.getNumberOfDishes());
+                    reservationRider.child("totalPrice").setValue(reservation.getTotalPrice());
+                    reservationRider.child("time").setValue(reservation.getTime());
+                    reservationRider.child("addressRestaurant").setValue(addressRestaurant);
+                    reservationRider.child("nameRestaurant").setValue(nameRestaurant);
+                    reservationRider.child("restaurantID").setValue(loggedID);
+                    sendNotification(riderID);
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+                Log.d("Valerio", "NotifyRandomRider -> retrieve restaurant info: " + databaseError.getMessage());
+            }
+        });
+    }
+
+    private void sendNotification(final String childID) {
+        AsyncTask.execute(new Runnable() {
+            @Override
+            public void run() {
+                int SDK_INT = android.os.Build.VERSION.SDK_INT;
+                if (SDK_INT > 8) {
+                    StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder()
+                            .permitAll().build();
+                    StrictMode.setThreadPolicy(policy);
+                    String send_email;
+
+                    //This is a Simple Logic to Send Notification different Device Programmatically....
+                    send_email= childID;
+
+                    try {
+                        String jsonResponse;
+
+                        URL url = new URL("https://onesignal.com/api/v1/notifications");
+                        HttpURLConnection con = (HttpURLConnection) url.openConnection();
+                        con.setUseCaches(false);
+                        con.setDoOutput(true);
+                        con.setDoInput(true);
+
+                        con.setRequestProperty("Content-Type", "application/json; charset=UTF-8");
+                        con.setRequestProperty("Authorization", "Basic YjdkNzQzZWQtYTlkYy00MmIzLTg0NDUtZmQ3MDg0ODc4YmQ1");
+                        con.setRequestMethod("POST");
+
+                        String strJsonBody = "{"
+                                + "\"app_id\": \"a2d0eb0d-4b93-4b96-853e-dcfe6c34778e\","
+
+                                + "\"filters\": [{\"field\": \"tag\", \"key\": \"User_ID\", \"relation\": \"=\", \"value\": \"" + send_email + "\"}],"
+
+                                + "\"data\": {\"Delivery\": \"New order\"},"
+                                + "\"contents\": {\"en\": \"New order to deliver\"}"
+                                + "}";
+
+
+                        System.out.println("strJsonBody:\n" + strJsonBody);
+
+                        byte[] sendBytes = strJsonBody.getBytes("UTF-8");
+                        con.setFixedLengthStreamingMode(sendBytes.length);
+
+                        OutputStream outputStream = con.getOutputStream();
+                        outputStream.write(sendBytes);
+
+                        int httpResponse = con.getResponseCode();
+                        System.out.println("httpResponse: " + httpResponse);
+
+                        if (httpResponse >= HttpURLConnection.HTTP_OK
+                                && httpResponse < HttpURLConnection.HTTP_BAD_REQUEST) {
+                            Scanner scanner = new Scanner(con.getInputStream(), "UTF-8");
+                            jsonResponse = scanner.useDelimiter("\\A").hasNext() ? scanner.next() : "";
+                            scanner.close();
+                        } else {
+                            Scanner scanner = new Scanner(con.getErrorStream(), "UTF-8");
+                            jsonResponse = scanner.useDelimiter("\\A").hasNext() ? scanner.next() : "";
+                            scanner.close();
+                        }
+                        System.out.println("jsonResponse:\n" + jsonResponse);
+
+                    } catch (Throwable t) {
+                        t.printStackTrace();
+                    }
+                }
+            }
+        });
     }
 }

@@ -113,8 +113,12 @@
             app:popUpTo="@+id/reservation_id"
             app:popUpToInclusive="true" />
         <argument
-            android:name="order_id"
+            android:name="logged_id"
             app:argType="string"
+            app:nullable="true" />
+        <argument
+            android:name="reservation"
+            app:argType="com.mad.poleato.Reservation.Reservation"
             app:nullable="true" />
     </fragment>
 

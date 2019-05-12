@@ -5,11 +5,12 @@ import android.util.Log;
 
 import com.mad.poleato.R;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 
 
 
-public class Reservation {
+public class Reservation implements Serializable{
     private String order_id;
     private String customer_id;
     private String name;
@@ -22,7 +23,7 @@ public class Reservation {
     private String phone;
     private boolean checked;
     private String totalPrice;
-    private Context context;
+    private String locale;
 
 
     private ArrayList<Dish>dishes = new ArrayList<>();
@@ -35,7 +36,7 @@ public class Reservation {
 
     public Reservation(String order_id, String customer_id, String name, String surname,
                        String address, String date, String time,
-                       String status, String phone, String totalPrice, Context context) {
+                       String status, String phone, String totalPrice, String locale){
         this.order_id = order_id;
         this.customer_id = customer_id;
         this.name = name;
@@ -44,11 +45,14 @@ public class Reservation {
         this.date = date;
         this.time= time;
         this.stat = status;
-        this.context= context;
         if(stat!=null && (!stat.equals("")))
             setStat(status);
         this.totalPrice= totalPrice;
-        this.buttonText= context.getString(R.string.button_reservation);
+        this.locale= locale;
+        if(locale.equals("it"))
+            this.buttonText= "Accetta o Rifiuta";
+        else
+            this.buttonText= "Accept or Reject";
         this.phone= phone;
     }
     public String getName() {
@@ -93,15 +97,31 @@ public class Reservation {
         return status;
     }
 
-    public void setStatus(Status status, Context context) {
-        if(status == Status.ACCEPTANCE)
-            this.stat = context.getString(R.string.new_order);
-        else if( status == Status.DELIVERY)
-            this.stat = context.getString(R.string.delivery);
-        else if( status == Status.COOKING)
-            this.stat = context.getString(R.string.cooking);
-        else if ( status == Status.REJECTED)
-            this.stat = context.getString(R.string.reject);
+    public void setStatus(Status status) {
+        if(status == Status.ACCEPTANCE){
+            if(locale.equals("it"))
+                this.stat= "Nuovo ordine";
+            else
+                this.stat= "New order";
+        }
+        else if( status == Status.DELIVERY){
+            if(locale.equals("it"))
+                this.stat= "In consegna";
+            else
+                this.stat= "Delivering";
+        }
+        else if( status == Status.COOKING){
+            if(locale.equals("it"))
+                this.stat= "Preparazione";
+            else
+                this.stat= "Cooking";
+        }
+        else if ( status == Status.REJECTED){
+            if(locale.equals("it"))
+                this.stat= "Rifiutato";
+            else
+                this.stat= "Rejected";
+        }
         this.status = status;
     }
 
@@ -111,13 +131,13 @@ public class Reservation {
 
     public void setStat(String stat) {
         this.stat= stat;
-        if(stat.equals(context.getString(R.string.new_order)))
+        if(stat.equals("New order") || stat.equals("Nuovo ordine"))
             this.status= Status.ACCEPTANCE;
-        if(stat.equals(context.getString(R.string.delivery)))
+        if(stat.equals("Delivering") || stat.equals("In consegna"))
             this.status= Status.DELIVERY;
-        if(stat.equals(context.getString(R.string.cooking)))
+        if(stat.equals("Cooking") || stat.equals("Preparazione"))
             this.status = Status.COOKING;
-        if(stat.equals(context.getString(R.string.reject)))
+        if(stat.equals("Rejected") || stat.equals("Rifiutato"))
             this.status= Status.REJECTED;
     }
 
