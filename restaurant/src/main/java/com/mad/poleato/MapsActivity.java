@@ -13,11 +13,13 @@ import com.google.android.gms.location.LocationListener;
 
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
 import android.support.v4.content.ContextCompat;
 import android.util.Log;
+import android.view.View;
 import android.widget.ListView;
 import android.widget.Toast;
 
@@ -49,7 +51,8 @@ public class MapsActivity extends FragmentActivity
                           implements OnMapReadyCallback,
                                      GoogleApiClient.ConnectionCallbacks,
                                      GoogleApiClient.OnConnectionFailedListener,
-                                     LocationListener{
+                                     LocationListener,
+                                    GoogleMap.OnMarkerClickListener {
 
     private GoogleMap mMap;
 
@@ -78,6 +81,9 @@ public class MapsActivity extends FragmentActivity
     private ListView listView;
     private RiderListAdapter listAdapter;
 
+    private FloatingActionButton mapButton;
+    SupportMapFragment mapFragment;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -89,9 +95,12 @@ public class MapsActivity extends FragmentActivity
         currentUserID = currentUser.getUid();
 
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
-        SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
+        mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map_view);
         mapFragment.getMapAsync(this);
+        mapFragment.getView().setVisibility(View.GONE);
+
+        mapButton= findViewById(R.id.map_button);
 
         ref= FirebaseDatabase.getInstance().getReference("restaurants").child(currentUserID);
         geoFire= new GeoFire(ref);
@@ -106,6 +115,29 @@ public class MapsActivity extends FragmentActivity
         listView.setAdapter(listAdapter);
 
         setUpLocation();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+        handleButton();
+    }
+
+    private void handleButton() {
+        mapButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(mapFragment.getView().getVisibility() == View.VISIBLE) {
+                    mapFragment.getView().setVisibility(View.GONE);
+                    mapButton.setImageResource(R.mipmap.map_icon_round);
+                }
+                else {
+                    mapFragment.getView().setVisibility(View.VISIBLE);
+                    mapButton.setImageResource(R.mipmap.list_icon_round);
+                }
+            }
+        });
     }
 
     /*
@@ -337,5 +369,11 @@ public class MapsActivity extends FragmentActivity
         drawable.setBounds(0, 0, drawable.getIntrinsicWidth(), drawable.getIntrinsicHeight());
         drawable.draw(canvas);
         return BitmapDescriptorFactory.fromBitmap(bitmap);
+    }
+
+    @Override
+    public boolean onMarkerClick(Marker marker) {
+        String riderID= marker.getTitle();
+        return false;
     }
 }
