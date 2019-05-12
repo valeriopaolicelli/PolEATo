@@ -1,18 +1,14 @@
 package com.mad.poleato.Reservation.ReservationListManagement;
 
 import android.annotation.SuppressLint;
-import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.DialogInterface;
-import android.content.Intent;
-import android.content.IntentFilter;
 import android.os.AsyncTask;
 import android.os.StrictMode;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -23,6 +19,8 @@ import android.widget.CheckBox;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.navigation.Navigation;
+
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -30,12 +28,11 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.MutableData;
 import com.google.firebase.database.Transaction;
 import com.google.firebase.database.ValueEventListener;
-import com.mad.poleato.MapsActivity;
 import com.mad.poleato.R;
 import com.mad.poleato.Reservation.Dish;
 import com.mad.poleato.Reservation.Reservation;
+import com.mad.poleato.Reservation.ReservationFragmentDirections;
 import com.mad.poleato.Reservation.Status;
-import com.mad.poleato.RiderListAdapter;
 
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
@@ -43,7 +40,6 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Random;
 import java.util.Scanner;
 
 
@@ -131,9 +127,9 @@ public class ReservationExpandableListAdapter extends BaseExpandableListAdapter{
 
     @Override
     public View getGroupView(int i, boolean b, View view, ViewGroup viewGroup) {
-        final Reservation c = (Reservation) getGroup(i);
+        final Reservation r = (Reservation) getGroup(i);
         final ViewHolder holder;
-        final List<Dish> dishes = c.getDishes();
+        final List<Dish> dishes = r.getDishes();
         boolean flag = false;
         if( view ==  null){
             holder = new ViewHolder();
@@ -151,9 +147,9 @@ public class ReservationExpandableListAdapter extends BaseExpandableListAdapter{
         }else{
             holder = (ViewHolder) view.getTag();
         }
-        holder.tv_date.setText(c.getDate());
-        holder.tv_time.setText(c.getTime());
-        holder.tv_status.setText(c.getStat());
+        holder.tv_date.setText(r.getDate());
+        holder.tv_time.setText(r.getTime());
+        holder.tv_status.setText(r.getStat());
 
         if(groupChecked.size()<=i){
             groupChecked.add(i,false);
@@ -164,22 +160,22 @@ public class ReservationExpandableListAdapter extends BaseExpandableListAdapter{
         }
 
 
-        if (c.getStatus() == Status.REJECTED) {
+        if (r.getStatus() == Status.REJECTED) {
             flag = true;
             holder.tv_status.setTextColor(context.getResources().getColor(R.color.colorTextRejected));
         }
-        else if (c.getStatus() == Status.DELIVERY) {
+        else if (r.getStatus() == Status.DELIVERY) {
             holder.button.setText(context.getResources().getString(R.string.order_info));
             holder.tv_status.setTextColor(context.getResources().getColor(R.color.colorTextAccepted));
             holder.button.setVisibility(View.VISIBLE);
         }
-        else if (c.getStatus() == Status.ACCEPTANCE ) {
+        else if (r.getStatus() == Status.ACCEPTANCE ) {
             holder.button.setText(context.getResources().getString(R.string.button_reservation));
             holder.tv_status.setTextColor(context.getResources().getColor(R.color.colorTextSubField));
             holder.button.setVisibility(View.VISIBLE);
         }
         // Se lo stato è COOKING allora compare la checkbox
-        if(c.getStatus() == Status.COOKING) {
+        if(r.getStatus() == Status.COOKING) {
             holder.button.setText(context.getResources().getString(R.string.order_deliver));
             holder.tv_status.setTextColor(context.getResources().getColor(R.color.colorTextSubField));
             holder.selectAllCheckBox.setVisibility(View.VISIBLE);
@@ -198,7 +194,7 @@ public class ReservationExpandableListAdapter extends BaseExpandableListAdapter{
                 groupChecked.set(group_pos, state ? false : true);
                 groupCheckBoxes.get(group_pos).setChecked(state ? false : true);
                 ArrayList<Boolean>childs = childsChecked.get(group_pos);
-                for ( int i=0 ; i<listHashMap.get(c.getOrder_id()).size(); i++){
+                for ( int i=0 ; i<listHashMap.get(r.getOrder_id()).size(); i++){
                     childs.set(i, state ? false : true);
                 }
                 childsChecked.put(group_pos,childs);
@@ -209,19 +205,21 @@ public class ReservationExpandableListAdapter extends BaseExpandableListAdapter{
 
         if (!flag) {
             //if is the last child, add the button "accept or reject" on the bottom
+
+            final View finalView1 = view;
             holder.button.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     final AlertDialog.Builder builder = new AlertDialog.Builder(v.getContext());
                     //TODO transfer all strings to file
-                    if (c.getStatus() == Status.DELIVERY) {
+                    if (r.getStatus() == Status.DELIVERY) {
                         builder.setTitle(context.getString(R.string.title_deliver));
-                        String msg = v.getResources().getString(R.string.order) + ": " + c.getOrder_id() + "\n"
-                                + v.getResources().getString(R.string.date) + ": " + c.getDate() + " "
-                                + v.getResources().getString(R.string.time) + ": " + c.getTime() + "\n"
-                                + v.getResources().getString(R.string.surname) + ": " + c.getSurname() + "\n"
-                                + v.getResources().getString(R.string.address) + ": " + c.getAddress() + "\n"
-                                + v.getResources().getString(R.string.phone) + ": " + c.getPhone() + "\n";
+                        String msg = v.getResources().getString(R.string.order) + ": " + r.getOrder_id() + "\n"
+                                + v.getResources().getString(R.string.date) + ": " + r.getDate() + " "
+                                + v.getResources().getString(R.string.time) + ": " + r.getTime() + "\n"
+                                + v.getResources().getString(R.string.surname) + ": " + r.getSurname() + "\n"
+                                + v.getResources().getString(R.string.address) + ": " + r.getAddress() + "\n"
+                                + v.getResources().getString(R.string.phone) + ": " + r.getPhone() + "\n";
                         builder.setMessage(msg);
                         builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
                             @Override
@@ -231,7 +229,7 @@ public class ReservationExpandableListAdapter extends BaseExpandableListAdapter{
                         });
                     } else {
                         //se lo status è COOKING, il ristoratore può scegliere se far partire la consegna
-                        if (c.getStatus() == Status.COOKING) {
+                        if (r.getStatus() == Status.COOKING) {
                             builder.setTitle(context.getString(R.string.title_deliver));
 
                             builder.setMessage(context.getString(R.string.msg_deliver));
@@ -239,19 +237,28 @@ public class ReservationExpandableListAdapter extends BaseExpandableListAdapter{
                                 @Override
                                 public void onClick(DialogInterface dialogInterface, int i) {
 
-                                    Intent mapsActivity= new Intent(context, MapsActivity.class);
-                                    context.startActivity(mapsActivity);
-                                    /*if(riderSelected != null) {
-                                        FirebaseDatabase.getInstance().getReference("deliveryman").child(riderSelected).child("Busy").setValue(true);
-                                        FirebaseDatabase.getInstance().getReference("restaurants").child(loggedID).child("reservations").child(c.getOrder_id()).child("status").child("en").setValue("Delivering");
-                                        FirebaseDatabase.getInstance().getReference("restaurants").child(loggedID).child("reservations").child(c.getOrder_id()).child("status").child("it").setValue("In consegna");
-                                        c.setStatus(Status.DELIVERY, context);
-                                        holder.button.setText(context.getString(R.string.order_info));
-                                        c.setButtonText(context.getString(R.string.order_info));
-                                        notify = true;
-                                        notifyRider(c, riderSelected);
-                                        notifyDataSetChanged();
-                                    }*/
+                                    /**Intent mapsActivity= new Intent(context, MapsActivity2.class);
+                                    context.startActivity(mapsActivity);*/
+
+                                    /**
+                                     * GO FROM RESERVATION to MAPSFRAGMENT
+                                     */
+                                    ReservationFragmentDirections.ActionReservationIdToMapsFragmentId action =
+                                            ReservationFragmentDirections
+                                                    .actionReservationIdToMapsFragmentId("orderID");
+                                    action.setOrderId(r.getOrder_id());
+                                    Navigation.findNavController(finalView1).navigate(action);
+
+//                                    FirebaseDatabase.getInstance().getReference("deliveryman").child(riderSelected).child("Busy").setValue(true);
+//                                    FirebaseDatabase.getInstance().getReference("restaurants").child(loggedID).child("reservations").child(r.getOrder_id()).child("status").child("en").setValue("Delivering");
+//                                    FirebaseDatabase.getInstance().getReference("restaurants").child(loggedID).child("reservations").child(r.getOrder_id()).child("status").child("it").setValue("In consegna");
+//                                    r.setStatus(Status.DELIVERY, context);
+//                                    holder.button.setText(context.getString(R.string.order_info));
+//                                    r.setButtonText(context.getString(R.string.order_info));
+//                                    notify = true;
+                                   // notifyRider(c, riderSelected);
+                                    notifyDataSetChanged();
+
                                 }
                             });
                             builder.setNegativeButton(context.getString(R.string.choice_cancel), new DialogInterface.OnClickListener() {
@@ -294,7 +301,7 @@ public class ReservationExpandableListAdapter extends BaseExpandableListAdapter{
                                  */
                                                 String foodID= m.getKey();
                                                 Integer quantity= Integer.parseInt(mutableData.child(foodID).child("Quantity").getValue().toString());
-                                                for( Dish d : c.getDishes()){
+                                                for( Dish d : r.getDishes()){
                                                     if(d.getID().equals(foodID)){
                                                         if(quantity - d.getQuantity()< 0 ){
                                                             Toast.makeText(context, "Not enough quantity, please update", Toast.LENGTH_LONG).show();
@@ -306,11 +313,11 @@ public class ReservationExpandableListAdapter extends BaseExpandableListAdapter{
                                                         /*
                                                          * pruning
                                                          */
-                                                        if(updated==c.getNumberOfDishes()){
-                                                            c.setStatus(Status.COOKING, context);
-                                                            FirebaseDatabase.getInstance().getReference("restaurants").child(loggedID).child("reservations").child(c.getOrder_id()).child("status").child("en").setValue("Cooking");
-                                                            FirebaseDatabase.getInstance().getReference("restaurants").child(loggedID).child("reservations").child(c.getOrder_id()).child("status").child("it").setValue("Preparazione");
-                                                            c.setButtonText(context.getString(R.string.title_deliver));
+                                                        if(updated==r.getNumberOfDishes()){
+                                                            r.setStatus(Status.COOKING, context);
+                                                            FirebaseDatabase.getInstance().getReference("restaurants").child(loggedID).child("reservations").child(r.getOrder_id()).child("status").child("en").setValue("Cooking");
+                                                            FirebaseDatabase.getInstance().getReference("restaurants").child(loggedID).child("reservations").child(r.getOrder_id()).child("status").child("it").setValue("Preparazione");
+                                                            r.setButtonText(context.getString(R.string.title_deliver));
                                                             return Transaction.success(mutableData);
                                                         }
                                                     }
@@ -331,9 +338,9 @@ public class ReservationExpandableListAdapter extends BaseExpandableListAdapter{
                             builder.setNegativeButton(context.getString(R.string.choice_reject), new DialogInterface.OnClickListener() {
                                 @Override
                                 public void onClick(DialogInterface dialogInterface, int i) {
-                                    c.setStatus(Status.REJECTED, context);
-                                    FirebaseDatabase.getInstance().getReference("restaurants").child(loggedID).child("reservations").child(c.getOrder_id()).child("status").child("en").setValue("Rejected");
-                                    FirebaseDatabase.getInstance().getReference("restaurants").child(loggedID).child("reservations").child(c.getOrder_id()).child("status").child("it").setValue("Rifiutato");
+                                    r.setStatus(Status.REJECTED, context);
+                                    FirebaseDatabase.getInstance().getReference("restaurants").child(loggedID).child("reservations").child(r.getOrder_id()).child("status").child("en").setValue("Rejected");
+                                    FirebaseDatabase.getInstance().getReference("restaurants").child(loggedID).child("reservations").child(r.getOrder_id()).child("status").child("it").setValue("Rifiutato");
                                     notifyDataSetChanged();
                                 }
                             });

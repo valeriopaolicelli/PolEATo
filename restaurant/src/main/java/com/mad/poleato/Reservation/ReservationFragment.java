@@ -455,6 +455,8 @@ public class ReservationFragment extends Fragment {
                         reservations.get(i).setButtonText(buttonTextPersistence.get(i));
                     }
                 }
+
+
         }
     }
 

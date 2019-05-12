@@ -1,29 +1,34 @@
 package com.mad.poleato;
 
+
 import android.Manifest;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.drawable.Drawable;
 import android.location.Location;
-
-import com.firebase.geofire.GeoFire;
-import com.firebase.geofire.GeoLocation;
-import com.google.android.gms.location.LocationListener;
-
+import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
-import android.support.v4.app.FragmentActivity;
-import android.os.Bundle;
+import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
 import android.util.Log;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
 import android.widget.ListView;
+import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.navigation.Navigation;
+
+import com.firebase.geofire.GeoFire;
+import com.firebase.geofire.GeoLocation;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GoogleApiAvailability;
 import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.location.LocationListener;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -45,25 +50,28 @@ import com.google.firebase.database.ValueEventListener;
 
 import java.util.HashMap;
 
-public class MapsActivity extends FragmentActivity
-                          implements OnMapReadyCallback,
-                                     GoogleApiClient.ConnectionCallbacks,
-                                     GoogleApiClient.OnConnectionFailedListener,
-                                     LocationListener{
+/**
+ * A simple {@link Fragment} subclass.
+ */
+public class MapsFragment extends Fragment implements OnMapReadyCallback,
+        GoogleApiClient.ConnectionCallbacks,
+        GoogleApiClient.OnConnectionFailedListener,
+        LocationListener {
+
 
     private GoogleMap mMap;
 
     //Play Service Location
-    private static final int MY_PERMISSION_REQUEST_CODE= 0001;
-    private static final int PLAY_SERVICES_RESOLUTION_REQUEST= 000001;
+    private static final int MY_PERMISSION_REQUEST_CODE = 0001;
+    private static final int PLAY_SERVICES_RESOLUTION_REQUEST = 000001;
 
     private LocationRequest mLocationRequest;
     private GoogleApiClient mGoogleApiClient;
     private Location mLastLocation;
 
-    private static int UPDATE_INTERVAL= 5000; // 5 seconds
-    private static int FASTEST_INTERVAL= 3000; // 3 seconds
-    private static int DISPLACEMENT= 10;
+    private static int UPDATE_INTERVAL = 5000; // 5 seconds
+    private static int FASTEST_INTERVAL = 3000; // 3 seconds
+    private static int DISPLACEMENT = 10;
 
     DatabaseReference ref;
     GeoFire geoFire;
@@ -74,38 +82,55 @@ public class MapsActivity extends FragmentActivity
     private HashMap<String, Rider> riders;
     private String currentUserID;
     private FirebaseAuth mAuth;
+    private View fragView;
+    private String orderId;
 
     private ListView listView;
     private RiderListAdapter listAdapter;
 
 
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_maps);
+    public MapsFragment() {
+        // Required empty public constructor
+    }
 
+
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+                             Bundle savedInstanceState) {
+        fragView = inflater.inflate(R.layout.activity_maps, container, false);
+
+        /**
+         * Value of Order FROM RESERVATION FRAGMENT
+         */
+        orderId = MapsFragmentArgs.fromBundle(getArguments()).getOrderId();
+        /**
+         *
+         */
         mAuth = FirebaseAuth.getInstance();
         FirebaseUser currentUser = mAuth.getCurrentUser();
         currentUserID = currentUser.getUid();
 
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
-        SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
+        SupportMapFragment mapFragment = (SupportMapFragment) getChildFragmentManager()
                 .findFragmentById(R.id.map_view);
         mapFragment.getMapAsync(this);
 
-        ref= FirebaseDatabase.getInstance().getReference("restaurants").child(currentUserID);
-        geoFire= new GeoFire(ref);
+        ref = FirebaseDatabase.getInstance().getReference("restaurants").child(currentUserID);
+        geoFire = new GeoFire(ref);
 
         /*
          * setup listview and adapter that will contain the list of riders;
          */
-        riders= new HashMap<>();
-        listView = (ListView) findViewById(R.id.rider_listview);
-        listAdapter= new RiderListAdapter(this, 0);
+        riders = new HashMap<>();
+        listView = (ListView) fragView.findViewById(R.id.rider_listview);
+        listAdapter = new RiderListAdapter(getContext(), 0);
 
         listView.setAdapter(listAdapter);
 
         setUpLocation();
+
+
+        return fragView;
     }
 
     /*
@@ -113,10 +138,10 @@ public class MapsActivity extends FragmentActivity
      */
 
     private void setUpLocation() {
-        if(ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED &&
-                ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED){
+        if(ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED &&
+                ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED){
             // Request routine permission
-            ActivityCompat.requestPermissions(this, new String[]{
+            ActivityCompat.requestPermissions(getActivity(), new String[]{
                     Manifest.permission.ACCESS_COARSE_LOCATION,
                     Manifest.permission.ACCESS_FINE_LOCATION
             }, MY_PERMISSION_REQUEST_CODE);
@@ -140,7 +165,7 @@ public class MapsActivity extends FragmentActivity
     }
 
     private void buildGoogleApiClient() {
-        mGoogleApiClient= new GoogleApiClient.Builder(this)
+        mGoogleApiClient= new GoogleApiClient.Builder(getContext())
                 .addConnectionCallbacks(this)
                 .addOnConnectionFailedListener(this)
                 .addApi(LocationServices.API)
@@ -149,13 +174,17 @@ public class MapsActivity extends FragmentActivity
     }
 
     private boolean checkPlayServices() {
-        int resultCode= GoogleApiAvailability.getInstance().isGooglePlayServicesAvailable(this);
+        int resultCode= GoogleApiAvailability.getInstance().isGooglePlayServicesAvailable(getContext());
         if(resultCode != ConnectionResult.SUCCESS){
             if(GoogleApiAvailability.getInstance().isUserResolvableError(resultCode))
-                GoogleApiAvailability.getInstance().getErrorDialog(this, resultCode, PLAY_SERVICES_RESOLUTION_REQUEST).show();
+                GoogleApiAvailability.getInstance().getErrorDialog(getActivity(), resultCode, PLAY_SERVICES_RESOLUTION_REQUEST).show();
             else{
-                Toast.makeText(this, "This device is not suppoted", Toast.LENGTH_SHORT).show();
-                finish();
+                Toast.makeText(getContext(), "This device is not suppoted", Toast.LENGTH_SHORT).show();
+
+                /**
+                 * GO FROM MAPSFRAGMENT to RESERVATION
+                 */
+                Navigation.findNavController(fragView).navigate(R.id.action_mapsFragment_id_to_reservation_id);
             }
             return false;
         }
@@ -219,8 +248,8 @@ public class MapsActivity extends FragmentActivity
      */
 
     private void displayLocation() {
-        if(ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED &&
-                ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+        if(ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED &&
+                ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             return;
         }
     /*    mLastLocation= LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
@@ -240,7 +269,7 @@ public class MapsActivity extends FragmentActivity
                     @Override
                     public void onComplete(String key, DatabaseError error) {
                         //Add marker
-                        Drawable icon = ContextCompat.getDrawable(getApplicationContext(), R.drawable.restaurant_icon);
+                        Drawable icon = ContextCompat.getDrawable(getActivity().getApplicationContext(), R.drawable.restaurant_icon);
                         BitmapDescriptor markerIcon= getMarkerIconFromDrawable(icon);
                         if(restaurantMarker != null)
                             restaurantMarker= null;
@@ -259,7 +288,7 @@ public class MapsActivity extends FragmentActivity
 
             @Override
             public void onCancelled(@NonNull DatabaseError databaseError) {
-                Log.d("Valerio", "Firebase onCancelled in MapsActivity");
+                Log.d("Valerio", "Firebase onCancelled in MapsActivity2");
             }
         });
 
@@ -307,7 +336,7 @@ public class MapsActivity extends FragmentActivity
                                         if(riders.get(riderID).getMarker() != null)
                                             riders.get(riderID).setMarker(null);
 
-                                        Drawable icon = ContextCompat.getDrawable(getApplicationContext(), R.drawable.ic_baseline_directions_bike_24px);
+                                        Drawable icon = ContextCompat.getDrawable(getActivity().getApplicationContext(), R.drawable.ic_baseline_directions_bike_24px);
                                         BitmapDescriptor markerIcon= getMarkerIconFromDrawable(icon);
                                         riders.get(riderID).setMarker(mMap.addMarker(new MarkerOptions()
                                                 .position(new LatLng(latRider, longRider))
@@ -338,4 +367,5 @@ public class MapsActivity extends FragmentActivity
         drawable.draw(canvas);
         return BitmapDescriptorFactory.fromBitmap(bitmap);
     }
+
 }

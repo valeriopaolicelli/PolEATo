@@ -15,6 +15,9 @@
             app:destination="@id/signInActivity"
             app:popUpTo="@+id/signInActivity"
             app:popUpToInclusive="true" />
+        <action
+            android:id="@+id/action_reservation_id_to_mapsFragment_id"
+            app:destination="@id/mapsFragment_id" />
     </fragment>
 
 
@@ -97,5 +100,22 @@
         android:name="com.mad.poleato.SignInActivity"
         android:label="signin_layout"
         tools:layout="@layout/signin_layout" />
+
+
+    <fragment
+        android:id="@+id/mapsFragment_id"
+        android:name="com.mad.poleato.MapsFragment"
+        android:label="MapsFragment"
+        tools:layout="@layout/activity_maps" >
+        <action
+            android:id="@+id/action_mapsFragment_id_to_reservation_id"
+            app:destination="@id/reservation_id"
+            app:popUpTo="@+id/reservation_id"
+            app:popUpToInclusive="true" />
+        <argument
+            android:name="order_id"
+            app:argType="string"
+            app:nullable="true" />
+    </fragment>
 
 </navigation>

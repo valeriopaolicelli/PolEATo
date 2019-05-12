@@ -14,6 +14,10 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.TextView;
 
+import androidx.navigation.Navigation;
+
+import com.mad.poleato.DailyOffer.DailyOfferFragmentDirections;
+
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
@@ -73,12 +77,19 @@ public class RiderListAdapter extends ArrayAdapter<Rider>
             /*
              * Listener of button 'select rider'
              */
+            final View finalConvertView = convertView;
             holder.selectButton.setOnClickListener(new OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     String riderID= holder.riderID_tv.getText().toString();
-                    //TODO return riderID to reservation expandable list adapter
-                    ((Activity) mContext).finish();
+
+                    
+
+                    /**
+                     * GO FROM MAPSFRAGMENT to RESERVATION
+                     */
+                    Navigation.findNavController(finalConvertView).navigate(R.id.action_mapsFragment_id_to_reservation_id);
+
                 }
             });
 
