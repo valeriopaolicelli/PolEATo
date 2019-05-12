@@ -673,16 +673,6 @@ public class EditProfileFragment extends Fragment implements TimePickerDialog.On
             myToast.show();
             editTextFields.get("Info").setBackground(ContextCompat.getDrawable(getContext(), R.drawable.border_wrong_field));
         }
-        SimpleDateFormat format = new SimpleDateFormat("HH:mm");
-        Date d1 = format.parse(editTextFields.get("Open").getText().toString());
-        Date d2 = format.parse(editTextFields.get("Close").getText().toString());
-        if(d2.getTime()-d1.getTime()<0){
-            wrongField = true;
-            myToast.setText("Opening time can't be less than closing time");
-            myToast.show();
-            editTextFields.get("Open").setBackground(ContextCompat.getDrawable(getContext(), R.drawable.border_wrong_field));
-            editTextFields.get("Close").setBackground(ContextCompat.getDrawable(getContext(), R.drawable.border_wrong_field));
-        }
         else{
             /*
              * valid content, check if there are some spaces or new lines removable

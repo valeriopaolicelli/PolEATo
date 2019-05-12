@@ -141,4 +141,9 @@
     <!-- Address convertion -->
     <string name="no_address">No valid address</string>
 
+    <!-- Rider list adapter -->
+    <string name="rider_id">Rider ID</string>
+    <string name="distance">Distance</string>
+    <string name="select_rider">Select rider</string>
+
 </resources>

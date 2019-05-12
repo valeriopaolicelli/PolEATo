@@ -80,5 +80,4 @@ public class RidesRecyclerViewAdapter extends RecyclerView.Adapter<RidesRecycler
         notifyDataSetChanged();
     }
 
-
 }
