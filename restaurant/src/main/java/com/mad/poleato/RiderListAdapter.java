@@ -16,6 +16,8 @@ import android.widget.TextView;
 
 import java.text.DecimalFormat;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 public class RiderListAdapter extends ArrayAdapter<Rider>
@@ -101,6 +103,7 @@ public class RiderListAdapter extends ArrayAdapter<Rider>
 
     public void addRider(Rider rider){
         ridersList.add(rider);
+        Collections.sort(ridersList, Rider.distanceComparator);
     }
 
     @Override
