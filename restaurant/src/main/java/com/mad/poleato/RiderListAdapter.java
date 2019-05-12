@@ -1,7 +1,9 @@
 package com.mad.poleato;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.v4.content.LocalBroadcastManager;
@@ -20,6 +22,8 @@ import com.mad.poleato.DailyOffer.DailyOfferFragmentDirections;
 
 import java.text.DecimalFormat;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 public class RiderListAdapter extends ArrayAdapter<Rider>
@@ -83,13 +87,35 @@ public class RiderListAdapter extends ArrayAdapter<Rider>
                 public void onClick(View v) {
                     String riderID= holder.riderID_tv.getText().toString();
 
-                    
 
-                    /**
-                     * GO FROM MAPSFRAGMENT to RESERVATION
-                     */
-                    Navigation.findNavController(finalConvertView).navigate(R.id.action_mapsFragment_id_to_reservation_id);
 
+
+
+                    final AlertDialog.Builder builder = new AlertDialog.Builder(v.getContext());
+                    builder.setTitle(getContext().getString(R.string.rider_selected));
+
+                    builder.setMessage(getContext().getString(R.string.msg_rider_selected));
+                    builder.setPositiveButton(getContext().getString(R.string.choice_confirm), new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialogInterface, int i) {
+                            /**
+                             * GO FROM MAPSFRAGMENT to RESERVATION
+                             */
+                            Navigation.findNavController(finalConvertView).navigate(R.id.action_mapsFragment_id_to_reservation_id);
+                        }
+                    });
+                    builder.setNegativeButton(getContext().getString(R.string.choice_cancel), new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialogInterface, int i) {
+                            dialogInterface.cancel();
+                        }
+                    });
+                    builder.setNeutralButton(getContext().getString(R.string.choice_cancel), new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialogInterface, int i) {
+                            dialogInterface.cancel();
+                        }
+                    });
                 }
             });
 
@@ -112,6 +138,7 @@ public class RiderListAdapter extends ArrayAdapter<Rider>
 
     public void addRider(Rider rider){
         ridersList.add(rider);
+        Collections.sort(ridersList, Rider.distanceComparator);
     }
 
     @Override

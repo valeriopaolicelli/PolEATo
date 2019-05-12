@@ -2,6 +2,8 @@ package com.mad.poleato;
 
 import com.google.android.gms.maps.model.Marker;
 
+import java.util.Comparator;
+
 public class Rider {
     private String id;
     private Double distance;
@@ -77,4 +79,12 @@ public class Rider {
     public void setMarker(Marker marker) {
         this.marker = marker;
     }
+
+    public static Comparator<Rider> distanceComparator= new Comparator<Rider>() {
+        @Override
+        public int compare(Rider r1, Rider r2) {
+            return r1.getDistance().compareTo(r2.getDistance()) > 0 ? 1 :
+                    r1.getDistance().equals(r2.getDistance()) ? 0 : -1;
+        }
+    };
 }

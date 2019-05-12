@@ -145,8 +145,6 @@
     <string name="rider_id">Rider ID</string>
     <string name="distance">Distance</string>
     <string name="select_rider">Select rider</string>
-
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
-
+    <string name="rider_selected">Rider selected</string>
+    <string name="msg_rider_selected">Do you want select this rider?</string>
 </resources>

@@ -1,34 +1,38 @@
 package com.mad.poleato;
 
-
 import android.Manifest;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.drawable.Drawable;
 import android.location.Location;
-import android.os.Bundle;
+
+import com.firebase.geofire.GeoFire;
+import com.firebase.geofire.GeoLocation;
+import com.google.android.gms.location.LocationListener;
+
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentActivity;
+import android.os.Bundle;
 import android.support.v4.content.ContextCompat;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ListView;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.navigation.Navigation;
 
-import com.firebase.geofire.GeoFire;
-import com.firebase.geofire.GeoLocation;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GoogleApiAvailability;
 import com.google.android.gms.common.api.GoogleApiClient;
-import com.google.android.gms.location.LocationListener;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -56,8 +60,8 @@ import java.util.HashMap;
 public class MapsFragment extends Fragment implements OnMapReadyCallback,
         GoogleApiClient.ConnectionCallbacks,
         GoogleApiClient.OnConnectionFailedListener,
-        LocationListener {
-
+        LocationListener,
+        GoogleMap.OnMarkerClickListener {
 
     private GoogleMap mMap;
 
@@ -88,6 +92,9 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback,
     private ListView listView;
     private RiderListAdapter listAdapter;
 
+    private FloatingActionButton mapButton;
+    SupportMapFragment mapFragment;
+
 
     public MapsFragment() {
         // Required empty public constructor
@@ -114,6 +121,9 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback,
         SupportMapFragment mapFragment = (SupportMapFragment) getChildFragmentManager()
                 .findFragmentById(R.id.map_view);
         mapFragment.getMapAsync(this);
+        mapFragment.getView().setVisibility(View.GONE);
+
+        mapButton= fragView.findViewById(R.id.map_button);
 
         ref = FirebaseDatabase.getInstance().getReference("restaurants").child(currentUserID);
         geoFire = new GeoFire(ref);
@@ -131,6 +141,29 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback,
 
 
         return fragView;
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+
+        handleButton();
+    }
+
+    private void handleButton() {
+        mapButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(mapFragment.getView().getVisibility() == View.VISIBLE) {
+                    mapFragment.getView().setVisibility(View.GONE);
+                    mapButton.setImageResource(R.mipmap.map_icon_round);
+                }
+                else {
+                    mapFragment.getView().setVisibility(View.VISIBLE);
+                    mapButton.setImageResource(R.mipmap.list_icon_round);
+                }
+            }
+        });
     }
 
     /*
@@ -288,7 +321,7 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback,
 
             @Override
             public void onCancelled(@NonNull DatabaseError databaseError) {
-                Log.d("Valerio", "Firebase onCancelled in MapsActivity2");
+                Log.d("Valerio", "Firebase onCancelled in MapsActivity");
             }
         });
 
@@ -368,4 +401,35 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback,
         return BitmapDescriptorFactory.fromBitmap(bitmap);
     }
 
+    @Override
+    public boolean onMarkerClick(Marker marker) {
+        String riderID= marker.getTitle();
+        final AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+        builder.setTitle(this.getString(R.string.rider_selected));
+
+        builder.setMessage(this.getString(R.string.msg_rider_selected));
+        builder.setPositiveButton(this.getString(R.string.choice_confirm), new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+                /**
+                 * GO FROM MAPSFRAGMENT to RESERVATION
+                 */
+                Navigation.findNavController(fragView).navigate(R.id.action_mapsFragment_id_to_reservation_id);
+            }
+        });
+        builder.setNegativeButton(this.getString(R.string.choice_cancel), new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+                dialogInterface.cancel();
+            }
+        });
+        builder.setNeutralButton(this.getString(R.string.choice_cancel), new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+                dialogInterface.cancel();
+            }
+        });
+
+        return false;
+    }
 }
