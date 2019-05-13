@@ -19,7 +19,7 @@
             android:layout_marginEnd="4dp"
             android:layout_marginBottom="8dp"
             app:cardCornerRadius="10dp"
-            android:layout_weight="20">
+            android:layout_weight="25">
 
 
                 <android.support.constraint.ConstraintLayout
@@ -27,114 +27,86 @@
                     android:layout_height="wrap_content">
 
                         <ImageView
-                            android:id="@+id/deliveryCost_icon"
+                            android:id="@+id/delivery_icon"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginStart="16dp"
                             android:layout_marginTop="8dp"
                             android:layout_marginEnd="8dp"
                             android:layout_marginBottom="8dp"
-                            android:contentDescription="@string/phone"
                             android:src="@drawable/ic_baseline_directions_bike_24px"
-                            app:layout_constraintBottom_toTopOf="@id/surname_label"
-                            app:layout_constraintEnd_toStartOf="@id/order_label"
+                            app:layout_constraintBottom_toTopOf="@id/customerName_label"
+                            app:layout_constraintEnd_toStartOf="@id/deliveryAddress_label"
                             app:layout_constraintStart_toStartOf="parent"
                             app:layout_constraintTop_toTopOf="parent" />
 
                         <TextView
-                            android:id="@+id/order_label"
+                            android:id="@+id/deliveryAddress_label"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginStart="16dp"
                             android:layout_marginEnd="8dp"
-                            android:text="Order ID:"
+                            android:text="@string/address_label"
                             android:textAlignment="center"
                             android:textColor="@color/colorPrimaryDark"
                             android:textSize="15sp"
-                            app:layout_constraintBottom_toBottomOf="@id/deliveryCost_icon"
-                            app:layout_constraintEnd_toStartOf="@id/order_tv"
-                            app:layout_constraintStart_toEndOf="@id/deliveryCost_icon"
-                            app:layout_constraintTop_toTopOf="@id/deliveryCost_icon" />
-
-                        <TextView
-                            android:id="@+id/order_tv"
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:layout_marginEnd="8dp"
-                            android:textColor="@color/browser_actions_title_color"
-                            android:textSize="15sp"
-                            app:layout_constraintBottom_toBottomOf="@id/deliveryCost_icon"
-                            app:layout_constraintEnd_toEndOf="parent"
-                            app:layout_constraintStart_toEndOf="@id/order_label"
-                            app:layout_constraintTop_toTopOf="@id/deliveryCost_icon" />
-
-                        <TextView
-                            android:id="@+id/surname_label"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_marginTop="8dp"
-                            android:layout_marginEnd="8dp"
-                            android:text="@string/customer_surname"
-                            android:textColor="@color/colorPrimaryDark"
-                            android:textSize="15sp"
-                            app:layout_constraintBottom_toTopOf="@id/restaurantLabel"
-                            app:layout_constraintEnd_toStartOf="@id/surname_tv"
-                            app:layout_constraintHorizontal_bias="0.51"
-                            app:layout_constraintStart_toStartOf="@id/deliveryCost_icon"
-                            app:layout_constraintTop_toBottomOf="@id/deliveryCost_icon" />
-
-                        <TextView
-                            android:id="@+id/surname_tv"
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:layout_marginStart="8dp"
-                            android:textSize="15sp"
-                            android:textColor="@color/browser_actions_title_color"
-                            app:layout_constraintBottom_toBottomOf="@id/surname_label"
-                            app:layout_constraintEnd_toStartOf="@id/addressLabel"
-                            app:layout_constraintStart_toEndOf="@+id/surname_label"
-                            app:layout_constraintTop_toTopOf="@id/surname_label" />
-
-                        <TextView
-                            android:id="@+id/addressLabel"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_marginStart="8dp"
-                            android:layout_marginEnd="8dp"
-                            android:text="@string/address_label"
-                            android:textColor="@color/colorPrimaryDark"
-                            android:textSize="15sp"
-                            app:layout_constraintBottom_toBottomOf="@id/surname_tv"
+                            app:layout_constraintBottom_toBottomOf="@id/delivery_icon"
                             app:layout_constraintEnd_toStartOf="@id/deliveryAddress_tv"
-                            app:layout_constraintStart_toEndOf="@id/surname_tv"
-                            app:layout_constraintTop_toTopOf="@id/surname_tv" />
+                            app:layout_constraintStart_toEndOf="@id/delivery_icon"
+                            app:layout_constraintTop_toTopOf="@id/delivery_icon" />
 
                         <TextView
                             android:id="@+id/deliveryAddress_tv"
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:layout_marginEnd="8dp"
-                            android:textSize="15sp"
                             android:textColor="@color/browser_actions_title_color"
-                            app:layout_constraintBottom_toBottomOf="@+id/addressLabel"
+                            android:textSize="15sp"
+                            app:layout_constraintBottom_toBottomOf="@id/delivery_icon"
                             app:layout_constraintEnd_toEndOf="parent"
-                            app:layout_constraintStart_toEndOf="@id/addressLabel"
-                            app:layout_constraintTop_toTopOf="@id/addressLabel" />
+                            app:layout_constraintStart_toEndOf="@id/deliveryAddress_label"
+                            app:layout_constraintTop_toTopOf="@id/delivery_icon" />
 
                         <TextView
-                            android:id="@+id/restaurantLabel"
+                            android:id="@+id/customerName_label"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:layout_marginTop="16dp"
+                            android:layout_marginTop="8dp"
+                            android:layout_marginEnd="8dp"
+                            android:text="@string/customer_name"
+                            android:textColor="@color/colorPrimaryDark"
+                            android:textSize="15sp"
+                            app:layout_constraintBottom_toTopOf="@id/phone_label"
+                            app:layout_constraintEnd_toStartOf="@id/customerName_tv"
+                            app:layout_constraintHorizontal_bias="0.51"
+                            app:layout_constraintStart_toStartOf="@id/delivery_icon"
+                            app:layout_constraintTop_toBottomOf="@id/delivery_icon" />
+
+                        <TextView
+                            android:id="@+id/customerName_tv"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="8dp"
+                            android:textSize="15sp"
+                            android:textColor="@color/browser_actions_title_color"
+                            app:layout_constraintBottom_toBottomOf="@id/customerName_label"
+                            app:layout_constraintEnd_toStartOf="@id/restaurant_label"
+                            app:layout_constraintStart_toEndOf="@+id/customerName_label"
+                            app:layout_constraintTop_toTopOf="@id/customerName_label" />
+
+                        <TextView
+                            android:id="@+id/restaurant_label"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="8dp"
                             android:layout_marginEnd="8dp"
                             android:text="@string/restaurant_name"
                             android:textColor="@color/colorPrimaryDark"
                             android:textSize="15sp"
-                            app:layout_constraintBottom_toTopOf="@id/totalPriceLabel"
-                            app:layout_constraintEnd_toStartOf="@+id/restaurant_tv"
-                            app:layout_constraintHorizontal_bias="0.0"
-                            app:layout_constraintStart_toStartOf="@id/surname_label"
-                            app:layout_constraintTop_toBottomOf="@id/surname_label" />
+                            app:layout_constraintBottom_toBottomOf="@id/customerName_tv"
+                            app:layout_constraintEnd_toStartOf="@id/restaurant_tv"
+                            app:layout_constraintStart_toEndOf="@id/customerName_tv"
+                            app:layout_constraintTop_toTopOf="@id/customerName_tv" />
 
                         <TextView
                             android:id="@+id/restaurant_tv"
@@ -143,99 +115,142 @@
                             android:layout_marginEnd="8dp"
                             android:textSize="15sp"
                             android:textColor="@color/browser_actions_title_color"
-                            app:layout_constraintBottom_toBottomOf="@id/restaurantLabel"
-                            app:layout_constraintEnd_toStartOf="@id/restaurantAddressLabel"
-                            app:layout_constraintStart_toStartOf="@id/surname_tv"
-                            app:layout_constraintTop_toTopOf="@id/restaurantLabel" />
-
-                        <TextView
-                            android:id="@+id/restaurantAddressLabel"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_marginEnd="8dp"
-                            android:text="@string/address_label"
-                            android:textColor="@color/colorPrimaryDark"
-                            android:textSize="15sp"
-                            app:layout_constraintBottom_toBottomOf="@id/restaurant_tv"
-                            app:layout_constraintEnd_toStartOf="@id/restaurantAddress_tv"
-                            app:layout_constraintHorizontal_bias="0.0"
-                            app:layout_constraintStart_toStartOf="@id/addressLabel"
-                            app:layout_constraintTop_toTopOf="@id/restaurant_tv" />
-
-                        <TextView
-                            android:id="@+id/restaurantAddress_tv"
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:layout_marginEnd="8dp"
-                            android:textSize="15sp"
-                            android:textColor="@color/browser_actions_title_color"
-                            app:layout_constraintBottom_toBottomOf="@+id/restaurantAddressLabel"
+                            app:layout_constraintBottom_toBottomOf="@+id/restaurant_label"
                             app:layout_constraintEnd_toEndOf="parent"
-                            app:layout_constraintStart_toStartOf="@+id/deliveryAddress_tv"
-                            app:layout_constraintTop_toTopOf="@id/restaurantAddressLabel" />
+                            app:layout_constraintStart_toEndOf="@id/restaurant_label"
+                            app:layout_constraintTop_toTopOf="@id/restaurant_label" />
 
                         <TextView
-                            android:id="@+id/totalPriceLabel"
+                            android:id="@+id/phone_label"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginTop="16dp"
                             android:layout_marginEnd="8dp"
-                            android:layout_marginBottom="8dp"
-                            android:text="@string/total"
+                            android:text="@string/phone_number"
                             android:textColor="@color/colorPrimaryDark"
                             android:textSize="15sp"
-                            app:layout_constraintBottom_toBottomOf="parent"
-                            app:layout_constraintEnd_toStartOf="@id/totalPrice_tv"
+                            app:layout_constraintBottom_toTopOf="@id/time_label"
+                            app:layout_constraintEnd_toStartOf="@+id/phone_tv"
                             app:layout_constraintHorizontal_bias="0.0"
-                            app:layout_constraintStart_toStartOf="@id/restaurantLabel"
-                            app:layout_constraintTop_toBottomOf="@id/restaurantLabel" />
+                            app:layout_constraintStart_toStartOf="@id/customerName_label"
+                            app:layout_constraintTop_toBottomOf="@id/customerName_label" />
 
                         <TextView
-                            android:id="@+id/totalPrice_tv"
+                            android:id="@+id/phone_tv"
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:layout_marginEnd="8dp"
-                            android:textSize="15sp"
                             android:textColor="@color/browser_actions_title_color"
-                            app:layout_constraintBottom_toBottomOf="@+id/totalPriceLabel"
-                            app:layout_constraintEnd_toStartOf="@id/dishesLabel"
-                            app:layout_constraintStart_toStartOf="@id/restaurant_tv"
-                            app:layout_constraintTop_toTopOf="@id/totalPriceLabel" />
+                            android:textSize="15sp"
+                            app:layout_constraintBottom_toBottomOf="@id/phone_label"
+                            app:layout_constraintEnd_toStartOf="@id/dishes_label"
+                            app:layout_constraintTop_toTopOf="@id/phone_label"
+                            app:layout_constraintStart_toEndOf="@id/phone_label"/>
 
                         <TextView
-                            android:id="@+id/dishesLabel"
+                            android:id="@+id/dishes_label"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginEnd="8dp"
                             android:text="@string/dishes"
                             android:textColor="@color/colorPrimaryDark"
                             android:textSize="15sp"
-                            app:layout_constraintBottom_toBottomOf="@id/totalPrice_tv"
+                            app:layout_constraintBottom_toBottomOf="@id/phone_tv"
                             app:layout_constraintEnd_toStartOf="@id/dishes_tv"
                             app:layout_constraintHorizontal_bias="0.0"
-                            app:layout_constraintStart_toStartOf="@id/restaurantAddressLabel"
-                            app:layout_constraintTop_toTopOf="@id/totalPrice_tv" />
+                            app:layout_constraintStart_toStartOf="@id/restaurant_label"
+                            app:layout_constraintTop_toTopOf="@id/phone_tv" />
 
                         <TextView
                             android:id="@+id/dishes_tv"
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:layout_marginEnd="8dp"
-                            android:textSize="15sp"
                             android:textColor="@color/browser_actions_title_color"
-                            app:layout_constraintBottom_toBottomOf="@id/dishesLabel"
+                            android:textSize="15sp"
+                            app:layout_constraintBottom_toBottomOf="@+id/dishes_label"
                             app:layout_constraintEnd_toEndOf="parent"
-                            app:layout_constraintStart_toStartOf="@id/restaurantAddress_tv"
-                            app:layout_constraintTop_toTopOf="@id/dishesLabel" />
+                            app:layout_constraintTop_toTopOf="@id/dishes_label"
+                            app:layout_constraintStart_toEndOf="@id/dishes_label"/>
+
+                        <TextView
+                            android:id="@+id/time_label"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="16dp"
+                            android:layout_marginEnd="8dp"
+                            android:layout_marginBottom="8dp"
+                            android:text="@string/delivery_hour"
+                            android:textColor="@color/colorPrimaryDark"
+                            android:textSize="15sp"
+                            app:layout_constraintBottom_toBottomOf="parent"
+                            app:layout_constraintEnd_toStartOf="@id/time_tv"
+                            app:layout_constraintHorizontal_bias="0.0"
+                            app:layout_constraintStart_toStartOf="@id/phone_label"
+                            app:layout_constraintTop_toBottomOf="@id/phone_label" />
+
+                        <TextView
+                            android:id="@+id/time_tv"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_marginEnd="8dp"
+                            android:textColor="@color/browser_actions_title_color"
+                            android:textSize="15sp"
+                            app:layout_constraintBottom_toBottomOf="@+id/time_label"
+                            app:layout_constraintEnd_toStartOf="@id/cost_label"
+                            app:layout_constraintTop_toTopOf="@id/time_label"
+                            app:layout_constraintStart_toEndOf="@id/time_label" />
+
+                        <TextView
+                            android:id="@+id/cost_label"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginEnd="8dp"
+                            android:text="@string/total_cost"
+                            android:textColor="@color/colorPrimaryDark"
+                            android:textSize="15sp"
+                            app:layout_constraintBottom_toBottomOf="@id/time_tv"
+                            app:layout_constraintEnd_toStartOf="@id/cost_tv"
+                            app:layout_constraintHorizontal_bias="0.0"
+                            app:layout_constraintStart_toStartOf="@id/dishes_label"
+                            app:layout_constraintTop_toTopOf="@id/time_tv" />
+
+                        <TextView
+                            android:id="@+id/cost_tv"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_marginEnd="8dp"
+                            android:textColor="@color/browser_actions_title_color"
+                            android:textSize="15sp"
+                            app:layout_constraintBottom_toBottomOf="@id/cost_label"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintTop_toTopOf="@id/cost_label"
+                            app:layout_constraintStart_toEndOf="@id/cost_label"/>
                 </android.support.constraint.ConstraintLayout>
         </android.support.v7.widget.CardView>
 
-        <fragment
-            xmlns:android="http://schemas.android.com/apk/res/android"
-            android:name="com.google.android.gms.maps.SupportMapFragment"
-            android:id="@+id/map"
+        <FrameLayout
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            android:layout_weight="80"/>
+            android:layout_weight="75">
+
+                <fragment
+                    xmlns:android="http://schemas.android.com/apk/res/android"
+                    android:name="com.google.android.gms.maps.SupportMapFragment"
+                    android:id="@+id/map"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"/>
+
+                <Button
+                    android:id="@+id/button_map"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="bottom|center_horizontal"
+                    android:background="@drawable/ripple_blue"
+                    android:textColor="@color/colorBodyPrimary"
+                    android:layout_marginBottom="16dp"
+                    android:padding="4dp"/>
+
+        </FrameLayout>
 
 </LinearLayout>

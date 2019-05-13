@@ -360,8 +360,6 @@ public class ReservationExpandableListAdapter extends BaseExpandableListAdapter 
                         riderIDs.add(ds.getKey());
 
                     /* retrieve the restaurant information */
-                    final String[] addressRestaurant = new String[1];
-                    final String[] nameRestaurant = new String[1];
                     DatabaseReference referenceRestaurant = FirebaseDatabase.getInstance().getReference("restaurants").child(loggedID);
                     referenceRestaurant.addValueEventListener(new ValueEventListener() {
                         @Override
@@ -379,17 +377,21 @@ public class ReservationExpandableListAdapter extends BaseExpandableListAdapter 
                                     dataSnapshotRestaurant.hasChild("Address") &&
                                     dataSnapshotRestaurant.hasChild("Name")) {
 
-                                addressRestaurant[0] = dataSnapshotRestaurant.child("Address").getValue().toString();
-                                nameRestaurant[0] = dataSnapshotRestaurant.child("Name").getValue().toString();
+                                final String addressRestaurant = dataSnapshotRestaurant.child("Address").getValue().toString();
+                                final String nameRestaurant = dataSnapshotRestaurant.child("Name").getValue().toString();
+                                final String phoneRestaurant = dataSnapshotRestaurant.child("Phone").getValue().toString();
                                 if (notify) {
-                                    reservationRider.child("customerID").setValue(c.getCustomerID());
-                                    reservationRider.child("surnameCustomer").setValue(c.getSurname());
+                                    reservationRider.child("nameCustomer").setValue(c.getName() + " " + c.getSurname());
+                                    reservationRider.child("phoneCustomer").setValue(c.getPhone());
                                     reservationRider.child("addressCustomer").setValue(c.getAddress());
                                     reservationRider.child("orderID").setValue(c.getOrder_id());
                                     reservationRider.child("numberOfDishes").setValue(c.getNumberOfDishes());
                                     reservationRider.child("totalPrice").setValue(c.getTotalPrice());
-                                    reservationRider.child("addressRestaurant").setValue(addressRestaurant[0]);
-                                    reservationRider.child("nameRestaurant").setValue(nameRestaurant[0]);
+                                    reservationRider.child("time").setValue(c.getTime());
+                                    reservationRider.child("addressRestaurant").setValue(addressRestaurant);
+                                    reservationRider.child("nameRestaurant").setValue(nameRestaurant);
+                                    reservationRider.child("phoneRestaurant").setValue(phoneRestaurant);
+                                    reservationRider.child("delivering").setValue(false);
                                     sendNotification(childID);
                                     notify = false;
                                 }

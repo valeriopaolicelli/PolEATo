@@ -27,8 +27,8 @@
     <string name="title_bottombar_deliveryRide">Corse</string>
     <string name="title_actionbar_deliveryRide">Corse</string>
 
-    <string name="title_bottombar_deliveryRoutes">Percorsi</string>
-    <string name="title_actionbar_deliveryRoutes">Percorsi</string>
+    <string name="title_bottombar_deliveryHistory">Storico</string>
+    <string name="title_actionbar_deliveryHistory">Storico</string>
 
     <string name="title_bottombar_account">Account</string>
     <string name="title_actionbar_account">Account</string>
@@ -44,11 +44,32 @@
 
     <string name="hello_blank_fragment">Ci stiamo lavorando</string>
 
-    <string name="customer_surname">Cognome: </string>
+    <!-- Delivery cardview-->
+    <string name="address_label">Indirizzo di consegna: </string>
+    <string name="customer_name">Nome: </string>
     <string name="restaurant_name">Ristorante: </string>
-    <string name="address_label">Indirizzo: </string>
-    <string name="total">Totale: </string>
-    <string name="dishes">#Piatti</string>
+    <string name="phone_number">Telefono: </string>
+    <string name="dishes">#Piatti: </string>
+    <string name="delivery_hour">Orario di consegna: </string>
+    <string name="total_cost">Totale: </string>
+
+    <!-- History cardview-->
+    <string name="orderID_label">ID ordine: </string>
+    <string name="expected_hour">Ora prevista: </string>
+    <string name="delivered_hour">Ora di consegna: </string>
+
+
+    <!-- Maps strings -->
+    <string name="go_to_customer">Vai dal cliente</string>
+    <string name="dialog_go_to_customer">Sei sicuro che vuoi dirigerti dal cliente?</string>
+    <string name="restaurant_string">Ristorante</string>
+    <string name="customer_string">Cliente</string>
+    <string name="you_string">Tu</string>
+    <string name="you_arrived">Sei arrivato!</string>
+    <string name="maps_button_to_restaurant">Vai dal cliente</string>
+    <string name="maps_button_order_delivered">Termina corsa</string>
+    <string name="dialog_message_order_completed">Sei sicuro di voler terminare la corsa?</string>
+    <string name="message_order_completed">Ordine completato!</string>
 
 
     <string name="current_status"><font size="18">Il tuo stato</font></string>
