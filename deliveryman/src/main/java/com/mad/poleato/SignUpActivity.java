@@ -242,6 +242,7 @@ public class SignUpActivity extends AppCompatActivity {
                             reference.child(user.getUid()).child("Address").setValue(address);
                             reference.child(user.getUid()).child("Phone").setValue(editTextFields.get("Phone").getText().toString());
                             reference.child(user.getUid()).child("IsActive").setValue(true);
+                            reference.child(user.getUid()).child("Busy").setValue(false);
                             reference.child(user.getUid()).child("Latitude").setValue(latitude);
                             reference.child(user.getUid()).child("Longitude").setValue(longitude);
                             uploadFile(user.getUid());

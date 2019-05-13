@@ -1,6 +1,7 @@
 package com.mad.poleato.Reservation;
 
 import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
@@ -45,6 +46,7 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
@@ -164,7 +166,6 @@ public class ReservationFragment extends Fragment {
         super.onCreateOptionsMenu(menu,inflater);
     }
 
-
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -281,8 +282,9 @@ public class ReservationFragment extends Fragment {
 
                     // fields setted to null only because they will be setted later in the call back of FB
                     r = new Reservation(order_id, customer_id,null, null, null, date, time,
-                            status, null, totalPrice, getActivity());
+                            status, null, totalPrice, localeShort);
                     reservations.add(r);
+                    Collections.sort(reservations, Reservation.timeComparator);
 
                     //and for each customer (reservation) retrieve the list of dishes
                     DataSnapshot dishesOfReservation = dataSnapshot.child("dishes");
@@ -302,6 +304,7 @@ public class ReservationFragment extends Fragment {
                     listHash.put(r.getOrder_id(), r.getDishes());
                     if(!listHash.containsKey(order_id)){
                         reservations.add(r);
+                        Collections.sort(reservations, Reservation.timeComparator);
                     }
                     else{
                         for(Reservation res : reservations)
@@ -376,11 +379,12 @@ public class ReservationFragment extends Fragment {
                     }
 
                     Reservation r = new Reservation(order_id, customer_id, null, null, null, date, time,
-                            status, null, totalPrice, getContext());
+                            status, null, totalPrice, localeShort);
 
                     // if the status is changed (onclick listener) the order must change only and not re-added
                     if(!listHash.containsKey(order_id)){
                         reservations.add(r);
+                        Collections.sort(reservations, Reservation.timeComparator);
                     }
                     listHash.put(order_id, dishes);
 
@@ -455,6 +459,8 @@ public class ReservationFragment extends Fragment {
                         reservations.get(i).setButtonText(buttonTextPersistence.get(i));
                     }
                 }
+
+
         }
     }
 

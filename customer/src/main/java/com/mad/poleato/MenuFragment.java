@@ -261,7 +261,6 @@ public class MenuFragment extends Fragment {
                         dataSnapshot.hasChild("photoUrl")){
 
                     final String id = dataSnapshot.getKey();
-                    SerialBitmap img = new SerialBitmap(BitmapFactory.decodeResource(getResources(),R.drawable.plate_fork));
                     String name = dataSnapshot.child("Name").getValue().toString();
                     int quantity = Integer.parseInt(dataSnapshot.child("Quantity").getValue().toString());
                     String description = dataSnapshot.child("Description").getValue().toString();

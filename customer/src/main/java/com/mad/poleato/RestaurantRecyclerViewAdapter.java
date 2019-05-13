@@ -27,7 +27,7 @@ public class RestaurantRecyclerViewAdapter extends RecyclerView.Adapter<Restaura
 
     private List<Restaurant> list; //current displayed list
     private Context context;
-    Toast myToast;
+    private Toast myToast;
 
     /**
      * current order state of the list
@@ -39,7 +39,7 @@ public class RestaurantRecyclerViewAdapter extends RecyclerView.Adapter<Restaura
         PRICE_INVERSE_SORTED,
         DELIVERY_SORTED
     }
-    State currState;
+    private State currState;
 
     /**
      * Comparators

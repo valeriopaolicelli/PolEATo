@@ -9,7 +9,7 @@
     <item
         android:id="@+id/routes_id"
         android:icon="@drawable/ic_baseline_flag_24px"
-        android:title="@string/title_bottombar_deliveryRoutes" />
+        android:title="@string/title_bottombar_deliveryHistory" />
 
     <item
         android:id="@+id/mainProfile_id"
