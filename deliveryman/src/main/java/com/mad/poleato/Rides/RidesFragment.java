@@ -37,6 +37,7 @@ import com.mad.poleato.R;
 import java.util.HashMap;
 import java.util.Map;
 
+import static android.app.Activity.RESULT_CANCELED;
 import static android.app.Activity.RESULT_OK;
 
 
@@ -201,6 +202,11 @@ public class RidesFragment extends Fragment {
                 DatabaseReference deliverymanReference = FirebaseDatabase.getInstance().getReference("deliveryman/"+currentUserID);
                 deliverymanReference.child("Busy").setValue(false);
                 isRunning = false;
+
+            }
+            else if(resultCode == RESULT_CANCELED){
+                myToast.setText("Permission denied!");
+                myToast.show();
 
             }
         }
