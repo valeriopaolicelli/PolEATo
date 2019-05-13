@@ -172,9 +172,7 @@ public class DailyOfferFragment extends Fragment {
                  * GO TO ADD_FOOD_FRAGMENT
                  */
                 Navigation.findNavController(v).navigate(R.id.action_daily_offer_to_addFoodFragment);
-                /**
-                 *
-                 */
+
             }
         });
 
