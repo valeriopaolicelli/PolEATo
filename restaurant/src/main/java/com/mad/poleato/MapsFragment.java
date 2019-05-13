@@ -316,8 +316,6 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback,
                         @Override
                         public void onComplete(String key, DatabaseError error) {
                             //Add marker
-
-                            //TODO miche problema context
                             Drawable icon = ContextCompat.getDrawable(getContext(), R.drawable.restaurant_icon);
                             BitmapDescriptor markerIcon = getMarkerIconFromDrawable(icon);
                             if (restaurantMarker != null)
@@ -393,7 +391,6 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback,
                                             //Add marker
                                             if (riders.get(riderID).getMarker() != null)
                                                 riders.get(riderID).setMarker(null);
-                                            //TODO miche problema context
                                                 Drawable icon = ContextCompat.getDrawable(getContext(), R.drawable.ic_baseline_directions_bike_24px);
                                                 BitmapDescriptor markerIcon = getMarkerIconFromDrawable(icon);
                                                 riders.get(riderID).setMarker(mMap.addMarker(new MarkerOptions()
