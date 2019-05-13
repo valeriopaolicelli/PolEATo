@@ -175,23 +175,26 @@ public class RiderListAdapter extends ArrayAdapter<Rider>
 
                 if (dataSnapshotRestaurant.exists() &&
                         dataSnapshotRestaurant.hasChild("Address") &&
-                        dataSnapshotRestaurant.hasChild("Name")) {
+                        dataSnapshotRestaurant.hasChild("Name") &&
+                        dataSnapshotRestaurant.hasChild("Phone")) {
 
                     final String addressRestaurant = dataSnapshotRestaurant.child("Address").getValue().toString();
                     final String nameRestaurant = dataSnapshotRestaurant.child("Name").getValue().toString();
-                    reservationRider.child("customerID").setValue(reservation.getCustomerID());
-                    reservationRider.child("surnameCustomer").setValue(reservation.getSurname());
+                    final String phoneRestaurant= dataSnapshotRestaurant.child("Phone").getValue().toString();
                     reservationRider.child("addressCustomer").setValue(reservation.getAddress());
-                    reservationRider.child("orderID").setValue(reservation.getOrder_id());
-                    reservationRider.child("numberOfDishes").setValue(reservation.getNumberOfDishes());
-                    reservationRider.child("totalPrice").setValue(reservation.getTotalPrice());
-                    reservationRider.child("time").setValue(reservation.getTime());
                     reservationRider.child("addressRestaurant").setValue(addressRestaurant);
-                    reservationRider.child("nameRestaurant").setValue(nameRestaurant);
-                    reservationRider.child("restaurantID").setValue(loggedID);
-
+                    reservationRider.child("CustomerID").setValue(reservation.getCustomerID());
                     //update the delivery status
                     reservationRider.child("delivering").setValue(false);
+                    reservationRider.child("nameRestaurant").setValue(nameRestaurant);
+                    reservationRider.child("numberOfDishes").setValue(reservation.getNumberOfDishes());
+                    reservationRider.child("orderID").setValue(reservation.getOrder_id());
+                    reservationRider.child("restaurantID").setValue(loggedID);
+                    reservationRider.child("nameCustomer").setValue(reservation.getName() + " " + reservation.getSurname());
+                    reservationRider.child("totalPrice").setValue(reservation.getTotalPrice());
+                    reservationRider.child("phoneCustomer").setValue(reservation.getPhone());
+                    reservationRider.child("phoneRestaurant").setValue(phoneRestaurant);
+                    reservationRider.child("time").setValue(reservation.getTime());
                     sendNotification(riderID, convertView);
                 }
             }
