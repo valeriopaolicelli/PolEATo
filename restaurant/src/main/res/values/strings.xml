@@ -147,4 +147,5 @@
     <string name="select_rider">Select rider</string>
     <string name="rider_selected">Rider selected</string>
     <string name="msg_rider_selected">Do you want select this rider?</string>
+    <string name="choose_rider">Choose rider</string>
 </resources>

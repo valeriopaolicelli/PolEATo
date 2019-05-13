@@ -105,7 +105,7 @@
     <fragment
         android:id="@+id/mapsFragment_id"
         android:name="com.mad.poleato.MapsFragment"
-        android:label="MapsFragment"
+        android:label="@string/choose_rider"
         tools:layout="@layout/activity_maps" >
         <action
             android:id="@+id/action_mapsFragment_id_to_reservation_id"
