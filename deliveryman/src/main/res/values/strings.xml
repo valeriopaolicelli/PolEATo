@@ -94,6 +94,9 @@
     <string name="creation_fail">Account creation failed! Email must be valid and password composed by at least 6 characters</string>
 
     <!-- Address convertion -->
-    <string name="no_address">Indirizzo non valido</string>
+    <string name="no_address">Address not valid</string>
+
+    <!-- Rides layout -->
+    <string name="no_order">Nothing to deliver</string>
 
 </resources>
