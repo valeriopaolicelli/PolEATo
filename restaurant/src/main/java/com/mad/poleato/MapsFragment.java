@@ -347,8 +347,10 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback,
                 for(DataSnapshot ds : dataSnapshot.getChildren()){
                     if(ds.hasChild("Latitude") &&
                             ds.hasChild("Longitude") &&
-                            ds.hasChild("Busy")
-                            && ds.child("Busy").getValue().toString().equals("false")) {
+                            ds.hasChild("Busy") &&
+                            ds.child("Busy").getValue().toString().equals("false") &&
+                            ds.hasChild("IsActive") &&
+                            ds.child("IsActive").getValue().toString().equals("true")) {
 
                         final String riderID = ds.getKey();
                         final double latRider = Double.parseDouble(ds.child("Latitude").getValue().toString());
