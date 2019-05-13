@@ -54,6 +54,7 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.mad.poleato.Reservation.Reservation;
+import com.mad.poleato.Reservation.Status;
 
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
@@ -305,33 +306,35 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback,
         ref.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                restaurant_name= dataSnapshot.child("Name").getValue().toString();
-                latitudeRest= Double.parseDouble(dataSnapshot.child("Latitude").getValue().toString());
-                longitudeRest= Double.parseDouble(dataSnapshot.child("Longitude").getValue().toString());
-                Log.d( "Valerio", String.format("Restaurant location was changed: %f / %f", latitudeRest, longitudeRest));
-                //Update to firebase
-                geoFire.setLocation("Map/"+currentUserID, new GeoLocation(latitudeRest, longitudeRest), new GeoFire.CompletionListener() {
-                    @Override
-                    public void onComplete(String key, DatabaseError error) {
-                        //Add marker
+                if(reservation.getStatus().equals(Status.COOKING) && getContext() != null) {
+                    restaurant_name = dataSnapshot.child("Name").getValue().toString();
+                    latitudeRest = Double.parseDouble(dataSnapshot.child("Latitude").getValue().toString());
+                    longitudeRest = Double.parseDouble(dataSnapshot.child("Longitude").getValue().toString());
+                    Log.d("Valerio", String.format("Restaurant location was changed: %f / %f", latitudeRest, longitudeRest));
+                    //Update to firebase
+                    geoFire.setLocation("Map/" + currentUserID, new GeoLocation(latitudeRest, longitudeRest), new GeoFire.CompletionListener() {
+                        @Override
+                        public void onComplete(String key, DatabaseError error) {
+                            //Add marker
 
-                        //TODO miche problema context
-//                        Drawable icon = ContextCompat.getDrawable(getContext(), R.drawable.restaurant_icon);
-            //            BitmapDescriptor markerIcon= getMarkerIconFromDrawable(icon);
-                        if(restaurantMarker != null)
-                            restaurantMarker= null;
+                            //TODO miche problema context
+                            Drawable icon = ContextCompat.getDrawable(getContext(), R.drawable.restaurant_icon);
+                            BitmapDescriptor markerIcon = getMarkerIconFromDrawable(icon);
+                            if (restaurantMarker != null)
+                                restaurantMarker = null;
 
-                        restaurantMarker= mMap.addMarker(new MarkerOptions()
-                                .position(new LatLng(latitudeRest, longitudeRest))
-                                .title(restaurant_name)
-                               // .icon(markerIcon)
-                        );
+                            restaurantMarker = mMap.addMarker(new MarkerOptions()
+                                    .position(new LatLng(latitudeRest, longitudeRest))
+                                    .title(restaurant_name)
+                                    .icon(markerIcon)
+                            );
 
-                        //Move camera to this position
-                        mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(latitudeRest, longitudeRest), 15.0f));
+                            //Move camera to this position
+                            mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(latitudeRest, longitudeRest), 15.0f));
 
-                    }
-                });
+                        }
+                    });
+                }
             }
 
             @Override
@@ -344,12 +347,14 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback,
         referenceRider.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                for(DataSnapshot ds : dataSnapshot.getChildren()){
+                for(final DataSnapshot ds : dataSnapshot.getChildren()){
                     if(ds.hasChild("Latitude") &&
                             ds.hasChild("Longitude") &&
                             ds.hasChild("Busy") &&
                             ds.hasChild("IsActive") &&
-                            ds.child("IsActive").getValue().toString().equals("true")) {
+                            ds.child("IsActive").getValue().toString().equals("true") &&
+                            (reservation.getStat().equals("Cooking") || reservation.getStat().equals("Preparazione"))  &&
+                            getContext() != null) {
 
                         final String riderID = ds.getKey();
 
@@ -389,14 +394,14 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback,
                                             if (riders.get(riderID).getMarker() != null)
                                                 riders.get(riderID).setMarker(null);
                                             //TODO miche problema context
-                                            //             Drawable icon = ContextCompat.getDrawable(getContext(), R.drawable.ic_baseline_directions_bike_24px);
-                                            //      BitmapDescriptor markerIcon= getMarkerIconFromDrawable(icon);
-                                            riders.get(riderID).setMarker(mMap.addMarker(new MarkerOptions()
-                                                            .position(new LatLng(latRider, longRider))
-                                                            .title(riderID)
-                                                    //   .icon(markerIcon)
-                                            ));
-                                        }
+                                                Drawable icon = ContextCompat.getDrawable(getContext(), R.drawable.ic_baseline_directions_bike_24px);
+                                                BitmapDescriptor markerIcon = getMarkerIconFromDrawable(icon);
+                                                riders.get(riderID).setMarker(mMap.addMarker(new MarkerOptions()
+                                                        .position(new LatLng(latRider, longRider))
+                                                        .title(riderID)
+                                                        .icon(markerIcon)
+                                                ));
+                                            }
                                     });
                         }
                         else if (ds.child("Busy").getValue().toString().equals("true")){ // rider is busy
@@ -404,6 +409,7 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback,
                              * remove busy rider if is in the adapter
                              */
                             if(riders.containsKey(riderID)){
+                                riders.get(riderID).getMarker().remove();
                                 riders.remove(riderID);
                                 listAdapter.removeRider(riderID);
                                 listAdapter.notifyDataSetChanged();
@@ -418,10 +424,6 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback,
 
             }
         });
-
-    /*    }
-        else
-            Log.d("Valerio", "Cannot get your location");*/
     }
 
     private BitmapDescriptor getMarkerIconFromDrawable(Drawable drawable) {
@@ -438,7 +440,7 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback,
         if(!marker.getTitle().equals(restaurant_name)){
             final String riderID= marker.getTitle();
             final AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
-            builder.setTitle(this.getString(R.string.rider_selected));
+            builder.setTitle(this.getString(R.string.rider_selected) + ": " + riderID);
 
             builder.setMessage(this.getString(R.string.msg_rider_selected));
             builder.setPositiveButton(this.getString(R.string.choice_confirm), new DialogInterface.OnClickListener() {
@@ -447,7 +449,8 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback,
                     FirebaseDatabase.getInstance().getReference("deliveryman").child(riderID).child("Busy").setValue(true);
                     FirebaseDatabase.getInstance().getReference("restaurants").child(loggedID).child("reservations").child(reservation.getOrder_id()).child("status").child("en").setValue("Delivering");
                     FirebaseDatabase.getInstance().getReference("restaurants").child(loggedID).child("reservations").child(reservation.getOrder_id()).child("status").child("it").setValue("In consegna");
-
+                    reservation.setStat(getContext().getString(R.string.delivery));
+                    reservation.setStatus(Status.DELIVERY);
                     notifyRider(riderID);
                     /**
                      * GO FROM MAPSFRAGMENT to RESERVATION

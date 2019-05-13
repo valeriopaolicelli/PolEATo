@@ -29,6 +29,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.mad.poleato.DailyOffer.DailyOfferFragmentDirections;
 import com.mad.poleato.Reservation.Reservation;
+import com.mad.poleato.Reservation.Status;
 
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
@@ -104,7 +105,7 @@ public class RiderListAdapter extends ArrayAdapter<Rider>
                 @Override
                 public void onClick(View v) {
                     final AlertDialog.Builder builder = new AlertDialog.Builder(mContext);
-                    builder.setTitle(getContext().getString(R.string.rider_selected));
+                    builder.setTitle(getContext().getString(R.string.rider_selected) + ": " + holder.riderID_tv.getText().toString());
 
                     builder.setMessage(getContext().getString(R.string.msg_rider_selected));
                     builder.setPositiveButton(getContext().getString(R.string.choice_confirm), new DialogInterface.OnClickListener() {
@@ -114,7 +115,8 @@ public class RiderListAdapter extends ArrayAdapter<Rider>
                             FirebaseDatabase.getInstance().getReference("deliveryman").child(riderID).child("Busy").setValue(true);
                             FirebaseDatabase.getInstance().getReference("restaurants").child(loggedID).child("reservations").child(reservation.getOrder_id()).child("status").child("en").setValue("Delivering");
                             FirebaseDatabase.getInstance().getReference("restaurants").child(loggedID).child("reservations").child(reservation.getOrder_id()).child("status").child("it").setValue("In consegna");
-
+                            reservation.setStat(getContext().getString(R.string.delivery));
+                            reservation.setStatus(Status.DELIVERY);
                             notifyRider(riderID, finalConvertView);
                         }
                     });
@@ -277,6 +279,7 @@ public class RiderListAdapter extends ArrayAdapter<Rider>
     public void removeRider(String riderID) {
         for(int i=0; i < ridersList.size(); i++)
             if(ridersList.get(i).getId().equals(riderID)) {
+                ridersList.get(i).getMarker().remove();
                 ridersList.remove(i);
                 Collections.sort(ridersList, Rider.distanceComparator);
             }
