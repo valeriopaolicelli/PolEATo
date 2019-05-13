@@ -65,5 +65,4 @@
         android:label="signin_layout"
         tools:layout="@layout/signin_layout" />
 
-
 </navigation>
