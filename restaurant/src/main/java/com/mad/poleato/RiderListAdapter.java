@@ -124,12 +124,6 @@ public class RiderListAdapter extends ArrayAdapter<Rider>
                             dialogInterface.cancel();
                         }
                     });
-                    builder.setNeutralButton(getContext().getString(R.string.choice_cancel), new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialogInterface, int i) {
-                            dialogInterface.cancel();
-                        }
-                    });
 
                     AlertDialog dialog = builder.create();
                     dialog.show();
@@ -278,6 +272,12 @@ public class RiderListAdapter extends ArrayAdapter<Rider>
          */
         final View finalConvertView = convertView;
         Navigation.findNavController(finalConvertView).navigate(R.id.action_mapsFragment_id_to_reservation_id);
+    }
+
+    public void removeRider(String riderID) {
+        for(int i=0; i < ridersList.size(); i++)
+            if(ridersList.get(i).getId().equals(riderID))
+                ridersList.remove(i);
     }
 
     public class ViewHolder

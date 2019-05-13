@@ -348,53 +348,67 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback,
                     if(ds.hasChild("Latitude") &&
                             ds.hasChild("Longitude") &&
                             ds.hasChild("Busy") &&
-                            ds.child("Busy").getValue().toString().equals("false") &&
                             ds.hasChild("IsActive") &&
                             ds.child("IsActive").getValue().toString().equals("true")) {
 
                         final String riderID = ds.getKey();
-                        final double latRider = Double.parseDouble(ds.child("Latitude").getValue().toString());
-                        final double longRider = Double.parseDouble(ds.child("Longitude").getValue().toString());
 
-                        if(!riders.containsKey(riderID)) {
-                            Rider rider= new Rider(riderID, latRider, longRider, latitudeRest, longitudeRest);
-                            riders.put(riderID, rider);
-                            listAdapter.addRider(riders.get(riderID));
-                        }
-                        else{
-                            riders.get(riderID).setLatitude(latRider);
-                            riders.get(riderID).setLongitude(longRider);
-                            riders.get(riderID).setDistance(latitudeRest, longitudeRest);
-                            for(int i=0; i < listAdapter.getCount(); i++) {
-                                if (listAdapter.getItem(i).getId().equals(riderID)) {
-                                    listAdapter.getItem(i).setLatitude(latRider);
-                                    listAdapter.getItem(i).setLongitude(longRider);
-                                    listAdapter.getItem(i).setDistance(latitudeRest, longitudeRest);
+                        if (ds.child("Busy").getValue().toString().equals("false")) {
+                            /*
+                             * Add to adapter this rider
+                             */
+                            final double latRider = Double.parseDouble(ds.child("Latitude").getValue().toString());
+                            final double longRider = Double.parseDouble(ds.child("Longitude").getValue().toString());
+
+                            if (!riders.containsKey(riderID)) {
+                                Rider rider = new Rider(riderID, latRider, longRider, latitudeRest, longitudeRest);
+                                riders.put(riderID, rider);
+                                listAdapter.addRider(riders.get(riderID));
+                            } else {
+                                riders.get(riderID).setLatitude(latRider);
+                                riders.get(riderID).setLongitude(longRider);
+                                riders.get(riderID).setDistance(latitudeRest, longitudeRest);
+                                for (int i = 0; i < listAdapter.getCount(); i++) {
+                                    if (listAdapter.getItem(i).getId().equals(riderID)) {
+                                        listAdapter.getItem(i).setLatitude(latRider);
+                                        listAdapter.getItem(i).setLongitude(longRider);
+                                        listAdapter.getItem(i).setDistance(latitudeRest, longitudeRest);
+                                    }
                                 }
                             }
+
+                            listAdapter.notifyDataSetChanged();
+
+                            Log.d("Valerio", String.format("Rider %s location was changed: %f / %f", riderID, latRider, longRider));
+                            //Update to firebase
+                            geoFire.setLocation("Map/" + riderID,
+                                    new GeoLocation(latRider, longRider), new GeoFire.CompletionListener() {
+                                        @Override
+                                        public void onComplete(String key, DatabaseError error) {
+                                            //Add marker
+                                            if (riders.get(riderID).getMarker() != null)
+                                                riders.get(riderID).setMarker(null);
+                                            //TODO miche problema context
+                                            //             Drawable icon = ContextCompat.getDrawable(getContext(), R.drawable.ic_baseline_directions_bike_24px);
+                                            //      BitmapDescriptor markerIcon= getMarkerIconFromDrawable(icon);
+                                            riders.get(riderID).setMarker(mMap.addMarker(new MarkerOptions()
+                                                            .position(new LatLng(latRider, longRider))
+                                                            .title(riderID)
+                                                    //   .icon(markerIcon)
+                                            ));
+                                        }
+                                    });
                         }
-
-                        listAdapter.notifyDataSetChanged();
-
-                        Log.d("Valerio", String.format("Rider %s location was changed: %f / %f", riderID, latRider, longRider));
-                        //Update to firebase
-                        geoFire.setLocation("Map/" + riderID,
-                                new GeoLocation(latRider, longRider), new GeoFire.CompletionListener() {
-                                    @Override
-                                    public void onComplete(String key, DatabaseError error) {
-                                        //Add marker
-                                        if(riders.get(riderID).getMarker() != null)
-                                            riders.get(riderID).setMarker(null);
-                            //TODO miche problema context
-                           //             Drawable icon = ContextCompat.getDrawable(getContext(), R.drawable.ic_baseline_directions_bike_24px);
-                                  //      BitmapDescriptor markerIcon= getMarkerIconFromDrawable(icon);
-                                        riders.get(riderID).setMarker(mMap.addMarker(new MarkerOptions()
-                                                .position(new LatLng(latRider, longRider))
-                                                .title(riderID)
-                                             //   .icon(markerIcon)
-                                                ));
-                                    }
-                                });
+                        else{ // rider is busy
+                            /*
+                             * remove busy rider if is in the adapter
+                             */
+                            if(riders.containsKey(riderID)){
+                                riders.remove(riderID);
+                                listAdapter.removeRider(riderID);
+                                listAdapter.notifyDataSetChanged();
+                            }
+                        }
                     }
                 }
             }
@@ -441,12 +455,6 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback,
             }
         });
         builder.setNegativeButton(this.getString(R.string.choice_cancel), new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialogInterface, int i) {
-                dialogInterface.cancel();
-            }
-        });
-        builder.setNeutralButton(this.getString(R.string.choice_cancel), new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
                 dialogInterface.cancel();
