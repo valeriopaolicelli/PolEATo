@@ -196,6 +196,7 @@ public class SignUpActivity extends AppCompatActivity {
     public void access(){
         Intent myIntent = new Intent(SignUpActivity.this, NavigatorActivity.class);
         SignUpActivity.this.startActivity(myIntent);
+        finish();
     }
 
 
@@ -320,8 +321,6 @@ public class SignUpActivity extends AppCompatActivity {
                     break;
 
                 case R.id.ButtonSignIn:
-                    Intent myIntent = new Intent(SignUpActivity.this, SignInActivity.class);
-                    SignUpActivity.this.startActivity(myIntent);
                     finish();
                     break;
 
