@@ -37,6 +37,7 @@ import com.mad.poleato.R;
 import java.util.HashMap;
 import java.util.Map;
 
+import static android.app.Activity.RESULT_CANCELED;
 import static android.app.Activity.RESULT_OK;
 
 
@@ -203,6 +204,11 @@ public class RidesFragment extends Fragment {
                 isRunning = false;
 
             }
+            else if(resultCode == RESULT_CANCELED){
+                myToast.setText("Permission denied!");
+                myToast.show();
+
+            }
         }
     }
 
@@ -216,13 +222,16 @@ public class RidesFragment extends Fragment {
             public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
                 if (dataSnapshot.exists() &&
                         !isRunning &&
-                        dataSnapshot.hasChild("orderID") &&
                         dataSnapshot.hasChild("addressCustomer") &&
                         dataSnapshot.hasChild("addressRestaurant") &&
-                        dataSnapshot.hasChild("nameCustomer") &&
+                        dataSnapshot.hasChild("CustomerID") &&
+                        dataSnapshot.hasChild("delivering") &&
                         dataSnapshot.hasChild("nameRestaurant") &&
-                        dataSnapshot.hasChild("totalPrice") &&
                         dataSnapshot.hasChild("numberOfDishes") &&
+                        dataSnapshot.hasChild("orderID") &&
+                        dataSnapshot.hasChild("restaurantID") &&
+                        dataSnapshot.hasChild("nameCustomer") &&
+                        dataSnapshot.hasChild("totalPrice") &&
                         dataSnapshot.hasChild("phoneCustomer") &&
                         dataSnapshot.hasChild("phoneRestaurant") &&
                         dataSnapshot.hasChild("time")) {

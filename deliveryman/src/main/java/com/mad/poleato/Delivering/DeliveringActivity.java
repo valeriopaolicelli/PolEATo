@@ -268,65 +268,10 @@ public class DeliveringActivity extends FragmentActivity implements OnMapReadyCa
 
                     toCustomer = (Boolean)dataSnapshot.child("delivering").getValue();
 
-                    /*try {
-                        Address customerLocation = geocoder.getFromLocationName(customerAddress, 1).get(0);
-                        customerPosition = new LatLng(customerLocation.getLatitude(), customerLocation.getLongitude());
-
-                        Address restaurantLocation = geocoder.getFromLocationName(restaurantAddress, 1).get(0);
-                        restaurantPosition = new LatLng(restaurantLocation.getLatitude(), restaurantLocation.getLongitude());
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }*/
                     createMap();
 
                 }
 
-                /*if (dataSnapshot.exists() &&
-                        !isRunning &&
-                        dataSnapshot.hasChild("orderID") &&
-                        dataSnapshot.hasChild("addressCustomer") &&
-                        dataSnapshot.hasChild("addressRestaurant") &&
-                        dataSnapshot.hasChild("nameCustomer") &&
-                        dataSnapshot.hasChild("nameRestaurant") &&
-                        dataSnapshot.hasChild("totalPrice") &&
-                        dataSnapshot.hasChild("numberOfDishes") &&
-                        dataSnapshot.hasChild("phoneCustomer") &&
-                        dataSnapshot.hasChild("phoneRestaurant") &&
-                        dataSnapshot.hasChild("time")) {
-
-                    //retrieve order infos from DB
-                    String customerAddress = dataSnapshot.child("addressCustomer").getValue().toString();
-                    String nameRestaurant = dataSnapshot.child("nameRestaurant").getValue().toString();
-                    String numDishes = dataSnapshot.child("numberOfDishes").getValue().toString();
-                    String orderID = dataSnapshot.child("orderID").getValue().toString();
-                    String nameCustomer = dataSnapshot.child("nameCustomer").getValue().toString();
-                    String priceStr = dataSnapshot.child("totalPrice").getValue()
-                                            .toString().replace(",", ".");
-                    String restaurantAddress = dataSnapshot.child("addressRestaurant").getValue().toString();
-                    String deliveryTime = dataSnapshot.child("time").getValue().toString();
-                    String customerPhone = dataSnapshot.child("phoneCustomer").getValue().toString();
-
-                    //fill the fields
-                    tv_Fields.get("address").setText(customerAddress);
-                    tv_Fields.get("name").setText(nameCustomer);
-                    tv_Fields.get("restaurant").setText(nameRestaurant);
-                    tv_Fields.get("phone").setText(customerPhone);
-                    tv_Fields.get("dishes").setText(numDishes);
-                    tv_Fields.get("hour").setText(deliveryTime);
-                    tv_Fields.get("price").setText(priceStr+"€");
-
-                    try {
-                        Address customerLocation = geocoder.getFromLocationName(customerAddress, 1).get(0);
-                        customerPosition = new LatLng(customerLocation.getLatitude(), customerLocation.getLongitude());
-
-                        Address restaurantLocation = geocoder.getFromLocationName(restaurantAddress, 1).get(0);
-                        restaurantPosition = new LatLng(restaurantLocation.getLatitude(), restaurantLocation.getLongitude());
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
-                    isRunning = true;
-                    createMap();
-                }*/
             }
 
             @Override
@@ -346,15 +291,6 @@ public class DeliveringActivity extends FragmentActivity implements OnMapReadyCa
 
                     toCustomer = (Boolean)dataSnapshot.child("delivering").getValue();
 
-                    /*try {
-                        Address customerLocation = geocoder.getFromLocationName(customerAddress, 1).get(0);
-                        customerPosition = new LatLng(customerLocation.getLatitude(), customerLocation.getLongitude());
-
-                        Address restaurantLocation = geocoder.getFromLocationName(restaurantAddress, 1).get(0);
-                        restaurantPosition = new LatLng(restaurantLocation.getLatitude(), restaurantLocation.getLongitude());
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }*/
                     createMap();
 
                 }
@@ -400,12 +336,12 @@ public class DeliveringActivity extends FragmentActivity implements OnMapReadyCa
         mMap.setMapType(GoogleMap.MAP_TYPE_TERRAIN);
         //mMap.setBuildingsEnabled(true);
 
-        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED &&
+        if (/*ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED &&*/
                 ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
 
-            ActivityCompat.requestPermissions(this,
+            /*ActivityCompat.requestPermissions(this,
                 new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
-                1);
+                1);*/
 
             ActivityCompat.requestPermissions(this,
                     new String[]{Manifest.permission.ACCESS_COARSE_LOCATION},
@@ -413,6 +349,13 @@ public class DeliveringActivity extends FragmentActivity implements OnMapReadyCa
 
             return;
         }
+
+        startLocating();
+
+    }
+
+
+    private void startLocating(){
 
         //the first time the location updates would take times, so we retrieve once the last known location
         Location lastKnownLocation = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
@@ -437,7 +380,6 @@ public class DeliveringActivity extends FragmentActivity implements OnMapReadyCa
         // Register the listener with the Location Manager to receive location updates
         locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, MIN_TIME_LOC_UPDATE,
                 MIN_DISTANCE_LOC_UPDATE, new LocListener());
-
     }
 
     @Override
@@ -449,11 +391,16 @@ public class DeliveringActivity extends FragmentActivity implements OnMapReadyCa
                         && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                     Log.d("matte", "code 0 granted");
 
+                    startLocating();
+
                 } else {
 
                     Log.d("matte", "code 0 not granted");
-                    // permission denied, boo! Disable the
-                    // functionality that depends on this permission.
+
+                    //permission denied, return error
+                    Intent returnIntent = new Intent();
+                    setResult(RESULT_CANCELED,returnIntent);
+                    finish();
 
                 }
                 return;
