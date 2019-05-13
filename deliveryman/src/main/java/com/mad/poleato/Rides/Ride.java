@@ -1,78 +1,76 @@
 package com.mad.poleato.Rides;
 
-public class Ride {
+import java.io.Serializable;
+
+public class Ride implements Serializable {
 
     private String orderID;
-    private String surname;
-    private String deliveryAddress;
-    private String restaurantName;
-    private String restaurantAddress;
-    private Double totalPrice;
-    private Integer totalDishes;
+    private String addressCustomer;
+    private String addressRestaurant;
+    private String nameCustomer;
+    private String nameRestaurant;
+    private String totalPrice;
+    private String numberOfDishes;
+    private String phoneCustomer;
+    private String phoneRestaurant;
+    private String time;
 
-    public Ride(String orderID, String surname, String deliveryAddress, String restaurantName, String restaurantAddress, Double totalPrice, Integer totalDishes) {
+
+    public Ride(String orderID, String addressCustomer, String addressRestaurant,
+                String nameCustomer, String nameRestaurant, String totalPrice,
+                String numberOfDishes, String phoneCustomer, String phoneRestaurant,
+                String time) {
         this.orderID = orderID;
-        this.surname = surname;
-        this.deliveryAddress = deliveryAddress;
-        this.restaurantName = restaurantName;
-        this.restaurantAddress = restaurantAddress;
+        this.nameCustomer = nameCustomer;
+        this.nameRestaurant = nameRestaurant;
+        this.addressCustomer = addressCustomer;
+        this.addressRestaurant = addressRestaurant;
+        this.nameCustomer = nameCustomer;
         this.totalPrice = totalPrice;
-        this.totalDishes = totalDishes;
+        this.numberOfDishes = numberOfDishes;
+        this.phoneCustomer = phoneCustomer;
+        this.phoneRestaurant = phoneRestaurant;
+        this.time = time;
     }
 
     public String getOrderID() {
         return orderID;
     }
 
-    public void setOrderID(String orderID) {
-        this.orderID = orderID;
+    public String getAddressCustomer() {
+        return addressCustomer;
     }
 
-    public String getSurname() {
-        return surname;
+    public String getAddressRestaurant() {
+        return addressRestaurant;
     }
 
-    public void setSurname(String surname) {
-        this.surname = surname;
+    public String getNameCustomer() {
+        return nameCustomer;
     }
 
-    public String getDeliveryAddress() {
-        return deliveryAddress;
+    public String getNameRestaurant() {
+        return nameRestaurant;
     }
 
-    public void setDeliveryAddress(String deliveryAddress) {
-        this.deliveryAddress = deliveryAddress;
-    }
-
-    public String getRestaurantName() {
-        return restaurantName;
-    }
-
-    public void setRestaurantName(String restaurantName) {
-        this.restaurantName = restaurantName;
-    }
-
-    public String getRestaurantAddress() {
-        return restaurantAddress;
-    }
-
-    public void setRestaurantAddress(String restaurantAddress) {
-        this.restaurantAddress = restaurantAddress;
-    }
-
-    public Double getTotalPrice() {
+    public String getTotalPrice() {
         return totalPrice;
     }
 
-    public void setTotalPrice(Double totalPrice) {
-        this.totalPrice = totalPrice;
+    public String getNumberOfDishes() {
+        return numberOfDishes;
     }
 
-    public Integer getTotalDishes() {
-        return totalDishes;
+    public String getPhoneCustomer() {
+        return phoneCustomer;
     }
 
-    public void setTotalDishes(Integer totalDishes) {
-        this.totalDishes = totalDishes;
+    public String getPhoneRestaurant() {
+        return phoneRestaurant;
     }
+
+    public String getTime() {
+        return time;
+    }
+
 }

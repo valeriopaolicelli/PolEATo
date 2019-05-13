@@ -16,7 +16,7 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
-import com.mad.poleato.Rides.Ride;
+import com.mad.poleato.History.HistoryItem;
 import com.mad.poleato.View.ViewModel.MyViewModel;
 
 import java.util.List;
@@ -41,93 +41,72 @@ public class MyFirebaseData {
         currentUserID = currentUser.getUid();
     }
 
-    public void fillFieldsRiders() {
+    public void fillFieldsHistory() {
 
         model = ViewModelProviders.of((FragmentActivity) activity).get(MyViewModel.class);
 
         model.initChild();
 
-        DatabaseReference dbReferece = FirebaseDatabase.getInstance().getReference("deliveryman").child(currentUserID+"/reservations");
+        DatabaseReference dbReference = FirebaseDatabase.getInstance().getReference("deliveryman")
+                .child(currentUserID+"/history");
 
-        dbReferece.addValueEventListener(new ValueEventListener() {
+        dbReference.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                //handler.sendEmptyMessage(0);
-                progressDialog.dismiss();
+                if(progressDialog.isShowing())
+                    progressDialog.dismiss();
             }
 
             @Override
             public void onCancelled(@NonNull DatabaseError databaseError) {
-                //handler.sendEmptyMessage(0);
-                progressDialog.dismiss();
+                if(progressDialog.isShowing())
+                    progressDialog.dismiss();
             }
         });
 
-        dbReferece.addChildEventListener(new ChildEventListener() {
-            List<Ride> childItem;
+        dbReference.addChildEventListener(new ChildEventListener() {
 
             @Override
             public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
-                Log.d("fabio", "onChildAdded | PREVIOUS CHILD" + s);
-                if(dataSnapshot.hasChild("orderID") &&
-                    dataSnapshot.hasChild("addressCustomer") &&
-                    dataSnapshot.hasChild("surnameCustomer") &&
-                    dataSnapshot.hasChild("nameRestaurant") &&
-                    dataSnapshot.hasChild("addressRestaurant") &&
-                    dataSnapshot.hasChild("totalPrice") &&
-                    dataSnapshot.hasChild("numberOfDishes")) {
+                Log.d("matte", "onChildAdded | PREVIOUS CHILD" + s);
+                if (dataSnapshot.hasChild("orderID") &&
+                        dataSnapshot.hasChild("addressRestaurant") &&
+                        dataSnapshot.hasChild("nameRestaurant") &&
+                        dataSnapshot.hasChild("totalPrice") &&
+                        dataSnapshot.hasChild("numberOfDishes") &&
+                        dataSnapshot.hasChild("expectedTime") &&
+                        dataSnapshot.hasChild("deliveredTime")) {
 
-                    String orderID = dataSnapshot.child("orderID").getValue().toString();
-                    String addressCustomer = dataSnapshot.child("addressCustomer").getValue().toString();
-                    String addressRestaurant = dataSnapshot.child("addressRestaurant").getValue().toString();
+                    //retrieve history infos from DB
                     String nameRestaurant = dataSnapshot.child("nameRestaurant").getValue().toString();
-                    String surnameCustomer = dataSnapshot.child("surnameCustomer").getValue().toString();
-                    Double totalPrice = Double.parseDouble(dataSnapshot.child("totalPrice").getValue().toString());
-                    Integer numberOfDishes = Integer.parseInt(dataSnapshot.child("numberOfDishes").getValue().toString());
+                    String numDishes = dataSnapshot.child("numberOfDishes").getValue().toString();
+                    String orderID = dataSnapshot.child("orderID").getValue().toString();
+                    String priceStr = dataSnapshot.child("totalPrice").getValue()
+                            .toString().replace(",", ".");
+                    String restaurantAddress = dataSnapshot.child("addressRestaurant").getValue().toString();
+                    String expectedTime = dataSnapshot.child("expectedTime").getValue().toString();
+                    String deliveredTime = dataSnapshot.child("deliveredTime").getValue().toString();
 
-                    Ride rideObj = new Ride(orderID, surnameCustomer, addressCustomer, nameRestaurant,
-                            addressRestaurant, totalPrice, numberOfDishes);
 
-                    model.insertChild(orderID, rideObj);
+                    HistoryItem historyObj = new HistoryItem(orderID, restaurantAddress,
+                            nameRestaurant, priceStr, numDishes, expectedTime, deliveredTime);
+
                 }
             }
 
             @Override
             public void onChildChanged(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
-                Log.d("fabio", "onChildAdded | PREVIOUS CHILD" + s);
-                if(dataSnapshot.hasChild("orderID") &&
-                        dataSnapshot.hasChild("addressCustomer") &&
-                        dataSnapshot.hasChild("surnameCustomer") &&
-                        dataSnapshot.hasChild("nameRestaurant") &&
-                        dataSnapshot.hasChild("addressRestaurant") &&
-                        dataSnapshot.hasChild("totalPrice") &&
-                        dataSnapshot.hasChild("numberOfDishes")) {
-
-                    String orderID = dataSnapshot.child("orderID").getValue().toString();
-                    String addressCustomer = dataSnapshot.child("addressCustomer").getValue().toString();
-                    String addressRestaurant = dataSnapshot.child("addressRestaurant").getValue().toString();
-                    String nameRestaurant = dataSnapshot.child("nameRestaurant").getValue().toString();
-                    String surnameCustomer = dataSnapshot.child("surnameCustomer").getValue().toString();
-                    Double totalPrice = Double.parseDouble(dataSnapshot.child("totalPrice").getValue().toString());
-                    Integer numberOfDishes = Integer.parseInt(dataSnapshot.child("numberOfDishes").getValue().toString());
-
-                    Ride rideObj = new Ride(orderID, surnameCustomer, addressCustomer, nameRestaurant,
-                            addressRestaurant, totalPrice, numberOfDishes);
-
-                    model.insertChild(orderID, rideObj);
-                }
+                //History item cannot change
             }
 
             @Override
             public void onChildRemoved(@NonNull DataSnapshot dataSnapshot) {
-                String id = dataSnapshot.getKey();
-
-                model.removeChild(id);
+                //History item cannot be deleted
             }
 
             @Override
             public void onChildMoved(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
-
+                //History item cannot be moved
             }
 
             @Override

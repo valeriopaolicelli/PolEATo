@@ -3,42 +3,32 @@ package com.mad.poleato.View.ViewModel;
 import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.MutableLiveData;
 import android.arch.lifecycle.ViewModel;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-import android.util.Log;
 
-import com.google.firebase.database.ChildEventListener;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ValueEventListener;
-import com.mad.poleato.Rides.Ride;
+import com.mad.poleato.History.HistoryItem;
 
 import java.util.HashMap;
-import java.util.List;
 
 
 public class MyViewModel extends ViewModel {
-    private MutableLiveData<HashMap<String, Ride>> _MapDataRides;
+    private MutableLiveData<HashMap<String, HistoryItem>> _MapDataHistory;
 
-    public LiveData<HashMap<String, Ride>> getListR() {
-        if (_MapDataRides == null)
-        _MapDataRides = new MutableLiveData<>(); // header titles
-        return _MapDataRides;
+    public LiveData<HashMap<String, HistoryItem>> getListR() {
+        if (_MapDataHistory == null)
+        _MapDataHistory = new MutableLiveData<>(); // header titles
+        return _MapDataHistory;
     }
 
-    public void insertChild(String orderID, Ride ride) {
-        this._MapDataRides.getValue().put(orderID, ride);
-        this._MapDataRides.postValue(_MapDataRides.getValue());
+    public void insertChild(String orderID, HistoryItem history) {
+        this._MapDataHistory.getValue().put(orderID, history);
+        this._MapDataHistory.postValue(_MapDataHistory.getValue());
     }
 
     public void removeChild(final String orderID) {
-        this._MapDataRides.getValue().remove(orderID);
+        this._MapDataHistory.getValue().remove(orderID);
     }
 
     public void initChild(){
-        _MapDataRides.setValue(new HashMap<String, Ride>());
+        _MapDataHistory.setValue(new HashMap<String, HistoryItem>());
     }
 
     public void testInitRiders () {
