@@ -385,6 +385,7 @@ public class ReservationFragment extends Fragment {
                     if(!listHash.containsKey(order_id)){
                         reservations.add(r);
                         Collections.sort(reservations, Reservation.timeComparator);
+
                     }
                     listHash.put(order_id, dishes);
 

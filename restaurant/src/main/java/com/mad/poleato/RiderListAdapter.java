@@ -274,6 +274,14 @@ public class RiderListAdapter extends ArrayAdapter<Rider>
         Navigation.findNavController(finalConvertView).navigate(R.id.action_mapsFragment_id_to_reservation_id);
     }
 
+    public void removeRider(String riderID) {
+        for(int i=0; i < ridersList.size(); i++)
+            if(ridersList.get(i).getId().equals(riderID)) {
+                ridersList.remove(i);
+                Collections.sort(ridersList, Rider.distanceComparator);
+            }
+    }
+
     public class ViewHolder
     {
         TextView riderID_tv;
