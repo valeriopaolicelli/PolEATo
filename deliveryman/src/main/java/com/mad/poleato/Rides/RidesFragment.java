@@ -204,11 +204,10 @@ public class RidesFragment extends Fragment {
                 isRunning = false;
 
             }
-            else if(resultCode == RESULT_CANCELED){
-                myToast.setText("Permission denied!");
-                myToast.show();
+            /*else if(resultCode == RESULT_CANCELED){
 
-            }
+
+            }*/
         }
     }
 

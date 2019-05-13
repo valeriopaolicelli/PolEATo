@@ -82,6 +82,11 @@
             android:windowSoftInputMode="adjustPan"
             android:screenOrientation="portrait"/>
 
+        <activity
+            android:name=".Delivering.DeliveringActivity"
+            android:windowSoftInputMode="adjustPan"
+            android:screenOrientation="portrait"/>
+
 
         <provider
             android:name="android.support.v4.content.FileProvider"
