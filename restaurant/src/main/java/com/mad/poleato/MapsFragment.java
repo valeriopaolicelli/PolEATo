@@ -435,36 +435,40 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback,
 
     @Override
     public boolean onMarkerClick(Marker marker) {
-        final String riderID= marker.getTitle();
-        final AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
-        builder.setTitle(this.getString(R.string.rider_selected));
+        if(!marker.getTitle().equals(restaurant_name)){
+            final String riderID= marker.getTitle();
+            final AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+            builder.setTitle(this.getString(R.string.rider_selected));
 
-        builder.setMessage(this.getString(R.string.msg_rider_selected));
-        builder.setPositiveButton(this.getString(R.string.choice_confirm), new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialogInterface, int i) {
-                FirebaseDatabase.getInstance().getReference("deliveryman").child(riderID).child("Busy").setValue(true);
-                FirebaseDatabase.getInstance().getReference("restaurants").child(loggedID).child("reservations").child(reservation.getOrder_id()).child("status").child("en").setValue("Delivering");
-                FirebaseDatabase.getInstance().getReference("restaurants").child(loggedID).child("reservations").child(reservation.getOrder_id()).child("status").child("it").setValue("In consegna");
+            builder.setMessage(this.getString(R.string.msg_rider_selected));
+            builder.setPositiveButton(this.getString(R.string.choice_confirm), new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialogInterface, int i) {
+                    FirebaseDatabase.getInstance().getReference("deliveryman").child(riderID).child("Busy").setValue(true);
+                    FirebaseDatabase.getInstance().getReference("restaurants").child(loggedID).child("reservations").child(reservation.getOrder_id()).child("status").child("en").setValue("Delivering");
+                    FirebaseDatabase.getInstance().getReference("restaurants").child(loggedID).child("reservations").child(reservation.getOrder_id()).child("status").child("it").setValue("In consegna");
 
-                notifyRider(riderID);
-                /**
-                 * GO FROM MAPSFRAGMENT to RESERVATION
-                 */
-                Navigation.findNavController(fragView).navigate(R.id.action_mapsFragment_id_to_reservation_id);
-            }
-        });
-        builder.setNegativeButton(this.getString(R.string.choice_cancel), new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialogInterface, int i) {
-                dialogInterface.cancel();
-            }
-        });
+                    notifyRider(riderID);
+                    /**
+                     * GO FROM MAPSFRAGMENT to RESERVATION
+                     */
+                    Navigation.findNavController(fragView).navigate(R.id.action_mapsFragment_id_to_reservation_id);
+                }
+            });
+            builder.setNegativeButton(this.getString(R.string.choice_cancel), new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialogInterface, int i) {
+                    dialogInterface.cancel();
+                }
+            });
 
-        AlertDialog dialog = builder.create();
-        dialog.show();
+            AlertDialog dialog = builder.create();
+            dialog.show();
 
-        return true;
+            return true;
+        }
+        else
+            return false;
     }
 
     private void notifyRider(final String riderID) {
