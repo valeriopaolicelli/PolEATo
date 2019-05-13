@@ -248,7 +248,10 @@
             android:backgroundTint="@color/colorBodyPrimary"
             android:scaleType="center"
             android:src="@mipmap/map_icon_round"
-            app:fabSize="normal"
+            app:maxImageSize="40dp"
+            app:fabCustomSize="40dp"
+            app:fabSize="auto"
+            android:elevation="8dp"
             android:layout_margin="32dp"/>
 
     </FrameLayout>
