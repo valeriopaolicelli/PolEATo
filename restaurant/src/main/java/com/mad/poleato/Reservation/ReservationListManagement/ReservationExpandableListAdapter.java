@@ -57,7 +57,6 @@ public class ReservationExpandableListAdapter extends BaseExpandableListAdapter{
     @SuppressLint("UseSparseArrays")
     private HashMap<Integer, CheckBox> groupCheckBoxes = new HashMap<>();
     private String loggedID;
-    private String riderSelected;
     boolean notify;
 
     public ReservationExpandableListAdapter(Context context, List<Reservation> reservations, HashMap<String, List<Dish>> listHashMap, String currentUserID) {
@@ -435,14 +434,6 @@ public class ReservationExpandableListAdapter extends BaseExpandableListAdapter{
     @Override
     public boolean isChildSelectable(int i, int i1) {
         return false;
-    }
-
-
-    public void addReservation(Reservation r){
-        this.listHashMap.put(r.getOrder_id(), r.getDishes());
-        this.reservations.add(r);
-
-        this.notifyDataSetChanged();
     }
 
     @Override

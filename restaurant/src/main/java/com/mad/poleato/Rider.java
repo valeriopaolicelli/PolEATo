@@ -56,16 +56,8 @@ public class Rider {
         return Math.pow(Math.sin(val / 2), 2);
     }
 
-    public double getLatitude() {
-        return latitude;
-    }
-
     public void setLatitude(double latitude) {
         this.latitude = latitude;
-    }
-
-    public double getLongitude() {
-        return longitude;
     }
 
     public void setLongitude(double longitude) {
