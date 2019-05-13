@@ -151,37 +151,14 @@ public class Reservation implements Serializable{
         this.address = address;
     }
 
-    public void setDate(String date) {
-        this.date = date;
-    }
-
-    public void setTime(String time) {
-        this.time = time;
-    }
-
-    public boolean isChecked() {
-        return checked;
-    }
-
-    public void setChecked(boolean checked) {
-        this.checked = checked;
-    }
-
     public ArrayList<Dish> getDishes() {
         return dishes;
     }
 
     public int getNumberOfDishes(){ return dishes.size(); }
 
-    public void setDishes(ArrayList<Dish> dishes) {
-        this.dishes = dishes;
-    }
     public void addDishtoReservation(Dish d){
         this.dishes.add(d);
-    }
-
-    public String getButtonText(){
-        return buttonText;
     }
 
     public void setButtonText(String text){

@@ -236,9 +236,6 @@ public class ReservationExpandableListAdapter extends BaseExpandableListAdapter{
                                 @Override
                                 public void onClick(DialogInterface dialogInterface, int i) {
 
-                                    /**Intent mapsActivity= new Intent(context, MapsActivity2.class);
-                                    context.startActivity(mapsActivity);*/
-
                                     /**
                                      * GO FROM RESERVATION to MAPSFRAGMENT
                                      */
@@ -249,14 +246,6 @@ public class ReservationExpandableListAdapter extends BaseExpandableListAdapter{
                                     action.setLoggedId(loggedID);
                                     Navigation.findNavController(finalView1).navigate(action);
 
-//                                    FirebaseDatabase.getInstance().getReference("deliveryman").child(riderSelected).child("Busy").setValue(true);
-//                                    FirebaseDatabase.getInstance().getReference("restaurants").child(loggedID).child("reservations").child(r.getOrder_id()).child("status").child("en").setValue("Delivering");
-//                                    FirebaseDatabase.getInstance().getReference("restaurants").child(loggedID).child("reservations").child(r.getOrder_id()).child("status").child("it").setValue("In consegna");
-//                                    r.setStatus(Status.DELIVERY, context);
-//                                    holder.button.setText(context.getString(R.string.order_info));
-//                                    r.setButtonText(context.getString(R.string.order_info));
-//                                    notify = true;
-                                   // notifyRider(c, riderSelected);
                                     notifyDataSetChanged();
 
                                 }
