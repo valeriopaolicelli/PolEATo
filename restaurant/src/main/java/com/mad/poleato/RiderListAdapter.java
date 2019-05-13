@@ -189,6 +189,9 @@ public class RiderListAdapter extends ArrayAdapter<Rider>
                     reservationRider.child("addressRestaurant").setValue(addressRestaurant);
                     reservationRider.child("nameRestaurant").setValue(nameRestaurant);
                     reservationRider.child("restaurantID").setValue(loggedID);
+
+                    //update the delivery status
+                    reservationRider.child("delivering").setValue(false);
                     sendNotification(riderID, convertView);
                 }
             }
