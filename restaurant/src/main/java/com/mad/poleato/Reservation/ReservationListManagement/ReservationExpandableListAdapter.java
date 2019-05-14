@@ -103,8 +103,9 @@ public class ReservationExpandableListAdapter extends BaseExpandableListAdapter{
         }
     }
 
-    public void updateReservationList(List<Reservation>reservations){
+    public void updateReservationList(List<Reservation>reservations, HashMap<String,List<Dish>>listHashMap){
         this.reservations = reservations;
+        this.listHashMap = listHashMap;
     }
 
     @Override
@@ -148,6 +149,8 @@ public class ReservationExpandableListAdapter extends BaseExpandableListAdapter{
         final ViewHolder holder;
         final List<Dish> dishes = r.getDishes();
         boolean flag = false;
+
+
         if( view ==  null){
             holder = new ViewHolder();
             LayoutInflater inflater = (LayoutInflater)this.context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
@@ -304,9 +307,10 @@ public class ReservationExpandableListAdapter extends BaseExpandableListAdapter{
                                  * the reservation status and the button text are updated,
                                  * then the scanning of menu foods is stopped (pruning).
                                  */
+                                                Reservation reservation = reservations.get(group_pos);
                                                 String foodID= m.getKey();
                                                 Integer quantity= Integer.parseInt(mutableData.child(foodID).child("Quantity").getValue().toString());
-                                                for( Dish d : r.getDishes()){
+                                                for( Dish d : reservation.getDishes()){
                                                     if(d.getID().equals(foodID)){
                                                         if(quantity - d.getQuantity()< 0 ){
                                                             Toast.makeText(context, "Not enough quantity, please update", Toast.LENGTH_LONG).show();
@@ -329,7 +333,7 @@ public class ReservationExpandableListAdapter extends BaseExpandableListAdapter{
                                                 }
                                                 //TODO update quantity in food of reservation (list of reservations -> dishes)
                                             }
-                                            return null;
+                                            return Transaction.success(mutableData);
                                         }
 
                                         @Override
