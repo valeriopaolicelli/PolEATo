@@ -6,7 +6,6 @@ import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.Service;
-import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 
@@ -16,7 +15,6 @@ import android.os.Binder;
 import android.os.Build;
 import android.os.Handler;
 import android.os.IBinder;
-import android.os.PowerManager;
 
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.NotificationCompat;
@@ -99,7 +97,7 @@ public class BackgroundLocationService extends Service {
         notification = new NotificationCompat.Builder(this, CHANNEL_ID)
                 .setContentText("Location")
                 .setContentText("PolEATo is using your location in background")
-                .setSmallIcon(R.drawable.ic_notifications_black_24dp)
+                .setSmallIcon(R.drawable.location_icon)
                 .setContentIntent(pendingIntent)
                 .build();
         startForeground(1, notification);
