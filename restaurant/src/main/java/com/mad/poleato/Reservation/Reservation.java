@@ -163,6 +163,10 @@ public class Reservation implements Serializable{
         this.buttonText= text;
     }
 
+    public void setDishes(ArrayList<Dish>dishes){
+        this.dishes=dishes;
+    }
+
     public static Comparator<Reservation> timeComparator= new Comparator<Reservation>() {
         @Override
         public int compare(Reservation r1, Reservation r2) {

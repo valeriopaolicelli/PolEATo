@@ -316,6 +316,7 @@ public class ReservationFragment extends Fragment {
                     Collections.sort(reservations, Reservation.timeComparator);
                     listAdapter.addCheckState(false);
                     listAdapter.notifyDataSetChanged();
+                    listAdapter.updateReservationList(reservations,listHash);
                 }
             }
 
@@ -394,7 +395,9 @@ public class ReservationFragment extends Fragment {
                     if(!listHash.containsKey(order_id)){
                         reservations.add(r);
                     }
+
                     listHash.put(order_id, dishes);
+                    r.setDishes(dishes);
 
                     for(Reservation res : reservations)
                             if(res.getOrder_id().equals(order_id))
@@ -402,7 +405,7 @@ public class ReservationFragment extends Fragment {
 
                     listAdapter.notifyDataSetChanged();
                     Collections.sort(reservations, Reservation.timeComparator);
-                    listAdapter.updateReservationList(reservations);
+                    listAdapter.updateReservationList(reservations, listHash);
                     listAdapter.addCheckState(false);
                 }
 
