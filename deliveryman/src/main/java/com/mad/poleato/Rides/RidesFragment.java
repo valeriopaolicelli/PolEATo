@@ -473,7 +473,7 @@ public class RidesFragment extends Fragment {
 
         //remove the ride
         DatabaseReference reservationReference = FirebaseDatabase.getInstance().getReference("deliveryman/"+currentUserID);
-        reservationReference.child("reservations").removeValue();
+        reservationReference.child("reservations/"+reservationKey).removeValue();
 
         //set this ride to free
         DatabaseReference deliverymanReference = FirebaseDatabase.getInstance().getReference("deliveryman/"+currentUserID);
@@ -482,12 +482,13 @@ public class RidesFragment extends Fragment {
 
         sendNotificationToRestaurant();
 
-        FirebaseDatabase.getInstance().getReference("restaurant/" + ride.getRestaurantID()
+        FirebaseDatabase.getInstance().getReference("restaurants/" + ride.getRestaurantID()
                                                            + "/reservations/" + ride.getOrderID()
                                                            + "/status/it/").setValue("Consegnato");
-        FirebaseDatabase.getInstance().getReference("restaurant/" + ride.getRestaurantID()
+        FirebaseDatabase.getInstance().getReference("restaurants/" + ride.getRestaurantID()
                                                             + "/reservations/" + ride.getOrderID()
                                                             + "/status/en/").setValue("Delivered");
+
     }
 
 

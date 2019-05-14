@@ -46,7 +46,8 @@
         <TextView
             android:id="@+id/name_tv"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
+            android:layout_height="wrap_content"
+            android:textIsSelectable="true"/>
 
         <TextView
             android:id="@+id/address_label"
@@ -58,7 +59,8 @@
         <TextView
             android:id="@+id/address_tv"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
+            android:layout_height="wrap_content"
+            android:textIsSelectable="true"/>
 
         <TextView
             android:id="@+id/phone_label"
@@ -71,7 +73,9 @@
             android:id="@+id/phone_tv"
             android:autoLink="phone"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
+            android:layout_height="wrap_content"
+            android:textIsSelectable="true"
+            />
     </GridLayout>
 
 </android.support.constraint.ConstraintLayout>
