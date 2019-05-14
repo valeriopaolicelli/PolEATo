@@ -215,6 +215,8 @@ public class ReservationFragment extends Fragment {
         reference.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                listAdapter.initCheckStates(false);
+
                 handler.sendEmptyMessage(0);
             }
 
@@ -257,7 +259,6 @@ public class ReservationFragment extends Fragment {
                     final String totalPrice= dataSnapshot.child("totalPrice").getValue().toString();
 
 
-                    //TODO update with proper date, time and notes
 
                     //Retrieve through customerID the details of the customer
                     customer= FirebaseDatabase.getInstance().getReference("customers").child(customer_id);

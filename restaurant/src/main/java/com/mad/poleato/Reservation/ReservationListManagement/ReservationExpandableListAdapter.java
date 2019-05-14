@@ -75,7 +75,7 @@ public class ReservationExpandableListAdapter extends BaseExpandableListAdapter{
      * Called to initialize the default check states of items
      * @param defaultState : false
      */
-    private void initCheckStates(boolean defaultState) {
+    public void initCheckStates(boolean defaultState) {
         for(int i = 0 ; i <reservations.size(); i++){
             groupChecked.add(i, defaultState);
             Reservation r = reservations.get(i);
