@@ -397,6 +397,9 @@ public class DeliveringActivity extends FragmentActivity implements OnMapReadyCa
 
                     Log.d("matte", "code 0 not granted");
 
+                    myToast.setText("Permission denied!");
+                    myToast.show();
+
                     //permission denied, return error
                     Intent returnIntent = new Intent();
                     setResult(RESULT_CANCELED,returnIntent);

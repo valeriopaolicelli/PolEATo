@@ -269,7 +269,7 @@ public class ReservationExpandableListAdapter extends BaseExpandableListAdapter{
                                             .child("restaurants")
                                             .child(loggedID)
                                             .child("Menu");
-                                    //TODO: Aggiornare quantità menù
+
                                     dbReference.runTransaction(new Transaction.Handler() {
                                         @NonNull
                                         @Override

@@ -66,18 +66,20 @@ public class UploadService extends IntentService {
      */
     private void handleActionUpload(String param1, String param2) {
         firebaseAuth = FirebaseAuth.getInstance();
-        String user = firebaseAuth.getCurrentUser().getUid();
-        DatabaseReference dbReference = FirebaseDatabase.getInstance()
-                .getReference("deliveryman").child(user);
+        if(firebaseAuth != null && firebaseAuth.getCurrentUser() != null) {
+            String user = firebaseAuth.getCurrentUser().getUid();
+            DatabaseReference dbReference = FirebaseDatabase.getInstance()
+                    .getReference("deliveryman").child(user);
 
-        Double latitude = Double.parseDouble(param1);
-        Double longitude = Double.parseDouble(param2);
-        GeoFire geoFire = new GeoFire(dbReference);
-        geoFire.setLocation("Map", new GeoLocation(latitude, longitude), new GeoFire.CompletionListener() {
-            @Override
-            public void onComplete(String key, DatabaseError error) {
-            }
-        });
-        Log.d("fabio", "Upload completed with Lat & Long: " + latitude + " " + longitude);
+            Double latitude = Double.parseDouble(param1);
+            Double longitude = Double.parseDouble(param2);
+            GeoFire geoFire = new GeoFire(dbReference);
+            geoFire.setLocation("Map", new GeoLocation(latitude, longitude), new GeoFire.CompletionListener() {
+                @Override
+                public void onComplete(String key, DatabaseError error) {
+                }
+            });
+            Log.d("fabio", "Upload completed with Lat & Long: " + latitude + " " + longitude);
+        }
     }
 }

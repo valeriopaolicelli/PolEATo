@@ -98,4 +98,7 @@
     <!-- Address convertion -->
     <string name="no_address">Indirizzo non valido</string>
 
+    <!-- Rides layout -->
+    <string name="no_order">Niente da consegnare</string>
+
 </resources>
