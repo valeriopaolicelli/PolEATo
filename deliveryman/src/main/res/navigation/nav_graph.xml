@@ -19,7 +19,7 @@
 
     <fragment
         android:id="@+id/routes_id"
-        android:name="com.mad.poleato.History.History"
+        android:name="com.mad.poleato.History.HistoryFragment"
         android:label="@string/title_actionbar_deliveryHistory"
         tools:layout="@layout/history_recyclerview" >
         <action

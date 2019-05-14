@@ -39,7 +39,7 @@ import java.util.Map;
 /**
  * A simple {@link Fragment} subclass.
  */
-public class History extends Fragment {
+public class HistoryFragment extends Fragment {
 
     private View view;
 
@@ -49,7 +49,7 @@ public class History extends Fragment {
     private FirebaseAuth mAuth;
 
 
-    public History() {
+    public HistoryFragment() {
         // Required empty public constructor
     }
 
@@ -146,6 +146,8 @@ public class History extends Fragment {
         layoutManager = new LinearLayoutManager(this.hostActivity);
         rv.setLayoutManager(layoutManager);
 
+        collectFields();
+
         this.historyAdapter = new HistoryRecyclerViewAdapter(this.hostActivity);
         rv.setAdapter(historyAdapter);
         //add separator between list items
@@ -160,6 +162,12 @@ public class History extends Fragment {
         super.onViewCreated(view, savedInstanceState);
 
         myFirebaseData.fillFieldsHistory();
+    }
+
+    private void collectFields(){
+        
+        //todo ?
+
     }
 
 }

@@ -96,17 +96,17 @@ public class MyFirebaseData {
 
             @Override
             public void onChildChanged(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
-                //History item cannot change
+                //HistoryFragment item cannot change
             }
 
             @Override
             public void onChildRemoved(@NonNull DataSnapshot dataSnapshot) {
-                //History item cannot be deleted
+                //HistoryFragment item cannot be deleted
             }
 
             @Override
             public void onChildMoved(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
-                //History item cannot be moved
+                //HistoryFragment item cannot be moved
             }
 
             @Override
