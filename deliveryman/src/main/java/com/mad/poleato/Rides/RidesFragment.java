@@ -33,6 +33,7 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.mad.poleato.Delivering.DeliveringActivity;
 import com.mad.poleato.R;
+import com.onesignal.OneSignal;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -112,10 +113,12 @@ public class RidesFragment extends Fragment {
                 //logout
                 Log.d("matte", "Logout");
                 FirebaseAuth.getInstance().signOut();
+                //                OneSignal.sendTag("User_ID", "");
+                OneSignal.setSubscription(false);
+
                 /**
                  *  GO TO LOGIN ****
                  */
-
                 Navigation.findNavController(fragView).navigate(R.id.action_rides_id_to_signInActivity);
                 getActivity().finish();
                 return true;

@@ -28,6 +28,7 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.mad.poleato.FirebaseData.MyFirebaseData;
 import com.mad.poleato.R;
 import com.mad.poleato.View.ViewModel.MyViewModel;
+import com.onesignal.OneSignal;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -117,10 +118,12 @@ public class History extends Fragment {
                 //logout
                 Log.d("matte", "Logout");
                 FirebaseAuth.getInstance().signOut();
+                //                OneSignal.sendTag("User_ID", "");
+                OneSignal.setSubscription(false);
+
                 /**
                  *  GO TO LOGIN ****
                  */
-
                 Navigation.findNavController(fragView).navigate(R.id.action_rides_id_to_signInActivity);
                 getActivity().finish();
                 return true;
