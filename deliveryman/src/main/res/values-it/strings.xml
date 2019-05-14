@@ -100,5 +100,8 @@
 
     <!-- Rides layout -->
     <string name="no_order">Niente da consegnare</string>
+    <string name="permission_denied">Permessi per i servizi di localizzazione rifiutati!</string>
+    <string name="delivering">In consegna</string>
+    <string name="not_delivering">Non in consegna</string>
 
 </resources>

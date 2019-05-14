@@ -98,5 +98,8 @@
 
     <!-- Rides layout -->
     <string name="no_order">Nothing to deliver</string>
+    <string name="permission_denied">Location service permission denied!</string>
+    <string name="delivering">Delivering</string>
+    <string name="not_delivering">Not delivering</string>
 
 </resources>

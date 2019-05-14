@@ -83,7 +83,7 @@
             android:screenOrientation="portrait"/>
 
         <activity
-            android:name=".Delivering.DeliveringActivity"
+            android:name=".Rides.DeliveringActivity"
             android:windowSoftInputMode="adjustPan"
             android:screenOrientation="portrait"/>
 

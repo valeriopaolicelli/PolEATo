@@ -1,9 +1,8 @@
-package com.mad.poleato.Delivering;
+package com.mad.poleato.Rides;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.AlertDialog;
-import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -40,13 +39,9 @@ import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.PolylineOptions;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.database.ChildEventListener;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.mad.poleato.R;
-import com.mad.poleato.Rides.Ride;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -68,8 +63,8 @@ import java.util.Map;
 
 public class DeliveringActivity extends FragmentActivity implements OnMapReadyCallback {
 
-    private Toast myToast;
-
+    //code for notify permission denied (visible also to RidesFragment)
+    protected final static int RESULT_PERMISSION_DENIED = 10001;
     private static final int EARTH_RADIUS = 6371; // Approx Earth radius in KM
 
     //two costant for frequency update tuning
@@ -77,8 +72,12 @@ public class DeliveringActivity extends FragmentActivity implements OnMapReadyCa
     private static final int MIN_DISTANCE_LOC_UPDATE = 5;
     private static final double ARRIVED_DISTANCE = 8.0; //if closer to 8 meters than notify arrived
 
-    //this flag is to indicate that the rider is already been at the restaurant
-    private boolean toCustomer;
+
+    private Toast myToast;
+
+    /*It correspond with the ride status: if the order is delivering or is still at restaurant
+        based on that value the map will provide directions towards a certain target (restaurant or customer)*/
+    private boolean delivering;
 
     //location data
     private GoogleMap mMap;
@@ -99,6 +98,8 @@ public class DeliveringActivity extends FragmentActivity implements OnMapReadyCa
     private String reservationKey;
 
 
+
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -111,13 +112,12 @@ public class DeliveringActivity extends FragmentActivity implements OnMapReadyCa
         FirebaseUser currentUser = mAuth.getCurrentUser();
         currentUserID = currentUser.getUid();
 
+        //to retrieve latitude and longitude from address
         geocoder = new Geocoder(this);
 
         // Acquire a reference to the system Location Manager
         locationManager = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
 
-        //start the loading dialog
-        //progressDialog = ProgressDialog.show(this, "", getString(R.string.loading));
 
         tv_Fields = new HashMap<>();
         //collects all the TextView inside the HashMap tv_Fields
@@ -126,14 +126,32 @@ public class DeliveringActivity extends FragmentActivity implements OnMapReadyCa
         //fill the fields with the Ride object from the Bundle
         fillFields();
 
-        retrieveRideStatus();
+        createMap();
+
+        //to retrieve the ride status: directed by restaurant or by customer. Once done it call the creates map
+        //retrieveRideStatus();
     }
 
-    private void fillFields(){
 
+    private void collectFields() {
+
+        tv_Fields.put("address", (TextView)findViewById(R.id.deliveryAddress_tv));
+        tv_Fields.put("name", (TextView)findViewById(R.id.customerName_tv));
+        tv_Fields.put("restaurant", (TextView)findViewById(R.id.restaurant_tv));
+        tv_Fields.put("phone", (TextView)findViewById(R.id.phone_tv));
+        tv_Fields.put("dishes", (TextView)findViewById(R.id.dishes_tv));
+        tv_Fields.put("hour", (TextView)findViewById(R.id.time_tv));
+        tv_Fields.put("price", (TextView)findViewById(R.id.cost_tv));
+
+    }
+
+
+    private void fillFields(){
+        //retrieve the reservation data from bundle
         Bundle bundle = getIntent().getExtras();
         Ride ride = (Ride) bundle.get("ride");
-        reservationKey = (String) bundle.get("order_key");
+        reservationKey = (String) bundle.get("order_key"); //reservation key rider side
+        delivering = (Boolean) bundle.get("delivering"); //ride status
 
         //fill the fields
         tv_Fields.get("address").setText(ride.getAddressCustomer());
@@ -157,95 +175,8 @@ public class DeliveringActivity extends FragmentActivity implements OnMapReadyCa
 
     }
 
-    private void createMap() {
 
-        SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
-                .findFragmentById(R.id.map);
-
-        String buttonText;
-        if(toCustomer){
-            buttonText = getString(R.string.maps_button_order_delivered);
-        }
-        else{
-            buttonText = getString(R.string.maps_button_to_restaurant);
-        }
-
-        //set the map button to display the right text based on the value of the delivering item on FireBase
-        button_map = (Button) findViewById(R.id.button_map);
-        button_map.setText(buttonText);
-        button_map.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
-                String title,
-                        message;
-                //towards restaurant
-                if(!toCustomer){
-                    title = getString(R.string.go_to_customer);
-                    message = getString(R.string.dialog_go_to_customer);
-                }
-                else{
-                    //toward customer
-                    title = getString(R.string.maps_button_order_delivered);
-                    message = getString(R.string.dialog_message_order_completed);
-                }
-
-                new AlertDialog.Builder(v.getContext())
-                        .setTitle(title)
-                        .setMessage(message)
-
-                        // Specifying a listener allows you to take an action before dismissing the dialog.
-                        // The dialog is automatically dismissed when a dialog button is clicked.
-                        .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialog, int which) {
-                                // If the rider arrives to the restaurant
-                                if(!toCustomer)
-                                {
-                                    toCustomer = true;
-                                    @SuppressLint("MissingPermission") Location lastKnownLocation = locationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
-                                    button_map.setText(getString(R.string.maps_button_order_delivered));
-                                    mMap.clear();
-                                    if(lastKnownLocation != null)
-                                    {
-                                        LatLng lastPosition = new LatLng(lastKnownLocation.getLatitude(), lastKnownLocation.getLongitude());
-                                        showDirections(lastPosition, customerPosition, getString(R.string.customer_string));
-                                    }
-                                    //update the delivery status
-                                    DatabaseReference reference = FirebaseDatabase.getInstance().getReference("deliveryman/"+currentUserID+"/reservations/"
-                                            +reservationKey);
-                                    reference.child("delivering").setValue(true);
-                                }
-                                else{
-                                    myToast.setText(R.string.message_order_completed);
-                                    myToast.show();
-
-                                    //here returns and close this ride
-                                    Intent returnIntent = new Intent();
-                                    Date currentDate = Calendar.getInstance().getTime();
-                                    SimpleDateFormat sdf = new SimpleDateFormat("HH:mm");
-                                    String currentTime = sdf.format(currentDate);
-                                    returnIntent.putExtra("deliveryHour", currentTime);
-                                    Log.d("matte", "Delivering finished at "+currentTime);
-                                    setResult(RESULT_OK,returnIntent);
-                                    finish();
-
-                                }
-
-
-                            }
-                        })
-
-                        // A null listener allows the button to dismiss the dialog and take no further action.
-                        .setNegativeButton(android.R.string.no, null)
-                        .show();
-            }
-        });
-
-        mapFragment.getMapAsync(this);
-    }
-
-
-    private void retrieveRideStatus() {
+    /*private void retrieveRideStatus() {
 
         DatabaseReference reference = FirebaseDatabase.getInstance()
                 .getReference("deliveryman/" + currentUserID + "/reservations");
@@ -254,22 +185,23 @@ public class DeliveringActivity extends FragmentActivity implements OnMapReadyCa
             @Override
             public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
                 if (dataSnapshot.exists() &&
-                        dataSnapshot.hasChild("orderID") &&
                         dataSnapshot.hasChild("addressCustomer") &&
                         dataSnapshot.hasChild("addressRestaurant") &&
-                        dataSnapshot.hasChild("nameCustomer") &&
+                        dataSnapshot.hasChild("CustomerID") &&
+                        dataSnapshot.hasChild("delivering") &&
                         dataSnapshot.hasChild("nameRestaurant") &&
-                        dataSnapshot.hasChild("totalPrice") &&
                         dataSnapshot.hasChild("numberOfDishes") &&
+                        dataSnapshot.hasChild("orderID") &&
+                        dataSnapshot.hasChild("restaurantID") &&
+                        dataSnapshot.hasChild("nameCustomer") &&
+                        dataSnapshot.hasChild("totalPrice") &&
                         dataSnapshot.hasChild("phoneCustomer") &&
                         dataSnapshot.hasChild("phoneRestaurant") &&
-                        dataSnapshot.hasChild("time") &&
-                        dataSnapshot.hasChild("delivering")){
+                        dataSnapshot.hasChild("time")){
 
-                    toCustomer = (Boolean)dataSnapshot.child("delivering").getValue();
+                    delivering = (Boolean)dataSnapshot.child("delivering").getValue();
 
                     createMap();
-
                 }
 
             }
@@ -289,10 +221,9 @@ public class DeliveringActivity extends FragmentActivity implements OnMapReadyCa
                         dataSnapshot.hasChild("time") &&
                         dataSnapshot.hasChild("delivering")){
 
-                    toCustomer = (Boolean)dataSnapshot.child("delivering").getValue();
+                    delivering = (Boolean)dataSnapshot.child("delivering").getValue();
 
                     createMap();
-
                 }
             }
 
@@ -312,19 +243,99 @@ public class DeliveringActivity extends FragmentActivity implements OnMapReadyCa
             }
         });
 
+    }*/
+
+
+    private void createMap() {
+
+        //get the map fragment
+        SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
+                .findFragmentById(R.id.map);
+
+        //set the button text based on the rider status
+        String buttonText;
+        if(delivering){
+            buttonText = getString(R.string.maps_button_order_delivered);
+        }
+        else{
+            buttonText = getString(R.string.maps_button_to_restaurant);
+        }
+
+        //set the map button to display the right text based on the value of the delivering item on FireBase
+        button_map = (Button) findViewById(R.id.button_map);
+        button_map.setText(buttonText);
+        button_map.setOnClickListener(new OnClickButtonMap());
+
+        //when the map is ready the callback method OnMapReady will be called
+        mapFragment.getMapAsync(this);
     }
 
+    private class OnClickButtonMap implements View.OnClickListener {
 
-    private void collectFields() {
+        @Override
+        public void onClick(View v) {
+            String title,
+                    message;
+            //towards restaurant
+            if(!delivering){
+                title = getString(R.string.go_to_customer);
+                message = getString(R.string.dialog_go_to_customer);
+            }
+            else{
+                //toward customer
+                title = getString(R.string.maps_button_order_delivered);
+                message = getString(R.string.dialog_message_order_completed);
+            }
 
-        tv_Fields.put("address", (TextView)findViewById(R.id.deliveryAddress_tv));
-        tv_Fields.put("name", (TextView)findViewById(R.id.customerName_tv));
-        tv_Fields.put("restaurant", (TextView)findViewById(R.id.restaurant_tv));
-        tv_Fields.put("phone", (TextView)findViewById(R.id.phone_tv));
-        tv_Fields.put("dishes", (TextView)findViewById(R.id.dishes_tv));
-        tv_Fields.put("hour", (TextView)findViewById(R.id.time_tv));
-        tv_Fields.put("price", (TextView)findViewById(R.id.cost_tv));
+            new AlertDialog.Builder(v.getContext())
+                    .setTitle(title)
+                    .setMessage(message)
 
+                    // Specifying a listener allows you to take an action before dismissing the dialog.
+                    // The dialog is automatically dismissed when a dialog button is clicked.
+                    .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int which) {
+                            // If the rider arrives to the restaurant
+                            if(!delivering)
+                            {
+                                delivering = true;
+                                @SuppressLint("MissingPermission") Location lastKnownLocation = locationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
+                                button_map.setText(getString(R.string.maps_button_order_delivered));
+                                mMap.clear();
+                                if(lastKnownLocation != null)
+                                {
+                                    LatLng lastPosition = new LatLng(lastKnownLocation.getLatitude(), lastKnownLocation.getLongitude());
+                                    showDirections(lastPosition, customerPosition, getString(R.string.customer_string));
+                                }
+                                //update the delivery status on FireBase
+                                DatabaseReference reference = FirebaseDatabase.getInstance().getReference("deliveryman/"+currentUserID+"/reservations/"
+                                        +reservationKey);
+                                reference.child("delivering").setValue(true);
+                            }
+                            else{
+                                myToast.setText(R.string.message_order_completed);
+                                myToast.show();
+
+                                //here returns and close this ride
+                                Intent returnIntent = new Intent();
+                                Date currentDate = Calendar.getInstance().getTime();
+                                SimpleDateFormat sdf = new SimpleDateFormat("HH:mm");
+                                String currentTime = sdf.format(currentDate);
+                                returnIntent.putExtra("deliveryHour", currentTime);
+                                Log.d("matte", "Delivering finished at "+currentTime);
+                                setResult(RESULT_OK,returnIntent);
+                                finish();
+
+                            }
+
+
+                        }
+                    })
+
+                    // A null listener allows the button to dismiss the dialog and take no further action.
+                    .setNegativeButton(android.R.string.no, null)
+                    .show();
+        }
     }
 
 
@@ -332,24 +343,7 @@ public class DeliveringActivity extends FragmentActivity implements OnMapReadyCa
     public void onMapReady(GoogleMap googleMap) {
 
         mMap = googleMap;
-        //mMap.moveCamera(CameraUpdateFactory.newLatLng(customerLocation));
         mMap.setMapType(GoogleMap.MAP_TYPE_TERRAIN);
-        //mMap.setBuildingsEnabled(true);
-
-        if (/*ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED &&*/
-                ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-
-            /*ActivityCompat.requestPermissions(this,
-                new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
-                1);*/
-
-            ActivityCompat.requestPermissions(this,
-                    new String[]{Manifest.permission.ACCESS_COARSE_LOCATION},
-                    0);
-
-            return;
-        }
-
         startLocating();
 
     }
@@ -357,19 +351,25 @@ public class DeliveringActivity extends FragmentActivity implements OnMapReadyCa
 
     private void startLocating(){
 
-        //the first time the location updates would take times, so we retrieve once the last known location
-        Location lastKnownLocation = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
-        if(lastKnownLocation == null){
+        //check if permission for location if permission for location was grant
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
 
-            Log.d("matte", "GPS returns null, using Network for last known location");
-            lastKnownLocation = locationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
-
+            ActivityCompat.requestPermissions(this,
+                    new String[]{Manifest.permission.ACCESS_COARSE_LOCATION},
+                    0);
+            return;
         }
 
-        if(lastKnownLocation != null){
+        //TODO check if network provider enabled
 
+        /*the first time the location updates would take times, so we retrieve once the last known location
+        we use the NETWORK_PROVIDER for location retrieving because it consume much less battery*/
+        Location lastKnownLocation = locationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
+        if(lastKnownLocation != null){
+            //here convert the location to LatLng and then shows direction based on the ride status
+            Log.d("matte", "Last location found at "+lastKnownLocation.toString());
             LatLng lastKnownLatLng = new LatLng(lastKnownLocation.getLatitude(), lastKnownLocation.getLongitude());
-            if(toCustomer)
+            if(delivering)
                 showDirections(lastKnownLatLng, customerPosition, getString(R.string.customer_string));
             else
                 showDirections(lastKnownLatLng, restaurantPosition, getString(R.string.restaurant_string));
@@ -389,35 +389,16 @@ public class DeliveringActivity extends FragmentActivity implements OnMapReadyCa
                 // If request is cancelled, the result arrays are empty.
                 if (grantResults.length > 0
                         && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    Log.d("matte", "code 0 granted");
+                    Log.d("matte", "permission 0 granted");
 
                     startLocating();
 
                 } else {
-
-                    Log.d("matte", "code 0 not granted");
-
-                    myToast.setText("Permission denied!");
-                    myToast.show();
-
+                    Log.d("matte", "permission 0 not granted");
                     //permission denied, return error
                     Intent returnIntent = new Intent();
-                    setResult(RESULT_CANCELED,returnIntent);
+                    setResult(RESULT_PERMISSION_DENIED,returnIntent);
                     finish();
-
-                }
-                return;
-            }
-            case 1: {
-                if (grantResults.length > 0
-                        && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-
-                    Log.d("matte", "code 1 granted");
-
-                } else {
-                    // permission denied, boo! Disable the
-                    // functionality that depends on this permission.7
-                    Log.d("matte", "code 1 not granted");
                 }
                 return;
             }
@@ -425,13 +406,14 @@ public class DeliveringActivity extends FragmentActivity implements OnMapReadyCa
 
     }
 
+
     // Define a listener that responds to location updates
     class LocListener implements LocationListener {
         public void onLocationChanged(Location location) {
             // Called when a new location is found by the network location provider.
             Log.d("matte", "Location changed: "+location.getLatitude()+", "+location.getLongitude());
             mMap.clear();
-            if(toCustomer)
+            if(delivering)
                 showDirections(new LatLng(location.getLatitude(), location.getLongitude()), customerPosition, getString(R.string.customer_string));
             else
                 showDirections(new LatLng(location.getLatitude(), location.getLongitude()), restaurantPosition, getString(R.string.restaurant_string));
@@ -447,13 +429,8 @@ public class DeliveringActivity extends FragmentActivity implements OnMapReadyCa
 
     public double computeDistance(LatLng origin, LatLng destination) {
 
-        double startLat,
-                endLat;
         double dLat  = Math.toRadians((destination.latitude - origin.latitude));
         double dLong = Math.toRadians((destination.longitude - origin.longitude));
-
-        startLat = Math.toRadians(origin.latitude);
-        endLat   = Math.toRadians(destination.longitude);
 
         double a = haversin(dLat) + Math.cos(origin.latitude) * Math.cos(destination.latitude) * haversin(dLong);
         double c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
@@ -468,24 +445,31 @@ public class DeliveringActivity extends FragmentActivity implements OnMapReadyCa
     }
 
 
+    private void moveCameraToCurrentLocation(LatLng currentLocation)
+    {
+        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(currentLocation,15));
+        // Zoom in, animating the camera.
+        mMap.animateCamera(CameraUpdateFactory.zoomIn());
+        // Zoom out to zoom level 10, animating with a duration of 2 seconds.
+        mMap.animateCamera(CameraUpdateFactory.zoomTo(15), 2000, null);
+
+    }
+
     //uses the Google Direction API
     private void showDirections(LatLng origin, LatLng destination, String title){
 
         //add a marker for the destination
         mMap.addMarker(new MarkerOptions().position(destination)
                 .title(title));
-
         //add customized marker for current position
         mMap.addMarker(new MarkerOptions().position(origin)
                 .title(getString(R.string.you_string)))
                 .setIcon(bitmapDescriptorFromVector(this, R.drawable.ic_baseline_directions_bike_24px));
         //move map camera
-        mMap.moveCamera(CameraUpdateFactory.newLatLng(origin));
-        mMap.animateCamera(CameraUpdateFactory.zoomTo(15.0f));
+        moveCameraToCurrentLocation(origin);
 
         // check if already arrived
         double distance = computeDistance(origin, destination)*1000; //in meters
-
         if(distance < ARRIVED_DISTANCE){
             myToast.setText(getString(R.string.you_arrived));
             myToast.show();
