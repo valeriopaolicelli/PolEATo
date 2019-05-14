@@ -7,12 +7,14 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.constraint.ConstraintLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v7.widget.CardView;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -23,6 +25,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.FrameLayout;
+import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -43,6 +46,7 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
 
 import static android.app.Activity.RESULT_OK;
@@ -64,6 +68,7 @@ public class RidesFragment extends Fragment {
     private Map<String, TextView> tv_Fields;
     private Button status_button;
     private FloatingActionButton map_button;
+    private ImageButton show_more_button;
 
     //to set the visibility to gone when there are no ride available
     private CardView cardview;
@@ -191,11 +196,35 @@ public class RidesFragment extends Fragment {
         status_button = (Button) fragView.findViewById(R.id.status_button);
         status_button.setOnClickListener(new OnClickRideStatus());
 
+        show_more_button = (ImageButton) fragView.findViewById(R.id.showMoreButton);
+        show_more_button.setOnClickListener(new OnClickShowMore());
+
         //initialize visibility TODO: make it in the layout
         emptyView.setVisibility(View.VISIBLE);
         cardview.setVisibility(View.GONE);
         frameLayout.setVisibility(View.GONE);
 
+    }
+
+    private class OnClickShowMore implements View.OnClickListener{
+
+        @Override
+        public void onClick(View v) {
+            FragmentTransaction ft = getFragmentManager().beginTransaction();
+            Fragment prev = getFragmentManager().findFragmentByTag("show_more_fragment");
+            if (prev != null) {
+                ft.remove(prev);
+            }
+            ft.addToBackStack(null);
+            ShowMoreFragment showMoreFrag = new ShowMoreFragment();
+            Bundle bundle = new Bundle();
+            //pass the restaurant info
+            bundle.putString("name", ride.getNameRestaurant());
+            bundle.putString("address", ride.getAddressRestaurant());
+            bundle.putString("phone", ride.getPhoneRestaurant());
+            showMoreFrag.setArguments(bundle);
+            showMoreFrag.show(ft, "show_more_fragment");
+        }
     }
 
 

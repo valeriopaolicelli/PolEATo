@@ -102,4 +102,8 @@
     <string name="delivering">Delivering</string>
     <string name="not_delivering">Not delivering</string>
 
+    <!-- Show more fragment -->
+    <string name="address_semicolon">Address:</string>
+    <string name="show_more_title">Restaurant info:</string>
+
 </resources>

@@ -15,16 +15,21 @@ import android.location.Geocoder;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
+import android.media.Image;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
+import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v4.content.ContextCompat;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -78,6 +83,7 @@ public class DeliveringActivity extends FragmentActivity implements OnMapReadyCa
     /*It correspond with the ride status: if the order is delivering or is still at restaurant
         based on that value the map will provide directions towards a certain target (restaurant or customer)*/
     private boolean delivering;
+    private Ride ride;
 
     //location data
     private GoogleMap mMap;
@@ -96,6 +102,7 @@ public class DeliveringActivity extends FragmentActivity implements OnMapReadyCa
 
     //data structures for layout element storing
     private Map<String, TextView> tv_Fields;
+    private ImageButton show_more_button;
     private Button button_map;
 
     //key of the order rider side
@@ -146,13 +153,15 @@ public class DeliveringActivity extends FragmentActivity implements OnMapReadyCa
         tv_Fields.put("distance", (TextView)findViewById(R.id.distance_tv));
         tv_Fields.put("duration", (TextView)findViewById(R.id.duration_tv));
 
+        show_more_button = (ImageButton) findViewById(R.id.showMoreButton);
+
     }
 
 
     private void fillFields(){
         //retrieve the reservation data from bundle
         Bundle bundle = getIntent().getExtras();
-        Ride ride = (Ride) bundle.get("ride");
+        ride = (Ride) bundle.get("ride");
         reservationKey = (String) bundle.get("order_key"); //reservation key rider side
         delivering = (Boolean) bundle.get("delivering"); //ride status
 
@@ -165,6 +174,8 @@ public class DeliveringActivity extends FragmentActivity implements OnMapReadyCa
         tv_Fields.get("hour").setText(ride.getTime());
         tv_Fields.get("price").setText(ride.getTotalPrice()+"€");
 
+        show_more_button.setOnClickListener(new OnClickShowMore());
+
         //retrieve location for customer and restaurant
         try {
             Address customerLocation = geocoder.getFromLocationName(ride.getAddressCustomer(), 1).get(0);
@@ -176,6 +187,28 @@ public class DeliveringActivity extends FragmentActivity implements OnMapReadyCa
             e.printStackTrace();
         }
 
+    }
+
+
+    public class OnClickShowMore implements View.OnClickListener{
+
+        @Override
+        public void onClick(View v) {
+            FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+            Fragment prev = getSupportFragmentManager().findFragmentByTag("show_more_fragment");
+            if (prev != null) {
+                ft.remove(prev);
+            }
+            ft.addToBackStack(null);
+            ShowMoreFragment showMoreFrag = new ShowMoreFragment();
+            Bundle bundle = new Bundle();
+            //pass the restaurant info
+            bundle.putString("name", ride.getNameRestaurant());
+            bundle.putString("address", ride.getAddressRestaurant());
+            bundle.putString("phone", ride.getPhoneRestaurant());
+            showMoreFrag.setArguments(bundle);
+            showMoreFrag.show(ft, "show_more_fragment");
+        }
     }
 
 
