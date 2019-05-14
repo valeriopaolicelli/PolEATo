@@ -86,6 +86,10 @@ public class DeliveringActivity extends FragmentActivity implements OnMapReadyCa
     private Geocoder geocoder;
     private LocationManager locationManager;
 
+    //current distance and duration of the ride
+    private String currDistance;
+    private String currDuration;
+
     //auth
     private String currentUserID;
     private FirebaseAuth mAuth;
@@ -127,9 +131,6 @@ public class DeliveringActivity extends FragmentActivity implements OnMapReadyCa
         fillFields();
 
         createMap();
-
-        //to retrieve the ride status: directed by restaurant or by customer. Once done it call the creates map
-        //retrieveRideStatus();
     }
 
 
@@ -142,6 +143,8 @@ public class DeliveringActivity extends FragmentActivity implements OnMapReadyCa
         tv_Fields.put("dishes", (TextView)findViewById(R.id.dishes_tv));
         tv_Fields.put("hour", (TextView)findViewById(R.id.time_tv));
         tv_Fields.put("price", (TextView)findViewById(R.id.cost_tv));
+        tv_Fields.put("distance", (TextView)findViewById(R.id.distance_tv));
+        tv_Fields.put("duration", (TextView)findViewById(R.id.duration_tv));
 
     }
 
@@ -174,76 +177,6 @@ public class DeliveringActivity extends FragmentActivity implements OnMapReadyCa
         }
 
     }
-
-
-    /*private void retrieveRideStatus() {
-
-        DatabaseReference reference = FirebaseDatabase.getInstance()
-                .getReference("deliveryman/" + currentUserID + "/reservations");
-
-        reference.addChildEventListener(new ChildEventListener() {
-            @Override
-            public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
-                if (dataSnapshot.exists() &&
-                        dataSnapshot.hasChild("addressCustomer") &&
-                        dataSnapshot.hasChild("addressRestaurant") &&
-                        dataSnapshot.hasChild("CustomerID") &&
-                        dataSnapshot.hasChild("delivering") &&
-                        dataSnapshot.hasChild("nameRestaurant") &&
-                        dataSnapshot.hasChild("numberOfDishes") &&
-                        dataSnapshot.hasChild("orderID") &&
-                        dataSnapshot.hasChild("restaurantID") &&
-                        dataSnapshot.hasChild("nameCustomer") &&
-                        dataSnapshot.hasChild("totalPrice") &&
-                        dataSnapshot.hasChild("phoneCustomer") &&
-                        dataSnapshot.hasChild("phoneRestaurant") &&
-                        dataSnapshot.hasChild("time")){
-
-                    delivering = (Boolean)dataSnapshot.child("delivering").getValue();
-
-                    createMap();
-                }
-
-            }
-
-            @Override
-            public void onChildChanged(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
-                if (dataSnapshot.exists() &&
-                        dataSnapshot.hasChild("orderID") &&
-                        dataSnapshot.hasChild("addressCustomer") &&
-                        dataSnapshot.hasChild("addressRestaurant") &&
-                        dataSnapshot.hasChild("nameCustomer") &&
-                        dataSnapshot.hasChild("nameRestaurant") &&
-                        dataSnapshot.hasChild("totalPrice") &&
-                        dataSnapshot.hasChild("numberOfDishes") &&
-                        dataSnapshot.hasChild("phoneCustomer") &&
-                        dataSnapshot.hasChild("phoneRestaurant") &&
-                        dataSnapshot.hasChild("time") &&
-                        dataSnapshot.hasChild("delivering")){
-
-                    delivering = (Boolean)dataSnapshot.child("delivering").getValue();
-
-                    createMap();
-                }
-            }
-
-            @Override
-            public void onChildRemoved(@NonNull DataSnapshot dataSnapshot) {
-                //an order cannot be removed
-            }
-
-            @Override
-            public void onChildMoved(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
-                //an order cannot be moved
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
-
-            }
-        });
-
-    }*/
 
 
     private void createMap() {
@@ -479,12 +412,26 @@ public class DeliveringActivity extends FragmentActivity implements OnMapReadyCa
         // form: http://maps.googleapis.com/maps/api/directions/outputFormat?parameters
         String url = "https://maps.googleapis.com/maps/api/directions/json?origin="+origin.latitude+","+origin.longitude+
                 "&destination="+ destination.latitude+","+ destination.longitude+
-                "&avoid=highways&mode=driving"+
+                "&avoid=highways&mode=walking"+
                 "&key="+getString(R.string.google_maps_key);
 
         FetchUrl FetchUrl = new FetchUrl();
         // Start downloading json data from Google Directions API
         FetchUrl.execute(url);
+
+    }
+
+    //to set distance and duration in the layout. It is called each time a new location is found
+    private void setDirectionParameters(String distance, String duration){
+
+        String s;
+        try{
+            tv_Fields.get("distance").setText(distance);
+            tv_Fields.get("duration").setText(duration);
+        }catch (Exception e){
+            s = e.getMessage();
+            Log.d("matte", s);
+        }
 
     }
 
@@ -563,7 +510,7 @@ public class DeliveringActivity extends FragmentActivity implements OnMapReadyCa
             List<List<HashMap<String, String>>> routes = null;
             try {
                 jObject = new JSONObject(jsonData[0]);
-                Log.d("ParserTask",jsonData[0].toString());
+                Log.d("ParserTask",jsonData[0]);
                 DataParser parser = new DataParser();
                 Log.d("ParserTask", parser.toString());
                 // Starts parsing data
@@ -608,11 +555,14 @@ public class DeliveringActivity extends FragmentActivity implements OnMapReadyCa
             else {
                 Log.d("onPostExecute","without Polylines drawn");
             }
+            //set current distance and duration updated
+            setDirectionParameters(currDistance, currDuration);
         }
     }
 
 
     class DataParser {
+
         List<List<HashMap<String,String>>> parse(JSONObject jObject){
             List<List<HashMap<String, String>>> routes = new ArrayList<>() ;
             JSONArray jRoutes;
@@ -626,6 +576,11 @@ public class DeliveringActivity extends FragmentActivity implements OnMapReadyCa
                     List path = new ArrayList<>();
                     /** Traversing all legs */
                     for(int j=0;j<jLegs.length();j++){
+
+                        //save the current distance and duration
+                        currDistance = ( (JSONObject)jLegs.get(i)).getJSONObject("distance").get("text").toString();
+                        currDuration = ( (JSONObject)jLegs.get(i)).getJSONObject("duration").get("text").toString();
+
                         jSteps = ( (JSONObject)jLegs.get(j)).getJSONArray("steps");
                         /** Traversing all steps */
                         for(int k=0;k<jSteps.length();k++){
@@ -647,8 +602,11 @@ public class DeliveringActivity extends FragmentActivity implements OnMapReadyCa
                 e.printStackTrace();
             }catch (Exception e){
             }
+
             return routes;
         }
+
+
         /**
          * Method to decode polyline points
          * */

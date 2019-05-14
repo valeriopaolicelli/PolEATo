@@ -190,11 +190,10 @@ public class RidesFragment extends Fragment {
         status_button = (Button) fragView.findViewById(R.id.status_button);
         status_button.setOnClickListener(new OnClickRideStatus());
 
-        //initialize visibility
+        //initialize visibility TODO: make it in the layout
         emptyView.setVisibility(View.VISIBLE);
         cardview.setVisibility(View.GONE);
         constraintLayout.setVisibility(View.GONE);
-
 
     }
 

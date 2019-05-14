@@ -19,7 +19,6 @@ import com.google.firebase.database.ValueEventListener;
 import com.mad.poleato.History.HistoryItem;
 import com.mad.poleato.View.ViewModel.MyViewModel;
 
-import java.util.List;
 import java.util.logging.Handler;
 
 public class MyFirebaseData {
@@ -91,6 +90,7 @@ public class MyFirebaseData {
                     HistoryItem historyObj = new HistoryItem(orderID, restaurantAddress,
                             nameRestaurant, priceStr, numDishes, expectedTime, deliveredTime);
 
+                    model.insertChild(historyObj.getOrderID(), historyObj);
                 }
             }
 

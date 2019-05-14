@@ -98,7 +98,7 @@ public class History extends Fragment {
 
         /** Listeners to update UI Expandable list from VIEW_MODEL list child */
         model = ViewModelProviders.of(getActivity()).get(MyViewModel.class);
-        model.getListR().observe(this, new Observer<HashMap<String, HistoryItem>>() {
+        model.getListH().observe(this, new Observer<HashMap<String, HistoryItem>>() {
             @Override
             public void onChanged(@Nullable HashMap<String, HistoryItem> stringHistoryHashMap) {
                 if(stringHistoryHashMap.values() != null)
