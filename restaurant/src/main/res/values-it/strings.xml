@@ -147,4 +147,5 @@
     <string name="rider_selected">Rider selezionato</string>
     <string name="msg_rider_selected">Vuoi selezionare questo rider?</string>
     <string name="choose_rider">Scegli un rider</string>
+    <string name="delivered">Consegnato</string>
 </resources>

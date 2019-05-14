@@ -103,6 +103,7 @@
     <string name="permission_denied">Permessi per i servizi di localizzazione rifiutati!</string>
     <string name="delivering">In consegna</string>
     <string name="not_delivering">Non in consegna</string>
+    <string name="delivered">Consegnato</string>
 
     <!-- Show more fragment -->
     <string name="address_semicolon">Indirizzo:</string>

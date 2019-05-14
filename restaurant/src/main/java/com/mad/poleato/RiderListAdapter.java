@@ -234,8 +234,8 @@ public class RiderListAdapter extends ArrayAdapter<Rider>
 
                                 + "\"filters\": [{\"field\": \"tag\", \"key\": \"User_ID\", \"relation\": \"=\", \"value\": \"" + send_email + "\"}],"
 
-                                + "\"data\": {\"Delivery\": \"New order\"},"
-                                + "\"contents\": {\"en\": \"New order to deliver\"}"
+                                + "\"data\": {\"Order\": \"PolEATo\"},"
+                                + "\"contents\": {\"it\": \"Nuovo ordine da consegnare\"}"
                                 + "}";
 
 

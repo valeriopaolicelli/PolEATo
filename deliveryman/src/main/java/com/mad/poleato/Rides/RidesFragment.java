@@ -8,7 +8,9 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.StrictMode;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.constraint.ConstraintLayout;
@@ -41,6 +43,9 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.mad.poleato.R;
 import com.onesignal.OneSignal;
 
+import java.io.OutputStream;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -48,6 +53,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
+import java.util.Scanner;
 
 import static android.app.Activity.RESULT_OK;
 import static com.mad.poleato.Rides.DeliveringActivity.RESULT_PERMISSION_DENIED;
@@ -281,6 +287,8 @@ public class RidesFragment extends Fragment {
                     String numDishes = dataSnapshot.child("numberOfDishes").getValue().toString();
                     String orderID = dataSnapshot.child("orderID").getValue().toString();
                     String nameCustomer = dataSnapshot.child("nameCustomer").getValue().toString();
+                    String customerID = dataSnapshot.child("CustomerID").getValue().toString();
+                    String restaurantID = dataSnapshot.child("restaurantID").getValue().toString();
                     //replace comma with dot before change it in double
                     String priceStr = dataSnapshot.child("totalPrice").getValue()
                             .toString().replace(",", ".");
@@ -328,7 +336,7 @@ public class RidesFragment extends Fragment {
                     ride = new Ride(orderID, customerAddress, restaurantAddress,
                             nameCustomer, nameRestaurant, priceStr,
                             numDishes, customerPhone, restaurantPhone,
-                            deliveryTime);
+                            deliveryTime, customerID, restaurantID);
                     //lock the rider
                     isRunning = true;
 
@@ -365,6 +373,8 @@ public class RidesFragment extends Fragment {
                         String numDishes = dataSnapshot.child("numberOfDishes").getValue().toString();
                         String orderID = dataSnapshot.child("orderID").getValue().toString();
                         String nameCustomer = dataSnapshot.child("nameCustomer").getValue().toString();
+                        String customerID = dataSnapshot.child("CustomerID").getValue().toString();
+                        String restaurantID = dataSnapshot.child("restaurantID").getValue().toString();
                         //replace comma with dot before change it in double
                         String priceStr = dataSnapshot.child("totalPrice").getValue()
                                 .toString().replace(",", ".");
@@ -391,7 +401,7 @@ public class RidesFragment extends Fragment {
                         ride = new Ride(orderID, customerAddress, restaurantAddress,
                                 nameCustomer, nameRestaurant, priceStr,
                                 numDishes, customerPhone, restaurantPhone,
-                                deliveryTime);
+                                deliveryTime, customerID, restaurantID);
 
                         //lock the rider
                         isRunning = true;
@@ -470,6 +480,14 @@ public class RidesFragment extends Fragment {
         deliverymanReference.child("Busy").setValue(false);
         isRunning = false;
 
+        sendNotificationToRestaurant();
+
+        FirebaseDatabase.getInstance().getReference("restaurant/" + ride.getRestaurantID()
+                                                           + "/reservations/" + ride.getOrderID()
+                                                           + "/status/it/").setValue("Consegnato");
+        FirebaseDatabase.getInstance().getReference("restaurant/" + ride.getRestaurantID()
+                                                            + "/reservations/" + ride.getOrderID()
+                                                            + "/status/en/").setValue("Delivered");
     }
 
 
@@ -507,6 +525,7 @@ public class RidesFragment extends Fragment {
                                 DatabaseReference reference = FirebaseDatabase.getInstance().getReference("deliveryman/"+currentUserID+"/reservations/"
                                         +reservationKey);
                                 reference.child("delivering").setValue(true);
+                                sendNotificationToCustomer();
                             }
                             else{
                                 //here the order is completed
@@ -530,4 +549,138 @@ public class RidesFragment extends Fragment {
         }
     }
 
+
+    private void sendNotificationToCustomer() {
+        AsyncTask.execute(new Runnable() {
+            @Override
+            public void run() {
+                int SDK_INT = android.os.Build.VERSION.SDK_INT;
+                if (SDK_INT > 8) {
+                    StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder()
+                            .permitAll().build();
+                    StrictMode.setThreadPolicy(policy);
+                    String send_email;
+
+                    //This is a Simple Logic to Send Notification different Device Programmatically....
+                    send_email= ride.getCustomerID();
+
+                    try {
+                        String jsonResponse;
+
+                        URL url = new URL("https://onesignal.com/api/v1/notifications");
+                        HttpURLConnection con = (HttpURLConnection) url.openConnection();
+                        con.setUseCaches(false);
+                        con.setDoOutput(true);
+                        con.setDoInput(true);
+
+                        con.setRequestProperty("Content-Type", "application/json; charset=UTF-8");
+                        con.setRequestProperty("Authorization", "Basic YjdkNzQzZWQtYTlkYy00MmIzLTg0NDUtZmQ3MDg0ODc4YmQ1");
+                        con.setRequestMethod("POST");
+                        String strJsonBody = "{"
+                                + "\"app_id\": \"a2d0eb0d-4b93-4b96-853e-dcfe6c34778e\","
+
+                                + "\"filters\": [{\"field\": \"tag\", \"key\": \"User_ID\", \"relation\": \"=\", \"value\": \"" + send_email + "\"}],"
+
+                                + "\"data\": {\"Order\": \"PolEATo\"},"
+                                + "\"contents\": {\"it\": \"Il fattorino ha lasciato il ristorante\"}"
+                                + "}";
+
+
+                        System.out.println("strJsonBody:\n" + strJsonBody);
+
+                        byte[] sendBytes = strJsonBody.getBytes("UTF-8");
+                        con.setFixedLengthStreamingMode(sendBytes.length);
+
+                        OutputStream outputStream = con.getOutputStream();
+                        outputStream.write(sendBytes);
+
+                        int httpResponse = con.getResponseCode();
+                        System.out.println("httpResponse: " + httpResponse);
+
+                        if (httpResponse >= HttpURLConnection.HTTP_OK
+                                && httpResponse < HttpURLConnection.HTTP_BAD_REQUEST) {
+                            Scanner scanner = new Scanner(con.getInputStream(), "UTF-8");
+                            jsonResponse = scanner.useDelimiter("\\A").hasNext() ? scanner.next() : "";
+                            scanner.close();
+                        } else {
+                            Scanner scanner = new Scanner(con.getErrorStream(), "UTF-8");
+                            jsonResponse = scanner.useDelimiter("\\A").hasNext() ? scanner.next() : "";
+                            scanner.close();
+                        }
+                        System.out.println("jsonResponse:\n" + jsonResponse);
+
+                    } catch (Throwable t) {
+                        t.printStackTrace();
+                    }
+                }
+            }
+        });
+    }
+
+    private void sendNotificationToRestaurant() {
+        AsyncTask.execute(new Runnable() {
+            @Override
+            public void run() {
+                int SDK_INT = android.os.Build.VERSION.SDK_INT;
+                if (SDK_INT > 8) {
+                    StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder()
+                            .permitAll().build();
+                    StrictMode.setThreadPolicy(policy);
+                    String send_email;
+
+                    //This is a Simple Logic to Send Notification different Device Programmatically....
+                    send_email= ride.getRestaurantID();
+
+                    try {
+                        String jsonResponse;
+
+                        URL url = new URL("https://onesignal.com/api/v1/notifications");
+                        HttpURLConnection con = (HttpURLConnection) url.openConnection();
+                        con.setUseCaches(false);
+                        con.setDoOutput(true);
+                        con.setDoInput(true);
+
+                        con.setRequestProperty("Content-Type", "application/json; charset=UTF-8");
+                        con.setRequestProperty("Authorization", "Basic YjdkNzQzZWQtYTlkYy00MmIzLTg0NDUtZmQ3MDg0ODc4YmQ1");
+                        con.setRequestMethod("POST");
+                        String strJsonBody = "{"
+                                + "\"app_id\": \"a2d0eb0d-4b93-4b96-853e-dcfe6c34778e\","
+
+                                + "\"filters\": [{\"field\": \"tag\", \"key\": \"User_ID\", \"relation\": \"=\", \"value\": \"" + send_email + "\"}],"
+
+                                + "\"data\": {\"Order\": \"PolEATo\"},"
+                                + "\"contents\": {\"it\": \"Ordine " + ride.getOrderID() + " consegnato!\"}"
+                                + "}";
+
+
+                        System.out.println("strJsonBody:\n" + strJsonBody);
+
+                        byte[] sendBytes = strJsonBody.getBytes("UTF-8");
+                        con.setFixedLengthStreamingMode(sendBytes.length);
+
+                        OutputStream outputStream = con.getOutputStream();
+                        outputStream.write(sendBytes);
+
+                        int httpResponse = con.getResponseCode();
+                        System.out.println("httpResponse: " + httpResponse);
+
+                        if (httpResponse >= HttpURLConnection.HTTP_OK
+                                && httpResponse < HttpURLConnection.HTTP_BAD_REQUEST) {
+                            Scanner scanner = new Scanner(con.getInputStream(), "UTF-8");
+                            jsonResponse = scanner.useDelimiter("\\A").hasNext() ? scanner.next() : "";
+                            scanner.close();
+                        } else {
+                            Scanner scanner = new Scanner(con.getErrorStream(), "UTF-8");
+                            jsonResponse = scanner.useDelimiter("\\A").hasNext() ? scanner.next() : "";
+                            scanner.close();
+                        }
+                        System.out.println("jsonResponse:\n" + jsonResponse);
+
+                    } catch (Throwable t) {
+                        t.printStackTrace();
+                    }
+                }
+            }
+        });
+    }
 }

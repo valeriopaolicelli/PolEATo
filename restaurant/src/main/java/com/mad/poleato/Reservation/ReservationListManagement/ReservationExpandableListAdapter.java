@@ -184,7 +184,7 @@ public class ReservationExpandableListAdapter extends BaseExpandableListAdapter{
             flag = true;
             holder.tv_status.setTextColor(context.getResources().getColor(R.color.colorTextRejected));
         }
-        else if (r.getStatus() == Status.DELIVERY) {
+        else if (r.getStatus() == Status.DELIVERY || r.getStatus() == Status.DELIVERED) {
             holder.button.setText(context.getResources().getString(R.string.order_info));
             holder.tv_status.setTextColor(context.getResources().getColor(R.color.colorTextAccepted));
             holder.button.setVisibility(View.VISIBLE);
@@ -229,7 +229,7 @@ public class ReservationExpandableListAdapter extends BaseExpandableListAdapter{
                 @Override
                 public void onClick(View v) {
                     final AlertDialog.Builder builder = new AlertDialog.Builder(v.getContext());
-                    if (r.getStatus() == Status.DELIVERY) {
+                    if (r.getStatus() == Status.DELIVERY || r.getStatus() == Status.DELIVERED) {
                         builder.setTitle(context.getString(R.string.title_deliver));
                         String msg = v.getResources().getString(R.string.order) + ": " + r.getOrder_id() + "\n"
                                 + v.getResources().getString(R.string.date) + ": " + r.getDate() + " "

@@ -101,6 +101,7 @@
     <string name="permission_denied">Location service permission denied!</string>
     <string name="delivering">Delivering</string>
     <string name="not_delivering">Not delivering</string>
+    <string name="delivered">Delivered</string>
 
     <!-- Show more fragment -->
     <string name="address_semicolon">Address:</string>
