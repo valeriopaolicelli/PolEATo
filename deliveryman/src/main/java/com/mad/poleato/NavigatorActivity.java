@@ -61,6 +61,12 @@ public class NavigatorActivity extends AppCompatActivity {
         mAuth = FirebaseAuth.getInstance();
         FirebaseUser currentUser = mAuth.getCurrentUser();
         currentUserID = currentUser.getUid();
+        OneSignal.startInit(this)
+                .inFocusDisplaying(OneSignal.OSInFocusDisplayOption.Notification)
+                .unsubscribeWhenNotificationsAreDisabled(true)
+                .init();
+
+        OneSignal.sendTag("User_ID", currentUserID);
 
 
         DatabaseReference dbReference = FirebaseDatabase.getInstance().getReference("deliveryman").child(currentUserID).child("IsActive");
@@ -79,12 +85,6 @@ public class NavigatorActivity extends AppCompatActivity {
             }
         });
 
-        OneSignal.startInit(this)
-                .inFocusDisplaying(OneSignal.OSInFocusDisplayOption.Notification)
-                .unsubscribeWhenNotificationsAreDisabled(true)
-                .init();
-
-        OneSignal.sendTag("User_ID", currentUserID);
         navigation = (BottomNavigationView) findViewById(R.id.navigation);
 //        navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
         navController = Navigation.findNavController(this,R.id.nav_host_fragment);

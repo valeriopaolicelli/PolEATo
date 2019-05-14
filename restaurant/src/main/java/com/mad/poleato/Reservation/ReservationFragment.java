@@ -41,6 +41,7 @@ import com.mad.poleato.R;
 import com.mad.poleato.Reservation.ReservationListManagement.ReservationExpandableListAdapter;
 import com.mad.poleato.SignInActivity;
 import com.mad.poleato.SignUpActivity;
+import com.onesignal.OneSignal;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -153,11 +154,11 @@ public class ReservationFragment extends Fragment {
                 //logout
                 Log.d("matte", "Logout");
                 FirebaseAuth.getInstance().signOut();
+                OneSignal.sendTag("User_ID", "");
 
                 /**
                  *  GO TO LOGIN ****
                  */
-
                 Navigation.findNavController(view).navigate(R.id.action_reservation_id_to_signInActivity);
                 getActivity().finish();
                 return true;

@@ -31,6 +31,7 @@ import com.mad.poleato.NavigatorActivity;
 import com.mad.poleato.R;
 import com.mad.poleato.SignInActivity;
 import com.mad.poleato.View.ViewModel.MyViewModel;
+import com.onesignal.OneSignal;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -140,10 +141,11 @@ public class DailyOfferFragment extends Fragment {
                 //logout
                 Log.d("matte", "Logout");
                 FirebaseAuth.getInstance().signOut();
+                OneSignal.sendTag("User_ID", "");
+
                 /**
                  *  GO TO LOGIN ****
                  */
-
                 Navigation.findNavController(fragView).navigate(R.id.action_daily_offer_id_to_signInActivity);
                 getActivity().finish();
                 return true;
