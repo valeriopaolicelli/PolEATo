@@ -165,7 +165,7 @@ public class HistoryFragment extends Fragment {
     }
 
     private void collectFields(){
-        
+
         //todo ?
 
     }

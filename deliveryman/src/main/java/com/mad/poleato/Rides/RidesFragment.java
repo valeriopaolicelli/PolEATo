@@ -22,6 +22,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.FrameLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -66,7 +67,7 @@ public class RidesFragment extends Fragment {
 
     //to set the visibility to gone when there are no ride available
     private CardView cardview;
-    private ConstraintLayout constraintLayout;
+    private FrameLayout frameLayout;
     private TextView emptyView;
 
     //the key for that order at rider side
@@ -172,7 +173,7 @@ public class RidesFragment extends Fragment {
         tv_Fields.put("status", (TextView) fragView.findViewById(R.id.status_tv));
 
         cardview = (CardView) fragView.findViewById(R.id.rideCardView);
-        constraintLayout = (ConstraintLayout) fragView.findViewById(R.id.rideConstraintLayout);
+        frameLayout = (FrameLayout) fragView.findViewById(R.id.rideFrameLayout);
         emptyView = (TextView) fragView.findViewById(R.id.ride_empty_view);
 
         map_button = (FloatingActionButton) fragView.findViewById(R.id.map_button);
@@ -193,7 +194,7 @@ public class RidesFragment extends Fragment {
         //initialize visibility TODO: make it in the layout
         emptyView.setVisibility(View.VISIBLE);
         cardview.setVisibility(View.GONE);
-        constraintLayout.setVisibility(View.GONE);
+        frameLayout.setVisibility(View.GONE);
 
     }
 
@@ -305,7 +306,7 @@ public class RidesFragment extends Fragment {
                     //set the visibility
                     emptyView.setVisibility(View.GONE);
                     cardview.setVisibility(View.VISIBLE);
-                    constraintLayout.setVisibility(View.VISIBLE);
+                    frameLayout.setVisibility(View.VISIBLE);
                 }
             }
 
@@ -369,7 +370,7 @@ public class RidesFragment extends Fragment {
                         //set the visibility
                         emptyView.setVisibility(View.GONE);
                         cardview.setVisibility(View.VISIBLE);
-                        constraintLayout.setVisibility(View.VISIBLE);
+                        frameLayout.setVisibility(View.VISIBLE);
                     }
 
                     //delivering field instead can be changed only if the rider is busy
@@ -402,7 +403,7 @@ public class RidesFragment extends Fragment {
                 isRunning = false;
                 emptyView.setVisibility(View.VISIBLE);
                 cardview.setVisibility(View.GONE);
-                constraintLayout.setVisibility(View.GONE);
+                frameLayout.setVisibility(View.GONE);
             }
 
             @Override
