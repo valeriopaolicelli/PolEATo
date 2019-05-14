@@ -125,7 +125,8 @@ public class RestaurantSearchFragment extends Fragment {
                 //logout
                 Log.d("matte", "Logout");
                 FirebaseAuth.getInstance().signOut();
-                OneSignal.sendTag("User_ID", "");
+                //                OneSignal.sendTag("User_ID", "");
+                OneSignal.setSubscription(false);
 
                 /**
                  *  GO TO LOGIN ****

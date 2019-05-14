@@ -66,6 +66,7 @@ public class NavigatorActivity extends AppCompatActivity {
                 .unsubscribeWhenNotificationsAreDisabled(true)
                 .init();
 
+        OneSignal.setSubscription(true);
         OneSignal.sendTag("User_ID", currentUserID);
 
 

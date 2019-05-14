@@ -154,7 +154,9 @@ public class ReservationFragment extends Fragment {
                 //logout
                 Log.d("matte", "Logout");
                 FirebaseAuth.getInstance().signOut();
-                OneSignal.sendTag("User_ID", "");
+                OneSignal.setSubscription(false);
+                //                OneSignal.sendTag("User_ID", "");
+                OneSignal.setSubscription(false);
 
                 /**
                  *  GO TO LOGIN ****

@@ -108,7 +108,8 @@ public class AccountFragment extends Fragment {
                 //logout
                 Log.d("matte", "Logout");
                 FirebaseAuth.getInstance().signOut();
-                OneSignal.sendTag("User_ID", "");
+                OneSignal.setSubscription(false);
+                //OneSignal.sendTag("User_ID", "");
 
                 /**
                  *  GO TO LOGIN ****
