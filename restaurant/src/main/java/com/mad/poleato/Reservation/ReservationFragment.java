@@ -348,8 +348,6 @@ public class ReservationFragment extends Fragment {
                     String note= null;
                     ArrayList<Dish> dishes= new ArrayList<>();
 
-                    //TODO update with proper date, time and notes
-
                     //Retrieve through customerID the details of the customer
                     customer= FirebaseDatabase.getInstance().getReference("customers").child(customer_id);
                     readData(new FirebaseCallBack() {
