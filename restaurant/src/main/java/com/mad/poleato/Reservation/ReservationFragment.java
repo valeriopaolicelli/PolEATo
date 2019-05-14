@@ -215,7 +215,7 @@ public class ReservationFragment extends Fragment {
         reference.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                listAdapter.initCheckStates(false);
+//                listAdapter.addCheckState(false);
 
                 handler.sendEmptyMessage(0);
             }
@@ -285,7 +285,6 @@ public class ReservationFragment extends Fragment {
                     r = new Reservation(order_id, customer_id,null, null, null, date, time,
                             status, null, totalPrice, localeShort);
                     reservations.add(r);
-                    Collections.sort(reservations, Reservation.timeComparator);
 
                     //and for each customer (reservation) retrieve the list of dishes
                     DataSnapshot dishesOfReservation = dataSnapshot.child("dishes");
@@ -305,14 +304,14 @@ public class ReservationFragment extends Fragment {
                     listHash.put(r.getOrder_id(), r.getDishes());
                     if(!listHash.containsKey(order_id)){
                         reservations.add(r);
-                        Collections.sort(reservations, Reservation.timeComparator);
                     }
                     else{
                         for(Reservation res : reservations)
                             if(res.getOrder_id().equals(order_id))
                                 res.setStat(status);
                     }
-
+                    Collections.sort(reservations, Reservation.timeComparator);
+                    listAdapter.addCheckState(false);
                     listAdapter.notifyDataSetChanged();
                 }
             }
@@ -334,7 +333,13 @@ public class ReservationFragment extends Fragment {
                 {
                     final String order_id= dataSnapshot.getKey();
                     final String customer_id= dataSnapshot.child("customerID").getValue().toString();
-                    final String date= dataSnapshot.child("date").getValue().toString();
+                    final Long dateInMills= Long.parseLong(dataSnapshot.child("date").getValue().toString());
+
+                    DateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
+                    Calendar calendar = Calendar.getInstance();
+                    calendar.setTimeInMillis(dateInMills);
+                    final String date = formatter.format(calendar.getTime());
+
                     final String time= dataSnapshot.child("time").getValue().toString();
                     final String status = dataSnapshot.child("status").child(localeShort).getValue().toString();
                     final String totalPrice= dataSnapshot.child("totalPrice").getValue().toString();
@@ -385,8 +390,6 @@ public class ReservationFragment extends Fragment {
                     // if the status is changed (onclick listener) the order must change only and not re-added
                     if(!listHash.containsKey(order_id)){
                         reservations.add(r);
-                        Collections.sort(reservations, Reservation.timeComparator);
-
                     }
                     listHash.put(order_id, dishes);
 
@@ -395,7 +398,9 @@ public class ReservationFragment extends Fragment {
                                 res.setStat(status);
 
                     listAdapter.notifyDataSetChanged();
-
+                    Collections.sort(reservations, Reservation.timeComparator);
+                    listAdapter.updateReservationList(reservations);
+                    listAdapter.addCheckState(false);
                 }
 
             }
