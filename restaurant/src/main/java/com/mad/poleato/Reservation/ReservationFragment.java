@@ -336,7 +336,11 @@ public class ReservationFragment extends Fragment {
                 {
                     final String order_id= dataSnapshot.getKey();
                     final String customer_id= dataSnapshot.child("customerID").getValue().toString();
-                    final String date= dataSnapshot.child("date").getValue().toString();
+                    final Long dateInMills= Long.parseLong(dataSnapshot.child("date").getValue().toString());
+                    DateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
+                    Calendar calendar = Calendar.getInstance();
+                    calendar.setTimeInMillis(dateInMills);
+                    final String date = formatter.format(calendar.getTime());
                     final String time= dataSnapshot.child("time").getValue().toString();
                     final String status = dataSnapshot.child("status").child(localeShort).getValue().toString();
                     final String totalPrice= dataSnapshot.child("totalPrice").getValue().toString();
