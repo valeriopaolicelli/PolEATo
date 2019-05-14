@@ -12,7 +12,7 @@ import java.util.HashMap;
 public class MyViewModel extends ViewModel {
     private MutableLiveData<HashMap<String, HistoryItem>> _MapDataHistory;
 
-    public LiveData<HashMap<String, HistoryItem>> getListR() {
+    public LiveData<HashMap<String, HistoryItem>> getListH() {
         if (_MapDataHistory == null)
         _MapDataHistory = new MutableLiveData<>(); // header titles
         return _MapDataHistory;

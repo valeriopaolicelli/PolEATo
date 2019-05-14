@@ -19,7 +19,6 @@ import com.google.firebase.database.ValueEventListener;
 import com.mad.poleato.History.HistoryItem;
 import com.mad.poleato.View.ViewModel.MyViewModel;
 
-import java.util.List;
 import java.util.logging.Handler;
 
 public class MyFirebaseData {
@@ -91,22 +90,23 @@ public class MyFirebaseData {
                     HistoryItem historyObj = new HistoryItem(orderID, restaurantAddress,
                             nameRestaurant, priceStr, numDishes, expectedTime, deliveredTime);
 
+                    model.insertChild(historyObj.getOrderID(), historyObj);
                 }
             }
 
             @Override
             public void onChildChanged(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
-                //History item cannot change
+                //HistoryFragment item cannot change
             }
 
             @Override
             public void onChildRemoved(@NonNull DataSnapshot dataSnapshot) {
-                //History item cannot be deleted
+                //HistoryFragment item cannot be deleted
             }
 
             @Override
             public void onChildMoved(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
-                //History item cannot be moved
+                //HistoryFragment item cannot be moved
             }
 
             @Override

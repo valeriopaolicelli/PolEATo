@@ -51,7 +51,7 @@
     <string name="delivery_hour">Delivery hour: </string>
     <string name="total_cost">Total: </string>
 
-    <!-- History cardview-->
+    <!-- HistoryFragment cardview-->
     <string name="orderID_label">Order ID: </string>
     <string name="expected_hour">Expected hour: </string>
     <string name="delivered_hour">Delivered hour: </string>
