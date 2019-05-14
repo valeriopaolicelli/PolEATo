@@ -50,7 +50,7 @@
     <string name="restaurant_name">Ristorante: </string>
     <string name="phone_number">Telefono: </string>
     <string name="dishes">#Piatti: </string>
-    <string name="delivery_hour">Orario di consegna: </string>
+    <string name="delivery_hour">Orario consegna: </string>
     <string name="total_cost">Totale: </string>
 
     <!-- HistoryFragment cardview-->
@@ -103,5 +103,10 @@
     <string name="permission_denied">Permessi per i servizi di localizzazione rifiutati!</string>
     <string name="delivering">In consegna</string>
     <string name="not_delivering">Non in consegna</string>
+
+    <!-- Show more fragment -->
+    <string name="address_semicolon">Indirizzo:</string>
+    <string name="show_more_title">Info ristorante:</string>
+
 
 </resources>

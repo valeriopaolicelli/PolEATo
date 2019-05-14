@@ -155,7 +155,7 @@ public class BackgroundLocationService extends Service {
 //            this.mWakeLock = null;
 //        }
 
-        stopForeground(true);
+        //stopForeground(true);
 
         super.onDestroy();
     }
