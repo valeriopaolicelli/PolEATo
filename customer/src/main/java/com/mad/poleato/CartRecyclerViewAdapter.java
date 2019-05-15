@@ -10,6 +10,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -26,7 +27,8 @@ public class CartRecyclerViewAdapter extends RecyclerView.Adapter<CartRecyclerVi
         public ImageView img;
         public TextView name,price,quantity;
         public EditText notes;
-        public Button minum,plus,delete;
+        public ImageButton minum,plus,delete;
+
 
         public CartViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -35,9 +37,9 @@ public class CartRecyclerViewAdapter extends RecyclerView.Adapter<CartRecyclerVi
             this.price = (TextView) itemView.findViewById(R.id.cardPrice);
             this.quantity = (TextView) itemView.findViewById(R.id.quantity);
             this.notes = (EditText) itemView.findViewById(R.id.notesEditText);
-            this.minum = (Button) itemView.findViewById(R.id.decreaseBtn);
-            this.plus = (Button) itemView.findViewById(R.id.increaseBtn);
-            this.delete = (Button) itemView.findViewById(R.id.deleteBtn);
+            this.minum = (ImageButton) itemView.findViewById(R.id.decreaseBtn);
+            this.plus = (ImageButton) itemView.findViewById(R.id.increaseBtn);
+            this.delete = (ImageButton) itemView.findViewById(R.id.deleteBtn);
         }
     }
 
