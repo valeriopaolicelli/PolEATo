@@ -133,23 +133,27 @@ public class DeliveringActivity extends FragmentActivity implements OnMapReadyCa
 
             LatLng currLocation = new LatLng(latitude, longitude);
 
-            if(!firstLocation){
+            if (!firstLocation) {
 
-                double d = computeDistance(oldLocation, currLocation)*1000;
-                if(d < 7)
+                double d = computeDistance(oldLocation, currLocation) * 1000;
+                if (d < 7)
                     return;
             }
 
-            if(mMap!=null) {
-                mMap.clear();
-                if (delivering)
-                    showDirections(currLocation, customerPosition, getString(R.string.customer_string));
-                else
-                    showDirections(currLocation, restaurantPosition, getString(R.string.restaurant_string));
+            try {
+                if (mMap != null) {
+                    mMap.clear();
+                    if (delivering)
+                        showDirections(currLocation, customerPosition, getString(R.string.customer_string));
+                    else
+                        showDirections(currLocation, restaurantPosition, getString(R.string.restaurant_string));
+                }
+                if (firstLocation)
+                    firstLocation = false;
+                oldLocation = currLocation;
+            }catch (Exception e){
+                Log.d("ServiceException", e.getMessage());
             }
-            if(firstLocation)
-                firstLocation = false;
-            oldLocation = currLocation;
         }
     };
 
@@ -799,4 +803,9 @@ public class DeliveringActivity extends FragmentActivity implements OnMapReadyCa
         });
     }
 
+    @Override
+    protected void onDestroy() {
+        unregisterReceiver(locationReceiver);
+        super.onDestroy();
+    }
 }
