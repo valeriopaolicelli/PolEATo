@@ -35,7 +35,8 @@ public class BackgroundLocationService extends Service {
     private LocationRequest mLocationRequest;
     // Flag that indicates if a request is underway.
     private String CHANNEL_ID;
-    Handler handler;
+    private Handler handler;
+    private Runnable r;
 
     public class LocalBinder extends Binder {
         public BackgroundLocationService getServiceInstance() {
@@ -120,7 +121,7 @@ public class BackgroundLocationService extends Service {
 
 
         // Request location updates about deliveryman every 5 seconds
-        final Runnable r = new Runnable() {
+         r = new Runnable() {
             @Override
             public void run() {
                 if (ActivityCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.ACCESS_FINE_LOCATION)
@@ -147,6 +148,7 @@ public class BackgroundLocationService extends Service {
         super.onTaskRemoved(rootIntent);
         stopForeground(true);
         this.stopSelf();
+        handler.removeCallbacks(r);
     }
 
     @Override
@@ -160,9 +162,9 @@ public class BackgroundLocationService extends Service {
 //            this.mWakeLock.release();
 //            this.mWakeLock = null;
 //        }
-
-        //stopForeground(true);
-
+        this.stopSelf();
+        stopForeground(true);
+        handler.removeCallbacks(r);
         super.onDestroy();
     }
 }
