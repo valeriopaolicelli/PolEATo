@@ -19,6 +19,8 @@ import android.widget.ExpandableListView;
 
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -26,6 +28,7 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
+import com.onesignal.OneSignal;
 
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -47,6 +50,9 @@ public class MenuFragment extends Fragment {
     private String restaurantID;
     private Order order;
     private Interface listener;
+
+    private String currentUserID;
+    private FirebaseAuth mAuth;
 
     private SortMenu sortMenu;
 
@@ -87,6 +93,21 @@ public class MenuFragment extends Fragment {
         size = new Point();
         display.getSize(size);
         width = size.x;
+
+        mAuth = FirebaseAuth.getInstance();
+        FirebaseUser currentUser = mAuth.getCurrentUser();
+        currentUserID = currentUser.getUid();
+
+// OneSignal is used to send notifications between applications
+
+        OneSignal.startInit(getContext())
+                .inFocusDisplaying(OneSignal.OSInFocusDisplayOption.Notification)
+                .unsubscribeWhenNotificationsAreDisabled(true)
+                .init();
+
+        OneSignal.setSubscription(true);
+
+        OneSignal.sendTag("User_ID", currentUserID);
     }
 
     @Nullable

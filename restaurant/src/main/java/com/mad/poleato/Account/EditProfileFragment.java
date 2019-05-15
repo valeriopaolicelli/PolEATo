@@ -65,6 +65,7 @@ import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 import com.mad.poleato.LineLimiter;
 import com.mad.poleato.R;
+import com.onesignal.OneSignal;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -191,6 +192,18 @@ public class EditProfileFragment extends Fragment implements TimePickerDialog.On
         mAuth = FirebaseAuth.getInstance();
         FirebaseUser currentUser = mAuth.getCurrentUser();
         currentUserID = currentUser.getUid();
+
+
+// OneSignal is used to send notifications between applications
+
+        OneSignal.startInit(getContext())
+                .inFocusDisplaying(OneSignal.OSInFocusDisplayOption.Notification)
+                .unsubscribeWhenNotificationsAreDisabled(true)
+                .init();
+
+        OneSignal.setSubscription(true);
+
+        OneSignal.sendTag("User_ID", currentUserID);
         
     }
 

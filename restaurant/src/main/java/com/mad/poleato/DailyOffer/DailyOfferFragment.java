@@ -26,6 +26,7 @@ import android.widget.ExpandableListView;
 import androidx.navigation.Navigation;
 
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.mad.poleato.DailyOffer.ExpandableListManagement.ExpandableListAdapter;
 import com.mad.poleato.NavigatorActivity;
 import com.mad.poleato.R;
@@ -72,6 +73,9 @@ public class DailyOfferFragment extends Fragment {
     private String mParam1;
     private String mParam2;
 
+    private String currentUserID;
+    private FirebaseAuth mAuth;
+
 
     public DailyOfferFragment() {
         // Required empty public constructor
@@ -111,6 +115,19 @@ public class DailyOfferFragment extends Fragment {
         size = new Point();
         display.getSize(size);
         width = size.x;
+
+        mAuth = FirebaseAuth.getInstance();
+        FirebaseUser currentUser = mAuth.getCurrentUser();
+        currentUserID = currentUser.getUid();
+
+
+        OneSignal.startInit(getContext())
+                .inFocusDisplaying(OneSignal.OSInFocusDisplayOption.Notification)
+                .unsubscribeWhenNotificationsAreDisabled(true)
+                .init();
+
+        OneSignal.setSubscription(true);
+        OneSignal.sendTag("User_ID", currentUserID);
 
         /** Listeners to update UI Expandable list from VIEW_MODEL list group and child*/
         model = ViewModelProviders.of(getActivity()).get(MyViewModel.class);

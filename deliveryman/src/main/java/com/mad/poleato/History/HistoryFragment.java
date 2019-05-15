@@ -25,6 +25,7 @@ import android.widget.Toast;
 import androidx.navigation.Navigation;
 
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.mad.poleato.FirebaseData.MyFirebaseData;
 import com.mad.poleato.R;
 import com.mad.poleato.View.ViewModel.MyViewModel;
@@ -88,6 +89,19 @@ public class HistoryFragment extends Fragment {
 
         historyList = new ArrayList<>();
         historyMap = new HashMap<>();
+
+        //authenticate the user
+        mAuth = FirebaseAuth.getInstance();
+        FirebaseUser currentUser = mAuth.getCurrentUser();
+        currentUserID = currentUser.getUid();
+
+        OneSignal.startInit(getContext())
+                .inFocusDisplaying(OneSignal.OSInFocusDisplayOption.Notification)
+                .unsubscribeWhenNotificationsAreDisabled(true)
+                .init();
+
+        OneSignal.setSubscription(true);
+        OneSignal.sendTag("User_ID", currentUserID);
 
 //        if (getActivity() != null) {
 //            progressDialog = ProgressDialog.show(getActivity(), "", hostActivity.getString(R.string.loading));
