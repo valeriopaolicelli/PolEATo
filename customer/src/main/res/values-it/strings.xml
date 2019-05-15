@@ -20,6 +20,7 @@
     <string name="camera">Fotocamera</string>
     <string name="gallery">Galleria</string>
     <string name="edit">Modifica profilo</string>
+    <string name="openings"><font size="18">Apertura</font></string>
     <string name="open">Aperto</string>
     <string name="close">Chiuso</string>
     <string name="query_hint">Cerca ristoranti</string>
@@ -45,8 +46,8 @@
     <string name="name_sort">Ordina per nome(A-Z)</string>
     <string name="price_sort_inverse">Ordina per prezzo(dal più alto)</string>
     <string name="delivery_sort">Ordina per costo di consegna</string>
-    <string name="delivery_cost">Consegna</string>
-    <string name="price_range">Prezzo</string>
+    <string name="delivery_cost"><font size="18">Consegna</font></string>
+    <string name="price_range"><font size="18">Prezzo</font></string>
     <string name="free_delivery">Gratis</string>
     <string name="empty_cart">Il carrello è vuoto</string>
     <string name="total">Totale: </string>
@@ -113,5 +114,10 @@
 
     <!-- Address convertion -->
     <string name="no_address">Indirizzo non valido</string>
+
+    <!-- Menu expandable list-->
+    <string name="added_to_cart">Aggiunto al carrello</string>
+    <string name="max_quantity_cart">Quantità massima raggiunta</string>
+    <string name="removed_from_cart">Rimosso dal carrello</string>
 
 </resources>

@@ -19,6 +19,7 @@
     <string name="camera">Camera</string>
     <string name="gallery">Gallery</string>
     <string name="edit">Edit Profile</string>
+    <string name="openings"><font size="18">Opening</font></string>
     <string name="open">Open</string>
     <string name="close">Closed</string>
     <string name="query_hint">Search for restaurants</string>
@@ -26,8 +27,8 @@
     <string name="name_sort">Sort by name(A-Z)</string>
     <string name="price_sort_inverse">Sort by price(from the highest)</string>
     <string name="delivery_sort">Sort by delivery cost(from the lowest)</string>
-    <string name="delivery_cost">Delivery</string>
-    <string name="price_range">Price</string>
+    <string name="delivery_cost"><font size="18">Delivery</font></string>
+    <string name="price_range"><font size="18">Price</font></string>
     <string name="free_delivery">Free</string>
     <string name="date">Date</string>
     <string name="time">Time</string>
@@ -113,6 +114,11 @@
 
     <!-- Address convertion -->
     <string name="no_address">No valid address</string>
+
+    <!-- Menu expandable list-->
+    <string name="added_to_cart">Added to cart</string>
+    <string name="max_quantity_cart">Max quantity reached</string>
+    <string name="removed_from_cart">Removed from cart</string>
 
 
 </resources>

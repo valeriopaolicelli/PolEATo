@@ -183,7 +183,7 @@
             android:layout_marginStart="16dp"
             android:layout_marginTop="8dp"
             android:layout_marginEnd="16dp"
-            android:text="@string/open"
+            android:text="@string/openings"
             android:textColor="@color/colorTextField"
             app:layout_constraintBottom_toTopOf="@id/tvOpenField"
             app:layout_constraintEnd_toEndOf="parent"
@@ -196,7 +196,6 @@
             android:layout_height="wrap_content"
             android:layout_marginEnd="16dp"
             android:maxLength="90"
-            android:maxLines="7"
             android:textColor="@color/colorTextSubField"
             app:layout_constraintBottom_toTopOf="@id/addressLabel"
             app:layout_constraintEnd_toEndOf="parent"
@@ -281,6 +280,7 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginEnd="16dp"
+            android:autoLink="email"
             android:maxLength="254"
             android:singleLine="true"
             android:textColor="@color/colorTextSubField"
@@ -326,6 +326,7 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginEnd="16dp"
+            android:autoLink="phone"
             android:maxLength="15"
             android:singleLine="true"
             android:textColor="@color/colorTextSubField"
@@ -375,55 +376,10 @@
             android:singleLine="true"
             android:textColor="@color/colorTextSubField"
             android:textIsSelectable="true"
-            app:layout_constraintBottom_toTopOf="@id/statusLabel"
+            app:layout_constraintBottom_toTopOf="@id/priceRangeLabel"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="@id/deliveryCostLabel"
             app:layout_constraintTop_toBottomOf="@id/deliveryCostLabel" />
-
-
-        <!-- Status -->
-
-        <ImageView
-            android:id="@+id/status_icon"
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:layout_marginTop="8dp"
-            android:layout_marginStart="16dp"
-            android:contentDescription="@string/phone"
-            android:padding="4dp"
-            android:src="@drawable/ic_baseline_notification_important_24px"
-            app:layout_constraintBottom_toTopOf="@id/tvStatusField"
-            app:layout_constraintEnd_toStartOf="@id/statusLabel"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/tvDeliveryCostField" />
-
-        <TextView
-            android:id="@+id/statusLabel"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            android:layout_marginStart="16dp"
-            android:layout_marginEnd="16dp"
-            android:text="@string/current_status"
-            android:textColor="@color/colorTextField"
-            app:layout_constraintBottom_toTopOf="@id/tvStatusField"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toEndOf="@id/status_icon"
-            app:layout_constraintTop_toBottomOf="@id/tvDeliveryCostField" />
-
-        <TextView
-            android:id="@+id/tvStatusField"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginEnd="16dp"
-            android:maxLength="15"
-            android:singleLine="true"
-            android:textColor="@color/colorTextSubField"
-            android:textIsSelectable="true"
-            app:layout_constraintBottom_toTopOf="@id/priceRangeLabel"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="@id/statusLabel"
-            app:layout_constraintTop_toBottomOf="@id/statusLabel" />
 
         <!-- Price range -->
 
@@ -439,7 +395,7 @@
             app:layout_constraintBottom_toTopOf="@id/tvPriceRangeField"
             app:layout_constraintEnd_toStartOf="@id/priceRangeLabel"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/tvStatusField" />
+            app:layout_constraintTop_toBottomOf="@id/tvDeliveryCostField" />
 
         <TextView
             android:id="@+id/priceRangeLabel"
@@ -453,7 +409,7 @@
             app:layout_constraintBottom_toTopOf="@id/tvPriceRangeField"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toEndOf="@id/priceRange_icon"
-            app:layout_constraintTop_toBottomOf="@id/tvStatusField" />
+            app:layout_constraintTop_toBottomOf="@id/tvDeliveryCostField" />
 
         <TextView
             android:id="@+id/tvPriceRangeField"

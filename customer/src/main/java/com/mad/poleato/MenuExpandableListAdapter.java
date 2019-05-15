@@ -19,6 +19,8 @@ import java.util.List;
 
 public class MenuExpandableListAdapter extends BaseExpandableListAdapter {
 
+    private Toast myToast;
+
     private final Activity host;
     private final LayoutInflater inf;
     private List<String> _listDataGroup; // header titles
@@ -27,6 +29,8 @@ public class MenuExpandableListAdapter extends BaseExpandableListAdapter {
 
     public MenuExpandableListAdapter(Activity host, List<String> listDataHeader,
                                      HashMap<String, List<Food>> listChildData, Order order) {
+
+        myToast = Toast.makeText(host, "", Toast.LENGTH_SHORT);
 
         this.host = host;
         inf = LayoutInflater.from(host);
@@ -126,11 +130,14 @@ public class MenuExpandableListAdapter extends BaseExpandableListAdapter {
                     order.updateTotalPrice();
                     //((OrderActivity)host).setOrder(order); //works but it's bad programming => better use interfaces
                     Log.d("fabio", "new total price: "+ order.getTotalPrice());
-                    Toast.makeText(host,"Added to cart",Toast.LENGTH_LONG ).show();
+                    myToast.setText(host.getString(R.string.added_to_cart));
+                    myToast.show();
                     notifyDataSetChanged();
                 }
-                else
-                    Toast.makeText(host,"Max quantity reached",Toast.LENGTH_SHORT ).show();
+                else{
+                    myToast.setText(host.getString(R.string.max_quantity_cart));
+                    myToast.show();
+                }
             }
         });
 
@@ -148,8 +155,9 @@ public class MenuExpandableListAdapter extends BaseExpandableListAdapter {
 
                     order.updateTotalPrice();
                     Log.d("fabio", "new total price: "+ order.getTotalPrice());
-                    // ((OrderActivity)host).setOrder(order);
-                    Toast.makeText(host,"Removed from cart",Toast.LENGTH_SHORT).show();
+
+                    myToast.setText(host.getString(R.string.removed_from_cart));
+                    myToast.show();
                     notifyDataSetChanged();
                 }
             }
