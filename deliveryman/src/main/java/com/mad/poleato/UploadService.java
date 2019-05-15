@@ -25,6 +25,8 @@ public class UploadService extends IntentService {
     // IntentService can perform, e.g. ACTION_FETCH_NEW_ITEMS
     private static final String ACTION_FOO = "com.mad.poleato.action.FOO";
 
+    private Double previous_latitude;
+    private Double previous_longitude;
     // TODO: Rename parameters
     private static final String EXTRA_PARAM1 = "com.mad.poleato.extra.PARAM1";
     private static final String EXTRA_PARAM2 = "com.mad.poleato.extra.PARAM2";
@@ -75,12 +77,14 @@ public class UploadService extends IntentService {
             DatabaseReference dbReference = FirebaseDatabase.getInstance()
                     .getReference("Map");
 
-            Double latitude = Double.parseDouble(param1);
-            Double longitude = Double.parseDouble(param2);
+            final Double latitude = Double.parseDouble(param1);
+            final Double longitude = Double.parseDouble(param2);
             GeoFire geoFire = new GeoFire(dbReference);
             geoFire.setLocation(user, new GeoLocation(latitude, longitude), new GeoFire.CompletionListener() {
                 @Override
                 public void onComplete(String key, DatabaseError error) {
+                    Log.d("fabio", "Upload completed with Lat & Long: " + latitude + " " + longitude);
+
                 }
             });
             Log.d("fabio", "Upload completed with Lat & Long: " + latitude + " " + longitude);
