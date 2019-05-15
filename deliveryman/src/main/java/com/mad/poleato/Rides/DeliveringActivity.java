@@ -449,7 +449,7 @@ public class DeliveringActivity extends FragmentActivity implements OnMapReadyCa
         // form: http://maps.googleapis.com/maps/api/directions/outputFormat?parameters
         String url = "https://maps.googleapis.com/maps/api/directions/json?origin="+origin.latitude+","+origin.longitude+
                 "&destination="+ destination.latitude+","+ destination.longitude+
-                "&avoid=highways&mode=walking"+
+                "&avoid=highways&mode=driving"+
                 "&key="+getString(R.string.google_maps_key);
 
         FetchUrl FetchUrl = new FetchUrl();
