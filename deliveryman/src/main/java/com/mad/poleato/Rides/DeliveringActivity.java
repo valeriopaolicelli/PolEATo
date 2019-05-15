@@ -3,9 +3,11 @@ package com.mad.poleato.Rides;
 import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.AlertDialog;
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
@@ -47,6 +49,7 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.mad.poleato.LocationReceiver;
 import com.mad.poleato.R;
 
 import org.json.JSONArray;
@@ -111,7 +114,27 @@ public class DeliveringActivity extends FragmentActivity implements OnMapReadyCa
     //key of the order rider side
     private String reservationKey;
 
+    BroadcastReceiver locationReceiver =  new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
 
+            Bundle b = intent.getExtras();
+
+            Double latitude = b.getDouble("latitude");
+
+            Double longitude = b.getDouble("longitude");
+
+            Log.d("matte", "Received coordinates from service: " + latitude + " " + longitude);
+
+            if(mMap!=null) {
+                mMap.clear();
+                if (delivering)
+                    showDirections(new LatLng(latitude, longitude), customerPosition, getString(R.string.customer_string));
+                else
+                    showDirections(new LatLng(latitude, longitude), restaurantPosition, getString(R.string.restaurant_string));
+            }
+        }
+    };
 
 
     @Override
@@ -130,7 +153,8 @@ public class DeliveringActivity extends FragmentActivity implements OnMapReadyCa
         geocoder = new Geocoder(this);
 
         // Acquire a reference to the system Location Manager
-        locationManager = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
+        //locationManager = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
+        registerReceiver(locationReceiver,new IntentFilter("Coordinates"));
 
 
         tv_Fields = new HashMap<>();
@@ -141,6 +165,7 @@ public class DeliveringActivity extends FragmentActivity implements OnMapReadyCa
         fillFields();
 
         createMap();
+
     }
 
 
@@ -268,14 +293,14 @@ public class DeliveringActivity extends FragmentActivity implements OnMapReadyCa
                             if(!delivering)
                             {
                                 delivering = true;
-                                @SuppressLint("MissingPermission") Location lastKnownLocation = locationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
+                               // @SuppressLint("MissingPermission") Location lastKnownLocation = locationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
                                 button_map.setText(getString(R.string.maps_button_order_delivered));
                                 mMap.clear();
-                                if(lastKnownLocation != null)
-                                {
-                                    LatLng lastPosition = new LatLng(lastKnownLocation.getLatitude(), lastKnownLocation.getLongitude());
-                                    showDirections(lastPosition, customerPosition, getString(R.string.customer_string));
-                                }
+//                                if(lastKnownLocation != null)
+//                                {
+//                                    LatLng lastPosition = new LatLng(lastKnownLocation.getLatitude(), lastKnownLocation.getLongitude());
+//                                    showDirections(lastPosition, customerPosition, getString(R.string.customer_string));
+//                                }
                                 //update the delivery status on FireBase
                                 DatabaseReference reference = FirebaseDatabase.getInstance().getReference("deliveryman/"+currentUserID+"/reservations/"
                                         +reservationKey);
@@ -285,6 +310,7 @@ public class DeliveringActivity extends FragmentActivity implements OnMapReadyCa
                             else{
                                 myToast.setText(R.string.message_order_completed);
                                 myToast.show();
+                                unregisterReceiver(locationReceiver);
 
                                 //here returns and close this ride
                                 Intent returnIntent = new Intent();
@@ -334,22 +360,23 @@ public class DeliveringActivity extends FragmentActivity implements OnMapReadyCa
 
         /*the first time the location updates would take times, so we retrieve once the last known location
         we use the NETWORK_PROVIDER for location retrieving because it consume much less battery*/
-        Location lastKnownLocation = locationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
-        if(lastKnownLocation != null){
-            //here convert the location to LatLng and then shows direction based on the ride status
-            Log.d("matte", "Last location found at "+lastKnownLocation.toString());
-            LatLng lastKnownLatLng = new LatLng(lastKnownLocation.getLatitude(), lastKnownLocation.getLongitude());
-            if(delivering)
-                showDirections(lastKnownLatLng, customerPosition, getString(R.string.customer_string));
-            else
-                showDirections(lastKnownLatLng, restaurantPosition, getString(R.string.restaurant_string));
-        }
-        else
-            Log.d("matte", "Last location not found");
+//        Location lastKnownLocation = locationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
+//        if(lastKnownLocation != null){
+//            //here convert the location to LatLng and then shows direction based on the ride status
+//            Log.d("matte", "Last location found at "+lastKnownLocation.toString());
+//            LatLng lastKnownLatLng = new LatLng(lastKnownLocation.getLatitude(), lastKnownLocation.getLongitude());
+//            if(delivering)
+//                showDirections(lastKnownLatLng, customerPosition, getString(R.string.customer_string));
+//            else
+//                showDirections(lastKnownLatLng, restaurantPosition, getString(R.string.restaurant_string));
+//        }
+//        else
+//            Log.d("matte", "Last location not found");
 
         // Register the listener with the Location Manager to receive location updates
-        locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, MIN_TIME_LOC_UPDATE,
-                MIN_DISTANCE_LOC_UPDATE, new LocListener());
+//        locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, MIN_TIME_LOC_UPDATE,
+//                MIN_DISTANCE_LOC_UPDATE, new LocListener());
+
     }
 
     @Override
@@ -377,24 +404,24 @@ public class DeliveringActivity extends FragmentActivity implements OnMapReadyCa
     }
 
 
-    // Define a listener that responds to location updates
-    class LocListener implements LocationListener {
-        public void onLocationChanged(Location location) {
-            // Called when a new location is found by the network location provider.
-            Log.d("matte", "Location changed: "+location.getLatitude()+", "+location.getLongitude());
-            mMap.clear();
-            if(delivering)
-                showDirections(new LatLng(location.getLatitude(), location.getLongitude()), customerPosition, getString(R.string.customer_string));
-            else
-                showDirections(new LatLng(location.getLatitude(), location.getLongitude()), restaurantPosition, getString(R.string.restaurant_string));
-        }
-
-        public void onStatusChanged(String provider, int status, Bundle extras) {}
-
-        public void onProviderEnabled(String provider) {}
-
-        public void onProviderDisabled(String provider) {}
-    };
+//    // Define a listener that responds to location updates
+//    class LocListener implements LocationListener {
+//        public void onLocationChanged(Location location) {
+//            // Called when a new location is found by the network location provider.
+//            Log.d("matte", "Location changed: "+location.getLatitude()+", "+location.getLongitude());
+//            mMap.clear();
+//            if(delivering)
+//                showDirections(new LatLng(location.getLatitude(), location.getLongitude()), customerPosition, getString(R.string.customer_string));
+//            else
+//                showDirections(new LatLng(location.getLatitude(), location.getLongitude()), restaurantPosition, getString(R.string.restaurant_string));
+//        }
+//
+//        public void onStatusChanged(String provider, int status, Bundle extras) {}
+//
+//        public void onProviderEnabled(String provider) {}
+//
+//        public void onProviderDisabled(String provider) {}
+//    };
 
 
     public double computeDistance(LatLng origin, LatLng destination) {

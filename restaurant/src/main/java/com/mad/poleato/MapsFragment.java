@@ -462,7 +462,7 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback,
          */
 
 
-        GeoQuery geoQuery = geoFire.queryAtLocation(new GeoLocation(latitudeRest, longitudeRest), 6);
+        GeoQuery geoQuery = geoFire.queryAtLocation(new GeoLocation(latitudeRest, longitudeRest), 2);
 
         geoQuery.addGeoQueryEventListener(new GeoQueryEventListener() {
               @Override
@@ -900,8 +900,6 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback,
                           @Override
                           public Transaction.Result doTransaction(@NonNull MutableData mutableData) {
                               mutableData.child("Busy").setValue(true);
-                              FirebaseDatabase.getInstance().getReference("restaurants").child(loggedID).child("reservations").child(reservation.getOrder_id()).child("status").child("en").setValue("Delivering");
-                              FirebaseDatabase.getInstance().getReference("restaurants").child(loggedID).child("reservations").child(reservation.getOrder_id()).child("status").child("it").setValue("In consegna");
                               reservation.setStat(getContext().getString(R.string.delivery));
                               reservation.setStatus(Status.DELIVERY);
                               notifyRider(riderID);
@@ -922,10 +920,10 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback,
 //                    reservation.setStat(getContext().getString(R.string.delivery));
 //                    reservation.setStatus(Status.DELIVERY);
 //                    notifyRider(riderID);
-                    /**
-                     * GO FROM MAPSFRAGMENT to RESERVATION
-                     */
-                    Navigation.findNavController(fragView).navigate(R.id.action_mapsFragment_id_to_reservation_id);
+//                    /**
+//                     * GO FROM MAPSFRAGMENT to RESERVATION
+//                     */
+//                    Navigation.findNavController(fragView).navigate(R.id.action_mapsFragment_id_to_reservation_id);
                 }
             });
             builder.setNegativeButton(this.getString(R.string.choice_cancel), new DialogInterface.OnClickListener() {
@@ -951,10 +949,16 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback,
         referenceRestaurant.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshotRestaurant) {
-                if(dataSnapshotRestaurant.child("reservations/" + reservation.getOrder_id()
-                                +"/status/it").getValue().toString().equals("In consegna") &&
+                if(getContext() != null &&
+                        dataSnapshotRestaurant.hasChild("reservations") &&
+                        dataSnapshotRestaurant.child("reservations").hasChild(reservation.getOrder_id()) &&
+                        dataSnapshotRestaurant.child("reservations/"+reservation.getOrder_id()).hasChild("status") &&
+                        dataSnapshotRestaurant.child("reservations/"+reservation.getOrder_id()+"/status").hasChild("it") &&
+                        dataSnapshotRestaurant.child("reservations/"+reservation.getOrder_id()+"/status").hasChild("en") &&
                         dataSnapshotRestaurant.child("reservations/" + reservation.getOrder_id()
-                                +"/status/en").getValue().toString().equals("Delivering")) {
+                                +"/status/it").getValue().toString().equals("Preparazione") &&
+                        dataSnapshotRestaurant.child("reservations/" + reservation.getOrder_id()
+                                +"/status/en").getValue().toString().equals("Cooking")) {
                     DatabaseReference referenceRider= FirebaseDatabase.getInstance().getReference("deliveryman").child(riderID);
                     DatabaseReference reservationRider = referenceRider.child("reservations").push();
 
@@ -980,6 +984,8 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback,
                         reservationRider.child("phoneCustomer").setValue(reservation.getPhone());
                         reservationRider.child("phoneRestaurant").setValue(phoneRestaurant);
                         reservationRider.child("time").setValue(reservation.getTime());
+                        FirebaseDatabase.getInstance().getReference("restaurants").child(loggedID).child("reservations").child(reservation.getOrder_id()).child("status").child("en").setValue("Delivering");
+                        FirebaseDatabase.getInstance().getReference("restaurants").child(loggedID).child("reservations").child(reservation.getOrder_id()).child("status").child("it").setValue("In consegna");
                         sendNotification(riderID);
                     }
                 }
