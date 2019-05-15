@@ -1,4 +1,4 @@
-package com.mad.poleato;
+package com.mad.poleato.Reservation.RiderSelection;
 
 import android.Manifest;
 import android.app.AlertDialog;
@@ -23,7 +23,6 @@ import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
 import android.support.v4.content.ContextCompat;
 import android.util.Log;
@@ -59,8 +58,11 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.MutableData;
 import com.google.firebase.database.Transaction;
 import com.google.firebase.database.ValueEventListener;
+import com.mad.poleato.R;
 import com.mad.poleato.Reservation.Reservation;
+import com.mad.poleato.Reservation.RiderSelection.RiderListAdapter;
 import com.mad.poleato.Reservation.Status;
+import com.mad.poleato.Rider;
 
 import java.io.OutputStream;
 import java.net.HttpURLConnection;

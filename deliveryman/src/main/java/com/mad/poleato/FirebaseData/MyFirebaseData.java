@@ -2,6 +2,8 @@ package com.mad.poleato.FirebaseData;
 
 import android.app.Activity;
 import android.app.ProgressDialog;
+import android.arch.lifecycle.LiveData;
+import android.arch.lifecycle.MutableLiveData;
 import android.arch.lifecycle.ViewModelProviders;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -19,32 +21,43 @@ import com.google.firebase.database.ValueEventListener;
 import com.mad.poleato.History.HistoryItem;
 import com.mad.poleato.View.ViewModel.MyViewModel;
 
+import java.util.HashMap;
 import java.util.logging.Handler;
 
 public class MyFirebaseData {
 
-    private MyViewModel model;
-    private Activity activity;
+    private MutableLiveData<HashMap<String, HistoryItem>> mapDataHistory;
+    private MutableLiveData<Boolean> showProgressBar;
     private Handler handler;
-    private ProgressDialog progressDialog;
+    private boolean progressDialog;
 
     private String currentUserID;
     private FirebaseAuth mAuth;
 
-    public MyFirebaseData(Activity activity, ProgressDialog progressDialog) {
-        this.activity = activity;
-        this.progressDialog = progressDialog;
+    public MyFirebaseData() {
 
+        mapDataHistory = new MutableLiveData<>();
+        mapDataHistory.setValue(new HashMap<String, HistoryItem>());
+        showProgressBar = new MutableLiveData<>();
         mAuth = FirebaseAuth.getInstance();
         FirebaseUser currentUser = mAuth.getCurrentUser();
         currentUserID = currentUser.getUid();
+
+    }
+
+    public MutableLiveData<HashMap<String, HistoryItem>> getMapDataHistory() {
+        return mapDataHistory;
+    }
+
+    public MutableLiveData<Boolean> getShowProgressBar() {
+        return showProgressBar;
     }
 
     public void fillFieldsHistory() {
 
-        model = ViewModelProviders.of((FragmentActivity) activity).get(MyViewModel.class);
-
-        model.initChild();
+//        model = ViewModelProviders.of((FragmentActivity) activity).get(MyViewModel.class);
+//
+//        model.initChild();
 
         DatabaseReference dbReference = FirebaseDatabase.getInstance().getReference("deliveryman")
                 .child(currentUserID+"/history");
@@ -52,14 +65,14 @@ public class MyFirebaseData {
         dbReference.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                if(progressDialog.isShowing())
-                    progressDialog.dismiss();
+//                if(progressDialog.isShowing())
+//                    progressDialog.dismiss();
             }
 
             @Override
             public void onCancelled(@NonNull DatabaseError databaseError) {
-                if(progressDialog.isShowing())
-                    progressDialog.dismiss();
+//                if(progressDialog.isShowing())
+//                    progressDialog.dismiss();
             }
         });
 
@@ -90,7 +103,8 @@ public class MyFirebaseData {
                     HistoryItem historyObj = new HistoryItem(orderID, restaurantAddress,
                             nameRestaurant, priceStr, numDishes, expectedTime, deliveredTime);
 
-                    model.insertChild(historyObj.getOrderID(), historyObj);
+                    mapDataHistory.getValue().put(historyObj.getOrderID(), historyObj);
+                    mapDataHistory.setValue(mapDataHistory.getValue());
                 }
             }
 

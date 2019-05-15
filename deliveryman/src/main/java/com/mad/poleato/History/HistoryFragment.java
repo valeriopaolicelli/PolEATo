@@ -65,7 +65,6 @@ public class HistoryFragment extends Fragment {
     private List<HistoryItem> historyList;
     private List<HistoryItem> currDisplayedList; //list of filtered elements displayed on the screen
     private MyViewModel model;
-    private MyFirebaseData myFirebaseData;
 
     private ProgressDialog progressDialog;
 
@@ -90,21 +89,12 @@ public class HistoryFragment extends Fragment {
         historyList = new ArrayList<>();
         historyMap = new HashMap<>();
 
-        if (getActivity() != null) {
-            progressDialog = ProgressDialog.show(getActivity(), "", hostActivity.getString(R.string.loading));
-        }
+//        if (getActivity() != null) {
+//            progressDialog = ProgressDialog.show(getActivity(), "", hostActivity.getString(R.string.loading));
+//        }
 
-        myFirebaseData = new MyFirebaseData(getActivity(), progressDialog);
 
-        /** Listeners to update UI Expandable list from VIEW_MODEL list child */
-        model = ViewModelProviders.of(getActivity()).get(MyViewModel.class);
-        model.getListH().observe(this, new Observer<HashMap<String, HistoryItem>>() {
-            @Override
-            public void onChanged(@Nullable HashMap<String, HistoryItem> stringHistoryHashMap) {
-                if(stringHistoryHashMap.values() != null)
-                    historyAdapter.setAllHistories(new ArrayList<HistoryItem>(stringHistoryHashMap.values()) );
-            }
-        });
+
     }
 
     @Override
@@ -138,7 +128,8 @@ public class HistoryFragment extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         fragView = inflater.inflate(R.layout.history_recyclerview, container, false);
-        myFirebaseData.fillFieldsHistory();
+
+        /**myFirebaseData.fillFieldsHistory();*/
 
         rv = (RecyclerView) fragView.findViewById(R.id.history_recyclerview);
         rv.setHasFixedSize(true);
@@ -161,7 +152,20 @@ public class HistoryFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        myFirebaseData.fillFieldsHistory();
+        /**myFirebaseData.fillFieldsHistory();*/
+
+        /** Listeners to update UI Expandable list from VIEW_MODEL list child */
+        model = ViewModelProviders.of(getActivity()).get(MyViewModel.class);
+        model.getListH().observe(this, new Observer<HashMap<String, HistoryItem>>() {
+            @Override
+            public void onChanged(@Nullable HashMap<String, HistoryItem> stringHistoryHashMap) {
+                if(stringHistoryHashMap.values() != null)
+                    historyAdapter.setAllHistories( new ArrayList<HistoryItem>(stringHistoryHashMap.values()));
+//                    if(progressDialog.isShowing()){
+//                        progressDialog.dismiss();
+//                    }
+            }
+        });
     }
 
     private void collectFields(){
