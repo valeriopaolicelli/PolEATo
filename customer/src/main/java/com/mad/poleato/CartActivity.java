@@ -71,6 +71,8 @@ public class CartActivity extends AppCompatActivity implements Interface,TimePic
                 .unsubscribeWhenNotificationsAreDisabled(true)
                 .init();
 
+        OneSignal.setSubscription(true);
+
         OneSignal.sendTag("User_ID", currentUserID);
 
         order = (Order) getIntent().getSerializableExtra("order");

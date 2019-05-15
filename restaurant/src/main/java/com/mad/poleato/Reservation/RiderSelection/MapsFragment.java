@@ -63,6 +63,7 @@ import com.mad.poleato.Reservation.Reservation;
 import com.mad.poleato.Reservation.RiderSelection.RiderListAdapter;
 import com.mad.poleato.Reservation.Status;
 import com.mad.poleato.Rider;
+import com.onesignal.OneSignal;
 
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
@@ -146,6 +147,15 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback,
         mAuth = FirebaseAuth.getInstance();
         FirebaseUser currentUser = mAuth.getCurrentUser();
         currentUserID = currentUser.getUid();
+
+
+        OneSignal.startInit(getContext())
+                .inFocusDisplaying(OneSignal.OSInFocusDisplayOption.Notification)
+                .unsubscribeWhenNotificationsAreDisabled(true)
+                .init();
+
+        OneSignal.setSubscription(true);
+        OneSignal.sendTag("User_ID", currentUserID);
 
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
         mapFragment = (SupportMapFragment) getChildFragmentManager()
