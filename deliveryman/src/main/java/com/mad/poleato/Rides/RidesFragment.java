@@ -7,13 +7,11 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
-import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.StrictMode;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.constraint.ConstraintLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
@@ -28,6 +26,8 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.ImageButton;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -51,7 +51,6 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Map;
 import java.util.Scanner;
 
@@ -77,9 +76,9 @@ public class RidesFragment extends Fragment {
     private ImageButton show_more_button;
 
     //to set the visibility to gone when there are no ride available
-    private CardView cardview;
-    private FrameLayout frameLayout;
-    private TextView emptyView;
+    private ImageView emptyView;
+    private CardView rideCardView;
+    private FrameLayout rideFrameLayout;
 
     //the key for that order at rider side
     private String reservationKey;
@@ -183,9 +182,9 @@ public class RidesFragment extends Fragment {
         tv_Fields.put("price", (TextView) fragView.findViewById(R.id.cost_tv));
         tv_Fields.put("status", (TextView) fragView.findViewById(R.id.status_tv));
 
-        cardview = (CardView) fragView.findViewById(R.id.rideCardView);
-        frameLayout = (FrameLayout) fragView.findViewById(R.id.rideFrameLayout);
-        emptyView = (TextView) fragView.findViewById(R.id.ride_empty_view);
+        rideCardView = (CardView) fragView.findViewById(R.id.rideCardView);
+        rideFrameLayout = (FrameLayout) fragView.findViewById(R.id.rideFrameLayout);
+        emptyView = (ImageView) fragView.findViewById(R.id.ride_empty_view);
 
         map_button = (FloatingActionButton) fragView.findViewById(R.id.map_button);
         map_button.setOnClickListener(new View.OnClickListener() {
@@ -205,11 +204,23 @@ public class RidesFragment extends Fragment {
         show_more_button = (ImageButton) fragView.findViewById(R.id.showMoreButton);
         show_more_button.setOnClickListener(new OnClickShowMore());
 
-        //initialize visibility TODO: make it in the layout
-        emptyView.setVisibility(View.VISIBLE);
-        cardview.setVisibility(View.GONE);
-        frameLayout.setVisibility(View.GONE);
+        //initialize visibility
+        show_empty_view();
 
+    }
+
+    private void show_empty_view(){
+
+        rideCardView.setVisibility(View.GONE);
+        rideFrameLayout.setVisibility(View.GONE);
+        emptyView.setVisibility(View.VISIBLE);
+    }
+
+    private void show_view(){
+
+        emptyView.setVisibility(View.GONE);
+        rideCardView.setVisibility(View.VISIBLE);
+        rideFrameLayout.setVisibility(View.VISIBLE);
     }
 
     private class OnClickShowMore implements View.OnClickListener{
@@ -265,6 +276,7 @@ public class RidesFragment extends Fragment {
             @Override
             public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
                 if (dataSnapshot.exists() &&
+                        getContext() != null &&
                         !isRunning &&
                         dataSnapshot.hasChild("addressCustomer") &&
                         dataSnapshot.hasChild("addressRestaurant") &&
@@ -340,16 +352,15 @@ public class RidesFragment extends Fragment {
                     //lock the rider
                     isRunning = true;
 
-                    //set the visibility
-                    emptyView.setVisibility(View.GONE);
-                    cardview.setVisibility(View.VISIBLE);
-                    frameLayout.setVisibility(View.VISIBLE);
+                    //hide the empty view
+                    show_view();
                 }
             }
 
             @Override
             public void onChildChanged(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
                 if (dataSnapshot.exists() &&
+                        getContext() != null &&
                         dataSnapshot.hasChild("addressCustomer") &&
                         dataSnapshot.hasChild("addressRestaurant") &&
                         dataSnapshot.hasChild("CustomerID") &&
@@ -407,9 +418,7 @@ public class RidesFragment extends Fragment {
                         isRunning = true;
 
                         //set the visibility
-                        emptyView.setVisibility(View.GONE);
-                        cardview.setVisibility(View.VISIBLE);
-                        frameLayout.setVisibility(View.VISIBLE);
+                        show_view();
                     }
 
                     //delivering field instead can be changed only if the rider is busy
@@ -440,9 +449,7 @@ public class RidesFragment extends Fragment {
                 //the order can be removed after its completion
                 ride = null;
                 isRunning = false;
-                emptyView.setVisibility(View.VISIBLE);
-                cardview.setVisibility(View.GONE);
-                frameLayout.setVisibility(View.GONE);
+                show_empty_view();
             }
 
             @Override

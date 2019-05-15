@@ -33,6 +33,7 @@ import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 
+import java.text.DecimalFormat;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
@@ -94,7 +95,6 @@ public class InfoFragment extends Fragment {
         tvFields.put("Email", (TextView)view.findViewById(R.id.tvEmailField));
         tvFields.put("Phone", (TextView)view.findViewById(R.id.tvPhoneField));
         tvFields.put("DeliveryCost", (TextView)view.findViewById(R.id.tvDeliveryCostField));
-        tvFields.put("IsActive", (TextView)view.findViewById(R.id.tvStatusField));
         tvFields.put("PriceRange", (TextView)view.findViewById(R.id.tvPriceRangeField));
 
         profileImage = view.findViewById(R.id.ivBackground);
@@ -127,24 +127,26 @@ public class InfoFragment extends Fragment {
                     // dataSnapshot is the "issue" node with all children
 
                     if(dataSnapshot.hasChild("DeliveryCost") &&
+                            dataSnapshot.hasChild("Address") &&
+                            dataSnapshot.hasChild("Close") &&
+                            dataSnapshot.hasChild("Email") &&
+                            dataSnapshot.hasChild("Info") &&
+                            dataSnapshot.hasChild("Name") &&
+                            dataSnapshot.hasChild("Open") &&
+                            dataSnapshot.hasChild("Phone") &&
                             dataSnapshot.hasChild("IsActive") &&
-                            //dataSnapshot.hasChild("PriceRange") &&
+                            dataSnapshot.hasChild("PriceRange") &&
                             dataSnapshot.hasChild("Type") &&
                             dataSnapshot.child("Type").hasChild("it") &&
                             dataSnapshot.child("Type").hasChild("en"))
                     {
+
+                        String open = "", close = "";
                         for(DataSnapshot snap : dataSnapshot.getChildren()){
-                            if(tvFields.containsKey(snap.getKey())){
                                 if(snap.getKey().equals("DeliveryCost")){
-                                    //DecimalFormat decimalFormat = new DecimalFormat("#0.00"); //two decimal
-                                    //String priceStr = decimalFormat.format(Double.parseDouble(snap.getValue().toString()));
-                                    tvFields.get(snap.getKey()).setText(snap.getValue().toString()+"€");
-                                }
-                                else if(snap.getKey().equals("IsActive") && getActivity() != null){
-                                    if((Boolean)snap.getValue())
-                                        tvFields.get(snap.getKey()).setText(getString(R.string.active_status));
-                                    else
-                                        tvFields.get(snap.getKey()).setText(getString(R.string.inactive_status));
+                                    DecimalFormat decimalFormat = new DecimalFormat("#0.00"); //two decimal
+                                    String priceStr = decimalFormat.format(Double.parseDouble(snap.getValue().toString()));
+                                    tvFields.get(snap.getKey()).setText(priceStr+"€");
                                 }
                                 else if(snap.getKey().equals("PriceRange")){
                                     //translate price range value into a $ string
@@ -156,10 +158,20 @@ public class InfoFragment extends Fragment {
                                 }
                                 else if(snap.getKey().equals("Type"))
                                     tvFields.get(snap.getKey()).setText(snap.child(localeShort).getValue().toString());
-                                else
+                                else if(snap.getKey().equals("Open"))
+                                    open = snap.getValue().toString();
+                                else if(snap.getKey().equals("Close"))
+                                    close = snap.getValue().toString();
+                                else if(snap.getKey().equals("Address") ||
+                                        snap.getKey().equals("Email") ||
+                                        snap.getKey().equals("Info") ||
+                                        snap.getKey().equals("Name") ||
+                                        snap.getKey().equals("Phone"))
                                     tvFields.get(snap.getKey()).setText(snap.getValue().toString());
-                            }
+
                         } //for end
+                        String openings = open + "-" + close;
+                        tvFields.get("Open").setText(openings);
 
                     } //end if
                 }

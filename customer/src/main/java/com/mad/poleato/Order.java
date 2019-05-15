@@ -170,7 +170,7 @@ public class Order implements Serializable {
                         notes= f.getCustomerNotes();
                         selectedDishes.add(new Dish(name, quantity, notes));
                     }
-                    DecimalFormat df = new DecimalFormat("#.00");
+                    DecimalFormat df = new DecimalFormat("#0.00");
                     String price = df.format(totalPrice);
 
                     Reservation reservation= new Reservation(orderID, restaurantName[0], "", time, price);

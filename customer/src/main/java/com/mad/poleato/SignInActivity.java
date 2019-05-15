@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.constraint.ConstraintLayout;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.text.Editable;
@@ -13,6 +14,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import com.facebook.login.widget.LoginButton;
@@ -48,6 +50,10 @@ public class SignInActivity extends AppCompatActivity {
     private Button signInButton, signUpButton;
     private SignInButton googleButton;
     private LoginButton facebookButton;
+
+    //this is the layout that must be hide as default: it contains the mail and password fields
+    private ConstraintLayout login_constraint;
+    private ProgressBar progress_bar;
 
 
     @Override
@@ -88,6 +94,21 @@ public class SignInActivity extends AppCompatActivity {
         signInButton.setOnClickListener(signInRoutine);
         signUpButton.setOnClickListener(signInRoutine);
 
+        login_constraint = (ConstraintLayout) findViewById(R.id.login_constraint);
+        progress_bar = (ProgressBar) findViewById(R.id.progressBar);
+        //default: show the progressBar only
+        show_progress();
+
+    }
+
+    private void show_progress(){
+        login_constraint.setVisibility(View.GONE);
+        progress_bar.setVisibility(View.VISIBLE);
+    }
+
+    private void show_login_form(){
+        progress_bar.setVisibility(View.GONE);
+        login_constraint.setVisibility(View.VISIBLE);
     }
 
     @Override
@@ -97,6 +118,7 @@ public class SignInActivity extends AppCompatActivity {
         handleButton();
         buttonListener();
     }
+
 
     @Override
     public void onStart() {
@@ -111,8 +133,10 @@ public class SignInActivity extends AppCompatActivity {
                     if (dataSnapshot.exists())
                         if (dataSnapshot.getValue().toString().equals("customer"))
                             access();
-                        else
+                        else{
+                            show_login_form();
                             FirebaseAuth.getInstance().signOut();
+                        }
                 }
 
                 @Override
@@ -121,6 +145,8 @@ public class SignInActivity extends AppCompatActivity {
                 }
             });
         }
+        else
+            show_login_form();
         //check if signed in with Google
         GoogleSignInAccount account = GoogleSignIn.getLastSignedInAccount(this);
         if(account != null)

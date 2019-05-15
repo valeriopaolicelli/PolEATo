@@ -35,11 +35,11 @@
                 android:layout_marginTop="8dp"
                 android:layout_marginEnd="8dp"
                 android:layout_marginBottom="8dp"
-                android:gravity="center_horizontal|center_vertical"
+                android:gravity="start"
                 android:textColor="#444444"
                 android:textSize="20sp"
-                app:layout_constraintBottom_toTopOf="@+id/priceLabel"
-                app:layout_constraintEnd_toStartOf="@+id/deleteBtn"
+                app:layout_constraintBottom_toTopOf="@id/notesEditText"
+                app:layout_constraintEnd_toStartOf="@id/deleteBtn"
                 app:layout_constraintHorizontal_bias="0.0"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
@@ -54,10 +54,10 @@
                 android:textColor="#000000"
                 android:textSize="14sp"
                 android:textStyle="bold"
-                app:layout_constraintBottom_toBottomOf="@+id/priceLabel"
-                app:layout_constraintEnd_toStartOf="@+id/decreaseBtn"
+                app:layout_constraintBottom_toBottomOf="@id/priceLabel"
+                app:layout_constraintEnd_toStartOf="@id/quantityLabel"
                 app:layout_constraintHorizontal_bias="0.0"
-                app:layout_constraintStart_toEndOf="@+id/priceLabel"
+                app:layout_constraintStart_toEndOf="@id/priceLabel"
                 app:layout_constraintTop_toTopOf="@+id/priceLabel" />
 
             <TextView
@@ -68,9 +68,9 @@
                 android:layout_marginBottom="8dp"
                 android:text="@string/quantity"
                 android:textAlignment="center"
-                app:layout_constraintBottom_toBottomOf="@+id/increaseBtn"
-                app:layout_constraintEnd_toStartOf="@+id/quantity"
-                app:layout_constraintTop_toTopOf="@+id/decreaseBtn" />
+                app:layout_constraintBottom_toBottomOf="@id/increaseBtn"
+                app:layout_constraintEnd_toStartOf="@id/quantity"
+                app:layout_constraintTop_toTopOf="@id/decreaseBtn" />
 
             <TextView
                 android:id="@+id/quantity"
@@ -81,9 +81,9 @@
                 android:layout_marginBottom="8dp"
                 android:text="0"
                 android:textAlignment="center"
-                app:layout_constraintBottom_toBottomOf="@+id/increaseBtn"
-                app:layout_constraintEnd_toStartOf="@+id/decreaseBtn"
-                app:layout_constraintTop_toTopOf="@+id/decreaseBtn" />
+                app:layout_constraintBottom_toBottomOf="@id/increaseBtn"
+                app:layout_constraintEnd_toStartOf="@id/decreaseBtn"
+                app:layout_constraintTop_toTopOf="@id/decreaseBtn" />
 
             <ImageButton
                 android:id="@+id/increaseBtn"
@@ -131,7 +131,7 @@
                 android:layout_height="wrap_content"
                 android:text="@string/price"
                 app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintStart_toStartOf="@+id/cardName"
+                app:layout_constraintStart_toStartOf="@id/cardName"
                 app:layout_constraintTop_toTopOf="@id/decreaseBtn"/>
 
             <EditText
@@ -144,10 +144,11 @@
                 android:imeOptions="actionDone"
                 android:inputType="text"
                 android:maxLength="30"
-                app:layout_constraintBottom_toTopOf="@+id/decreaseBtn"
-                app:layout_constraintEnd_toEndOf="@+id/cardName"
+                app:layout_constraintTop_toBottomOf="@id/cardName"
+                app:layout_constraintBottom_toTopOf="@id/decreaseBtn"
+                app:layout_constraintEnd_toEndOf="@id/cardName"
                 app:layout_constraintHorizontal_bias="0.0"
-                app:layout_constraintStart_toStartOf="@+id/cardName"
+                app:layout_constraintStart_toStartOf="@id/cardName"
                 />
 
 
