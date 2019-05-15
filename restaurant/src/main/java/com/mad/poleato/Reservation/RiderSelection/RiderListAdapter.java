@@ -255,7 +255,6 @@ public class RiderListAdapter extends ArrayAdapter<Rider>
 
                     //This is a Simple Logic to Send Notification different Device Programmatically....
                     send_email= childID;
-
                     try {
                         String jsonResponse;
 
