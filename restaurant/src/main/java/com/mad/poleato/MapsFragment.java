@@ -56,6 +56,8 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.MutableData;
+import com.google.firebase.database.Transaction;
 import com.google.firebase.database.ValueEventListener;
 import com.mad.poleato.Reservation.Reservation;
 import com.mad.poleato.Reservation.Status;
@@ -892,12 +894,34 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback,
             builder.setPositiveButton(this.getString(R.string.choice_confirm), new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialogInterface, int i) {
-                    FirebaseDatabase.getInstance().getReference("deliveryman").child(riderID).child("Busy").setValue(true);
-                    FirebaseDatabase.getInstance().getReference("restaurants").child(loggedID).child("reservations").child(reservation.getOrder_id()).child("status").child("en").setValue("Delivering");
-                    FirebaseDatabase.getInstance().getReference("restaurants").child(loggedID).child("reservations").child(reservation.getOrder_id()).child("status").child("it").setValue("In consegna");
-                    reservation.setStat(getContext().getString(R.string.delivery));
-                    reservation.setStatus(Status.DELIVERY);
-                    notifyRider(riderID);
+                    DatabaseReference referenceRider = FirebaseDatabase.getInstance().getReference("deliveryman").child(riderID);
+                    referenceRider.runTransaction(new Transaction.Handler() {
+                          @NonNull
+                          @Override
+                          public Transaction.Result doTransaction(@NonNull MutableData mutableData) {
+                              mutableData.child("Busy").setValue(true);
+                              FirebaseDatabase.getInstance().getReference("restaurants").child(loggedID).child("reservations").child(reservation.getOrder_id()).child("status").child("en").setValue("Delivering");
+                              FirebaseDatabase.getInstance().getReference("restaurants").child(loggedID).child("reservations").child(reservation.getOrder_id()).child("status").child("it").setValue("In consegna");
+                              reservation.setStat(getContext().getString(R.string.delivery));
+                              reservation.setStatus(Status.DELIVERY);
+                              notifyRider(riderID);
+                              return Transaction.success(mutableData);
+                          }
+
+                          @Override
+                          public void onComplete(@Nullable DatabaseError databaseError, boolean b, @Nullable DataSnapshot dataSnapshot) {
+                              // Transaction completed
+                              Log.d("Valerio", "postTransaction:onComplete:" + databaseError);
+                          }
+                      }
+                    );
+
+//                    FirebaseDatabase.getInstance().getReference("deliveryman").child(riderID).child("Busy").setValue(true);
+//                    FirebaseDatabase.getInstance().getReference("restaurants").child(loggedID).child("reservations").child(reservation.getOrder_id()).child("status").child("en").setValue("Delivering");
+//                    FirebaseDatabase.getInstance().getReference("restaurants").child(loggedID).child("reservations").child(reservation.getOrder_id()).child("status").child("it").setValue("In consegna");
+//                    reservation.setStat(getContext().getString(R.string.delivery));
+//                    reservation.setStatus(Status.DELIVERY);
+//                    notifyRider(riderID);
                     /**
                      * GO FROM MAPSFRAGMENT to RESERVATION
                      */
@@ -927,11 +951,7 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback,
         referenceRestaurant.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshotRestaurant) {
-                String status= dataSnapshotRestaurant.child("reservations/" + reservation.getOrder_id()
-                                                                 +"/status/"+localeShort).getValue().toString();
-                Log.d("ValerioStatus", "**********" + status);
-                if(getContext() != null &&
-                        dataSnapshotRestaurant.child("reservations/" + reservation.getOrder_id()
+                if(dataSnapshotRestaurant.child("reservations/" + reservation.getOrder_id()
                                 +"/status/it").getValue().toString().equals("In consegna") &&
                         dataSnapshotRestaurant.child("reservations/" + reservation.getOrder_id()
                                 +"/status/en").getValue().toString().equals("Delivering")) {
@@ -1038,5 +1058,10 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback,
                 }
             }
         });
+
+        /**
+         * GO FROM MAPSFRAGMENT to RESERVATION
+         */
+        Navigation.findNavController(fragView).navigate(R.id.action_mapsFragment_id_to_reservation_id);
     }
 }
