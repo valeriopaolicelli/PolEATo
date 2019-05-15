@@ -37,6 +37,7 @@ public class MyFirebaseData {
     public MyFirebaseData() {
 
         mapDataHistory = new MutableLiveData<>();
+        mapDataHistory.setValue(new HashMap<String, HistoryItem>());
         showProgressBar = new MutableLiveData<>();
         mAuth = FirebaseAuth.getInstance();
         FirebaseUser currentUser = mAuth.getCurrentUser();

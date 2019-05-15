@@ -160,10 +160,10 @@ public class HistoryFragment extends Fragment {
             @Override
             public void onChanged(@Nullable HashMap<String, HistoryItem> stringHistoryHashMap) {
                 if(stringHistoryHashMap.values() != null)
-                    historyAdapter.setAllHistories( (ArrayList<HistoryItem>) stringHistoryHashMap.values());
-                    if(progressDialog.isShowing()){
-                        progressDialog.dismiss();
-                    }
+                    historyAdapter.setAllHistories( new ArrayList<HistoryItem>(stringHistoryHashMap.values()));
+//                    if(progressDialog.isShowing()){
+//                        progressDialog.dismiss();
+//                    }
             }
         });
     }

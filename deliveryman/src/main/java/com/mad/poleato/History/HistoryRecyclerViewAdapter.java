@@ -26,13 +26,13 @@ public class HistoryRecyclerViewAdapter extends RecyclerView.Adapter<HistoryRecy
         public HistoryViewHolder(@NonNull View itemView) {
             super(itemView);
             this.itemView=itemView;
-            this.order_tv = (TextView) itemView.findViewById(R.id.deliveryAddress_tv);
-            this.restaurant_tv = (TextView) itemView.findViewById(R.id.customerName_tv);
-            this.restaurantAddress_tv = (TextView) itemView.findViewById(R.id.restaurant_tv);
-            this.price_tv = (TextView) itemView.findViewById(R.id.dishes_tv);
-            this.dishes_tv = (TextView) itemView.findViewById(R.id.phone_tv);
-            this.expectedTime_tv = (TextView) itemView.findViewById(R.id.time_tv);
-            this.deliveredTime_tv = (TextView) itemView.findViewById(R.id.cost_tv);
+            this.order_tv = (TextView) itemView.findViewById(R.id.orderID_tv);
+            this.restaurant_tv = (TextView) itemView.findViewById(R.id.restaurant_tv);
+            this.restaurantAddress_tv = (TextView) itemView.findViewById(R.id.restaurantAddress_tv);
+            this.price_tv = (TextView) itemView.findViewById(R.id.cost_tv);
+            this.dishes_tv = (TextView) itemView.findViewById(R.id.dishes_tv);
+            this.expectedTime_tv = (TextView) itemView.findViewById(R.id.expectedTime_tv);
+            this.deliveredTime_tv = (TextView) itemView.findViewById(R.id.deliveredTime_tv);
         }
     }
 
