@@ -42,7 +42,8 @@
         <service
             android:name=".BackgroundLocationService"
             android:enabled="true"
-            android:exported="true" />
+            android:exported="true"
+            android:stopWithTask="true"/>
 
 
 
