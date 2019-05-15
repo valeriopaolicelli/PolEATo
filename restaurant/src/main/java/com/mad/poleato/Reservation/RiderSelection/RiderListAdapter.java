@@ -1,4 +1,4 @@
-package com.mad.poleato;
+package com.mad.poleato.Reservation.RiderSelection;
 
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -28,8 +28,10 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.mad.poleato.DailyOffer.DailyOfferFragmentDirections;
+import com.mad.poleato.R;
 import com.mad.poleato.Reservation.Reservation;
 import com.mad.poleato.Reservation.Status;
+import com.mad.poleato.Rider;
 
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
