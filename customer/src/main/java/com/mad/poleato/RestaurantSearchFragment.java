@@ -43,6 +43,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
+import com.onesignal.OneSignal;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -124,11 +125,12 @@ public class RestaurantSearchFragment extends Fragment {
                 //logout
                 Log.d("matte", "Logout");
                 FirebaseAuth.getInstance().signOut();
+                //                OneSignal.sendTag("User_ID", "");
+                OneSignal.setSubscription(false);
 
                 /**
                  *  GO TO LOGIN ****
                  */
-
                 Navigation.findNavController(fragView).navigate(R.id.action_restaurantSearchFragment_id_to_signInActivity);
                 getActivity().finish();
                 return true;

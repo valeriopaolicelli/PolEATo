@@ -47,7 +47,11 @@ public class UploadService extends IntentService {
         intent.setAction(ACTION_FOO);
         intent.putExtra(EXTRA_PARAM1, param1);
         intent.putExtra(EXTRA_PARAM2, param2);
-        context.startService(intent);
+        try {
+            context.startService(intent);
+        }catch (Exception e){
+            Log.d("ServiceException", e.getMessage());
+        }
     }
 
 
@@ -69,12 +73,12 @@ public class UploadService extends IntentService {
         if(firebaseAuth != null && firebaseAuth.getCurrentUser() != null) {
             String user = firebaseAuth.getCurrentUser().getUid();
             DatabaseReference dbReference = FirebaseDatabase.getInstance()
-                    .getReference("deliveryman").child(user);
+                    .getReference("Map");
 
             Double latitude = Double.parseDouble(param1);
             Double longitude = Double.parseDouble(param2);
             GeoFire geoFire = new GeoFire(dbReference);
-            geoFire.setLocation("Map", new GeoLocation(latitude, longitude), new GeoFire.CompletionListener() {
+            geoFire.setLocation(user, new GeoLocation(latitude, longitude), new GeoFire.CompletionListener() {
                 @Override
                 public void onComplete(String key, DatabaseError error) {
                 }

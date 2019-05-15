@@ -8,6 +8,8 @@ public class Ride implements Serializable {
     private String addressCustomer;
     private String addressRestaurant;
     private String nameCustomer;
+    private String customerID;
+    private String restaurantID;
     private String nameRestaurant;
     private String totalPrice;
     private String numberOfDishes;
@@ -19,7 +21,7 @@ public class Ride implements Serializable {
     public Ride(String orderID, String addressCustomer, String addressRestaurant,
                 String nameCustomer, String nameRestaurant, String totalPrice,
                 String numberOfDishes, String phoneCustomer, String phoneRestaurant,
-                String time) {
+                String time, String customerID, String restaurantID) {
         this.orderID = orderID;
         this.nameCustomer = nameCustomer;
         this.nameRestaurant = nameRestaurant;
@@ -30,7 +32,17 @@ public class Ride implements Serializable {
         this.numberOfDishes = numberOfDishes;
         this.phoneCustomer = phoneCustomer;
         this.phoneRestaurant = phoneRestaurant;
+        this.restaurantID= restaurantID;
+        this.customerID= customerID;
         this.time = time;
+    }
+
+    public String getCustomerID() {
+        return customerID;
+    }
+
+    public String getRestaurantID() {
+        return restaurantID;
     }
 
     public String getOrderID() {

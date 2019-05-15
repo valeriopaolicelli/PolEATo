@@ -51,7 +51,7 @@
     <string name="delivery_hour">Delivery hour: </string>
     <string name="total_cost">Total: </string>
 
-    <!-- History cardview-->
+    <!-- HistoryFragment cardview-->
     <string name="orderID_label">Order ID: </string>
     <string name="expected_hour">Expected hour: </string>
     <string name="delivered_hour">Delivered hour: </string>
@@ -98,5 +98,13 @@
 
     <!-- Rides layout -->
     <string name="no_order">Nothing to deliver</string>
+    <string name="permission_denied">Location service permission denied!</string>
+    <string name="delivering">Delivering</string>
+    <string name="not_delivering">Not delivering</string>
+    <string name="delivered">Delivered</string>
+
+    <!-- Show more fragment -->
+    <string name="address_semicolon">Address:</string>
+    <string name="show_more_title">Restaurant info:</string>
 
 </resources>

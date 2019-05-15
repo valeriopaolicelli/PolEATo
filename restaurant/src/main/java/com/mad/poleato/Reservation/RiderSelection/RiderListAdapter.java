@@ -41,6 +41,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Locale;
 import java.util.Scanner;
 
 public class RiderListAdapter extends ArrayAdapter<Rider>
@@ -163,37 +164,50 @@ public class RiderListAdapter extends ArrayAdapter<Rider>
 
     private void notifyRider(final String riderID, final View convertView) {
 
+        Locale locale= Locale.getDefault();
+        final String localeShort = locale.toString().substring(0, 2);
+
         /* retrieve the restaurant information */
         DatabaseReference referenceRestaurant = FirebaseDatabase.getInstance().getReference("restaurants").child(loggedID);
         referenceRestaurant.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshotRestaurant) {
-                DatabaseReference referenceRider= FirebaseDatabase.getInstance().getReference("deliveryman").child(riderID);
-                DatabaseReference reservationRider = referenceRider.child("reservations").push();
+                String status= dataSnapshotRestaurant.child("reservations/" + reservation.getOrder_id()
+                        +"/status/"+localeShort).getValue().toString();
+                Log.d("ValerioStatus", "**********" + status);
+                if(getContext() != null &&
+                    dataSnapshotRestaurant.child("reservations/" + reservation.getOrder_id()
+                                                                +"/status/it").getValue().toString().equals("In consegna") &&
+                        dataSnapshotRestaurant.child("reservations/" + reservation.getOrder_id()
+                                +"/status/en").getValue().toString().equals("Delivering")) {
 
-                if (dataSnapshotRestaurant.exists() &&
-                        dataSnapshotRestaurant.hasChild("Address") &&
-                        dataSnapshotRestaurant.hasChild("Name") &&
-                        dataSnapshotRestaurant.hasChild("Phone")) {
+                    DatabaseReference referenceRider = FirebaseDatabase.getInstance().getReference("deliveryman").child(riderID);
+                    DatabaseReference reservationRider = referenceRider.child("reservations").push();
 
-                    final String addressRestaurant = dataSnapshotRestaurant.child("Address").getValue().toString();
-                    final String nameRestaurant = dataSnapshotRestaurant.child("Name").getValue().toString();
-                    final String phoneRestaurant= dataSnapshotRestaurant.child("Phone").getValue().toString();
-                    reservationRider.child("addressCustomer").setValue(reservation.getAddress());
-                    reservationRider.child("addressRestaurant").setValue(addressRestaurant);
-                    reservationRider.child("CustomerID").setValue(reservation.getCustomerID());
-                    //update the delivery status
-                    reservationRider.child("delivering").setValue(false);
-                    reservationRider.child("nameRestaurant").setValue(nameRestaurant);
-                    reservationRider.child("numberOfDishes").setValue(reservation.getNumberOfDishes());
-                    reservationRider.child("orderID").setValue(reservation.getOrder_id());
-                    reservationRider.child("restaurantID").setValue(loggedID);
-                    reservationRider.child("nameCustomer").setValue(reservation.getName() + " " + reservation.getSurname());
-                    reservationRider.child("totalPrice").setValue(reservation.getTotalPrice());
-                    reservationRider.child("phoneCustomer").setValue(reservation.getPhone());
-                    reservationRider.child("phoneRestaurant").setValue(phoneRestaurant);
-                    reservationRider.child("time").setValue(reservation.getTime());
-                    sendNotification(riderID, convertView);
+                    if (dataSnapshotRestaurant.exists() &&
+                            dataSnapshotRestaurant.hasChild("Address") &&
+                            dataSnapshotRestaurant.hasChild("Name") &&
+                            dataSnapshotRestaurant.hasChild("Phone")) {
+
+                        final String addressRestaurant = dataSnapshotRestaurant.child("Address").getValue().toString();
+                        final String nameRestaurant = dataSnapshotRestaurant.child("Name").getValue().toString();
+                        final String phoneRestaurant = dataSnapshotRestaurant.child("Phone").getValue().toString();
+                        reservationRider.child("addressCustomer").setValue(reservation.getAddress());
+                        reservationRider.child("addressRestaurant").setValue(addressRestaurant);
+                        reservationRider.child("CustomerID").setValue(reservation.getCustomerID());
+                        //update the delivery status
+                        reservationRider.child("delivering").setValue(false);
+                        reservationRider.child("nameRestaurant").setValue(nameRestaurant);
+                        reservationRider.child("numberOfDishes").setValue(reservation.getNumberOfDishes());
+                        reservationRider.child("orderID").setValue(reservation.getOrder_id());
+                        reservationRider.child("restaurantID").setValue(loggedID);
+                        reservationRider.child("nameCustomer").setValue(reservation.getName() + " " + reservation.getSurname());
+                        reservationRider.child("totalPrice").setValue(reservation.getTotalPrice());
+                        reservationRider.child("phoneCustomer").setValue(reservation.getPhone());
+                        reservationRider.child("phoneRestaurant").setValue(phoneRestaurant);
+                        reservationRider.child("time").setValue(reservation.getTime());
+                        sendNotification(riderID, convertView);
+                    }
                 }
             }
 
@@ -236,8 +250,8 @@ public class RiderListAdapter extends ArrayAdapter<Rider>
 
                                 + "\"filters\": [{\"field\": \"tag\", \"key\": \"User_ID\", \"relation\": \"=\", \"value\": \"" + send_email + "\"}],"
 
-                                + "\"data\": {\"Delivery\": \"New order\"},"
-                                + "\"contents\": {\"en\": \"New order to deliver\"}"
+                                + "\"data\": {\"Order\": \"PolEATo\"},"
+                                + "\"contents\": {\"it\": \"Nuovo ordine da consegnare\"}"
                                 + "}";
 
 

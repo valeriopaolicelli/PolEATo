@@ -6,7 +6,6 @@ import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.Service;
-import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 
@@ -16,7 +15,6 @@ import android.os.Binder;
 import android.os.Build;
 import android.os.Handler;
 import android.os.IBinder;
-import android.os.PowerManager;
 
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.NotificationCompat;
@@ -37,7 +35,8 @@ public class BackgroundLocationService extends Service {
     private LocationRequest mLocationRequest;
     // Flag that indicates if a request is underway.
     private String CHANNEL_ID;
-    Handler handler;
+    private Handler handler;
+    private Runnable r;
 
     public class LocalBinder extends Binder {
         public BackgroundLocationService getServiceInstance() {
@@ -99,7 +98,7 @@ public class BackgroundLocationService extends Service {
         notification = new NotificationCompat.Builder(this, CHANNEL_ID)
                 .setContentText("Location")
                 .setContentText("PolEATo is using your location in background")
-                .setSmallIcon(R.drawable.ic_notifications_black_24dp)
+                .setSmallIcon(R.drawable.location_icon)
                 .setContentIntent(pendingIntent)
                 .build();
         startForeground(1, notification);
@@ -122,7 +121,7 @@ public class BackgroundLocationService extends Service {
 
 
         // Request location updates about deliveryman every 5 seconds
-        final Runnable r = new Runnable() {
+         r = new Runnable() {
             @Override
             public void run() {
                 if (ActivityCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.ACCESS_FINE_LOCATION)
@@ -142,8 +141,15 @@ public class BackgroundLocationService extends Service {
 
     }
 
-
-
+    //Called when the application task is cleared
+    //Needed to proper stop background service
+    @Override
+    public void onTaskRemoved(Intent rootIntent) {
+        super.onTaskRemoved(rootIntent);
+        stopForeground(true);
+        this.stopSelf();
+        handler.removeCallbacks(r);
+    }
 
     @Override
     public void onDestroy() {
@@ -156,9 +162,9 @@ public class BackgroundLocationService extends Service {
 //            this.mWakeLock.release();
 //            this.mWakeLock = null;
 //        }
-
+        this.stopSelf();
         stopForeground(true);
-
+        handler.removeCallbacks(r);
         super.onDestroy();
     }
 }

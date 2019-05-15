@@ -768,8 +768,9 @@ public class EditProfileFragment extends Fragment implements TimePickerDialog.On
             /*
              * save latitude and longitude of inserted address
              */
-            reference.child("Latitude").setValue(latitude);
-            reference.child("Longitude").setValue(longitude);
+
+            reference.child("Coordinates").child("Geo").child("Latitude").setValue(latitude);
+            reference.child("Coordinates").child("Geo").child("Longitude").setValue(longitude);
 
             reference.child("IsActive").setValue(statusSwitch.isChecked());
             EditText ed;

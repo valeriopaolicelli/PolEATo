@@ -1,6 +1,7 @@
 package com.mad.poleato;
 
 import android.Manifest;
+import android.app.Notification;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -8,6 +9,7 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
 import android.support.v4.app.ActivityCompat;
+import android.support.v4.app.NotificationCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
@@ -61,7 +63,13 @@ public class NavigatorActivity extends AppCompatActivity {
         mAuth = FirebaseAuth.getInstance();
         FirebaseUser currentUser = mAuth.getCurrentUser();
         currentUserID = currentUser.getUid();
+        OneSignal.startInit(this)
+                .inFocusDisplaying(OneSignal.OSInFocusDisplayOption.Notification)
+                .unsubscribeWhenNotificationsAreDisabled(true)
+                .init();
 
+        OneSignal.setSubscription(true);
+        OneSignal.sendTag("User_ID", currentUserID);
 
         DatabaseReference dbReference = FirebaseDatabase.getInstance().getReference("deliveryman").child(currentUserID).child("IsActive");
         dbReference.addValueEventListener(new ValueEventListener() {
@@ -79,12 +87,6 @@ public class NavigatorActivity extends AppCompatActivity {
             }
         });
 
-        OneSignal.startInit(this)
-                .inFocusDisplaying(OneSignal.OSInFocusDisplayOption.Notification)
-                .unsubscribeWhenNotificationsAreDisabled(true)
-                .init();
-
-        OneSignal.sendTag("User_ID", currentUserID);
         navigation = (BottomNavigationView) findViewById(R.id.navigation);
 //        navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
         navController = Navigation.findNavController(this,R.id.nav_host_fragment);

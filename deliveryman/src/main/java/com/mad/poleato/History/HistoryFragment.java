@@ -28,6 +28,7 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.mad.poleato.FirebaseData.MyFirebaseData;
 import com.mad.poleato.R;
 import com.mad.poleato.View.ViewModel.MyViewModel;
+import com.onesignal.OneSignal;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -38,7 +39,7 @@ import java.util.Map;
 /**
  * A simple {@link Fragment} subclass.
  */
-public class History extends Fragment {
+public class HistoryFragment extends Fragment {
 
     private View view;
 
@@ -48,7 +49,7 @@ public class History extends Fragment {
     private FirebaseAuth mAuth;
 
 
-    public History() {
+    public HistoryFragment() {
         // Required empty public constructor
     }
 
@@ -97,7 +98,7 @@ public class History extends Fragment {
 
         /** Listeners to update UI Expandable list from VIEW_MODEL list child */
         model = ViewModelProviders.of(getActivity()).get(MyViewModel.class);
-        model.getListR().observe(this, new Observer<HashMap<String, HistoryItem>>() {
+        model.getListH().observe(this, new Observer<HashMap<String, HistoryItem>>() {
             @Override
             public void onChanged(@Nullable HashMap<String, HistoryItem> stringHistoryHashMap) {
                 if(stringHistoryHashMap.values() != null)
@@ -117,10 +118,12 @@ public class History extends Fragment {
                 //logout
                 Log.d("matte", "Logout");
                 FirebaseAuth.getInstance().signOut();
+                //                OneSignal.sendTag("User_ID", "");
+                OneSignal.setSubscription(false);
+
                 /**
                  *  GO TO LOGIN ****
                  */
-
                 Navigation.findNavController(fragView).navigate(R.id.action_rides_id_to_signInActivity);
                 getActivity().finish();
                 return true;
@@ -143,6 +146,8 @@ public class History extends Fragment {
         layoutManager = new LinearLayoutManager(this.hostActivity);
         rv.setLayoutManager(layoutManager);
 
+        collectFields();
+
         this.historyAdapter = new HistoryRecyclerViewAdapter(this.hostActivity);
         rv.setAdapter(historyAdapter);
         //add separator between list items
@@ -157,6 +162,12 @@ public class History extends Fragment {
         super.onViewCreated(view, savedInstanceState);
 
         myFirebaseData.fillFieldsHistory();
+    }
+
+    private void collectFields(){
+
+        //todo ?
+
     }
 
 }

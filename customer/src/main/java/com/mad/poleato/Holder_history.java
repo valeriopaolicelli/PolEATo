@@ -29,6 +29,7 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.onesignal.OneSignal;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -95,11 +96,12 @@ public class Holder_history extends Fragment {
                 //logout
                 Log.d("matte", "Logout");
                 FirebaseAuth.getInstance().signOut();
+                //                OneSignal.sendTag("User_ID", "");
+                OneSignal.setSubscription(false);
 
                 /**
                  *  GO TO LOGIN ****
                  */
-
                 Navigation.findNavController(view).navigate(R.id.action_holder_history_id_to_signInActivity);
                 getActivity().finish();
                 return true;

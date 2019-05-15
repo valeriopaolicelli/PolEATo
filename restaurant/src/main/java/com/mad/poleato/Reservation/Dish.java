@@ -1,6 +1,8 @@
 package com.mad.poleato.Reservation;
 
-public class Dish {
+import java.io.Serializable;
+
+public class Dish implements Serializable {
 
     // REFERENCE TO FOOD CLASS
     private String name;

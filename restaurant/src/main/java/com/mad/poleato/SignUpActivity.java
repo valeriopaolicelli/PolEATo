@@ -246,8 +246,8 @@ public class SignUpActivity extends AppCompatActivity {
                             reference.child("PriceRange").setValue("0");
                             reference.child("Type").child("it").setValue("");
                             reference.child("Type").child("en").setValue("");
-                            reference.child("Latitude").setValue(latitude);
-                            reference.child("Longitude").setValue(longitude);
+                            reference.child("Coordinates").child("Geo").child("Latitude").setValue(latitude);
+                            reference.child("Coordinates").child("Geo").child("Longitude").setValue(longitude);
 
                             access();
                         } else {

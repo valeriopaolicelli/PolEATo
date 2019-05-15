@@ -39,6 +39,7 @@ import com.google.firebase.storage.StorageReference;
 import com.mad.poleato.NavigatorActivity;
 import com.mad.poleato.R;
 import com.mad.poleato.SignInActivity;
+import com.onesignal.OneSignal;
 
 import org.w3c.dom.Text;
 
@@ -107,10 +108,12 @@ public class AccountFragment extends Fragment {
                 //logout
                 Log.d("matte", "Logout");
                 FirebaseAuth.getInstance().signOut();
+                OneSignal.setSubscription(false);
+                //OneSignal.sendTag("User_ID", "");
+
                 /**
                  *  GO TO LOGIN ****
                  */
-
                 Navigation.findNavController(view).navigate(R.id.action_account_id_to_signInActivity);
                 getActivity().finish();
                 return true;

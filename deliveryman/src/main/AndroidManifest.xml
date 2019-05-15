@@ -42,7 +42,8 @@
         <service
             android:name=".BackgroundLocationService"
             android:enabled="true"
-            android:exported="true" />
+            android:exported="true"
+            android:stopWithTask="true"/>
 
 
 
@@ -83,7 +84,7 @@
             android:screenOrientation="portrait"/>
 
         <activity
-            android:name=".Delivering.DeliveringActivity"
+            android:name=".Rides.DeliveringActivity"
             android:windowSoftInputMode="adjustPan"
             android:screenOrientation="portrait"/>
 
