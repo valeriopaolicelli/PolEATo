@@ -47,7 +47,11 @@ public class UploadService extends IntentService {
         intent.setAction(ACTION_FOO);
         intent.putExtra(EXTRA_PARAM1, param1);
         intent.putExtra(EXTRA_PARAM2, param2);
-        context.startService(intent);
+        try {
+            context.startService(intent);
+        }catch (Exception e){
+            Log.d("ServiceException", e.getMessage());
+        }
     }
 
 

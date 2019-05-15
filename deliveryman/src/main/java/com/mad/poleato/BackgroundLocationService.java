@@ -140,8 +140,14 @@ public class BackgroundLocationService extends Service {
 
     }
 
-
-
+    //Called when the application task is cleared
+    //Needed to proper stop background service
+    @Override
+    public void onTaskRemoved(Intent rootIntent) {
+        super.onTaskRemoved(rootIntent);
+        stopForeground(true);
+        this.stopSelf();
+    }
 
     @Override
     public void onDestroy() {
