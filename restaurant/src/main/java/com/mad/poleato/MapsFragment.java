@@ -462,7 +462,7 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback,
          */
 
 
-        GeoQuery geoQuery = geoFire.queryAtLocation(new GeoLocation(latitudeRest, longitudeRest), 6);
+        GeoQuery geoQuery = geoFire.queryAtLocation(new GeoLocation(latitudeRest, longitudeRest), 2);
 
         geoQuery.addGeoQueryEventListener(new GeoQueryEventListener() {
               @Override
