@@ -951,7 +951,12 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback,
         referenceRestaurant.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshotRestaurant) {
-                if(dataSnapshotRestaurant.child("reservations/" + reservation.getOrder_id()
+                if(getContext() != null &&
+                        dataSnapshotRestaurant.hasChild("reservations") &&
+                        dataSnapshotRestaurant.child("reservations").hasChild("status") &&
+                        dataSnapshotRestaurant.child("reservations").child("status").hasChild("it") &&
+                        dataSnapshotRestaurant.child("reservations").child("status").hasChild("en") &&
+                        dataSnapshotRestaurant.child("reservations/" + reservation.getOrder_id()
                                 +"/status/it").getValue().toString().equals("In consegna") &&
                         dataSnapshotRestaurant.child("reservations/" + reservation.getOrder_id()
                                 +"/status/en").getValue().toString().equals("Delivering")) {

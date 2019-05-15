@@ -195,15 +195,16 @@ public class RiderListAdapter extends ArrayAdapter<Rider>
         referenceRestaurant.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshotRestaurant) {
-                String status= dataSnapshotRestaurant.child("reservations/" + reservation.getOrder_id()
-                        +"/status/"+localeShort).getValue().toString();
-                Log.d("ValerioStatus", "**********" + status);
                 if( getContext() != null &&
                     convertView != null &&
-                    dataSnapshotRestaurant.child("reservations/" + reservation.getOrder_id()
-                                                                +"/status/it").getValue().toString().equals("In consegna") &&
+                        dataSnapshotRestaurant.hasChild("reservations") &&
+                        dataSnapshotRestaurant.child("reservations").hasChild("status") &&
+                        dataSnapshotRestaurant.child("reservations").child("status").hasChild("it") &&
+                        dataSnapshotRestaurant.child("reservations").child("status").hasChild("en") &&
                         dataSnapshotRestaurant.child("reservations/" + reservation.getOrder_id()
-                                +"/status/en").getValue().toString().equals("Delivering")) {
+                                                                 +"/status/it").getValue().toString().equals("In consegna") &&
+                        dataSnapshotRestaurant.child("reservations/" + reservation.getOrder_id()
+                                                                 +"/status/en").getValue().toString().equals("Delivering")) {
 
                     DatabaseReference referenceRider = FirebaseDatabase.getInstance().getReference("deliveryman").child(riderID);
                     DatabaseReference reservationRider = referenceRider.child("reservations").push();
