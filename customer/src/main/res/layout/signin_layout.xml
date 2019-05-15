@@ -39,159 +39,187 @@
             app:layout_constraintTop_toBottomOf="@id/app_icon"
             tools:ignore="HardcodedText" />
 
-        <com.facebook.login.widget.LoginButton
-            android:id="@+id/facebook_button"
-            android:layout_width="236dp"
-            android:layout_height="31dp"
-            android:layout_margin="10dp"
-            android:layout_marginStart="87dp"
+
+
+        <android.support.constraint.ConstraintLayout
+            android:id="@+id/login_constraint"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:layout_marginTop="32dp"
-            android:layout_marginEnd="165dp"
-            android:layout_marginBottom="8dp"
-            android:elevation="@dimen/default_gap"
-            android:textSize="18sp"
-            app:layout_constraintBottom_toTopOf="@+id/google_button"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/ButtonSignIn" />
-
-        <android.support.design.widget.TextInputLayout
-            android:id="@+id/tiEmail"
-            android:layout_width="0dp"
-            android:layout_height="56dp"
-            android:layout_marginStart="32dp"
-            android:layout_marginTop="16dp"
-            android:layout_marginBottom="16dp"
-            android:theme="@style/FloatLabelSignInUp"
-            app:layout_constraintBottom_toTopOf="@id/tiPassword"
-            app:layout_constraintEnd_toStartOf="@id/cancel_email"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/tvTitle">
-
-            <EditText
-                android:id="@+id/edEmail"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="5dp"
-                android:hint="@string/email"
-                android:imeOptions="actionDone"
-                android:inputType="textEmailAddress"
-                android:maxLength="40"
-                android:singleLine="true"
-                android:textColor="@color/colorBodyPrimary"
-                tools:ignore="Autofill" />
-        </android.support.design.widget.TextInputLayout>
-
-        <ImageButton
-            android:id="@+id/cancel_email"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginEnd="16dp"
-            android:background="@android:color/transparent"
-            android:contentDescription="@string/delete"
-            android:onClick="clearText"
-            android:src="@drawable/clear"
-            app:layout_constraintBottom_toBottomOf="@id/tiEmail"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toEndOf="@id/tiEmail"
-            app:layout_constraintTop_toTopOf="@id/tiEmail" />
-
-        <android.support.design.widget.TextInputLayout
-            android:id="@+id/tiPassword"
-            android:layout_width="0dp"
-            android:layout_height="56dp"
-            android:layout_marginStart="32dp"
-            android:layout_marginBottom="24dp"
-            android:theme="@style/FloatLabelSignInUp"
-            app:layout_constraintBottom_toTopOf="@id/ButtonSignIn"
-            app:layout_constraintEnd_toStartOf="@id/cancel_password"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/tiEmail">
-
-            <EditText
-                android:id="@+id/edPassword"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="5dp"
-                android:hint="@string/password"
-                android:imeOptions="actionDone"
-                android:inputType="textPassword"
-                android:maxLength="40"
-                android:singleLine="true"
-                android:textColor="@color/colorBodyPrimary"
-                tools:ignore="Autofill" />
-        </android.support.design.widget.TextInputLayout>
-
-        <ImageButton
-            android:id="@+id/cancel_password"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginEnd="16dp"
-            android:background="@android:color/transparent"
-            android:contentDescription="@string/delete"
-            android:onClick="clearText"
-            android:src="@drawable/clear"
-            app:layout_constraintBottom_toBottomOf="@id/tiPassword"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toEndOf="@id/tiPassword"
-            app:layout_constraintTop_toTopOf="@id/tiPassword" />
-
-        <Button
-            android:id="@+id/ButtonSignIn"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="76dp"
-            android:layout_marginTop="8dp"
-            android:layout_marginEnd="79dp"
-            android:layout_marginBottom="16dp"
-            android:background="@drawable/ripple"
-            android:text="@string/signin"
-            android:textColor="@color/colorBodyPrimary"
-            app:layout_constraintBottom_toTopOf="@+id/facebook_button"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/tiPassword" />
-
-        <Button
-            android:id="@+id/ButtonSignUp"
-            style="@style/Widget.AppCompat.Button.Borderless"
-            android:layout_width="79dp"
-            android:layout_height="36dp"
-            android:layout_marginTop="16dp"
-            android:layout_marginEnd="119dp"
-            android:layout_marginBottom="15dp"
-            android:text="@string/signup"
-            android:textColor="@color/com_facebook_blue"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toEndOf="@+id/textView"
-            app:layout_constraintTop_toBottomOf="@+id/google_button" />
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/tvTitle">
 
-        <com.google.android.gms.common.SignInButton
-            android:id="@+id/google_button"
-            android:layout_width="242dp"
-            android:layout_height="39dp"
-            android:layout_margin="10dp"
-            android:layout_marginStart="8dp"
-            android:layout_marginEnd="8dp"
-            android:elevation="@dimen/default_gap"
-            android:textSize="18sp"
+            <com.facebook.login.widget.LoginButton
+                android:id="@+id/facebook_button"
+                android:layout_width="236dp"
+                android:layout_height="31dp"
+                android:layout_margin="10dp"
+                android:layout_marginStart="87dp"
+                android:layout_marginTop="32dp"
+                android:layout_marginEnd="165dp"
+                android:layout_marginBottom="8dp"
+                android:elevation="@dimen/default_gap"
+                android:textSize="18sp"
+                app:layout_constraintBottom_toTopOf="@+id/google_button"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/ButtonSignIn" />
+
+            <android.support.design.widget.TextInputLayout
+                android:id="@+id/tiEmail"
+                android:layout_width="0dp"
+                android:layout_height="56dp"
+                android:layout_marginStart="32dp"
+                android:layout_marginTop="16dp"
+                android:layout_marginBottom="16dp"
+                android:theme="@style/FloatLabelSignInUp"
+                app:layout_constraintBottom_toTopOf="@id/tiPassword"
+                app:layout_constraintEnd_toStartOf="@id/cancel_email"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent">
+
+                <EditText
+                    android:id="@+id/edEmail"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="5dp"
+                    android:hint="@string/email"
+                    android:imeOptions="actionDone"
+                    android:inputType="textEmailAddress"
+                    android:maxLength="40"
+                    android:singleLine="true"
+                    android:textColor="@color/colorBodyPrimary"
+                    tools:ignore="Autofill" />
+            </android.support.design.widget.TextInputLayout>
+
+            <ImageButton
+                android:id="@+id/cancel_email"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="16dp"
+                android:background="@android:color/transparent"
+                android:contentDescription="@string/delete"
+                android:onClick="clearText"
+                android:src="@drawable/clear"
+                app:layout_constraintBottom_toBottomOf="@id/tiEmail"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@id/tiEmail"
+                app:layout_constraintTop_toTopOf="@id/tiEmail" />
+
+            <android.support.design.widget.TextInputLayout
+                android:id="@+id/tiPassword"
+                android:layout_width="0dp"
+                android:layout_height="56dp"
+                android:layout_marginStart="32dp"
+                android:layout_marginBottom="24dp"
+                android:theme="@style/FloatLabelSignInUp"
+                app:layout_constraintBottom_toTopOf="@id/ButtonSignIn"
+                app:layout_constraintEnd_toStartOf="@id/cancel_password"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/tiEmail">
+
+                <EditText
+                    android:id="@+id/edPassword"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="5dp"
+                    android:hint="@string/password"
+                    android:imeOptions="actionDone"
+                    android:inputType="textPassword"
+                    android:maxLength="40"
+                    android:singleLine="true"
+                    android:textColor="@color/colorBodyPrimary"
+                    tools:ignore="Autofill" />
+            </android.support.design.widget.TextInputLayout>
+
+            <ImageButton
+                android:id="@+id/cancel_password"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="16dp"
+                android:background="@android:color/transparent"
+                android:contentDescription="@string/delete"
+                android:onClick="clearText"
+                android:src="@drawable/clear"
+                app:layout_constraintBottom_toBottomOf="@id/tiPassword"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@id/tiPassword"
+                app:layout_constraintTop_toTopOf="@id/tiPassword" />
+
+            <Button
+                android:id="@+id/ButtonSignIn"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="76dp"
+                android:layout_marginTop="8dp"
+                android:layout_marginEnd="79dp"
+                android:layout_marginBottom="16dp"
+                android:background="@drawable/ripple"
+                android:text="@string/signin"
+                android:textColor="@color/colorBodyPrimary"
+                app:layout_constraintBottom_toTopOf="@+id/facebook_button"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/tiPassword" />
+
+            <Button
+                android:id="@+id/ButtonSignUp"
+                style="@style/Widget.AppCompat.Button.Borderless"
+                android:layout_width="79dp"
+                android:layout_height="36dp"
+                android:layout_marginTop="16dp"
+                android:layout_marginEnd="119dp"
+                android:layout_marginBottom="15dp"
+                android:text="@string/signup"
+                android:textColor="@color/com_facebook_blue"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@+id/textView"
+                app:layout_constraintTop_toBottomOf="@+id/google_button" />
+
+            <com.google.android.gms.common.SignInButton
+                android:id="@+id/google_button"
+                android:layout_width="242dp"
+                android:layout_height="39dp"
+                android:layout_margin="10dp"
+                android:layout_marginStart="8dp"
+                android:layout_marginEnd="8dp"
+                android:elevation="@dimen/default_gap"
+                android:textSize="18sp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/facebook_button" />
+
+            <TextView
+                android:id="@+id/textView"
+                android:layout_width="156dp"
+                android:layout_height="20dp"
+                android:layout_marginStart="32dp"
+                android:layout_marginTop="24dp"
+                android:layout_marginBottom="20dp"
+                android:text="@string/no_account"
+                android:textColor="@color/colorBodyPrimary"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toStartOf="@+id/ButtonSignUp"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/google_button" />
+
+        </android.support.constraint.ConstraintLayout>
+
+        <ProgressBar
+            android:id="@+id/progressBar"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="32dp"
+            android:indeterminateTint="@color/colorBodyPrimary"
+            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/facebook_button" />
+            app:layout_constraintTop_toBottomOf="@id/tvTitle"
+            android:visibility="gone"/>
 
-        <TextView
-            android:id="@+id/textView"
-            android:layout_width="156dp"
-            android:layout_height="20dp"
-            android:layout_marginStart="32dp"
-            android:layout_marginTop="24dp"
-            android:layout_marginBottom="20dp"
-            android:text="@string/no_account"
-            android:textColor="@color/colorBodyPrimary"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toStartOf="@+id/ButtonSignUp"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/google_button" />
+
     </android.support.constraint.ConstraintLayout>
 </ScrollView>
