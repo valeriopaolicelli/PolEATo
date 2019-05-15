@@ -84,10 +84,10 @@
     <string name="cooking">Preparazione</string>
     <string name="delivery">In consegna</string>
     <string name="reject">Rifiutato</string>
-    <string name="button_reservation">Accetta o Rifiuta</string>
+    <string name="button_reservation">Accetta/Rifiuta</string>
     <string name="button_delivery">E\' pronto</string>
     <string name="order">ID</string>
-    <string name="order_info">Info consegna</string>
+    <string name="order_info">Info</string>
     <string name="order_deliver">Consegna</string>
     <string name="title_deliver">Consegna ordine</string>
     <string name="msg_deliver">E\' tutto pronto? Lo stato della prenotazione passerà su \'In consegna\'</string>
