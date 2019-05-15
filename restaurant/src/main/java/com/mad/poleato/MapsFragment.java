@@ -922,10 +922,10 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback,
 //                    reservation.setStat(getContext().getString(R.string.delivery));
 //                    reservation.setStatus(Status.DELIVERY);
 //                    notifyRider(riderID);
-                    /**
-                     * GO FROM MAPSFRAGMENT to RESERVATION
-                     */
-                    Navigation.findNavController(fragView).navigate(R.id.action_mapsFragment_id_to_reservation_id);
+//                    /**
+//                     * GO FROM MAPSFRAGMENT to RESERVATION
+//                     */
+//                    Navigation.findNavController(fragView).navigate(R.id.action_mapsFragment_id_to_reservation_id);
                 }
             });
             builder.setNegativeButton(this.getString(R.string.choice_cancel), new DialogInterface.OnClickListener() {

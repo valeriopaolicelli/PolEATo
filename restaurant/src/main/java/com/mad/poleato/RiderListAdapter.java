@@ -198,7 +198,8 @@ public class RiderListAdapter extends ArrayAdapter<Rider>
                 String status= dataSnapshotRestaurant.child("reservations/" + reservation.getOrder_id()
                         +"/status/"+localeShort).getValue().toString();
                 Log.d("ValerioStatus", "**********" + status);
-                if(getContext() != null &&
+                if( getContext() != null &&
+                    convertView != null &&
                     dataSnapshotRestaurant.child("reservations/" + reservation.getOrder_id()
                                                                 +"/status/it").getValue().toString().equals("In consegna") &&
                         dataSnapshotRestaurant.child("reservations/" + reservation.getOrder_id()
