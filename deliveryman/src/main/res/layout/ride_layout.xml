@@ -2,15 +2,18 @@
 
 
 <LinearLayout
+    android:id="@+id/ride_layout"
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".NavigatorActivity"
+    android:background="@color/colorBodyPrimary"
     android:weightSum="100"
     android:orientation="vertical"
-    android:layout_marginBottom="?attr/actionBarSize">
+    android:layout_marginBottom="?attr/actionBarSize"
+    android:visibility="visible">
 
     <android.support.v7.widget.CardView
         android:id="@+id/rideCardView"
@@ -22,8 +25,7 @@
         android:layout_marginEnd="4dp"
         android:layout_marginBottom="8dp"
         app:cardCornerRadius="10dp"
-        android:layout_weight="25"
-        android:visibility="visible">
+        android:layout_weight="25">
 
 
         <android.support.constraint.ConstraintLayout
@@ -310,13 +312,16 @@
     </FrameLayout>
 
 
-
-    <TextView
+    <ImageView
         android:id="@+id/ride_empty_view"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
         android:layout_gravity="center_horizontal|center_vertical"
-        android:text="@string/no_order"
+        android:src="@drawable/empty_mail"
+        android:alpha=".5"
+        android:scaleType="fitCenter"
         android:visibility="gone"/>
 
 </LinearLayout>
+
+
