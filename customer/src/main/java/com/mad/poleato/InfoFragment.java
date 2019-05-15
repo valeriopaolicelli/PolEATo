@@ -165,7 +165,8 @@ public class InfoFragment extends Fragment {
                         for(DataSnapshot snap : dataSnapshot.getChildren()){
                                 if(snap.getKey().equals("DeliveryCost")){
                                     DecimalFormat decimalFormat = new DecimalFormat("#0.00"); //two decimal
-                                    String priceStr = decimalFormat.format(Double.parseDouble(snap.getValue().toString()));
+                                    String s = snap.getValue().toString().replace(",", ".");
+                                    String priceStr = decimalFormat.format(Double.parseDouble(s));
                                     tvFields.get(snap.getKey()).setText(priceStr+"€");
                                 }
                                 else if(snap.getKey().equals("PriceRange")){

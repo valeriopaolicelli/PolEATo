@@ -48,105 +48,102 @@
                 android:gravity="center_horizontal|center_vertical"
                 android:textColor="#444444"
                 android:textSize="20sp"
-                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintBottom_toTopOf="@id/cardDescription"
                 app:layout_constraintEnd_toStartOf="@+id/cardPrice"
                 app:layout_constraintHorizontal_bias="0.0"
                 app:layout_constraintStart_toEndOf="@+id/cardImage"
-                app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintVertical_bias="0.213" />
+                app:layout_constraintTop_toTopOf="parent" />
 
             <TextView
                 android:id="@+id/cardPrice"
                 android:layout_width="36dp"
                 android:layout_height="19dp"
                 android:layout_marginStart="8dp"
-                android:layout_marginTop="8dp"
                 android:layout_marginEnd="8dp"
                 android:layout_marginBottom="32dp"
                 android:textAllCaps="false"
                 android:textColor="#000000"
                 android:textSize="14sp"
                 android:textStyle="bold"
-                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintBottom_toBottomOf="@id/cardName"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toEndOf="@+id/cardName"
-                app:layout_constraintTop_toTopOf="parent" />
+                app:layout_constraintStart_toEndOf="@id/cardName"
+                app:layout_constraintTop_toTopOf="@id/cardName"
+                app:layout_constraintVertical_bias="0.0" />
 
 
             <TextView
                 android:id="@+id/cardDescription"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="8dp"
                 android:layout_marginTop="8dp"
                 android:layout_marginEnd="8dp"
                 android:gravity="center_horizontal|center_vertical"
-                app:layout_constraintEnd_toStartOf="@+id/cardPrice"
-                app:layout_constraintStart_toEndOf="@+id/cardImage"
-                app:layout_constraintTop_toBottomOf="@+id/cardName" />
+                app:layout_constraintBottom_toTopOf="@id/quantityLabel"
+                app:layout_constraintEnd_toStartOf="@id/cardPrice"
+                app:layout_constraintStart_toStartOf="@id/cardName"
+                app:layout_constraintTop_toBottomOf="@id/cardName" />
 
 
             <TextView
                 android:id="@+id/quantityLabel"
-                android:layout_width="57dp"
+                android:layout_width="wrap_content"
                 android:layout_height="18dp"
+                android:layout_marginStart="50dp"
                 android:layout_marginTop="8dp"
                 android:layout_marginBottom="8dp"
                 android:text="@string/quantity"
                 android:textAlignment="center"
-                app:layout_constraintBottom_toBottomOf="@+id/increaseBtn"
-                app:layout_constraintEnd_toStartOf="@+id/quantity"
-                app:layout_constraintTop_toTopOf="@+id/decreaseBtn" />
+                android:textColor="#000000"
+                android:textSize="14sp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toStartOf="@id/quantity"
+                app:layout_constraintHorizontal_bias="0.97"
+                app:layout_constraintStart_toEndOf="@id/cardImage"
+                app:layout_constraintTop_toBottomOf="@id/cardDescription" />
 
             <TextView
                 android:id="@+id/quantity"
-                android:layout_width="20dp"
+                android:layout_width="wrap_content"
                 android:layout_height="18dp"
                 android:layout_marginTop="8dp"
-                android:layout_marginEnd="16dp"
                 android:layout_marginBottom="8dp"
                 android:text="0"
                 android:textAlignment="center"
-                app:layout_constraintBottom_toBottomOf="@+id/increaseBtn"
-                app:layout_constraintEnd_toStartOf="@+id/decreaseBtn"
-                app:layout_constraintTop_toTopOf="@+id/decreaseBtn" />
+                app:layout_constraintBottom_toBottomOf="@id/quantityLabel"
+                app:layout_constraintEnd_toStartOf="@id/decreaseBtn"
+                app:layout_constraintStart_toEndOf="@id/quantityLabel"
+                app:layout_constraintTop_toTopOf="@id/quantityLabel" />
 
-            <ImageButton
-                android:id="@+id/increaseBtn"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
-                android:layout_marginEnd="8dp"
-                android:layout_marginBottom="8dp"
-                android:backgroundTint="@color/colorBodyPrimary"
-                android:src="@drawable/ic_add_icon"
-                android:text="@string/plus"
-                android:textAlignment="center"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toEndOf="@id/decreaseBtn"
-                app:layout_constraintTop_toTopOf="@id/decreaseBtn"
-                app:layout_constraintVertical_bias="0.39"
-                tools:text="+" />
 
             <ImageButton
                 android:id="@+id/decreaseBtn"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="32dp"
-                android:layout_marginTop="16dp"
-                android:layout_marginBottom="8dp"
                 android:backgroundTint="@color/colorBodyPrimary"
                 android:src="@drawable/ic_minus_icon2"
                 android:text="@string/minum"
                 android:textAlignment="center"
-                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintBottom_toBottomOf="@id/quantity"
                 app:layout_constraintEnd_toStartOf="@id/increaseBtn"
-                app:layout_constraintStart_toEndOf="@+id/cardDescription"
-                app:layout_constraintStart_toStartOf="@id/quantity"
-                app:layout_constraintTop_toBottomOf="@id/cardDescription" />
+                app:layout_constraintStart_toEndOf="@id/quantity"
+                app:layout_constraintTop_toTopOf="@id/quantity"
+                app:layout_constraintVertical_bias="0.44" />
 
-
+            <ImageButton
+                android:id="@+id/increaseBtn"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="8dp"
+                android:backgroundTint="@color/colorBodyPrimary"
+                android:src="@drawable/ic_add_icon"
+                android:text="@string/plus"
+                android:textAlignment="center"
+                app:layout_constraintBottom_toBottomOf="@id/decreaseBtn"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@id/decreaseBtn"
+                app:layout_constraintTop_toTopOf="@id/decreaseBtn"
+                app:layout_constraintVertical_bias="0.39" />
 
         </android.support.constraint.ConstraintLayout>
 
