@@ -325,6 +325,9 @@ public class DeliveringActivity extends FragmentActivity implements OnMapReadyCa
                             if(!delivering)
                             {
                                 delivering = true;
+
+                                //don't care about distance now, shows the new directions
+                                firstLocation = true;
                                // @SuppressLint("MissingPermission") Location lastKnownLocation = locationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
                                 button_map.setText(getString(R.string.maps_button_order_delivered));
                                 mMap.clear();

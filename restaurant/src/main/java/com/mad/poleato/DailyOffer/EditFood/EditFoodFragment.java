@@ -377,56 +377,58 @@ public class EditFoodFragment extends DialogFragment {
                 .addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
                     @Override
                     public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                        storageReference.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
-                            @Override
-                            public void onSuccess(Uri uri) {
-                                //save the link to the image
-                                final String downloadUrl =
-                                        uri.toString();
-                                FirebaseDatabase.getInstance()
-                                        .getReference("restaurants")
-                                        .child(currentUserID +"/Menu/"+f.getId()+"/photoUrl")
-                                        .setValue(downloadUrl);
-                                //set the image on the object
-                                f.setImg(bitmap);
+                        if(getContext() != null) {
+                            storageReference.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+                                @Override
+                                public void onSuccess(Uri uri) {
+                                    //save the link to the image
+                                    final String downloadUrl =
+                                            uri.toString();
+                                    FirebaseDatabase.getInstance()
+                                            .getReference("restaurants")
+                                            .child(currentUserID + "/Menu/" + f.getId() + "/photoUrl")
+                                            .setValue(downloadUrl);
+                                    //set the image on the object
+                                    f.setImg(bitmap);
+                                }
+                            });
+                            // taskSnapshot.getMetadata() contains file metadata such as size, content-type, and download URL.
+                            Uri downloadUrl = taskSnapshot.getUploadSessionUri();
+
+                            String s = taskSnapshot.getMetadata().getReference().getDownloadUrl().toString();
+                            Log.d("matte", "downloadUrl-->" + downloadUrl);
+                            if (getActivity() != null) {
+                                myToast.setText(getString(R.string.saved));
+                                myToast.show();
                             }
-                        });
-                        // taskSnapshot.getMetadata() contains file metadata such as size, content-type, and download URL.
-                        Uri downloadUrl = taskSnapshot.getUploadSessionUri();
 
-                        String s = taskSnapshot.getMetadata().getReference().getDownloadUrl().toString();
-                        Log.d("matte", "downloadUrl-->" + downloadUrl);
-                        if(getActivity() != null){
-                            myToast.setText(getString(R.string.saved));
-                            myToast.show();
+                            /**
+                             * SAVE ON MODEL_VIEW
+                             */
+                            model.removeChild(toModifyCategory, toModifyID);
+                            model.insertChild(toModifyCategory, f);
+
+                            //set the priceRange for the restaurant after the insertion
+                            DatabaseReference reference = FirebaseDatabase.getInstance().getReference()
+                                    .child("restaurants/" + currentUserID + "/PriceRange");
+                            double meanPrice = model.getMeanPrice();
+                            if (meanPrice == 0)
+                                reference.setValue(0);
+                            else if (meanPrice < firstRange)
+                                reference.setValue(1);
+                            else if (meanPrice < secondRange)
+                                reference.setValue(2);
+                            else
+                                reference.setValue(3);
+
+                            if (progressDialog.isShowing())
+                                handler.sendEmptyMessage(0);
+
+                            /**
+                             * GO TO DAILY_OFFER_FRAGMENT
+                             */
+                            Navigation.findNavController(v).navigate(R.id.action_editFoodFragment_id_to_daily_offer_id);
                         }
-
-                        /**
-                         * SAVE ON MODEL_VIEW
-                         */
-                        model.removeChild(toModifyCategory, toModifyID);
-                        model.insertChild(toModifyCategory, f);
-
-                        //set the priceRange for the restaurant after the insertion
-                        DatabaseReference reference = FirebaseDatabase.getInstance().getReference()
-                                .child("restaurants/"+currentUserID+"/PriceRange");
-                        double meanPrice = model.getMeanPrice();
-                        if(meanPrice == 0)
-                            reference.setValue(0);
-                        else if(meanPrice < firstRange)
-                            reference.setValue(1);
-                        else if(meanPrice < secondRange)
-                            reference.setValue(2);
-                        else
-                            reference.setValue(3);
-
-                        if(progressDialog.isShowing())
-                            handler.sendEmptyMessage(0);
-
-                        /**
-                         * GO TO DAILY_OFFER_FRAGMENT
-                         */
-                        Navigation.findNavController(v).navigate(R.id.action_editFoodFragment_id_to_daily_offer_id);
                     }
                 })
                 .addOnFailureListener(new OnFailureListener() {
