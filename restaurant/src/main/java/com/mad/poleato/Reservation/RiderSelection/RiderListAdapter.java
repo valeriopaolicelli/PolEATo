@@ -138,12 +138,6 @@ public class RiderListAdapter extends ArrayAdapter<Rider>
                               }
 
                             );
-                            //FirebaseDatabase.getInstance().getReference("deliveryman").child(riderID).child("Busy").setValue(true);
-//                            FirebaseDatabase.getInstance().getReference("restaurants").child(loggedID).child("reservations").child(reservation.getOrder_id()).child("status").child("en").setValue("Delivering");
-//                            FirebaseDatabase.getInstance().getReference("restaurants").child(loggedID).child("reservations").child(reservation.getOrder_id()).child("status").child("it").setValue("In consegna");
-//                            reservation.setStat(getContext().getString(R.string.delivery));
-//                            reservation.setStatus(Status.DELIVERY);
-//                            notifyRider(riderID, finalConvertView);
                         }
                     });
                     builder.setNegativeButton(getContext().getString(R.string.choice_cancel), new DialogInterface.OnClickListener() {
@@ -196,6 +190,10 @@ public class RiderListAdapter extends ArrayAdapter<Rider>
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshotRestaurant) {
                 if( getContext() != null &&
+                        dataSnapshotRestaurant.exists() &&
+                        dataSnapshotRestaurant.hasChild("Address") &&
+                        dataSnapshotRestaurant.hasChild("Name") &&
+                        dataSnapshotRestaurant.hasChild("Phone") &&
                         dataSnapshotRestaurant.hasChild("reservations") &&
                         dataSnapshotRestaurant.child("reservations").hasChild(reservation.getOrder_id()) &&
                         dataSnapshotRestaurant.child("reservations/"+reservation.getOrder_id()).hasChild("status") &&
@@ -208,33 +206,32 @@ public class RiderListAdapter extends ArrayAdapter<Rider>
 
                     DatabaseReference referenceRider = FirebaseDatabase.getInstance().getReference("deliveryman").child(riderID);
                     DatabaseReference reservationRider = referenceRider.child("reservations").push();
+                    final String addressRestaurant = dataSnapshotRestaurant.child("Address").getValue().toString();
+                    final String nameRestaurant = dataSnapshotRestaurant.child("Name").getValue().toString();
+                    final String phoneRestaurant = dataSnapshotRestaurant.child("Phone").getValue().toString();
+                    reservationRider.child("addressCustomer").setValue(reservation.getAddress());
+                    reservationRider.child("addressRestaurant").setValue(addressRestaurant);
+                    reservationRider.child("CustomerID").setValue(reservation.getCustomerID());
+                    //update the delivery status
+                    reservationRider.child("delivering").setValue(false);
+                    reservationRider.child("nameRestaurant").setValue(nameRestaurant);
+                    reservationRider.child("numberOfDishes").setValue(reservation.getNumberOfDishes());
+                    reservationRider.child("orderID").setValue(reservation.getOrder_id());
+                    reservationRider.child("restaurantID").setValue(loggedID);
+                    reservationRider.child("nameCustomer").setValue(reservation.getName() + " " + reservation.getSurname());
+                    reservationRider.child("totalPrice").setValue(reservation.getTotalPrice());
+                    reservationRider.child("phoneCustomer").setValue(reservation.getPhone());
+                    reservationRider.child("phoneRestaurant").setValue(phoneRestaurant);
+                    reservationRider.child("time").setValue(reservation.getTime());
+                    reservationRider.child("date").setValue(reservation.getDate());
+                    FirebaseDatabase.getInstance().getReference("restaurants").child(loggedID).child("reservations").child(reservation.getOrder_id()).child("status").child("en").setValue("Delivering");
+                    FirebaseDatabase.getInstance().getReference("restaurants").child(loggedID).child("reservations").child(reservation.getOrder_id()).child("status").child("it").setValue("In consegna");
+                    sendNotification(riderID);
 
-                    if (dataSnapshotRestaurant.exists() &&
-                            dataSnapshotRestaurant.hasChild("Address") &&
-                            dataSnapshotRestaurant.hasChild("Name") &&
-                            dataSnapshotRestaurant.hasChild("Phone")) {
-
-                        final String addressRestaurant = dataSnapshotRestaurant.child("Address").getValue().toString();
-                        final String nameRestaurant = dataSnapshotRestaurant.child("Name").getValue().toString();
-                        final String phoneRestaurant = dataSnapshotRestaurant.child("Phone").getValue().toString();
-                        reservationRider.child("addressCustomer").setValue(reservation.getAddress());
-                        reservationRider.child("addressRestaurant").setValue(addressRestaurant);
-                        reservationRider.child("CustomerID").setValue(reservation.getCustomerID());
-                        //update the delivery status
-                        reservationRider.child("delivering").setValue(false);
-                        reservationRider.child("nameRestaurant").setValue(nameRestaurant);
-                        reservationRider.child("numberOfDishes").setValue(reservation.getNumberOfDishes());
-                        reservationRider.child("orderID").setValue(reservation.getOrder_id());
-                        reservationRider.child("restaurantID").setValue(loggedID);
-                        reservationRider.child("nameCustomer").setValue(reservation.getName() + " " + reservation.getSurname());
-                        reservationRider.child("totalPrice").setValue(reservation.getTotalPrice());
-                        reservationRider.child("phoneCustomer").setValue(reservation.getPhone());
-                        reservationRider.child("phoneRestaurant").setValue(phoneRestaurant);
-                        reservationRider.child("time").setValue(reservation.getTime());
-                        FirebaseDatabase.getInstance().getReference("restaurants").child(loggedID).child("reservations").child(reservation.getOrder_id()).child("status").child("en").setValue("Delivering");
-                        FirebaseDatabase.getInstance().getReference("restaurants").child(loggedID).child("reservations").child(reservation.getOrder_id()).child("status").child("it").setValue("In consegna");
-                        sendNotification(riderID, convertView);
-                    }
+                    /**
+                     * GO FROM MAPSFRAGMENT to RESERVATION
+                     */
+                    Navigation.findNavController(convertView).navigate(R.id.action_mapsFragment_id_to_reservation_id);
                 }
             }
 
@@ -245,7 +242,7 @@ public class RiderListAdapter extends ArrayAdapter<Rider>
         });
     }
 
-    private void sendNotification(final String childID, View convertView) {
+    private void sendNotification(final String childID) {
         AsyncTask.execute(new Runnable() {
             @Override
             public void run() {
@@ -311,12 +308,6 @@ public class RiderListAdapter extends ArrayAdapter<Rider>
                 }
             }
         });
-
-        /**
-         * GO FROM MAPSFRAGMENT to RESERVATION
-         */
-        final View finalConvertView = convertView;
-        Navigation.findNavController(finalConvertView).navigate(R.id.action_mapsFragment_id_to_reservation_id);
     }
 
     public void removeRider(String riderID) {

@@ -121,31 +121,31 @@
                 app:layout_constraintTop_toTopOf="@id/restaurantAddress_label" />
 
             <TextView
-                android:id="@+id/dishes_label"
+                android:id="@+id/date_label"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="16dp"
                 android:layout_marginEnd="8dp"
-                android:text="@string/dishes"
+                android:text="@string/delivered_date"
                 android:textColor="@color/colorPrimaryDark"
                 android:textSize="15sp"
                 app:layout_constraintBottom_toTopOf="@id/expectedTime_label"
-                app:layout_constraintEnd_toStartOf="@+id/dishes_tv"
+                app:layout_constraintEnd_toStartOf="@+id/date_tv"
                 app:layout_constraintHorizontal_bias="0.0"
                 app:layout_constraintStart_toStartOf="@id/restaurant_label"
                 app:layout_constraintTop_toBottomOf="@id/restaurant_label" />
 
             <TextView
-                android:id="@+id/dishes_tv"
+                android:id="@+id/date_tv"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginEnd="8dp"
                 android:textColor="@color/browser_actions_title_color"
                 android:textSize="15sp"
-                app:layout_constraintBottom_toBottomOf="@id/dishes_label"
+                app:layout_constraintBottom_toBottomOf="@id/date_label"
                 app:layout_constraintEnd_toStartOf="@id/cost_label"
-                app:layout_constraintStart_toEndOf="@id/dishes_label"
-                app:layout_constraintTop_toTopOf="@id/dishes_label" />
+                app:layout_constraintStart_toEndOf="@id/date_label"
+                app:layout_constraintTop_toTopOf="@id/date_label" />
 
             <TextView
                 android:id="@+id/cost_label"
@@ -155,11 +155,11 @@
                 android:text="@string/total_cost"
                 android:textColor="@color/colorPrimaryDark"
                 android:textSize="15sp"
-                app:layout_constraintBottom_toBottomOf="@id/dishes_tv"
+                app:layout_constraintBottom_toBottomOf="@id/date_tv"
                 app:layout_constraintEnd_toStartOf="@id/cost_tv"
                 app:layout_constraintHorizontal_bias="0.0"
                 app:layout_constraintStart_toStartOf="@id/restaurantAddress_label"
-                app:layout_constraintTop_toTopOf="@id/dishes_tv" />
+                app:layout_constraintTop_toTopOf="@id/date_tv" />
 
             <TextView
                 android:id="@+id/cost_tv"
@@ -186,8 +186,8 @@
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toStartOf="@id/expectedTime_tv"
                 app:layout_constraintHorizontal_bias="0.0"
-                app:layout_constraintStart_toStartOf="@id/dishes_label"
-                app:layout_constraintTop_toBottomOf="@id/dishes_label" />
+                app:layout_constraintStart_toStartOf="@id/date_label"
+                app:layout_constraintTop_toBottomOf="@id/date_label" />
 
             <TextView
                 android:id="@+id/expectedTime_tv"

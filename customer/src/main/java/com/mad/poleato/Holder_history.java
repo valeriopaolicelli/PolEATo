@@ -35,6 +35,7 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 
@@ -209,6 +210,7 @@ public class Holder_history extends Fragment {
                      */
                     reservations.add(r);
                     listHash.put(r.getOrderID(), r.getDishes());
+                    Collections.sort(reservations, Reservation.timeComparator);
                     listAdapter.notifyDataSetChanged();
                 }
             }
@@ -255,6 +257,7 @@ public class Holder_history extends Fragment {
                     if(!listHash.containsKey(orderID)){
                         reservations.add(r);
                     }
+                    Collections.sort(reservations, Reservation.timeComparator);
                     listAdapter.notifyDataSetChanged();
                 }
             }

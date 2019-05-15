@@ -11,6 +11,7 @@ import android.widget.TextView;
 import com.mad.poleato.R;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 public class HistoryRecyclerViewAdapter extends RecyclerView.Adapter<HistoryRecyclerViewAdapter.HistoryViewHolder> {
@@ -20,7 +21,7 @@ public class HistoryRecyclerViewAdapter extends RecyclerView.Adapter<HistoryRecy
 
     public class HistoryViewHolder extends RecyclerView.ViewHolder {
         public TextView order_tv, restaurant_tv, restaurantAddress_tv;
-        public TextView price_tv, dishes_tv, expectedTime_tv, deliveredTime_tv;
+        public TextView price_tv, date_tv, expectedTime_tv, deliveredTime_tv;
         public View itemView;
 
         public HistoryViewHolder(@NonNull View itemView) {
@@ -30,7 +31,7 @@ public class HistoryRecyclerViewAdapter extends RecyclerView.Adapter<HistoryRecy
             this.restaurant_tv = (TextView) itemView.findViewById(R.id.restaurant_tv);
             this.restaurantAddress_tv = (TextView) itemView.findViewById(R.id.restaurantAddress_tv);
             this.price_tv = (TextView) itemView.findViewById(R.id.cost_tv);
-            this.dishes_tv = (TextView) itemView.findViewById(R.id.dishes_tv);
+            this.date_tv = (TextView) itemView.findViewById(R.id.date_tv);
             this.expectedTime_tv = (TextView) itemView.findViewById(R.id.expectedTime_tv);
             this.deliveredTime_tv = (TextView) itemView.findViewById(R.id.deliveredTime_tv);
         }
@@ -43,6 +44,7 @@ public class HistoryRecyclerViewAdapter extends RecyclerView.Adapter<HistoryRecy
 
     public void setAllHistories(List<HistoryItem> histories) {
         this.historyList = histories;
+        Collections.sort(this.historyList, HistoryItem.timeComparator);
         notifyDataSetChanged();
     }
 
@@ -64,7 +66,7 @@ public class HistoryRecyclerViewAdapter extends RecyclerView.Adapter<HistoryRecy
         historyViewHolder.restaurant_tv.setText(historyList.get(position).getNameRestaurant());
         historyViewHolder.restaurantAddress_tv.setText(historyList.get(position).getAddressRestaurant());
         historyViewHolder.price_tv.setText(historyList.get(position).getTotalPrice());
-        historyViewHolder.dishes_tv.setText(historyList.get(position).getNumberOfDishes());
+        historyViewHolder.date_tv.setText(historyList.get(position).getDeliveredDate());
         historyViewHolder.expectedTime_tv.setText(historyList.get(position).getExpectedTime());
         historyViewHolder.deliveredTime_tv.setText(historyList.get(position).getDeliveredTime());
 

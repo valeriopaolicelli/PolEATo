@@ -50,6 +50,7 @@
     <string name="dishes">#Dishes: </string>
     <string name="delivery_hour">Delivery hour: </string>
     <string name="total_cost">Total: </string>
+    <string name="delivered_date">Date: </string>
 
     <!-- HistoryFragment cardview-->
     <string name="orderID_label">Order ID: </string>

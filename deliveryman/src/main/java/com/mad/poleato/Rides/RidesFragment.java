@@ -298,7 +298,8 @@ public class RidesFragment extends Fragment {
                         dataSnapshot.hasChild("totalPrice") &&
                         dataSnapshot.hasChild("phoneCustomer") &&
                         dataSnapshot.hasChild("phoneRestaurant") &&
-                        dataSnapshot.hasChild("time")) {
+                        dataSnapshot.hasChild("time") &&
+                        dataSnapshot.hasChild("date")) {
 
                     //retrieve order infos from DB
                     reservationKey = dataSnapshot.getKey();
@@ -322,6 +323,8 @@ public class RidesFragment extends Fragment {
                     String deliveryTime = dataSnapshot.child("time").getValue().toString();
                     String customerPhone = dataSnapshot.child("phoneCustomer").getValue().toString();
                     String restaurantPhone = dataSnapshot.child("phoneRestaurant").getValue().toString();
+                    String deliveryDate= dataSnapshot.child("date").getValue().toString();
+
                     delivering = (Boolean) dataSnapshot.child("delivering").getValue();
 
                     //set the button and status text based on the rider status
@@ -356,7 +359,7 @@ public class RidesFragment extends Fragment {
                     ride = new Ride(orderID, customerAddress, restaurantAddress,
                             nameCustomer, nameRestaurant, priceStr,
                             numDishes, customerPhone, restaurantPhone,
-                            deliveryTime, customerID, restaurantID);
+                            deliveryTime, customerID, restaurantID, deliveryDate);
                     //lock the rider
                     isRunning = true;
 
@@ -381,7 +384,8 @@ public class RidesFragment extends Fragment {
                         dataSnapshot.hasChild("totalPrice") &&
                         dataSnapshot.hasChild("phoneCustomer") &&
                         dataSnapshot.hasChild("phoneRestaurant") &&
-                        dataSnapshot.hasChild("time")) {
+                        dataSnapshot.hasChild("time") &&
+                        dataSnapshot.hasChild("date")) {
 
                     //a new reservation can be created only if the rider is not busy
                     if(!isRunning){
@@ -394,6 +398,7 @@ public class RidesFragment extends Fragment {
                         String nameCustomer = dataSnapshot.child("nameCustomer").getValue().toString();
                         String customerID = dataSnapshot.child("CustomerID").getValue().toString();
                         String restaurantID = dataSnapshot.child("restaurantID").getValue().toString();
+
                         //replace comma with dot before change it in double
                         String priceStr = dataSnapshot.child("totalPrice").getValue()
                                 .toString().replace(",", ".");
@@ -405,6 +410,7 @@ public class RidesFragment extends Fragment {
 
                         String restaurantAddress = dataSnapshot.child("addressRestaurant").getValue().toString();
                         String deliveryTime = dataSnapshot.child("time").getValue().toString();
+                        String deliveryDate = dataSnapshot.child("date").getValue().toString();
                         String customerPhone = dataSnapshot.child("phoneCustomer").getValue().toString();
                         String restaurantPhone = dataSnapshot.child("phoneRestaurant").getValue().toString();
 
@@ -420,7 +426,7 @@ public class RidesFragment extends Fragment {
                         ride = new Ride(orderID, customerAddress, restaurantAddress,
                                 nameCustomer, nameRestaurant, priceStr,
                                 numDishes, customerPhone, restaurantPhone,
-                                deliveryTime, customerID, restaurantID);
+                                deliveryTime, customerID, restaurantID, deliveryDate);
 
                         //lock the rider
                         isRunning = true;
@@ -485,6 +491,7 @@ public class RidesFragment extends Fragment {
         historyReference.child("numberOfDishes").setValue(ride.getNumberOfDishes());
         historyReference.child("expectedTime").setValue(ride.getTime());
         historyReference.child("deliveredTime").setValue(deliveredHour);
+        historyReference.child("deliveredDate").setValue(ride.getDate());
 
         //remove the ride
         DatabaseReference reservationReference = FirebaseDatabase.getInstance().getReference("deliveryman/"+currentUserID);
