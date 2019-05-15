@@ -1,13 +1,12 @@
 package com.mad.poleato;
 
 import android.app.Activity;
-import android.graphics.Bitmap;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseExpandableListAdapter;
-import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -18,7 +17,7 @@ import java.text.DecimalFormat;
 import java.util.HashMap;
 import java.util.List;
 
-public class ExpandableListAdapter extends BaseExpandableListAdapter {
+public class MenuExpandableListAdapter extends BaseExpandableListAdapter {
 
     private final Activity host;
     private final LayoutInflater inf;
@@ -26,8 +25,8 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
     private HashMap<String, List<Food>> _listDataChild; // child data in format of header title, child title
     private Order order;
 
-    public ExpandableListAdapter(Activity host, List<String> listDataHeader,
-                                 HashMap<String, List<Food>> listChildData, Order order) {
+    public MenuExpandableListAdapter(Activity host, List<String> listDataHeader,
+                                     HashMap<String, List<Food>> listChildData, Order order) {
 
         this.host = host;
         inf = LayoutInflater.from(host);
@@ -81,8 +80,8 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
             holder.name = (TextView) convertView.findViewById(R.id.cardName);
             holder.description = (TextView) convertView.findViewById(R.id.cardDescription);
             holder.price = (TextView) convertView.findViewById(R.id.cardPrice);
-            holder.increase = (Button) convertView.findViewById(R.id.increaseBtn);
-            holder.decrease = (Button) convertView.findViewById(R.id.decreaseBtn);
+            holder.increase = (ImageButton) convertView.findViewById(R.id.increaseBtn);
+            holder.decrease = (ImageButton) convertView.findViewById(R.id.decreaseBtn);
             holder.selectedQuantity = (TextView) convertView.findViewById(R.id.quantity);
             convertView.setTag(holder);
 
@@ -242,8 +241,8 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
         TextView description;
         TextView price;
         TextView selectedQuantity;
-        Button decrease;
-        Button increase;
+        ImageButton decrease;
+        ImageButton increase;
     }
 
     private class ViewHolder{

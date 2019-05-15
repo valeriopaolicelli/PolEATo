@@ -111,29 +111,34 @@
                 app:layout_constraintEnd_toStartOf="@+id/decreaseBtn"
                 app:layout_constraintTop_toTopOf="@+id/decreaseBtn" />
 
-            <Button
+            <ImageButton
                 android:id="@+id/increaseBtn"
-                android:layout_width="40dp"
-                android:layout_height="40dp"
+                android:layout_width="56dp"
+                android:layout_height="56dp"
                 android:layout_marginEnd="8dp"
                 android:text="@string/plus"
                 android:textAlignment="center"
+                android:backgroundTint="@color/colorBodyPrimary"
+                android:src="@drawable/ic_add_icon"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 tools:text="+" />
 
-            <Button
+            <ImageButton
                 android:id="@+id/decreaseBtn"
-                android:layout_width="40dp"
-                android:layout_height="40dp"
+                android:layout_width="56dp"
+                android:layout_height="56dp"
                 android:layout_marginTop="8dp"
                 android:layout_marginBottom="16dp"
                 android:text="@string/minum"
                 android:textAlignment="center"
+                android:backgroundTint="@color/colorBodyPrimary"
+                android:src="@drawable/ic_minus_icon2"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toStartOf="@+id/increaseBtn"
                 app:layout_constraintTop_toTopOf="@+id/increaseBtn"
-                app:layout_constraintVertical_bias="0.333" />
+                app:layout_constraintVertical_bias="0.333"/>
+
 
 
         </android.support.constraint.ConstraintLayout>

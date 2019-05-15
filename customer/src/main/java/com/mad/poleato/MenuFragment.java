@@ -3,8 +3,6 @@ package com.mad.poleato;
 import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Context;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.Point;
 import android.os.Bundle;
 import android.os.Handler;
@@ -26,12 +24,10 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
@@ -41,7 +37,7 @@ public class MenuFragment extends Fragment {
     private Activity hostActivity;
     private View fragView;
     private ExpandableListView expListView;
-    private ExpandableListAdapter listAdapter;
+    private MenuExpandableListAdapter listAdapter;
     private List<String> listDataGroup;
     private HashMap<String, List<Food>>listDataChild;
     private Display display;
@@ -134,7 +130,7 @@ public class MenuFragment extends Fragment {
         });
         setList();
         // list Adapter of ExpandableList
-        listAdapter = new ExpandableListAdapter(hostActivity, listDataGroup, listDataChild, order);
+        listAdapter = new MenuExpandableListAdapter(hostActivity, listDataGroup, listDataChild, order);
 
         // setting list adapter
         expListView.setAdapter(listAdapter);
