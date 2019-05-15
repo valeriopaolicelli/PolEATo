@@ -277,6 +277,19 @@ public class CartActivity extends AppCompatActivity implements Interface,TimePic
 
     @Override
     public void onTimeSet(TimePicker timePicker, int hourOfDay, int minute) {
-        time.setText(hourOfDay +":"+minute);
+        String hourStr;
+        String minStr;
+
+        //convert to format HH:mm
+        if(hourOfDay < 10)
+            hourStr = "0" + hourOfDay;
+        else
+            hourStr = "" + hourOfDay;
+
+        if(minute < 10)
+            minStr = "0" + minute;
+        else
+            minStr = "" + minute;
+        time.setText(hourStr +":"+minStr);
     }
 }

@@ -133,8 +133,10 @@ public class SignInActivity extends AppCompatActivity {
                     if (dataSnapshot.exists())
                         if (dataSnapshot.getValue().toString().equals("customer"))
                             access();
-                        else
+                        else{
+                            show_login_form();
                             FirebaseAuth.getInstance().signOut();
+                        }
                 }
 
                 @Override
