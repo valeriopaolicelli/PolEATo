@@ -131,11 +131,11 @@ public class BackgroundLocationService extends Service {
                 }
                 PendingIntent locationIntent = PendingIntent.getBroadcast(getApplicationContext(), 54321, intent_2, PendingIntent.FLAG_CANCEL_CURRENT);
                 fusedLocationProviderClient.requestLocationUpdates(mLocationRequest, locationIntent);
-                handler.postDelayed(this,7000);
+                handler.postDelayed(this,3000);
             }
         };
 
-        handler.postDelayed(r,7000);
+        handler.postDelayed(r,3000);
 
         return START_STICKY;
 

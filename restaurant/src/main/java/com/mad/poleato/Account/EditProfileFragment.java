@@ -790,7 +790,7 @@ public class EditProfileFragment extends Fragment implements TimePickerDialog.On
             for(String fieldName : editTextFields.keySet()){
                 ed = editTextFields.get(fieldName);
                 if(fieldName.equals("DeliveryCost")){
-                    DecimalFormat decimalFormat = new DecimalFormat("#.00"); //two decimal
+                    DecimalFormat decimalFormat = new DecimalFormat("#0.00"); //two decimal
                     String s = ed.getText().toString().replace(",", ".");
                     double d = Double.parseDouble(s);
                     String priceStr = decimalFormat.format(d);
@@ -982,49 +982,29 @@ public class EditProfileFragment extends Fragment implements TimePickerDialog.On
 
     @Override
     public void onTimeSet(TimePicker timePicker, int hourOfDay, int minute) {
+        String hourStr;
+        String minStr;
+
+        //convert to format HH:mm
+        if(hourOfDay < 10)
+            hourStr = "0" + hourOfDay;
+        else
+            hourStr = "" + hourOfDay;
+
+        if(minute < 10)
+            minStr = "0" + minute;
+        else
+            minStr = "" + minute;
+
         if(FLAG_HOUR == 0){
             EditText editText = (EditText) v.findViewById(R.id.editTextOpen);
-            editText.setText(hourOfDay + ":" + minute);
+            editText.setText(hourStr + ":" + minStr);
         }
         else{
             EditText editText = (EditText) v.findViewById(R.id.editTextClose);
-            editText.setText(hourOfDay + ":" + minute);
+            editText.setText(hourStr + ":" + minStr);
         }
     }
-
-
-
-/*
-    public void changeImage(View view) {
-        android.support.v7.widget.PopupMenu popup = new android.support.v7.widget.PopupMenu(view.getContext(), change_im);
-        popup.getMenuInflater().inflate(
-                R.menu.popup_menu, popup.getMenu());
-        popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
-            // implement click listener.
-            @Override
-            public boolean onMenuItemClick(MenuItem item) {
-                switch (item.getItemId()) {
-                    case R.id.camera:
-                        // create Intent with photoFile
-                        dispatchTakePictureIntent();
-                        return true;
-                    case R.id.gallery:
-                        Intent photoPickerIntent = new Intent(Intent.ACTION_PICK);
-                        photoPickerIntent.setType("image/*");
-                        startActivityForResult(photoPickerIntent, RESULT_LOAD_IMG);
-                        return true;
-                    case R.id.removeImage:
-                        removeProfileImage();
-                        return true;
-
-                    default:
-                        return false;
-                }
-            }
-        });
-        popup.show();
-    }
-*/
 
 
 
