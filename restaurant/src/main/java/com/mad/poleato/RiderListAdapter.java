@@ -122,8 +122,6 @@ public class RiderListAdapter extends ArrayAdapter<Rider>
                                   @Override
                                   public Transaction.Result doTransaction(@NonNull MutableData mutableData) {
                                       mutableData.child("Busy").setValue(true);
-                                      FirebaseDatabase.getInstance().getReference("restaurants").child(loggedID).child("reservations").child(reservation.getOrder_id()).child("status").child("en").setValue("Delivering");
-                                      FirebaseDatabase.getInstance().getReference("restaurants").child(loggedID).child("reservations").child(reservation.getOrder_id()).child("status").child("it").setValue("In consegna");
                                       reservation.setStat(getContext().getString(R.string.delivery));
                                       reservation.setStatus(Status.DELIVERY);
                                       notifyRider(riderID, finalConvertView);
@@ -196,15 +194,15 @@ public class RiderListAdapter extends ArrayAdapter<Rider>
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshotRestaurant) {
                 if( getContext() != null &&
-                    convertView != null &&
                         dataSnapshotRestaurant.hasChild("reservations") &&
-                        dataSnapshotRestaurant.child("reservations").hasChild("status") &&
-                        dataSnapshotRestaurant.child("reservations").child("status").hasChild("it") &&
-                        dataSnapshotRestaurant.child("reservations").child("status").hasChild("en") &&
+                        dataSnapshotRestaurant.child("reservations").hasChild(reservation.getOrder_id()) &&
+                        dataSnapshotRestaurant.child("reservations/"+reservation.getOrder_id()).hasChild("status") &&
+                        dataSnapshotRestaurant.child("reservations/"+reservation.getOrder_id()+"/status").hasChild("it") &&
+                        dataSnapshotRestaurant.child("reservations/"+reservation.getOrder_id()+"/status").hasChild("en") &&
                         dataSnapshotRestaurant.child("reservations/" + reservation.getOrder_id()
-                                                                 +"/status/it").getValue().toString().equals("In consegna") &&
+                                                                 +"/status/it").getValue().toString().equals("Preparazione") &&
                         dataSnapshotRestaurant.child("reservations/" + reservation.getOrder_id()
-                                                                 +"/status/en").getValue().toString().equals("Delivering")) {
+                                                                 +"/status/en").getValue().toString().equals("Cooking")) {
 
                     DatabaseReference referenceRider = FirebaseDatabase.getInstance().getReference("deliveryman").child(riderID);
                     DatabaseReference reservationRider = referenceRider.child("reservations").push();
@@ -231,6 +229,8 @@ public class RiderListAdapter extends ArrayAdapter<Rider>
                         reservationRider.child("phoneCustomer").setValue(reservation.getPhone());
                         reservationRider.child("phoneRestaurant").setValue(phoneRestaurant);
                         reservationRider.child("time").setValue(reservation.getTime());
+                        FirebaseDatabase.getInstance().getReference("restaurants").child(loggedID).child("reservations").child(reservation.getOrder_id()).child("status").child("en").setValue("Delivering");
+                        FirebaseDatabase.getInstance().getReference("restaurants").child(loggedID).child("reservations").child(reservation.getOrder_id()).child("status").child("it").setValue("In consegna");
                         sendNotification(riderID, convertView);
                     }
                 }
