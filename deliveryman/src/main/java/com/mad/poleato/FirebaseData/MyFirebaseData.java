@@ -110,7 +110,32 @@ public class MyFirebaseData {
 
             @Override
             public void onChildChanged(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
-                //HistoryFragment item cannot change
+                Log.d("matte", "onChildAdded | PREVIOUS CHILD" + s);
+                if (dataSnapshot.hasChild("orderID") &&
+                        dataSnapshot.hasChild("addressRestaurant") &&
+                        dataSnapshot.hasChild("nameRestaurant") &&
+                        dataSnapshot.hasChild("totalPrice") &&
+                        dataSnapshot.hasChild("numberOfDishes") &&
+                        dataSnapshot.hasChild("expectedTime") &&
+                        dataSnapshot.hasChild("deliveredTime")) {
+
+                    //retrieve history infos from DB
+                    String nameRestaurant = dataSnapshot.child("nameRestaurant").getValue().toString();
+                    String numDishes = dataSnapshot.child("numberOfDishes").getValue().toString();
+                    String orderID = dataSnapshot.child("orderID").getValue().toString();
+                    String priceStr = dataSnapshot.child("totalPrice").getValue()
+                            .toString().replace(",", ".");
+                    String restaurantAddress = dataSnapshot.child("addressRestaurant").getValue().toString();
+                    String expectedTime = dataSnapshot.child("expectedTime").getValue().toString();
+                    String deliveredTime = dataSnapshot.child("deliveredTime").getValue().toString();
+
+
+                    HistoryItem historyObj = new HistoryItem(orderID, restaurantAddress,
+                            nameRestaurant, priceStr, numDishes, expectedTime, deliveredTime);
+
+                    mapDataHistory.getValue().put(historyObj.getOrderID(), historyObj);
+                    mapDataHistory.setValue(mapDataHistory.getValue());
+                }
             }
 
             @Override
