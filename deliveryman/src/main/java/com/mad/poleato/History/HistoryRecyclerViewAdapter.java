@@ -10,6 +10,7 @@ import android.widget.TextView;
 
 import com.mad.poleato.R;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class HistoryRecyclerViewAdapter extends RecyclerView.Adapter<HistoryRecyclerViewAdapter.HistoryViewHolder> {
@@ -37,6 +38,7 @@ public class HistoryRecyclerViewAdapter extends RecyclerView.Adapter<HistoryRecy
 
     public HistoryRecyclerViewAdapter(Context context){
         this.context=context;
+        this.historyList = new ArrayList<>();
     }
 
     public void setAllHistories(List<HistoryItem> histories) {
