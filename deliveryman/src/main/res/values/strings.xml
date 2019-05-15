@@ -58,14 +58,14 @@
 
 
     <!-- Maps strings -->
-    <string name="go_to_customer">To the customer</string>
+    <string name="go_to_customer">To customer</string>
     <string name="dialog_go_to_customer">Are you sure you want to go to the customer?</string>
     <string name="restaurant_string">Restaurant</string>
     <string name="customer_string">Customer</string>
     <string name="you_string">You</string>
     <string name="you_arrived">You arrived!</string>
-    <string name="maps_button_to_restaurant">Go to the customer</string>
-    <string name="maps_button_order_delivered">Ends run</string>
+    <string name="maps_button_to_restaurant">Go to customer</string>
+    <string name="maps_button_order_delivered">End run</string>
     <string name="dialog_message_order_completed">Are you sure you want to end the run?</string>
     <string name="message_order_completed">Order completed!</string>
 

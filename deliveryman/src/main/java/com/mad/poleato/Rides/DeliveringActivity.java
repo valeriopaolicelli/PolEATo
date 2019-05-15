@@ -112,6 +112,9 @@ public class DeliveringActivity extends FragmentActivity implements OnMapReadyCa
     private ImageButton show_more_button;
     private Button button_map;
 
+    private Boolean firstLocation;
+    private LatLng oldLocation;
+
     //key of the order rider side
     private String reservationKey;
 
@@ -127,13 +130,26 @@ public class DeliveringActivity extends FragmentActivity implements OnMapReadyCa
 
             Log.d("matte", "Received coordinates from service: " + latitude + " " + longitude);
 
+
+            LatLng currLocation = new LatLng(latitude, longitude);
+
+            if(!firstLocation){
+
+                double d = computeDistance(oldLocation, currLocation)*1000;
+                if(d < 7)
+                    return;
+            }
+
             if(mMap!=null) {
                 mMap.clear();
                 if (delivering)
-                    showDirections(new LatLng(latitude, longitude), customerPosition, getString(R.string.customer_string));
+                    showDirections(currLocation, customerPosition, getString(R.string.customer_string));
                 else
-                    showDirections(new LatLng(latitude, longitude), restaurantPosition, getString(R.string.restaurant_string));
+                    showDirections(currLocation, restaurantPosition, getString(R.string.restaurant_string));
             }
+            if(firstLocation)
+                firstLocation = false;
+            oldLocation = currLocation;
         }
     };
 
@@ -160,6 +176,9 @@ public class DeliveringActivity extends FragmentActivity implements OnMapReadyCa
 
         //to retrieve latitude and longitude from address
         geocoder = new Geocoder(this);
+
+        //first location not received yet
+        firstLocation = true;
 
         // Acquire a reference to the system Location Manager
         //locationManager = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
