@@ -58,6 +58,7 @@ import com.google.firebase.storage.UploadTask;
 import com.mad.poleato.DailyOffer.DailyOfferFragmentDirections;
 import com.mad.poleato.DailyOffer.DishCategoryTranslator;
 import com.mad.poleato.DailyOffer.Food;
+import com.mad.poleato.MyDatabaseReference;
 import com.mad.poleato.NavigatorActivity;
 import com.mad.poleato.R;
 import com.mad.poleato.View.ViewModel.MyViewModel;
@@ -68,7 +69,9 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.TreeMap;
@@ -120,8 +123,9 @@ public class EditFoodFragment extends DialogFragment {
     //to map each category name to the position inside the spinner
     private Map<String, Integer> spinnerCategoryPosition;
 
-
-
+    private List<MyDatabaseReference> dbReferenceList;
+    int indexReference;
+    private List<TextWatcher> buttonListener;
 
     /* ***********************************
      ********   ANDROID CALLBACKS   ****
@@ -155,6 +159,9 @@ public class EditFoodFragment extends DialogFragment {
 
         OneSignal.setSubscription(true);
         OneSignal.sendTag("User_ID", currentUserID);
+
+        dbReferenceList= new ArrayList<>();
+        buttonListener= new ArrayList<>();
     }
 
 
@@ -230,9 +237,12 @@ public class EditFoodFragment extends DialogFragment {
     private void fillFields(){
 
         //Download text infos
+        ValueEventListener valueEventListener;
         reference = FirebaseDatabase.getInstance().getReference("restaurants/"+currentUserID+"/Menu/"+toModifyID);
+        dbReferenceList.add(new MyDatabaseReference(reference));
+        indexReference= dbReferenceList.size()-1;
 
-        reference.addValueEventListener(new ValueEventListener() {
+        dbReferenceList.get(indexReference).getReference().addValueEventListener(valueEventListener= new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
 
@@ -295,6 +305,8 @@ public class EditFoodFragment extends DialogFragment {
                 myToast.show();
             }
         });
+
+        dbReferenceList.get(indexReference).setValueListener(valueEventListener);
 
     }
 
@@ -537,7 +549,8 @@ public class EditFoodFragment extends DialogFragment {
             field= editTextFields.get(fieldName);
             final ImageButton button= imageButtons.get(fieldName);
             if(button!=null && field != null) {
-                field.addTextChangedListener(new TextWatcher() {
+                TextWatcher textWatcher;
+                field.addTextChangedListener(textWatcher= new TextWatcher() {
                     @Override
                     public void beforeTextChanged(CharSequence s, int start, int count, int after) {
                         if (s.toString().trim().length() == 0) {
@@ -565,6 +578,8 @@ public class EditFoodFragment extends DialogFragment {
                         }
                     }
                 });
+
+                buttonListener.add(textWatcher);
             }
             else
                 return;
@@ -761,4 +776,12 @@ public class EditFoodFragment extends DialogFragment {
         return rotatedImg;
     }
 
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        for(int i=0; i < dbReferenceList.size(); i++)
+            dbReferenceList.get(i).removeAllListener();
+        for (int i=0; i < editTextFields.size(); i++)
+            editTextFields.get(i).removeTextChangedListener(buttonListener.get(i));
+    }
 }

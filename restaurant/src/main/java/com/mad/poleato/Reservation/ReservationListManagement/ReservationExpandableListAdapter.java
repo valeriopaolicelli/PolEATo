@@ -29,6 +29,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.MutableData;
 import com.google.firebase.database.Transaction;
 import com.google.firebase.database.ValueEventListener;
+import com.mad.poleato.MyDatabaseReference;
 import com.mad.poleato.R;
 import com.mad.poleato.Reservation.Dish;
 import com.mad.poleato.Reservation.Reservation;
@@ -57,17 +58,12 @@ public class ReservationExpandableListAdapter extends BaseExpandableListAdapter{
     private HashMap<String, CheckBox> groupCheckBoxes = new HashMap<>(); //Map of groups checkboxes, used to to handle group check box from getChildView
 
     private String loggedID;
-    boolean notify;
 
     public ReservationExpandableListAdapter(Context context, List<Reservation> reservations, HashMap<String, List<Dish>> listHashMap, String currentUserID) {
         this.context = context;
         this.reservations = reservations;
         this.listHashMap = listHashMap;
         this.loggedID= currentUserID;
-
-        // flag to decide if notify the rider
-        notify = false;
-        //initialize default check states of checkboxes
     }
 
     /**

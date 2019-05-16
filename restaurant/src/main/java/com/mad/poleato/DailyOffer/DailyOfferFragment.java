@@ -28,6 +28,7 @@ import androidx.navigation.Navigation;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.mad.poleato.DailyOffer.ExpandableListManagement.ExpandableListAdapter;
+import com.mad.poleato.MyDatabaseReference;
 import com.mad.poleato.NavigatorActivity;
 import com.mad.poleato.R;
 import com.mad.poleato.SignInActivity;
@@ -75,7 +76,6 @@ public class DailyOfferFragment extends Fragment {
 
     private String currentUserID;
     private FirebaseAuth mAuth;
-
 
     public DailyOfferFragment() {
         // Required empty public constructor
@@ -143,8 +143,6 @@ public class DailyOfferFragment extends Fragment {
                 listAdapter.setAllChild(stringListHashMap);
             }
         });
-
-
     }
 
     @Override

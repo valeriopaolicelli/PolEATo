@@ -36,6 +36,7 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+import com.mad.poleato.MyDatabaseReference;
 import com.mad.poleato.NavigatorActivity;
 import com.mad.poleato.R;
 import com.mad.poleato.Reservation.ReservationListManagement.ReservationExpandableListAdapter;
@@ -84,6 +85,10 @@ public class ReservationFragment extends Fragment {
     };
 
     private DatabaseReference customer; //to retrieve the customer details -> global to handle async behaviour of FB
+    private int indexCustomerAdded;
+    private int indexCustomerChanged;
+
+    private List<MyDatabaseReference> dbReferenceList;
 
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -148,6 +153,8 @@ public class ReservationFragment extends Fragment {
 
         OneSignal.setSubscription(true);
         OneSignal.sendTag("User_ID", currentUserID);
+
+        dbReferenceList= new ArrayList<>();
     }
 
 
@@ -220,10 +227,12 @@ public class ReservationFragment extends Fragment {
 
         DatabaseReference reference = FirebaseDatabase.getInstance().getReference("restaurants")
                 .child(currentUserID).child("reservations");
+        dbReferenceList.add(new MyDatabaseReference(reference));
+        final int indexReference= dbReferenceList.size()-1;
 
+        ValueEventListener valueEventListener;
 
-
-        reference.addValueEventListener(new ValueEventListener() {
+        dbReferenceList.get(indexReference).getReference().addValueEventListener(valueEventListener= new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
 //                listAdapter.addCheckState(false);
@@ -236,8 +245,11 @@ public class ReservationFragment extends Fragment {
                 handler.sendEmptyMessage(0);
             }
         });
+        dbReferenceList.get(indexReference).setValueListener(valueEventListener);
 
-        reference.addChildEventListener(new ChildEventListener() {
+
+        ChildEventListener childEventListener;
+        dbReferenceList.get(indexReference).getReference().addChildEventListener(childEventListener= new ChildEventListener() {
             @Override
             public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
 
@@ -271,6 +283,8 @@ public class ReservationFragment extends Fragment {
 
                     //Retrieve through customerID the details of the customer
                     customer= FirebaseDatabase.getInstance().getReference("customers").child(customer_id);
+                    dbReferenceList.add(new MyDatabaseReference(customer));
+                    indexCustomerAdded= dbReferenceList.size()-1;
 
                     readData(new FirebaseCallBack() {
                         @Override
@@ -286,8 +300,7 @@ public class ReservationFragment extends Fragment {
                             }
                             listAdapter.notifyDataSetChanged();
                         }
-
-                    });
+                    }, indexCustomerAdded);
 
 
                     // fields setted to null only because they will be setted later in the call back of FB
@@ -358,6 +371,9 @@ public class ReservationFragment extends Fragment {
 
                     //Retrieve through customerID the details of the customer
                     customer= FirebaseDatabase.getInstance().getReference("customers").child(customer_id);
+                    dbReferenceList.add(new MyDatabaseReference(customer));
+                    indexCustomerChanged= dbReferenceList.size()-1;
+
                     readData(new FirebaseCallBack() {
                         @Override
                         public void onCallBack(List<String> customerDetails) {
@@ -371,10 +387,9 @@ public class ReservationFragment extends Fragment {
                                     r.setPhone(customerDetails.get(3));
                                 }
                             }
-
                             listAdapter.notifyDataSetChanged();
                         }
-                    });
+                    }, indexCustomerChanged);
 
                     //and for each customer (reservation) retrieve the list of dishes
                     DataSnapshot dishesOfReservation = dataSnapshot.child("dishes");
@@ -442,6 +457,8 @@ public class ReservationFragment extends Fragment {
                 myToast.show();
             }
         });
+        dbReferenceList.get(indexReference).setChildListener(childEventListener);
+
     }
 
 
@@ -482,7 +499,7 @@ public class ReservationFragment extends Fragment {
         }
     }
 
-    private void readData(final FirebaseCallBack firebaseCallBack){
+    private void readData(final FirebaseCallBack firebaseCallBack, int index){
         ValueEventListener valueEventListener= new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot ds) {
@@ -509,10 +526,18 @@ public class ReservationFragment extends Fragment {
             }
         };
 
-        customer.addListenerForSingleValueEvent(valueEventListener);
+        dbReferenceList.get(index).getReference().addListenerForSingleValueEvent(valueEventListener);
+        dbReferenceList.get(index).setValueListener(valueEventListener);
     }
 
     private interface FirebaseCallBack {
         void onCallBack(List<String> customerDetails);
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        for(int i=0; i < dbReferenceList.size(); i++)
+            dbReferenceList.get(i).removeAllListener();
     }
 }

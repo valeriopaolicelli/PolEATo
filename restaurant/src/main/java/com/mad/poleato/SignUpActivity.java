@@ -39,6 +39,7 @@ import com.mad.poleato.DailyOffer.Food;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -77,7 +78,6 @@ public class SignUpActivity extends AppCompatActivity {
         //set the listener
         signIn.setOnClickListener(signUpRoutine);
         signUp.setOnClickListener(signUpRoutine);
-
     }
 
     @Override
@@ -198,8 +198,6 @@ public class SignUpActivity extends AppCompatActivity {
         SignUpActivity.this.startActivity(myIntent);
         finish();
     }
-
-
 
     public void signUp(){
 
