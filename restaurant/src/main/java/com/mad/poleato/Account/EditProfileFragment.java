@@ -64,6 +64,7 @@ import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 import com.mad.poleato.LineLimiter;
+import com.mad.poleato.MyDatabaseReference;
 import com.mad.poleato.R;
 import com.onesignal.OneSignal;
 
@@ -75,6 +76,7 @@ import java.io.InputStream;
 import java.text.DecimalFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -128,6 +130,9 @@ public class EditProfileFragment extends Fragment implements TimePickerDialog.On
     private int FLAG_OPEN_HOUR = 0;
     private int FLAG_CLOSE_HOUR = 1;
     private int FLAG_HOUR;
+
+    private List<MyDatabaseReference> dbReferenceList;
+    int indexReference;
 
 
     // TODO: Rename parameter arguments, choose names that match
@@ -204,7 +209,8 @@ public class EditProfileFragment extends Fragment implements TimePickerDialog.On
         OneSignal.setSubscription(true);
 
         OneSignal.sendTag("User_ID", currentUserID);
-        
+
+        dbReferenceList= new ArrayList<>();
     }
 
 
@@ -361,8 +367,11 @@ public class EditProfileFragment extends Fragment implements TimePickerDialog.On
 
         //Download text infos
         reference = FirebaseDatabase.getInstance().getReference("restaurants/"+ currentUserID);
+        dbReferenceList.add(new MyDatabaseReference(reference));
+        indexReference= dbReferenceList.size()-1;
+        ValueEventListener valueEventListener;
 
-        reference.addValueEventListener(new ValueEventListener() {
+        dbReferenceList.get(indexReference).getReference().addValueEventListener(valueEventListener= new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
 
@@ -414,7 +423,7 @@ public class EditProfileFragment extends Fragment implements TimePickerDialog.On
                 myToast.show();
             }
         });
-
+        dbReferenceList.get(indexReference).setValueListener(valueEventListener);
 
         //Download the profile pic
         StorageReference storageReference = FirebaseStorage.getInstance().getReference();
@@ -623,9 +632,6 @@ public class EditProfileFragment extends Fragment implements TimePickerDialog.On
 
 
     public void saveChanges() throws ParseException {
-
-        // TODO HERE MAKE UI NON RESPONSIVE
-
 
         if(getActivity() != null)
             progressDialog = ProgressDialog.show(getActivity(), "", getActivity().getString(R.string.loading));
@@ -1030,7 +1036,6 @@ public class EditProfileFragment extends Fragment implements TimePickerDialog.On
         }
     }
 
-
     private class SwitchListener extends OnSwipeTouchListener{
 
         public SwitchListener(Context c) {
@@ -1090,4 +1095,11 @@ public class EditProfileFragment extends Fragment implements TimePickerDialog.On
         }
     }
 
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        for(int i=0; i < dbReferenceList.size(); i++){
+            dbReferenceList.get(i).removeAllListener();
+        }
+    }
 }

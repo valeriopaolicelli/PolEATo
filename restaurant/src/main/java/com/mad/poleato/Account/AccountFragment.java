@@ -36,6 +36,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
+import com.mad.poleato.MyDatabaseReference;
 import com.mad.poleato.NavigatorActivity;
 import com.mad.poleato.R;
 import com.mad.poleato.SignInActivity;
@@ -43,7 +44,9 @@ import com.onesignal.OneSignal;
 
 import org.w3c.dom.Text;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
@@ -71,6 +74,8 @@ public class AccountFragment extends Fragment {
     private String currentUserID;
     private FirebaseAuth mAuth;
 
+    private List<MyDatabaseReference> dbReferenceList;
+
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -97,6 +102,8 @@ public class AccountFragment extends Fragment {
 
         OneSignal.setSubscription(true);
         OneSignal.sendTag("User_ID", currentUserID);
+
+        dbReferenceList= new ArrayList<>();
     }
 
     @Override
@@ -180,8 +187,11 @@ public class AccountFragment extends Fragment {
     public void fillFields() {
 
         DatabaseReference reference = FirebaseDatabase.getInstance().getReference("restaurants/"+ currentUserID);
+        dbReferenceList.add(new MyDatabaseReference(reference));
+        int indexReference= dbReferenceList.size()-1;
+        ValueEventListener valueEventListener;
 
-        reference.addValueEventListener(new ValueEventListener() {
+        dbReferenceList.get(indexReference).getReference().addValueEventListener(valueEventListener= new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 // it is set to the first record (restaurant)
@@ -236,6 +246,7 @@ public class AccountFragment extends Fragment {
                 myToast.show();
             }
         });
+        dbReferenceList.get(indexReference).setValueListener(valueEventListener);
 
         //Download the profile pic
         StorageReference storageReference = FirebaseStorage.getInstance().getReference();
@@ -261,6 +272,14 @@ public class AccountFragment extends Fragment {
             }
         });
 
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        for(int i=0; i < dbReferenceList.size(); i++){
+            dbReferenceList.get(i).removeAllListener();
+        }
     }
 
 }
