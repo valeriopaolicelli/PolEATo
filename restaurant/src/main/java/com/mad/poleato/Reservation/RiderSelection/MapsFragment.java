@@ -156,6 +156,7 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback,
 
         OneSignal.setSubscription(true);
         OneSignal.sendTag("User_ID", currentUserID);
+        dbReferenceList= new ArrayList<>();
 
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
         mapFragment = (SupportMapFragment) getChildFragmentManager()
@@ -181,15 +182,12 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback,
 
         setUpLocation();
 
-        dbReferenceList= new ArrayList<>();
-
         return fragView;
     }
 
     @Override
     public void onResume() {
         super.onResume();
-
         handleButton();
     }
 
