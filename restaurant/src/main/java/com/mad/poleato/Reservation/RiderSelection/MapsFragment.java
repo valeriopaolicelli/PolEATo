@@ -83,6 +83,7 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback,
         GoogleMap.OnMarkerClickListener {
 
     private GoogleMap mMap;
+    private GeoQuery geoQuery;
 
     //Play Service Location
     private static final int MY_PERMISSION_REQUEST_CODE = 0001;
@@ -481,7 +482,7 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback,
          */
 
 
-        GeoQuery geoQuery = geoFire.queryAtLocation(new GeoLocation(latitudeRest, longitudeRest), 2);
+        geoQuery = geoFire.queryAtLocation(new GeoLocation(latitudeRest, longitudeRest), 2);
 
         geoQuery.addGeoQueryEventListener(new GeoQueryEventListener() {
               @Override
@@ -1108,5 +1109,7 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback,
         for(int i=0; i < dbReferenceList.size(); i++){
             dbReferenceList.get(i).removeAllListener();
         }
+
+        geoQuery.removeAllListeners();
     }
 }
