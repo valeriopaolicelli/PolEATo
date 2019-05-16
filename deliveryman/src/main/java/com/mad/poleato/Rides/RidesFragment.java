@@ -40,6 +40,8 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
+import com.mad.poleato.MyDatabaseReference;
 import com.mad.poleato.R;
 import com.onesignal.OneSignal;
 
@@ -48,9 +50,11 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Scanner;
 
@@ -94,6 +98,7 @@ public class RidesFragment extends Fragment {
 
     private Ride ride;
 
+    private List<MyDatabaseReference> dbReferenceList;
 
     @Override
     public void onAttach(Context context) {
@@ -128,6 +133,8 @@ public class RidesFragment extends Fragment {
 
         OneSignal.setSubscription(true);
         OneSignal.sendTag("User_ID", currentUserID);
+
+        dbReferenceList= new ArrayList<>();
     }
 
     @Override
@@ -279,8 +286,11 @@ public class RidesFragment extends Fragment {
 
         DatabaseReference reference = FirebaseDatabase.getInstance()
                 .getReference("deliveryman/" + currentUserID + "/reservations");
+        dbReferenceList.add(new MyDatabaseReference(reference));
+        int indexReference= dbReferenceList.size()-1;
+        ChildEventListener childEventListener;
 
-        reference.addChildEventListener(new ChildEventListener() {
+        dbReferenceList.get(indexReference).getReference().addChildEventListener(childEventListener= new ChildEventListener() {
             @Override
             public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
                 if (dataSnapshot.exists() &&
@@ -477,6 +487,7 @@ public class RidesFragment extends Fragment {
             }
         });
 
+        dbReferenceList.get(indexReference).setChildListener(childEventListener);
     }
 
 
@@ -705,5 +716,13 @@ public class RidesFragment extends Fragment {
                 }
             }
         });
+    }
+
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        for (int i=0; i < dbReferenceList.size(); i++)
+            dbReferenceList.get(i).removeAllListener();
     }
 }

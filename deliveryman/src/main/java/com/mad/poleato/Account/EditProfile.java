@@ -59,6 +59,7 @@ import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
+import com.mad.poleato.MyDatabaseReference;
 import com.mad.poleato.R;
 import com.onesignal.OneSignal;
 
@@ -68,6 +69,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.text.DecimalFormat;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -114,6 +116,7 @@ public class EditProfile extends Fragment {
     private double latitude;
     private double longitude;
 
+    private List<MyDatabaseReference> dbReferenceList;
 
     public EditProfile() {
         // Required empty public constructor
@@ -142,6 +145,8 @@ public class EditProfile extends Fragment {
         editTextFields = new HashMap<>();
         imageButtons = new HashMap<>();
         imageButtons = new HashMap<>();
+
+        dbReferenceList= new ArrayList<>();
     }
 
 
@@ -239,8 +244,11 @@ public class EditProfile extends Fragment {
 
         //Download text infos
         reference = FirebaseDatabase.getInstance().getReference("deliveryman/"+ currentUserID);
+        dbReferenceList.add(new MyDatabaseReference(reference));
+        int indexReference= dbReferenceList.size()-1;
+        ValueEventListener valueEventListener;
 
-        reference.addValueEventListener(new ValueEventListener() {
+        dbReferenceList.get(indexReference).getReference().addValueEventListener(valueEventListener= new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
 
@@ -274,7 +282,7 @@ public class EditProfile extends Fragment {
                 myToast.show();
             }
         });
-
+        dbReferenceList.get(indexReference).setValueListener(valueEventListener);
 
         //Download the profile pic
         StorageReference storageReference = FirebaseStorage.getInstance().getReference();
@@ -939,4 +947,10 @@ public class EditProfile extends Fragment {
     }
 
 
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        for (int i=0; i < dbReferenceList.size(); i++)
+            dbReferenceList.get(i).removeAllListener();
+    }
 }

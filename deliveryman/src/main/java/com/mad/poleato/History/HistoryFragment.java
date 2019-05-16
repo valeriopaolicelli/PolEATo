@@ -145,8 +145,6 @@ public class HistoryFragment extends Fragment {
         layoutManager = new LinearLayoutManager(this.hostActivity);
         rv.setLayoutManager(layoutManager);
 
-        collectFields();
-
         this.historyAdapter = new HistoryRecyclerViewAdapter(this.hostActivity);
         rv.setAdapter(historyAdapter);
         //add separator between list items
@@ -175,11 +173,4 @@ public class HistoryFragment extends Fragment {
             }
         });
     }
-
-    private void collectFields(){
-
-        //todo ?
-
-    }
-
 }
