@@ -179,6 +179,16 @@ public class ReservationExpandableListAdapter extends BaseExpandableListAdapter{
 
         }
 
+        /**
+//         * Uncomment this to upload delivered order to History node
+//         */
+//        if(r.getStatus() == Status.DELIVERED){
+//            //Adding reservation to History
+//            DatabaseReference dbReference = FirebaseDatabase.getInstance().getReference("restaurants").child(loggedID).child("History");
+//            dbReference.child(r.getOrder_id()).setValue(r);
+//            //Delete reservation from pending reservations
+//            FirebaseDatabase.getInstance().getReference("restaurants").child(loggedID).child("reservations").child(r.getOrder_id()).removeValue();
+//        }
 
         if (r.getStatus() == Status.REJECTED) {
             flag = true;
@@ -348,8 +358,15 @@ public class ReservationExpandableListAdapter extends BaseExpandableListAdapter{
                                 @Override
                                 public void onClick(DialogInterface dialogInterface, int i) {
                                     r.setStatus(Status.REJECTED);
-                                    FirebaseDatabase.getInstance().getReference("restaurants").child(loggedID).child("reservations").child(r.getOrder_id()).child("status").child("en").setValue("Rejected");
-                                    FirebaseDatabase.getInstance().getReference("restaurants").child(loggedID).child("reservations").child(r.getOrder_id()).child("status").child("it").setValue("Rifiutato");
+                                    //Adding reservation to History
+                                    DatabaseReference dbReference = FirebaseDatabase.getInstance().getReference("restaurants").child(loggedID).child("History");
+                                    dbReference.child(r.getOrder_id()).setValue(r);
+                                    //Delete reservation from pending reservations
+                                    FirebaseDatabase.getInstance().getReference("restaurants").child(loggedID).child("reservations").child(r.getOrder_id()).removeValue();
+
+
+//                                    FirebaseDatabase.getInstance().getReference("restaurants").child(loggedID).child("reservations").child(r.getOrder_id()).child("status").child("en").setValue("Rejected");
+//                                    FirebaseDatabase.getInstance().getReference("restaurants").child(loggedID).child("reservations").child(r.getOrder_id()).child("status").child("it").setValue("Rifiutato");
                                     notifyDataSetChanged();
                                 }
                             });

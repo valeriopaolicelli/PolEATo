@@ -111,6 +111,9 @@
     <string name="title_actionbar_account">Account</string>
     <string name="title_actionbar_edit_account">Modifica Account</string>
 
+
+    <string name="title_actionbar_history">Storico</string>
+
     <string name="title_notifications">Notifications</string>
 
 

@@ -113,6 +113,9 @@
     <string name="title_actionbar_account">Account</string>
     <string name="title_actionbar_edit_account">Edit Account</string>
 
+    <string name="title_actionbar_history">History</string>
+
+
     <string name="title_notifications">Notifications</string>
     <string name="no_account">Don\'t have an account?</string>
 
