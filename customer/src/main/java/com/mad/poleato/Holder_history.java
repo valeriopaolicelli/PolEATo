@@ -65,6 +65,7 @@ public class Holder_history extends Fragment {
     private String currentUserID;
     private FirebaseAuth mAuth;
 
+    private List<MyDatabaseReference> dbReferenceList;
 
     public Holder_history() {
         // Required empty public constructor
@@ -95,6 +96,8 @@ public class Holder_history extends Fragment {
         size = new Point();
         display.getSize(size);
         width = size.x;
+
+        dbReferenceList= new ArrayList<>();
     }
 
     @Override
@@ -294,4 +297,11 @@ public class Holder_history extends Fragment {
         return (int) (pixels * scale + 0.5f);
     }
 
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        for (int i=0; i < dbReferenceList.size(); i++)
+            dbReferenceList.get(i).removeAllListener();
+    }
 }

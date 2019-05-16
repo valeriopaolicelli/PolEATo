@@ -37,6 +37,9 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class SignInActivity extends AppCompatActivity {
 
     private Toast myToast;
@@ -55,6 +58,7 @@ public class SignInActivity extends AppCompatActivity {
     private ConstraintLayout login_constraint;
     private ProgressBar progress_bar;
 
+    private List<MyDatabaseReference> dbReferenceList;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -99,6 +103,7 @@ public class SignInActivity extends AppCompatActivity {
         //default: show the progressBar only
         show_progress();
 
+        dbReferenceList= new ArrayList<>();
     }
 
     private void show_progress(){
@@ -127,7 +132,11 @@ public class SignInActivity extends AppCompatActivity {
         FirebaseUser currentUser = mAuth.getCurrentUser();
         if(currentUser != null) {
             final DatabaseReference reference = FirebaseDatabase.getInstance().getReference("users").child(currentUser.getUid());
-            reference.addValueEventListener(new ValueEventListener() {
+            dbReferenceList.add(new MyDatabaseReference(reference));
+            int indexReference= dbReferenceList.size()-1;
+            ValueEventListener valueEventListener;
+
+            dbReferenceList.get(indexReference).getReference().addValueEventListener(valueEventListener= new ValueEventListener() {
                 @Override
                 public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                     if (dataSnapshot.exists())
@@ -144,6 +153,8 @@ public class SignInActivity extends AppCompatActivity {
                     Log.d("Valerio", "SignIn customer -> onStart -> onCancelled: " + databaseError.getMessage());
                 }
             });
+            dbReferenceList.get(indexReference).setValueListener(valueEventListener);
+
         }
         else
             show_login_form();
@@ -402,5 +413,12 @@ public class SignInActivity extends AppCompatActivity {
 
     public void hideButton(ImageButton button){
         button.setVisibility(View.INVISIBLE);
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        for (int i=0; i < dbReferenceList.size(); i++)
+            dbReferenceList.get(i).removeAllListener();
     }
 }

@@ -37,7 +37,9 @@ import com.google.firebase.storage.StorageReference;
 import com.onesignal.OneSignal;
 
 import java.text.DecimalFormat;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
@@ -65,6 +67,8 @@ public class InfoFragment extends Fragment {
     private String currentUserID;
     private FirebaseAuth mAuth;
 
+    private List<MyDatabaseReference> dbReferenceList;
+
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -91,8 +95,9 @@ public class InfoFragment extends Fragment {
 
         OneSignal.sendTag("User_ID", currentUserID);
 
-
         restaurantID = getArguments().getString("id");
+
+        dbReferenceList= new ArrayList<>();
     }
 
     @Override
@@ -137,8 +142,11 @@ public class InfoFragment extends Fragment {
     public void fillFields() {
 
         DatabaseReference reference = FirebaseDatabase.getInstance().getReference("restaurants/"+restaurantID);
+        dbReferenceList.add(new MyDatabaseReference(reference));
+        int indexReference= dbReferenceList.size()-1;
+        ValueEventListener valueEventListener;
 
-        reference.addValueEventListener(new ValueEventListener() {
+        dbReferenceList.get(indexReference).getReference().addValueEventListener(valueEventListener= new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 // it is set to the first record (restaurant)
@@ -206,6 +214,7 @@ public class InfoFragment extends Fragment {
                 myToast.show();
             }
         });
+        dbReferenceList.get(indexReference).setValueListener(valueEventListener);
 
         //Download the profile pic
         StorageReference storageReference = FirebaseStorage.getInstance().getReference();
@@ -233,4 +242,11 @@ public class InfoFragment extends Fragment {
 
     }
 
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        for (int i=0; i < dbReferenceList.size(); i++)
+            dbReferenceList.get(i).removeAllListener();
+    }
 }

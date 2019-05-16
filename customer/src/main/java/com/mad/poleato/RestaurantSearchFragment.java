@@ -85,6 +85,8 @@ public class RestaurantSearchFragment extends Fragment {
     //id for the filter fragment
     public static final int FILTER_FRAGMENT = 26;
 
+    private List<MyDatabaseReference> dbReferenceList;
+
 
     @Override
     public void onAttach(Context context) {
@@ -106,6 +108,8 @@ public class RestaurantSearchFragment extends Fragment {
         restaurantList = new ArrayList<>();
         typesToFilter = new HashSet<>();
         currDisplayedList = new ArrayList<>();
+
+        dbReferenceList= new ArrayList<>();
 
         if(getActivity() != null)
             progressDialog = ProgressDialog.show(getActivity(), "", getString(R.string.loading));
@@ -167,7 +171,11 @@ public class RestaurantSearchFragment extends Fragment {
          *         This listener is guaranteed to be called only after "ChildEvent".
          *         Thus it notifies the end of the children
          */
-        dbReference.addValueEventListener(new ValueEventListener() {
+        dbReferenceList.add(new MyDatabaseReference(dbReference));
+        int indexReference= dbReferenceList.size()-1;
+        ValueEventListener valueEventListener;
+
+        dbReferenceList.get(indexReference).getReference().addValueEventListener(valueEventListener= new ValueEventListener() {
 
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
@@ -180,7 +188,9 @@ public class RestaurantSearchFragment extends Fragment {
                 handler.sendEmptyMessage(0);
             }
         });
-        dbReference.addChildEventListener(new ChildEventListener() {
+
+        ChildEventListener childEventListener;
+        dbReference.addChildEventListener(childEventListener= new ChildEventListener() {
             @Override
             public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
                 Log.d("matte", "onChildAdded | PREVIOUS CHILD: " + s);
@@ -334,6 +344,8 @@ public class RestaurantSearchFragment extends Fragment {
             }
         });
 
+        dbReferenceList.get(indexReference).setValueListener(valueEventListener);
+        dbReferenceList.get(indexReference).setChildListener(childEventListener);
     }
 
 
@@ -547,5 +559,10 @@ public class RestaurantSearchFragment extends Fragment {
         return false;
     }
 
-
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        for (int i=0; i < dbReferenceList.size(); i++)
+            dbReferenceList.get(i).removeAllListener();
+    }
 }

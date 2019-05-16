@@ -43,7 +43,9 @@ import com.onesignal.OneSignal;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import de.hdodenhof.circleimageview.CircleImageView;
@@ -73,6 +75,8 @@ public class MainProfile extends Fragment {
     private String currentUserID;
     private FirebaseAuth mAuth;
 
+    private List<MyDatabaseReference> dbReferenceList;
+
     public MainProfile() {
         // Required empty public constructor
     }
@@ -98,6 +102,8 @@ public class MainProfile extends Fragment {
         OneSignal.setSubscription(true);
 
         OneSignal.sendTag("User_ID", currentUserID);
+
+        dbReferenceList= new ArrayList<>();
     }
 
     @Override
@@ -170,8 +176,11 @@ public class MainProfile extends Fragment {
 
         DatabaseReference reference = FirebaseDatabase.getInstance()
                 .getReference("customers/" + currentUserID);
+        dbReferenceList.add(new MyDatabaseReference(reference));
+        int indexReference= dbReferenceList.size()-1;
+        ValueEventListener valueEventListener;
 
-        reference.addValueEventListener(new ValueEventListener() {
+        dbReferenceList.get(indexReference).getReference().addValueEventListener(valueEventListener= new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
 
@@ -200,6 +209,7 @@ public class MainProfile extends Fragment {
 //                myToast.show();
             }
         });
+        dbReferenceList.get(indexReference).setValueListener(valueEventListener);
 
         //Download the profile pic
         StorageReference storageReference = FirebaseStorage.getInstance().getReference();
@@ -228,6 +238,10 @@ public class MainProfile extends Fragment {
         });
     }
 
-
-
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        for (int i=0; i < dbReferenceList.size(); i++)
+            dbReferenceList.get(i).removeAllListener();
+    }
 }

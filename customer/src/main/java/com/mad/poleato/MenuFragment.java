@@ -26,6 +26,7 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.onesignal.OneSignal;
@@ -63,6 +64,8 @@ public class MenuFragment extends Fragment {
             progressDialog.dismiss();
         }
     };
+
+    private List<MyDatabaseReference> dbReferenceList;
 
     private enum groupType{
         STARTERS,
@@ -108,6 +111,8 @@ public class MenuFragment extends Fragment {
         OneSignal.setSubscription(true);
 
         OneSignal.sendTag("User_ID", currentUserID);
+
+        dbReferenceList= new ArrayList<>();
     }
 
     @Nullable
@@ -206,8 +211,11 @@ public class MenuFragment extends Fragment {
                                         .child("Menu");
         listDataGroup = new ArrayList<>();
         listDataChild = new HashMap<>();
+        dbReferenceList.add(new MyDatabaseReference(reference));
+        int indexReference= dbReferenceList.size()-1;
+        ChildEventListener childEventListener;
 
-        reference.addChildEventListener(new ChildEventListener() {
+        dbReferenceList.get(indexReference).getReference().addChildEventListener(childEventListener= new ChildEventListener() {
                      @Override
             public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
 
@@ -374,6 +382,8 @@ public class MenuFragment extends Fragment {
             }
         });
 
+        dbReferenceList.get(indexReference).setChildListener(childEventListener);
+
     }
 
 
@@ -403,5 +413,10 @@ public class MenuFragment extends Fragment {
         }
     }
 
-
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        for (int i=0; i < dbReferenceList.size(); i++)
+            dbReferenceList.get(i).removeAllListener();
+    }
 }

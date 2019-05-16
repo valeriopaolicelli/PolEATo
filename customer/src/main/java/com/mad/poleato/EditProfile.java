@@ -64,6 +64,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
@@ -107,6 +108,7 @@ public class EditProfile extends Fragment {
     private double latitude;
     private double longitude;
 
+    private List<MyDatabaseReference> dbReferenceList;
 
     public EditProfile() {
         // Required empty public constructor
@@ -137,6 +139,8 @@ public class EditProfile extends Fragment {
         editTextFields = new HashMap<>();
         imageButtons = new HashMap<>();
         imageButtons = new HashMap<>();
+
+        dbReferenceList= new ArrayList<>();
     }
 
     @Override
@@ -226,8 +230,11 @@ public class EditProfile extends Fragment {
 
         //Download text infos
         reference = FirebaseDatabase.getInstance().getReference("customers/"+ currentUserID);
+        dbReferenceList.add(new MyDatabaseReference(reference));
+        int indexReference= dbReferenceList.size()-1;
+        ValueEventListener valueEventListener;
 
-        reference.addValueEventListener(new ValueEventListener() {
+        dbReferenceList.get(indexReference).getReference().addValueEventListener(valueEventListener= new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
 
@@ -258,6 +265,7 @@ public class EditProfile extends Fragment {
                 myToast.show();
             }
         });
+        dbReferenceList.get(indexReference).setValueListener(valueEventListener);
 
 
         //Download the profile pic
@@ -848,5 +856,13 @@ public class EditProfile extends Fragment {
         public void onClick(View v) {
             clearText(v);
         }
+    }
+
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        for (int i=0; i < dbReferenceList.size(); i++)
+            dbReferenceList.get(i).removeAllListener();
     }
 }

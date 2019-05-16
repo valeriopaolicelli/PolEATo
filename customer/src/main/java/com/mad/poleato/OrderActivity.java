@@ -23,6 +23,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.onesignal.OneSignal;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
@@ -43,6 +44,8 @@ public class OrderActivity extends AppCompatActivity implements Interface {
 
     private MenuFragment menuFragment;
     private InfoFragment infoFragment;
+
+    private List<MyDatabaseReference> dbReferenceList;
 
     private void addFragmentToAdapter(Bundle bundle) {
         infoFragment = null;
@@ -96,6 +99,8 @@ public class OrderActivity extends AppCompatActivity implements Interface {
 
         OneSignal.sendTag("User_ID", currentUserID);
 
+        dbReferenceList= new ArrayList<>();
+
         order = new Order(currentUserID);
         //gettin id of restaurant selected by user
         Bundle bundle = getIntent().getExtras();
@@ -106,7 +111,11 @@ public class OrderActivity extends AppCompatActivity implements Interface {
 
         order.setRestaurantID(bundle.getString("id"));
         dbReferece = FirebaseDatabase.getInstance().getReference("restaurants").child(order.getRestaurantID());
-        dbReferece.addValueEventListener(new ValueEventListener() {
+        dbReferenceList.add(new MyDatabaseReference(dbReferece));
+        int indexReference= dbReferenceList.size()-1;
+        ValueEventListener valueEventListener;
+
+        dbReferenceList.get(indexReference).getReference().addValueEventListener(valueEventListener= new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 String id = dataSnapshot.getKey();
@@ -135,6 +144,8 @@ public class OrderActivity extends AppCompatActivity implements Interface {
 
             }
         });
+        dbReferenceList.get(indexReference).setValueListener(valueEventListener);
+
         android.support.v7.widget.Toolbar toolbar = findViewById(R.id.toolbar_order);
         TabLayout tabLayout = findViewById(R.id.tabs);
 
@@ -200,5 +211,12 @@ public class OrderActivity extends AppCompatActivity implements Interface {
     @Override
     public Order getOrder() {
         return order;
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        for (int i=0; i < dbReferenceList.size(); i++)
+            dbReferenceList.get(i).removeAllListener();
     }
 }
