@@ -29,6 +29,7 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.mad.poleato.MyDatabaseReference;
 import com.mad.poleato.R;
 import com.mad.poleato.Reservation.Dish;
 import com.mad.poleato.Reservation.Reservation;
@@ -62,6 +63,10 @@ public class HistoryFragment extends Fragment {
     private List<Reservation> reservations;
     private HashMap<String, List<Dish>> listHash = new HashMap<>();
 
+    private DatabaseReference databaseReference;
+    private int indexCustomerAdded;
+    private int indexCustomerChanged;
+
 
     private Handler handler = new Handler() {
         @Override
@@ -89,6 +94,8 @@ public class HistoryFragment extends Fragment {
         mAuth = FirebaseAuth.getInstance();
         FirebaseUser currentUser = mAuth.getCurrentUser();
         currentUserID = currentUser.getUid();
+
+
     }
 
     @Override
@@ -146,10 +153,17 @@ public class HistoryFragment extends Fragment {
 
     private void initData(){
 
+        reservations = new ArrayList<>();
+        listHash = new HashMap<>();
+        customerDetails= new ArrayList<>();
+
         DatabaseReference reference = FirebaseDatabase.getInstance().getReference("restaurants")
                 .child(currentUserID).child("History");
+        dbReferenceList.add(new MyDatabaseReference(reference));
+        int indexOfReferenceInList= dbReferenceList.size()-1;
 
-        reference.addValueEventListener(new ValueEventListener() {
+        ValueEventListener valueEventListener;
+        dbReferenceList.get(indexOfReferenceInList).getReference().addValueEventListener(valueEventListener= new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 handler.sendEmptyMessage(0);
@@ -160,8 +174,10 @@ public class HistoryFragment extends Fragment {
                 handler.sendEmptyMessage(0);
             }
         });
+        dbReferenceList.get(indexOfReferenceInList).setValueListener(valueEventListener);
 
-        reference.addChildEventListener(new ChildEventListener() {
+        ChildEventListener childEventListener;
+        dbReferenceList.get(indexOfReferenceInList).getReference().addChildEventListener(childEventListener= new ChildEventListener() {
             @Override
             public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
                 Reservation r= null;
@@ -169,12 +185,17 @@ public class HistoryFragment extends Fragment {
                 String note= null;
 
                 if(dataSnapshot.hasChild("customerID") &&
-                        dataSnapshot.hasChild("restaurantID") &&
+                        dataSnapshot.hasChild("address") &&
+                        dataSnapshot.hasChild("name") &&
+                        dataSnapshot.hasChild("surname") &&
+                        dataSnapshot.hasChild("numberOfDishes") &&
+                        dataSnapshot.hasChild("order_id") &&
+                        dataSnapshot.hasChild("phone") &&
+                        dataSnapshot.hasChild("stat") &&
+                        dataSnapshot.hasChild("status") &&
                         dataSnapshot.hasChild("totalPrice") &&
                         dataSnapshot.hasChild("time") &&
                         dataSnapshot.hasChild("status") &&
-                        dataSnapshot.child("status").hasChild("it") &&
-                        dataSnapshot.child("status").hasChild("en") &&
                         dataSnapshot.hasChild("date") &&
                         dataSnapshot.hasChild("dishes")
                 )
@@ -182,18 +203,17 @@ public class HistoryFragment extends Fragment {
 
                     order_id = dataSnapshot.getKey();
                     customer_id = dataSnapshot.child("customerID").getValue().toString();
-                    final Long dateInMills= Long.parseLong(dataSnapshot.child("date").getValue().toString());
-                    DateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
-                    Calendar calendar = Calendar.getInstance();
-                    calendar.setTimeInMillis(dateInMills);
-                    final String date = formatter.format(calendar.getTime());
+                    final String date = dataSnapshot.child("date").getValue().toString();
                     final String time= dataSnapshot.child("time").getValue().toString();
-                    final String status = dataSnapshot.child("status").child(localeShort).getValue().toString();
+                    final String status = dataSnapshot.child("stat").getValue().toString();
                     final String totalPrice= dataSnapshot.child("totalPrice").getValue().toString();
 
 
                     //Retrieve through customerID the details of the customer
                     customer= FirebaseDatabase.getInstance().getReference("customers").child(customer_id);
+                    dbReferenceList.add(new MyDatabaseReference(customer));
+                    indexCustomerAdded= dbReferenceList.size()-1;
+
                     readData(new FirebaseCallBack() {
                         @Override
                         public void onCallBack(List<String> customerDetails) {
@@ -210,7 +230,7 @@ public class HistoryFragment extends Fragment {
 
                             listAdapter.notifyDataSetChanged();
                         }
-                    });
+                    }, indexCustomerAdded);
                     // fields setted to null only because they will be setted later in the call back of FB
                     r = new Reservation(order_id, customer_id,null, null, null, date, time,
                             status, null, totalPrice, localeShort);
@@ -225,9 +245,9 @@ public class HistoryFragment extends Fragment {
 
                     for (DataSnapshot dish : dishesOfReservation.getChildren()) {
                         nameDish = dish.child("name").getValue().toString();
-                        quantity = Integer.parseInt(dish.child("selectedQuantity").getValue().toString());
-                        note= dish.child("customerNotes").getValue().toString();
-                        foodID= dish.child("foodID").getValue().toString();
+                        quantity = Integer.parseInt(dish.child("quantity").getValue().toString());
+                        note= dish.child("notes").getValue().toString();
+                        foodID= dish.child("id").getValue().toString();
                         d = new Dish(nameDish, quantity, note, foodID);
                         r.addDishtoReservation(d);
                     }
@@ -251,33 +271,35 @@ public class HistoryFragment extends Fragment {
                 Log.d("Valerio", dataSnapshot.getKey());
 
                 if(dataSnapshot.hasChild("customerID") &&
-                        dataSnapshot.hasChild("restaurantID") &&
+                        dataSnapshot.hasChild("address") &&
+                        dataSnapshot.hasChild("name") &&
+                        dataSnapshot.hasChild("surname") &&
+                        dataSnapshot.hasChild("numberOfDishes") &&
+                        dataSnapshot.hasChild("order_id") &&
+                        dataSnapshot.hasChild("phone") &&
+                        dataSnapshot.hasChild("stat") &&
+                        dataSnapshot.hasChild("status") &&
                         dataSnapshot.hasChild("totalPrice") &&
                         dataSnapshot.hasChild("time") &&
                         dataSnapshot.hasChild("status") &&
-                        dataSnapshot.child("status").hasChild("it") &&
-                        dataSnapshot.child("status").hasChild("en") &&
                         dataSnapshot.hasChild("date") &&
                         dataSnapshot.hasChild("dishes")
                 )
                 {
                     final String order_id= dataSnapshot.getKey();
                     final String customer_id= dataSnapshot.child("customerID").getValue().toString();
-                    final Long dateInMills= Long.parseLong(dataSnapshot.child("date").getValue().toString());
-
-                    DateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
-                    Calendar calendar = Calendar.getInstance();
-                    calendar.setTimeInMillis(dateInMills);
-                    final String date = formatter.format(calendar.getTime());
-
+                    final String date = dataSnapshot.child("date").getValue().toString();
                     final String time= dataSnapshot.child("time").getValue().toString();
-                    final String status = dataSnapshot.child("status").child(localeShort).getValue().toString();
+                    final String status = dataSnapshot.child("stat").getValue().toString();
                     final String totalPrice= dataSnapshot.child("totalPrice").getValue().toString();
                     String note= null;
                     ArrayList<Dish> dishes= new ArrayList<>();
 
                     //Retrieve through customerID the details of the customer
                     customer= FirebaseDatabase.getInstance().getReference("customers").child(customer_id);
+                    dbReferenceList.add(new MyDatabaseReference(customer));
+                    indexCustomerChanged= dbReferenceList.size()-1;
+
                     readData(new FirebaseCallBack() {
                         @Override
                         public void onCallBack(List<String> customerDetails) {
@@ -293,7 +315,7 @@ public class HistoryFragment extends Fragment {
                             }
                             listAdapter.notifyDataSetChanged();
                         }
-                    });
+                    }, indexCustomerChanged);
 
                     //and for each customer (reservation) retrieve the list of dishes
                     DataSnapshot dishesOfReservation = dataSnapshot.child("dishes");
@@ -304,9 +326,9 @@ public class HistoryFragment extends Fragment {
 
                     for (DataSnapshot dish : dishesOfReservation.getChildren()) {
                         nameDish = dish.child("name").getValue().toString();
-                        quantity = Integer.parseInt(dish.child("selectedQuantity").getValue().toString());
-                        foodID = dish.child("foodID").getValue().toString();
-                        note = dish.child("customerNotes").getValue().toString();
+                        quantity = Integer.parseInt(dish.child("quantity").getValue().toString());
+                        foodID = dish.child("id").getValue().toString();
+                        note = dish.child("notes").getValue().toString();
                         d = new Dish(nameDish, quantity, note, foodID);
 
                         dishes.add(d);
@@ -361,9 +383,10 @@ public class HistoryFragment extends Fragment {
                 myToast.show();
             }
         });
+        dbReferenceList.get(indexOfReferenceInList).setChildListener(childEventListener);
     }
 
-    private void readData(final FirebaseCallBack firebaseCallBack){
+    private void readData(final FirebaseCallBack firebaseCallBack, int index){
         ValueEventListener valueEventListener = new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot ds) {
@@ -389,10 +412,19 @@ public class HistoryFragment extends Fragment {
                 myToast.show();
             }
         };
-        customer.addListenerForSingleValueEvent(valueEventListener);
+        dbReferenceList.get(index).getReference().addListenerForSingleValueEvent(valueEventListener);
+        dbReferenceList.get(index).setValueListener(valueEventListener);
     }
 
     private interface FirebaseCallBack {
         void onCallBack(List<String> customerDetails);
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        for(int i=0; i < dbReferenceList.size(); i++){
+            dbReferenceList.get(i).removeAllListener();
+        }
     }
 }
