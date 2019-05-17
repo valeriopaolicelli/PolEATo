@@ -102,6 +102,9 @@
     <string name="title_bottombar_reservation">Prenotazioni</string>
     <string name="title_actionbar_reservation">Prenotazioni</string>
 
+    <string name="title_bottombar_history">Storico</string>
+    <string name="title_actionbar_history">Storico</string>
+
     <string name="title_bottombar_dailyoffer">Menù</string>
     <string name="title_actionbar_dailyoffer">Daily Offer</string>
     <string name="title_actionbar_add_food">Aggiungi pietanza</string>
@@ -111,8 +114,6 @@
     <string name="title_actionbar_account">Account</string>
     <string name="title_actionbar_edit_account">Modifica Account</string>
 
-
-    <string name="title_actionbar_history">Storico</string>
 
     <string name="title_notifications">Notifications</string>
 
