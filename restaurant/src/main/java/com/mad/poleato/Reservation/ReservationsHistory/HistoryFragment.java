@@ -177,27 +177,20 @@ public class HistoryFragment extends Fragment {
                 String note= null;
 
                 if(dataSnapshot.hasChild("customerID") &&
-                        dataSnapshot.hasChild("address") &&
-                        dataSnapshot.hasChild("name") &&
-                        dataSnapshot.hasChild("surname") &&
-                        dataSnapshot.hasChild("numberOfDishes") &&
-                        dataSnapshot.hasChild("order_id") &&
-                        dataSnapshot.hasChild("phone") &&
-                        dataSnapshot.hasChild("stat") &&
                         dataSnapshot.hasChild("status") &&
+                        dataSnapshot.hasChild("status/it") &&
+                        dataSnapshot.hasChild("status/en") &&
                         dataSnapshot.hasChild("totalPrice") &&
                         dataSnapshot.hasChild("time") &&
-                        dataSnapshot.hasChild("status") &&
                         dataSnapshot.hasChild("date") &&
                         dataSnapshot.hasChild("dishes")
                 )
                 {
-
                     order_id = dataSnapshot.getKey();
                     customer_id = dataSnapshot.child("customerID").getValue().toString();
                     final String date = dataSnapshot.child("date").getValue().toString();
                     final String time= dataSnapshot.child("time").getValue().toString();
-                    final String status = dataSnapshot.child("stat").getValue().toString();
+                    final String status = dataSnapshot.child("status/"+localeShort).getValue().toString();
                     final String totalPrice= dataSnapshot.child("totalPrice").getValue().toString();
 
 
@@ -261,17 +254,11 @@ public class HistoryFragment extends Fragment {
                 Log.d("Valerio", dataSnapshot.getKey());
 
                 if(dataSnapshot.hasChild("customerID") &&
-                        dataSnapshot.hasChild("address") &&
-                        dataSnapshot.hasChild("name") &&
-                        dataSnapshot.hasChild("surname") &&
-                        dataSnapshot.hasChild("numberOfDishes") &&
-                        dataSnapshot.hasChild("order_id") &&
-                        dataSnapshot.hasChild("phone") &&
-                        dataSnapshot.hasChild("stat") &&
                         dataSnapshot.hasChild("status") &&
+                        dataSnapshot.hasChild("status/it") &&
+                        dataSnapshot.hasChild("status/en") &&
                         dataSnapshot.hasChild("totalPrice") &&
                         dataSnapshot.hasChild("time") &&
-                        dataSnapshot.hasChild("status") &&
                         dataSnapshot.hasChild("date") &&
                         dataSnapshot.hasChild("dishes")
                 )
@@ -280,7 +267,7 @@ public class HistoryFragment extends Fragment {
                     final String customer_id= dataSnapshot.child("customerID").getValue().toString();
                     final String date = dataSnapshot.child("date").getValue().toString();
                     final String time= dataSnapshot.child("time").getValue().toString();
-                    final String status = dataSnapshot.child("stat").getValue().toString();
+                    final String status = dataSnapshot.child("status/"+localeShort).getValue().toString();
                     final String totalPrice= dataSnapshot.child("totalPrice").getValue().toString();
                     String note= null;
                     ArrayList<Dish> dishes= new ArrayList<>();
