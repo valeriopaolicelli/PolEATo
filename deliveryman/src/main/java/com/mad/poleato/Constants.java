@@ -15,6 +15,7 @@ public final class Constants {
 
     public static final float DISPLACEMENT = 30;
 
+    public static final int LOCATION_REQUEST_FREQUENCY = 5000;
     /**
      * Suppress default constructor for noninstantiability
      */
