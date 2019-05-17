@@ -154,7 +154,7 @@
             android:visibility="visible"
             android:background="@drawable/ripple_green"
             android:focusable="false"
-            android:padding="8dp"
+            android:padding="16dp"
             android:text="@string/button_reservation"
             android:textColor="@color/colorBodyPrimary"
             />

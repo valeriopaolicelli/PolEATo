@@ -321,8 +321,8 @@ public class SignUpActivity extends AppCompatActivity {
             switch (v.getId()){
 
                 case R.id.ButtonSignUp:
-                    if(!connectionManager.haveNetworkConnection(getApplicationContext()))
-                        connectionManager.showDialog(getApplicationContext());
+                    /*if(!connectionManager.haveNetworkConnection(getApplicationContext()))
+                        connectionManager.showDialog(getApplicationContext());*/
                     if(!wrongFields())
                         signUp();
                     break;

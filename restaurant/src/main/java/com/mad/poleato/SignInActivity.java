@@ -214,8 +214,8 @@ public class SignInActivity extends AppCompatActivity {
     private View.OnClickListener signInRoutine = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            if(!connectionManager.haveNetworkConnection(getApplicationContext()))
-                connectionManager.showDialog(getApplicationContext());
+            /*if(!connectionManager.haveNetworkConnection(getApplicationContext()))
+                connectionManager.showDialog(getApplicationContext());*/
             switch (v.getId()) {
 
                 case R.id.google_button:
