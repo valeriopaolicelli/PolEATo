@@ -29,16 +29,12 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
-import com.mad.poleato.MyDatabaseReference;
 import com.mad.poleato.R;
 import com.mad.poleato.Reservation.Dish;
 import com.mad.poleato.Reservation.Reservation;
 import com.onesignal.OneSignal;
 
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -157,13 +153,10 @@ public class HistoryFragment extends Fragment {
         listHash = new HashMap<>();
         customerDetails= new ArrayList<>();
 
-        DatabaseReference reference = FirebaseDatabase.getInstance().getReference("restaurants")
+        databaseReference = FirebaseDatabase.getInstance().getReference("restaurants")
                 .child(currentUserID).child("History");
-        dbReferenceList.add(new MyDatabaseReference(reference));
-        int indexOfReferenceInList= dbReferenceList.size()-1;
 
-        ValueEventListener valueEventListener;
-        dbReferenceList.get(indexOfReferenceInList).getReference().addValueEventListener(valueEventListener= new ValueEventListener() {
+        databaseReference.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 handler.sendEmptyMessage(0);
@@ -174,10 +167,9 @@ public class HistoryFragment extends Fragment {
                 handler.sendEmptyMessage(0);
             }
         });
-        dbReferenceList.get(indexOfReferenceInList).setValueListener(valueEventListener);
 
-        ChildEventListener childEventListener;
-        dbReferenceList.get(indexOfReferenceInList).getReference().addChildEventListener(childEventListener= new ChildEventListener() {
+
+        databaseReference.addChildEventListener(new ChildEventListener() {
             @Override
             public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
                 Reservation r= null;
@@ -211,8 +203,6 @@ public class HistoryFragment extends Fragment {
 
                     //Retrieve through customerID the details of the customer
                     customer= FirebaseDatabase.getInstance().getReference("customers").child(customer_id);
-                    dbReferenceList.add(new MyDatabaseReference(customer));
-                    indexCustomerAdded= dbReferenceList.size()-1;
 
                     readData(new FirebaseCallBack() {
                         @Override
@@ -297,8 +287,6 @@ public class HistoryFragment extends Fragment {
 
                     //Retrieve through customerID the details of the customer
                     customer= FirebaseDatabase.getInstance().getReference("customers").child(customer_id);
-                    dbReferenceList.add(new MyDatabaseReference(customer));
-                    indexCustomerChanged= dbReferenceList.size()-1;
 
                     readData(new FirebaseCallBack() {
                         @Override
@@ -383,7 +371,7 @@ public class HistoryFragment extends Fragment {
                 myToast.show();
             }
         });
-        dbReferenceList.get(indexOfReferenceInList).setChildListener(childEventListener);
+
     }
 
     private void readData(final FirebaseCallBack firebaseCallBack, int index){
@@ -412,19 +400,10 @@ public class HistoryFragment extends Fragment {
                 myToast.show();
             }
         };
-        dbReferenceList.get(index).getReference().addListenerForSingleValueEvent(valueEventListener);
-        dbReferenceList.get(index).setValueListener(valueEventListener);
     }
 
     private interface FirebaseCallBack {
         void onCallBack(List<String> customerDetails);
     }
 
-    @Override
-    public void onDestroy() {
-        super.onDestroy();
-        for(int i=0; i < dbReferenceList.size(); i++){
-            dbReferenceList.get(i).removeAllListener();
-        }
-    }
 }
