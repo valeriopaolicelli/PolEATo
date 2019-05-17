@@ -40,6 +40,9 @@ public class OrderActivity extends AppCompatActivity implements Interface {
     private DatabaseReference dbReferece;
     private ConnectionManager connectionManager;
 
+    private List<MyDatabaseReference> dbReferenceList;
+    int indexReference;
+
     private String currentUserID;
     private FirebaseAuth mAuth;
 
