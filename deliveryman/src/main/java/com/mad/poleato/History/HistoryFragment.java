@@ -62,9 +62,6 @@ public class HistoryFragment extends Fragment {
     private RecyclerView.LayoutManager layoutManager;
     private RecyclerView rv;
 
-    private Map<String, HistoryItem> historyMap;
-    private List<HistoryItem> historyList;
-    private List<HistoryItem> currDisplayedList; //list of filtered elements displayed on the screen
     private MyViewModel model;
 
     private ProgressDialog progressDialog;
@@ -86,9 +83,6 @@ public class HistoryFragment extends Fragment {
         //in order to create the logout menu (don't move!)
         setHasOptionsMenu(true);
         super.onCreate(savedInstanceState);
-
-        historyList = new ArrayList<>();
-        historyMap = new HashMap<>();
 
         //authenticate the user
         mAuth = FirebaseAuth.getInstance();

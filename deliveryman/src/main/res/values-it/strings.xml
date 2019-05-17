@@ -57,6 +57,7 @@
     <string name="orderID_label">ID ordine: </string>
     <string name="expected_hour">Ora prevista: </string>
     <string name="delivered_hour">Ora di consegna: </string>
+    <string name="delivered_date">Data: </string>
 
 
     <!-- Maps strings -->
