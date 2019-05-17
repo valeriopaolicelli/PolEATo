@@ -156,5 +156,5 @@
     <!--- Internet dialog -->
     <string name="internet_title">Enable Internet Connection</string>
     <string name="internet_message">To use this application you must be connected to the Internet</string>
-    <string name="interner_confirm">WIFI settings</string>
+    <string name="interner_confirm">Data settings</string>
 </resources>

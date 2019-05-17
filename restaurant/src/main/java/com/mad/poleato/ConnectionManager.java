@@ -38,7 +38,7 @@ public class ConnectionManager {
                 .setCancelable(false)
                 .setPositiveButton(context.getString(R.string.interner_confirm), new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
-                        context.startActivity(new Intent(Settings.ACTION_WIFI_SETTINGS));
+                        context.startActivity(new Intent(Settings.ACTION_NETWORK_OPERATOR_SETTINGS));
                         dialog.cancel();
                     }
                 })
