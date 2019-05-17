@@ -78,7 +78,7 @@ public class HistoryExpandableListAdapter extends BaseExpandableListAdapter {
 
         if( view == null){
             holder = new ViewHolder();
-            LayoutInflater inflater = (LayoutInflater)this.context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+            LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
             view = inflater.inflate(R.layout.history_group_layout,null);
 
             holder.tv_date = (TextView)view.findViewById(R.id.tvDateField);

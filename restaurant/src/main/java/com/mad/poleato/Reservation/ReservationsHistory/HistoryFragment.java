@@ -152,8 +152,12 @@ public class HistoryFragment extends Fragment {
 
     private void initData(){
 
+        reservations = new ArrayList<>();
+        listHash = new HashMap<>();
+        customerDetails= new ArrayList<>();
+
         DatabaseReference reference = FirebaseDatabase.getInstance().getReference("restaurants")
-                .child(currentUserID).child("history");
+                .child(currentUserID).child("History");
         dbReferenceList.add(new MyDatabaseReference(reference));
         int indexOfReferenceInList= dbReferenceList.size()-1;
 
