@@ -185,12 +185,17 @@ public class HistoryFragment extends Fragment {
                 String note= null;
 
                 if(dataSnapshot.hasChild("customerID") &&
-                        dataSnapshot.hasChild("restaurantID") &&
+                        dataSnapshot.hasChild("address") &&
+                        dataSnapshot.hasChild("name") &&
+                        dataSnapshot.hasChild("surname") &&
+                        dataSnapshot.hasChild("numberOfDishes") &&
+                        dataSnapshot.hasChild("order_id") &&
+                        dataSnapshot.hasChild("phone") &&
+                        dataSnapshot.hasChild("stat") &&
+                        dataSnapshot.hasChild("status") &&
                         dataSnapshot.hasChild("totalPrice") &&
                         dataSnapshot.hasChild("time") &&
                         dataSnapshot.hasChild("status") &&
-                        dataSnapshot.child("status").hasChild("it") &&
-                        dataSnapshot.child("status").hasChild("en") &&
                         dataSnapshot.hasChild("date") &&
                         dataSnapshot.hasChild("dishes")
                 )
@@ -198,13 +203,9 @@ public class HistoryFragment extends Fragment {
 
                     order_id = dataSnapshot.getKey();
                     customer_id = dataSnapshot.child("customerID").getValue().toString();
-                    final Long dateInMills= Long.parseLong(dataSnapshot.child("date").getValue().toString());
-                    DateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
-                    Calendar calendar = Calendar.getInstance();
-                    calendar.setTimeInMillis(dateInMills);
-                    final String date = formatter.format(calendar.getTime());
+                    final String date = dataSnapshot.child("date").getValue().toString();
                     final String time= dataSnapshot.child("time").getValue().toString();
-                    final String status = dataSnapshot.child("status").child(localeShort).getValue().toString();
+                    final String status = dataSnapshot.child("stat").getValue().toString();
                     final String totalPrice= dataSnapshot.child("totalPrice").getValue().toString();
 
 
@@ -244,9 +245,9 @@ public class HistoryFragment extends Fragment {
 
                     for (DataSnapshot dish : dishesOfReservation.getChildren()) {
                         nameDish = dish.child("name").getValue().toString();
-                        quantity = Integer.parseInt(dish.child("selectedQuantity").getValue().toString());
-                        note= dish.child("customerNotes").getValue().toString();
-                        foodID= dish.child("foodID").getValue().toString();
+                        quantity = Integer.parseInt(dish.child("quantity").getValue().toString());
+                        note= dish.child("notes").getValue().toString();
+                        foodID= dish.child("id").getValue().toString();
                         d = new Dish(nameDish, quantity, note, foodID);
                         r.addDishtoReservation(d);
                     }
@@ -270,27 +271,26 @@ public class HistoryFragment extends Fragment {
                 Log.d("Valerio", dataSnapshot.getKey());
 
                 if(dataSnapshot.hasChild("customerID") &&
-                        dataSnapshot.hasChild("restaurantID") &&
+                        dataSnapshot.hasChild("address") &&
+                        dataSnapshot.hasChild("name") &&
+                        dataSnapshot.hasChild("surname") &&
+                        dataSnapshot.hasChild("numberOfDishes") &&
+                        dataSnapshot.hasChild("order_id") &&
+                        dataSnapshot.hasChild("phone") &&
+                        dataSnapshot.hasChild("stat") &&
+                        dataSnapshot.hasChild("status") &&
                         dataSnapshot.hasChild("totalPrice") &&
                         dataSnapshot.hasChild("time") &&
                         dataSnapshot.hasChild("status") &&
-                        dataSnapshot.child("status").hasChild("it") &&
-                        dataSnapshot.child("status").hasChild("en") &&
                         dataSnapshot.hasChild("date") &&
                         dataSnapshot.hasChild("dishes")
                 )
                 {
                     final String order_id= dataSnapshot.getKey();
                     final String customer_id= dataSnapshot.child("customerID").getValue().toString();
-                    final Long dateInMills= Long.parseLong(dataSnapshot.child("date").getValue().toString());
-
-                    DateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
-                    Calendar calendar = Calendar.getInstance();
-                    calendar.setTimeInMillis(dateInMills);
-                    final String date = formatter.format(calendar.getTime());
-
+                    final String date = dataSnapshot.child("date").getValue().toString();
                     final String time= dataSnapshot.child("time").getValue().toString();
-                    final String status = dataSnapshot.child("status").child(localeShort).getValue().toString();
+                    final String status = dataSnapshot.child("stat").getValue().toString();
                     final String totalPrice= dataSnapshot.child("totalPrice").getValue().toString();
                     String note= null;
                     ArrayList<Dish> dishes= new ArrayList<>();
@@ -326,9 +326,9 @@ public class HistoryFragment extends Fragment {
 
                     for (DataSnapshot dish : dishesOfReservation.getChildren()) {
                         nameDish = dish.child("name").getValue().toString();
-                        quantity = Integer.parseInt(dish.child("selectedQuantity").getValue().toString());
-                        foodID = dish.child("foodID").getValue().toString();
-                        note = dish.child("customerNotes").getValue().toString();
+                        quantity = Integer.parseInt(dish.child("quantity").getValue().toString());
+                        foodID = dish.child("id").getValue().toString();
+                        note = dish.child("notes").getValue().toString();
                         d = new Dish(nameDish, quantity, note, foodID);
 
                         dishes.add(d);
