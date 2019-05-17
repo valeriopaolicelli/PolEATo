@@ -6,6 +6,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseExpandableListAdapter;
+import android.widget.ExpandableListView;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -190,6 +191,10 @@ public class MenuExpandableListAdapter extends BaseExpandableListAdapter {
         }
 
         holder.text.setText(groupTitle);
+
+        //start all the group expanded
+        ExpandableListView mExpandableListView = (ExpandableListView) parent;
+        mExpandableListView.expandGroup(groupPosition);
 
         return convertView;
     }
