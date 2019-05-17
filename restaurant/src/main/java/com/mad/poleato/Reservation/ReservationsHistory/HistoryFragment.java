@@ -132,6 +132,7 @@ public class HistoryFragment extends Fragment {
         if(getActivity() != null)
             progressDialog = ProgressDialog.show(getActivity(), "", getString(R.string.loading));
 
+
         initData();
 
         listView = view.findViewById(R.id.historylv);

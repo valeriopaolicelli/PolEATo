@@ -153,4 +153,9 @@
     <string name="msg_rider_selected">Do you want select this rider?</string>
     <string name="choose_rider">Choose rider</string>
     <string name="delivered">Delivered</string>
+
+    <!--- Internet dialog -->
+    <string name="internet_title">Enable Internet Connection</string>
+    <string name="internet_message">To use this application you must be connected to the Internet</string>
+    <string name="interner_confirm">Data settings</string>
 </resources>

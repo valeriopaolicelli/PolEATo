@@ -2,9 +2,13 @@ package com.mad.poleato;
 
 import android.Manifest;
 import android.app.Notification;
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.pm.PackageManager;
+import android.net.ConnectivityManager;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
@@ -34,6 +38,7 @@ public class NavigatorActivity extends AppCompatActivity {
 
     private String currentUserID;
     private FirebaseAuth mAuth;
+    private ConnectionManager connectionManager;
 
 //    private BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener
 //            = new BottomNavigationView.OnNavigationItemSelectedListener() {
@@ -54,11 +59,20 @@ public class NavigatorActivity extends AppCompatActivity {
 //            return false;
 //        }
 //    };
+BroadcastReceiver networkReceiver = new BroadcastReceiver() {
+    @Override
+    public void onReceive(Context context, Intent intent) {
+
+        if(!connectionManager.haveNetworkConnection(context))
+            connectionManager.showDialog(context);
+    }
+};
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.navigator_layout);
+        connectionManager = new ConnectionManager();
 
         mAuth = FirebaseAuth.getInstance();
         FirebaseUser currentUser = mAuth.getCurrentUser();
@@ -93,6 +107,19 @@ public class NavigatorActivity extends AppCompatActivity {
         NavigationUI.setupWithNavController(navigation, navController);
         NavigationUI.setupActionBarWithNavController(this, navController);
 
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        IntentFilter filter = new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION);
+        registerReceiver(networkReceiver,filter);
+    }
+
+    @Override
+    protected void onStop() {
+        unregisterReceiver(networkReceiver);
+        super.onStop();
     }
 
     @Override

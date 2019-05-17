@@ -140,7 +140,7 @@ public class DeliveringActivity extends FragmentActivity implements OnMapReadyCa
             if (oldLocation != null) {
                 //check if the rider moved of at least 'X' m.
                 double d = computeDistance(oldLocation, currLocation) * 1000;
-                if (d < MIN_DISTANCE_LOC_UPDATE)
+                if (d <= MIN_DISTANCE_LOC_UPDATE)
                     return;
             }
 

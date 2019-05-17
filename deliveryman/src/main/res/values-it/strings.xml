@@ -110,5 +110,9 @@
     <string name="address_semicolon">Indirizzo:</string>
     <string name="show_more_title">Info ristorante:</string>
 
+    <!--- Internet dialog -->
+    <string name="internet_title">Abilita connession a Internet</string>
+    <string name="internet_message">Per utilizzare l\'applicazione devi essere connesso ad Internet</string>
+    <string name="interner_confirm">Impostazioni Internet</string>
 
 </resources>

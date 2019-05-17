@@ -51,12 +51,17 @@ public class SignUpActivity extends AppCompatActivity {
 
     private double latitude;
     private double longitude;
+    private ConnectionManager connectionManager;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
         setContentView(R.layout.signup_layout);
+        connectionManager = new ConnectionManager();
+        if(!connectionManager.haveNetworkConnection(this))
+            connectionManager.showDialog(this);
+
         myToast = Toast.makeText(this, "", Toast.LENGTH_SHORT);
         mAuth = FirebaseAuth.getInstance();
         dbReference = FirebaseDatabase.getInstance().getReference();

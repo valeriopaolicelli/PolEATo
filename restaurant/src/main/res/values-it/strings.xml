@@ -152,4 +152,10 @@
     <string name="msg_rider_selected">Vuoi selezionare questo rider?</string>
     <string name="choose_rider">Scegli un rider</string>
     <string name="delivered">Consegnato</string>
+
+    <!--- Internet dialog -->
+    <string name="internet_title">Abilita connession a Internet</string>
+    <string name="internet_message">Per utilizzare l\'applicazione devi essere connesso ad Internet</string>
+    <string name="interner_confirm">Impostazioni Internet</string>
+
 </resources>

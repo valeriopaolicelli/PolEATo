@@ -312,7 +312,7 @@
                     android:background="@drawable/ripple_blue"
                     android:textColor="@color/colorBodyPrimary"
                     android:layout_marginBottom="16dp"
-                    android:padding="8dp"/>
+                    android:padding="16dp"/>
 
         </FrameLayout>
 

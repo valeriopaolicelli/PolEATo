@@ -52,6 +52,7 @@ public class SignInActivity extends AppCompatActivity {
     private Button signInButton, signUpButton;
     private SignInButton googleButton;
     private LoginButton facebookButton;
+    ConnectionManager connectionManager;
 
     //this is the layout that must be hide as default: it contains the mail and password fields
     private ConstraintLayout login_constraint;
@@ -64,6 +65,10 @@ public class SignInActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
 
         setContentView(R.layout.signin_layout);
+        connectionManager = new ConnectionManager();
+
+        if(!connectionManager.haveNetworkConnection(this))
+            connectionManager.showDialog(this);
 
         myToast = Toast.makeText(this, "", Toast.LENGTH_SHORT);
         mAuth = FirebaseAuth.getInstance();
@@ -226,6 +231,8 @@ public class SignInActivity extends AppCompatActivity {
     private View.OnClickListener signInRoutine = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
+            /*if(!connectionManager.haveNetworkConnection(getApplicationContext()))
+                connectionManager.showDialog(getApplicationContext());*/
             switch (v.getId()) {
 
                 case R.id.google_button:
