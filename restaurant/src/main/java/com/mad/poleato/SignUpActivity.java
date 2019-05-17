@@ -48,6 +48,7 @@ public class SignUpActivity extends AppCompatActivity {
     private FirebaseAuth mAuth;
     private Toast myToast;
     private DatabaseReference dbReference;
+    ConnectionManager connectionManager;
 
     private Map<String, ImageButton> imageButtons;
     private Map<String, EditText> editTextFields;
@@ -59,6 +60,10 @@ public class SignUpActivity extends AppCompatActivity {
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        connectionManager = new ConnectionManager();
+
+        if(!connectionManager.haveNetworkConnection(this))
+            connectionManager.showDialog(this);
 
         setContentView(R.layout.signup_layout);
         myToast = Toast.makeText(this, "", Toast.LENGTH_SHORT);
@@ -316,6 +321,8 @@ public class SignUpActivity extends AppCompatActivity {
             switch (v.getId()){
 
                 case R.id.ButtonSignUp:
+                    if(!connectionManager.haveNetworkConnection(getApplicationContext()))
+                        connectionManager.showDialog(getApplicationContext());
                     if(!wrongFields())
                         signUp();
                     break;

@@ -125,6 +125,7 @@ public class HistoryFragment extends Fragment {
         if(getActivity() != null)
             progressDialog = ProgressDialog.show(getActivity(), "", getString(R.string.loading));
 
+
         initData();
 
         listView = view.findViewById(R.id.historylv);
@@ -146,7 +147,7 @@ public class HistoryFragment extends Fragment {
     private void initData(){
 
         DatabaseReference reference = FirebaseDatabase.getInstance().getReference("restaurants")
-                .child(currentUserID).child("history");
+                .child(currentUserID).child("History");
 
         reference.addValueEventListener(new ValueEventListener() {
             @Override
