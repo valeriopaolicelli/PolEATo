@@ -104,6 +104,9 @@
     <string name="title_bottombar_reservation">Reservation</string>
     <string name="title_actionbar_reservation">Reservation</string>
 
+    <string name="title_bottombar_history">History</string>
+    <string name="title_actionbar_history">History</string>
+
     <string name="title_bottombar_dailyoffer">Menù</string>
     <string name="title_actionbar_dailyoffer">Daily Offer</string>
     <string name="title_actionbar_add_food">Add food</string>
@@ -112,8 +115,6 @@
     <string name="title_bottombar_account">Account</string>
     <string name="title_actionbar_account">Account</string>
     <string name="title_actionbar_edit_account">Edit Account</string>
-
-    <string name="title_actionbar_history">History</string>
 
 
     <string name="title_notifications">Notifications</string>
