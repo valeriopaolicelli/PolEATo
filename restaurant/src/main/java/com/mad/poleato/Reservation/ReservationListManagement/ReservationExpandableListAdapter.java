@@ -182,13 +182,13 @@ public class ReservationExpandableListAdapter extends BaseExpandableListAdapter{
         /**
 //         * Uncomment this to upload delivered order to History node
 //         */
-//        if(r.getStatus() == Status.DELIVERED){
-//            //Adding reservation to History
-//            DatabaseReference dbReference = FirebaseDatabase.getInstance().getReference("restaurants").child(loggedID).child("History");
-//            dbReference.child(r.getOrder_id()).setValue(r);
-//            //Delete reservation from pending reservations
-//            FirebaseDatabase.getInstance().getReference("restaurants").child(loggedID).child("reservations").child(r.getOrder_id()).removeValue();
-//        }
+        if(r.getStatus() == Status.DELIVERED){
+            //Adding reservation to History
+            DatabaseReference dbReference = FirebaseDatabase.getInstance().getReference("restaurants").child(loggedID).child("History");
+            dbReference.child(r.getOrder_id()).setValue(r);
+            //Delete reservation from pending reservations
+            FirebaseDatabase.getInstance().getReference("restaurants").child(loggedID).child("reservations").child(r.getOrder_id()).removeValue();
+        }
 
         if (r.getStatus() == Status.REJECTED) {
             flag = true;
