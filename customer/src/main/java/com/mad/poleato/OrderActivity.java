@@ -1,7 +1,11 @@
 package com.mad.poleato;
 
 import android.app.Activity;
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
+import android.net.ConnectivityManager;
 import android.support.annotation.NonNull;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
@@ -33,6 +37,7 @@ public class OrderActivity extends AppCompatActivity implements Interface {
     private PageAdapter adapter;
     private Order order;
     private DatabaseReference dbReferece;
+    private ConnectionManager connectionManager;
 
     private String currentUserID;
     private FirebaseAuth mAuth;
@@ -44,6 +49,14 @@ public class OrderActivity extends AppCompatActivity implements Interface {
     private MenuFragment menuFragment;
     private InfoFragment infoFragment;
 
+    BroadcastReceiver networkReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+
+            if(!connectionManager.haveNetworkConnection(context))
+                connectionManager.showDialog(context);
+        }
+    };
     private void addFragmentToAdapter(Bundle bundle) {
         infoFragment = null;
         menuFragment = null;
@@ -79,7 +92,7 @@ public class OrderActivity extends AppCompatActivity implements Interface {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_order_layout);
-
+        connectionManager = new ConnectionManager();
 
         mAuth = FirebaseAuth.getInstance();
         FirebaseUser currentUser = mAuth.getCurrentUser();
@@ -151,6 +164,19 @@ public class OrderActivity extends AppCompatActivity implements Interface {
         addFragmentToAdapter(bundle);
 
         tabLayout.setupWithViewPager(onViewPager);
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        IntentFilter filter = new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION);
+        registerReceiver(networkReceiver,filter);
+    }
+
+    @Override
+    protected void onStop() {
+        unregisterReceiver(networkReceiver);
+        super.onStop();
     }
 
     @Override

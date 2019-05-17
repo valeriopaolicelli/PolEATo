@@ -2,8 +2,12 @@ package com.mad.poleato;
 
 import android.app.Activity;
 import android.app.TimePickerDialog;
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.IntentFilter;
+import android.net.ConnectivityManager;
 import android.os.AsyncTask;
 import android.os.StrictMode;
 import android.support.v4.app.DialogFragment;
@@ -50,13 +54,21 @@ public class CartActivity extends AppCompatActivity implements Interface,TimePic
 
     private String currentUserID;
     private FirebaseAuth mAuth;
+    private ConnectionManager connectionManager;
+    BroadcastReceiver networkReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
 
+            if(!connectionManager.haveNetworkConnection(context))
+                connectionManager.showDialog(context);
+        }
+    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_cart_layout);
-
+        connectionManager = new ConnectionManager();
         mAuth = FirebaseAuth.getInstance();
         FirebaseUser currentUser = mAuth.getCurrentUser();
         currentUserID = currentUser.getUid();
@@ -171,6 +183,20 @@ public class CartActivity extends AppCompatActivity implements Interface,TimePic
                 }
             }
         });
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        IntentFilter filter = new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION);
+        registerReceiver(networkReceiver,filter);
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        unregisterReceiver(networkReceiver);
+
     }
 
     private void sendNotification() {

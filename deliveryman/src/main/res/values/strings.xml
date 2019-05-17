@@ -107,5 +107,10 @@
     <!-- Show more fragment -->
     <string name="address_semicolon">Address:</string>
     <string name="show_more_title">Restaurant info:</string>
+    <!--- Internet dialog -->
+    <string name="internet_title">Enable Internet Connection</string>
+    <string name="internet_message">To use this application you must be connected to the Internet</string>
+    <string name="interner_confirm">Data settings</string>
+
 
 </resources>

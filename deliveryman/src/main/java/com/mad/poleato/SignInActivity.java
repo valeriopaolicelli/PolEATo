@@ -55,14 +55,16 @@ public class SignInActivity extends AppCompatActivity {
     //this is the layout that must be hide as default: it contains the mail and password fields
     private ConstraintLayout login_constraint;
     private ProgressBar progress_bar;
-
+    private ConnectionManager connectionManager;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
         setContentView(R.layout.signin_layout);
-
+        connectionManager = new ConnectionManager();
+        if(!connectionManager.haveNetworkConnection(this))
+            connectionManager.showDialog(this);
         myToast = Toast.makeText(this, "", Toast.LENGTH_SHORT);
         mAuth = FirebaseAuth.getInstance();
 
