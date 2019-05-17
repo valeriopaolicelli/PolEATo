@@ -243,7 +243,7 @@ public class HistoryFragment extends Fragment {
                             if(res.getOrder_id().equals(order_id))
                                 res.setStat(status);
                     }
-                    Collections.sort(reservations, Reservation.timeComparator);
+                    Collections.sort(reservations, Reservation.timeComparatorReverse);
                     listAdapter.notifyDataSetChanged();
                     listAdapter.updateReservationList(reservations,listHash);
                 }
@@ -325,7 +325,7 @@ public class HistoryFragment extends Fragment {
                             res.setStat(status);
 
                     listAdapter.notifyDataSetChanged();
-                    Collections.sort(reservations, Reservation.timeComparator);
+                    Collections.sort(reservations, Reservation.timeComparatorReverse);
                     listAdapter.updateReservationList(reservations, listHash);
                 }
 
