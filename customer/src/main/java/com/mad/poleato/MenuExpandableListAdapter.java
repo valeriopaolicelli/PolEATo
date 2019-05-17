@@ -192,10 +192,6 @@ public class MenuExpandableListAdapter extends BaseExpandableListAdapter {
 
         holder.text.setText(groupTitle);
 
-        //start all the group expanded
-        ExpandableListView mExpandableListView = (ExpandableListView) parent;
-        mExpandableListView.expandGroup(groupPosition);
-
         return convertView;
     }
 
