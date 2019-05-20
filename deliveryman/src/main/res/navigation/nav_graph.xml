@@ -30,6 +30,18 @@
 
 
     <fragment
+        android:id="@+id/statistics_id"
+        android:name="com.mad.poleato.Statistics.StatisticsFragment"
+        android:label="@string/title_actionbar_deliveryStatistics"
+        tools:layout="@layout/fragment_statistics" >
+        <action
+            android:id="@+id/action_statisticsFragment_to_signInActivity"
+            app:destination="@id/signInActivity" />
+    </fragment>
+
+
+
+    <fragment
         android:id="@+id/mainProfile_id"
         android:name="com.mad.poleato.Account.MainProfile"
         android:label="@string/title_actionbar_account"
@@ -56,10 +68,14 @@
             app:popUpTo="@+id/mainProfile_id"
             app:popUpToInclusive="true" />
     </fragment>
+
+
+
     <activity
         android:id="@+id/signInActivity"
         android:name="com.mad.poleato.SignInActivity"
         android:label="signin_layout"
         tools:layout="@layout/signin_layout" />
+
 
 </navigation>

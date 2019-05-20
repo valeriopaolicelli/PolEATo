@@ -12,6 +12,11 @@
         android:title="@string/title_bottombar_deliveryHistory" />
 
     <item
+        android:id="@+id/statistics_id"
+        android:icon="@drawable/ic_baseline_bar_chart_24px"
+        android:title="@string/title_bottombar_deliveryStatistics" />
+
+    <item
         android:id="@+id/mainProfile_id"
         android:icon="@drawable/ic_baseline_person_24px"
         android:title="@string/title_bottombar_account" />
