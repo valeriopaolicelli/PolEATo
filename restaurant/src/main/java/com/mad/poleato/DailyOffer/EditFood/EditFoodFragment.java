@@ -125,7 +125,6 @@ public class EditFoodFragment extends DialogFragment {
 
     private List<MyDatabaseReference> dbReferenceList;
     int indexReference;
-    private List<TextWatcher> buttonListener;
 
     /* ***********************************
      ********   ANDROID CALLBACKS   ****
@@ -161,7 +160,6 @@ public class EditFoodFragment extends DialogFragment {
         OneSignal.sendTag("User_ID", currentUserID);
 
         dbReferenceList= new ArrayList<>();
-        buttonListener= new ArrayList<>();
     }
 
 
@@ -578,8 +576,6 @@ public class EditFoodFragment extends DialogFragment {
                         }
                     }
                 });
-
-                buttonListener.add(textWatcher);
             }
             else
                 return;
@@ -781,7 +777,5 @@ public class EditFoodFragment extends DialogFragment {
         super.onDestroy();
         for(int i=0; i < dbReferenceList.size(); i++)
             dbReferenceList.get(i).removeAllListener();
-        for (int i=0; i < editTextFields.size(); i++)
-            editTextFields.get(i).removeTextChangedListener(buttonListener.get(i));
     }
 }
