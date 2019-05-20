@@ -76,13 +76,14 @@ public class RidesFragment extends Fragment {
 
     private Map<String, TextView> tv_Fields;
     private Button status_button;
-    private FloatingActionButton map_button;
+//    private FloatingActionButton map_button;
     private ImageButton show_more_button;
 
     //to set the visibility to gone when there are no ride available
     private ImageView emptyView;
     private CardView rideCardView;
     private FrameLayout rideFrameLayout;
+    private Boolean show_icon_map_menu = false;
 
     //the key for that order at rider side
     private String reservationKey;
@@ -134,32 +135,48 @@ public class RidesFragment extends Fragment {
         OneSignal.setSubscription(true);
         OneSignal.sendTag("User_ID", currentUserID);
 
-        dbReferenceList= new ArrayList<>();
+        dbReferenceList = new ArrayList<>();
     }
 
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         menu.clear();
-        // Inflate the menu; this adds items to the action bar if it is present.
-        inflater.inflate(R.menu.popup_account_settings, menu);
-        menu.findItem(R.id.logout).setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
+        /** Inflate the menu; this adds items to the action bar if it is present.*/
+        inflater.inflate(R.menu.map_menu, menu);
+
+        /** If Button is visible go to DeliveringActivity*/
+        menu.findItem(R.id.map_id).setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
             @Override
             public boolean onMenuItemClick(MenuItem item) {
-                //logout
-                Log.d("matte", "Logout");
-                FirebaseAuth.getInstance().signOut();
-                //                OneSignal.sendTag("User_ID", "");
-                OneSignal.setSubscription(false);
 
-                /**
-                 *  GO TO LOGIN ****
-                 */
-                Navigation.findNavController(fragView).navigate(R.id.action_rides_id_to_signInActivity);
-                getActivity().finish();
+                Intent intent = new Intent(getActivity(), DeliveringActivity.class);
+                intent.putExtra("ride", ride);
+                intent.putExtra("order_key", reservationKey);
+                intent.putExtra("delivering", delivering);
+                startActivityForResult(intent, MAPS_ACTIVITY_CODE);
+//                //logout
+//                Log.d("matte", "Logout");
+//                FirebaseAuth.getInstance().signOut();
+//                //                OneSignal.sendTag("User_ID", "");
+//                OneSignal.setSubscription(false);
+//
+//                /**
+//                 *  GO TO LOGIN ****
+//                 */
+//                Navigation.findNavController(fragView).navigate(R.id.action_rides_id_to_signInActivity);
+//                getActivity().finish();
                 return true;
             }
         });
-        super.onCreateOptionsMenu(menu,inflater);
+
+        /** Used to set Visible Button map fo ActionBar */
+        if (show_icon_map_menu)
+            menu.findItem(R.id.map_id).setVisible(true);
+        else
+            menu.findItem(R.id.map_id).setVisible(false);
+
+
+        super.onCreateOptionsMenu(menu, inflater);
     }
 
 
@@ -201,17 +218,20 @@ public class RidesFragment extends Fragment {
         rideFrameLayout = (FrameLayout) fragView.findViewById(R.id.rideFrameLayout);
         emptyView = (ImageView) fragView.findViewById(R.id.ride_empty_view);
 
-        map_button = (FloatingActionButton) fragView.findViewById(R.id.map_button);
-        map_button.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(getActivity(), DeliveringActivity.class);
-                intent.putExtra("ride", ride);
-                intent.putExtra("order_key", reservationKey);
-                intent.putExtra("delivering", delivering);
-                startActivityForResult(intent, MAPS_ACTIVITY_CODE);
-            }
-        });
+
+        //TODO Accertarsi che il button sull'action bar funzioni e se funziona cancellare questo
+        //TODO cancellare questo codice ed il corrispettivo elemento XML
+//        map_button = (FloatingActionButton) fragView.findViewById(R.id.map_button);
+//        map_button.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                Intent intent = new Intent(getActivity(), DeliveringActivity.class);
+//                intent.putExtra("ride", ride);
+//                intent.putExtra("order_key", reservationKey);
+//                intent.putExtra("delivering", delivering);
+//                startActivityForResult(intent, MAPS_ACTIVITY_CODE);
+//            }
+//        });
 
         status_button = (Button) fragView.findViewById(R.id.status_button);
         status_button.setOnClickListener(new OnClickRideStatus());
@@ -224,21 +244,31 @@ public class RidesFragment extends Fragment {
 
     }
 
-    private void show_empty_view(){
+    /** To hide all element used to enable Rider actions*/
+    private void show_empty_view() {
 
         rideCardView.setVisibility(View.GONE);
         rideFrameLayout.setVisibility(View.GONE);
         emptyView.setVisibility(View.VISIBLE);
+
+        /** To set invisible button map of Actionbar*/
+        show_icon_map_menu = false;
+        getActivity().invalidateOptionsMenu();
     }
 
-    private void show_view(){
+    /** To visualize all element used to enable Rider actions*/
+    private void show_view() {
 
         emptyView.setVisibility(View.GONE);
         rideCardView.setVisibility(View.VISIBLE);
         rideFrameLayout.setVisibility(View.VISIBLE);
+
+        /** To set visible button map of Actionbar*/
+        show_icon_map_menu = true;
+        getActivity().invalidateOptionsMenu();
     }
 
-    private class OnClickShowMore implements View.OnClickListener{
+    private class OnClickShowMore implements View.OnClickListener {
 
         @Override
         public void onClick(View v) {
@@ -264,8 +294,8 @@ public class RidesFragment extends Fragment {
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
-        if(requestCode == MAPS_ACTIVITY_CODE){
-            if(resultCode == RESULT_OK){
+        if (requestCode == MAPS_ACTIVITY_CODE) {
+            if (resultCode == RESULT_OK) {
                 //retrieve the delivered hour
                 Bundle b = data.getExtras();
                 String deliveredHour = b.get("deliveryHour").toString();
@@ -273,8 +303,7 @@ public class RidesFragment extends Fragment {
                 //terminate the ride
                 terminateRide(deliveredHour);
 
-            }
-            else if(resultCode == RESULT_PERMISSION_DENIED){
+            } else if (resultCode == RESULT_PERMISSION_DENIED) {
                 myToast.setText(hostActivity.getString(R.string.permission_denied));
                 myToast.show();
             }
@@ -287,10 +316,10 @@ public class RidesFragment extends Fragment {
         DatabaseReference reference = FirebaseDatabase.getInstance()
                 .getReference("deliveryman/" + currentUserID + "/reservations");
         dbReferenceList.add(new MyDatabaseReference(reference));
-        int indexReference= dbReferenceList.size()-1;
+        int indexReference = dbReferenceList.size() - 1;
         ChildEventListener childEventListener;
 
-        dbReferenceList.get(indexReference).getReference().addChildEventListener(childEventListener= new ChildEventListener() {
+        dbReferenceList.get(indexReference).getReference().addChildEventListener(childEventListener = new ChildEventListener() {
             @Override
             public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
                 if (dataSnapshot.exists() &&
@@ -333,7 +362,7 @@ public class RidesFragment extends Fragment {
                     String deliveryTime = dataSnapshot.child("time").getValue().toString();
                     String customerPhone = dataSnapshot.child("phoneCustomer").getValue().toString();
                     String restaurantPhone = dataSnapshot.child("phoneRestaurant").getValue().toString();
-                    String deliveryDate= dataSnapshot.child("date").getValue().toString();
+                    String deliveryDate = dataSnapshot.child("date").getValue().toString();
 
                     delivering = (Boolean) dataSnapshot.child("delivering").getValue();
 
@@ -341,12 +370,11 @@ public class RidesFragment extends Fragment {
                     String buttonText;
                     String statusText;
                     int textColor;
-                    if(delivering){
+                    if (delivering) {
                         buttonText = getString(R.string.maps_button_order_delivered);
                         statusText = getString(R.string.delivering);
                         textColor = getResources().getColor(R.color.colorPrimary);
-                    }
-                    else{
+                    } else {
                         buttonText = getString(R.string.maps_button_to_restaurant);
                         statusText = getString(R.string.not_delivering);
                         textColor = Color.RED;
@@ -356,7 +384,6 @@ public class RidesFragment extends Fragment {
                     tv_Fields.get("status").setTextColor(textColor);
 
 
-
                     //fill the fields
                     tv_Fields.get("address").setText(customerAddress);
                     tv_Fields.get("name").setText(nameCustomer);
@@ -364,7 +391,7 @@ public class RidesFragment extends Fragment {
                     tv_Fields.get("phone").setText(customerPhone);
                     tv_Fields.get("dishes").setText(numDishes);
                     tv_Fields.get("hour").setText(deliveryTime);
-                    tv_Fields.get("price").setText(priceStr+"€");
+                    tv_Fields.get("price").setText(priceStr + "€");
 
                     ride = new Ride(orderID, customerAddress, restaurantAddress,
                             nameCustomer, nameRestaurant, priceStr,
@@ -398,7 +425,7 @@ public class RidesFragment extends Fragment {
                         dataSnapshot.hasChild("date")) {
 
                     //a new reservation can be created only if the rider is not busy
-                    if(!isRunning){
+                    if (!isRunning) {
                         //retrieve order infos from DB
                         reservationKey = dataSnapshot.getKey();
                         String customerAddress = dataSnapshot.child("addressCustomer").getValue().toString();
@@ -431,7 +458,7 @@ public class RidesFragment extends Fragment {
                         tv_Fields.get("phone").setText(customerPhone);
                         tv_Fields.get("dishes").setText(numDishes);
                         tv_Fields.get("hour").setText(deliveryTime);
-                        tv_Fields.get("price").setText(priceStr+"€");
+                        tv_Fields.get("price").setText(priceStr + "€");
 
                         ride = new Ride(orderID, customerAddress, restaurantAddress,
                                 nameCustomer, nameRestaurant, priceStr,
@@ -451,12 +478,11 @@ public class RidesFragment extends Fragment {
                     String buttonText;
                     String statusText;
                     int textColor;
-                    if(delivering){
+                    if (delivering) {
                         buttonText = getString(R.string.maps_button_order_delivered);
                         statusText = getString(R.string.delivering);
                         textColor = getResources().getColor(R.color.colorPrimary);
-                    }
-                    else{
+                    } else {
                         buttonText = getString(R.string.maps_button_to_restaurant);
                         statusText = getString(R.string.not_delivering);
                         textColor = Color.RED;
@@ -491,10 +517,10 @@ public class RidesFragment extends Fragment {
     }
 
 
-    private void terminateRide(String deliveredHour){
+    private void terminateRide(String deliveredHour) {
 
         //save the completed ride into the history
-        DatabaseReference historyReference = FirebaseDatabase.getInstance().getReference("deliveryman/"+currentUserID+"/history").push();
+        DatabaseReference historyReference = FirebaseDatabase.getInstance().getReference("deliveryman/" + currentUserID + "/history").push();
         historyReference.child("orderID").setValue(ride.getOrderID());
         historyReference.child("addressRestaurant").setValue(ride.getAddressRestaurant());
         historyReference.child("nameRestaurant").setValue(ride.getNameRestaurant());
@@ -505,22 +531,22 @@ public class RidesFragment extends Fragment {
         historyReference.child("deliveredDate").setValue(ride.getDate());
 
         //remove the ride
-        DatabaseReference reservationReference = FirebaseDatabase.getInstance().getReference("deliveryman/"+currentUserID);
-        reservationReference.child("reservations/"+reservationKey).removeValue();
+        DatabaseReference reservationReference = FirebaseDatabase.getInstance().getReference("deliveryman/" + currentUserID);
+        reservationReference.child("reservations/" + reservationKey).removeValue();
 
         //set this ride to free
-        DatabaseReference deliverymanReference = FirebaseDatabase.getInstance().getReference("deliveryman/"+currentUserID);
+        DatabaseReference deliverymanReference = FirebaseDatabase.getInstance().getReference("deliveryman/" + currentUserID);
         deliverymanReference.child("Busy").setValue(false);
         isRunning = false;
 
         sendNotificationToRestaurant();
 
         FirebaseDatabase.getInstance().getReference("restaurants/" + ride.getRestaurantID()
-                                                           + "/reservations/" + ride.getOrderID()
-                                                           + "/status/it/").setValue("Consegnato");
+                + "/reservations/" + ride.getOrderID()
+                + "/status/it/").setValue("Consegnato");
         FirebaseDatabase.getInstance().getReference("restaurants/" + ride.getRestaurantID()
-                                                            + "/reservations/" + ride.getOrderID()
-                                                            + "/status/en/").setValue("Delivered");
+                + "/reservations/" + ride.getOrderID()
+                + "/status/en/").setValue("Delivered");
 
     }
 
@@ -532,11 +558,10 @@ public class RidesFragment extends Fragment {
             String title,
                     message;
             //towards restaurant
-            if(!delivering){
+            if (!delivering) {
                 title = getString(R.string.go_to_customer);
                 message = getString(R.string.dialog_go_to_customer);
-            }
-            else{
+            } else {
                 //toward customer
                 title = getString(R.string.maps_button_order_delivered);
                 message = getString(R.string.dialog_message_order_completed);
@@ -551,17 +576,15 @@ public class RidesFragment extends Fragment {
                     .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface dialog, int which) {
                             // If the rider arrives to the restaurant
-                            if(!delivering)
-                            {
+                            if (!delivering) {
                                 delivering = true;
                                 status_button.setText(getString(R.string.maps_button_order_delivered));
                                 //update the delivery status on FireBase
-                                DatabaseReference reference = FirebaseDatabase.getInstance().getReference("deliveryman/"+currentUserID+"/reservations/"
-                                        +reservationKey);
+                                DatabaseReference reference = FirebaseDatabase.getInstance().getReference("deliveryman/" + currentUserID + "/reservations/"
+                                        + reservationKey);
                                 reference.child("delivering").setValue(true);
                                 sendNotificationToCustomer();
-                            }
-                            else{
+                            } else {
                                 //here the order is completed
                                 myToast.setText(R.string.message_order_completed);
                                 myToast.show();
@@ -596,7 +619,7 @@ public class RidesFragment extends Fragment {
                     String send_email;
 
                     //This is a Simple Logic to Send Notification different Device Programmatically....
-                    send_email= ride.getCustomerID();
+                    send_email = ride.getCustomerID();
 
                     try {
                         String jsonResponse;
@@ -663,7 +686,7 @@ public class RidesFragment extends Fragment {
                     String send_email;
 
                     //This is a Simple Logic to Send Notification different Device Programmatically....
-                    send_email= ride.getRestaurantID();
+                    send_email = ride.getRestaurantID();
 
                     try {
                         String jsonResponse;
@@ -722,7 +745,7 @@ public class RidesFragment extends Fragment {
     @Override
     public void onDestroy() {
         super.onDestroy();
-        for (int i=0; i < dbReferenceList.size(); i++)
+        for (int i = 0; i < dbReferenceList.size(); i++)
             dbReferenceList.get(i).removeAllListener();
     }
 }

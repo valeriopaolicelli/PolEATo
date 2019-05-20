@@ -296,19 +296,19 @@
             android:layout_marginBottom="16dp"/>
 
 
-        <android.support.design.widget.FloatingActionButton
-            android:id="@+id/map_button"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="bottom|right"
-            android:layout_margin="16dp"
-            android:backgroundTint="@color/colorBodyPrimary"
-            android:elevation="8dp"
-            android:scaleType="center"
-            android:src="@mipmap/maps_icon_round"
-            app:fabCustomSize="40dp"
-            app:fabSize="auto"
-            app:maxImageSize="40dp" />
+        <!--<android.support.design.widget.FloatingActionButton-->
+            <!--android:id="@+id/map_button"-->
+            <!--android:layout_width="wrap_content"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:layout_gravity="bottom|right"-->
+            <!--android:layout_margin="16dp"-->
+            <!--android:backgroundTint="@color/colorBodyPrimary"-->
+            <!--android:elevation="8dp"-->
+            <!--android:scaleType="center"-->
+            <!--android:src="@mipmap/maps_icon_round"-->
+            <!--app:fabCustomSize="40dp"-->
+            <!--app:fabSize="auto"-->
+            <!--app:maxImageSize="40dp" />-->
 
     </FrameLayout>
 
