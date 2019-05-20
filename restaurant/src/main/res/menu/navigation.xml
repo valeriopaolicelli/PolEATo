@@ -6,6 +6,10 @@
             android:id="@+id/reservation_id"
             android:icon="@drawable/ic_baseline_event_24px"
             android:title="@string/title_bottombar_reservation" />
+        <item
+            android:id="@+id/history_id"
+            android:icon="@drawable/ic_baseline_history_24px"
+            android:title="@string/title_bottombar_history" />
 
         <item
             android:id="@+id/history_id"

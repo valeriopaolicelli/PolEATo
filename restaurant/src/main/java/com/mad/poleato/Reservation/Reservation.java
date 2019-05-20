@@ -212,4 +212,40 @@ public class Reservation implements Serializable{
         }
     };
 
+    public static Comparator<Reservation> timeComparatorReverse= new Comparator<Reservation>() {
+        @Override
+        public int compare(Reservation r1, Reservation r2) {
+            SimpleDateFormat formatDate = new SimpleDateFormat("dd/MM/yyyy");
+            SimpleDateFormat formatTime = new SimpleDateFormat("HH:mm");
+
+            Date date1 = null, date2= null, time1= null, time2= null;
+
+            try {
+                date1 = formatDate.parse(r1.getDate());
+                date2 = formatDate.parse(r2.getDate());
+                time1= formatTime.parse(r1.getTime());
+                time2= formatTime.parse(r2.getTime());
+            } catch (ParseException e) {
+                e.printStackTrace();
+                return -1;
+            }
+
+            if(date1.compareTo(date2) < 0)
+                return 1;
+            else if(date1.compareTo(date2) > 0)
+                return -1;
+            else{
+                /*
+                 * Same date -> compare time
+                 */
+
+                if(time1.compareTo(time2) < 0)
+                    return 1;
+                else if(time1.compareTo(time2) > 0)
+                    return -1;
+                else // at same time and date
+                    return 0;
+            }
+        }
+    };
 }

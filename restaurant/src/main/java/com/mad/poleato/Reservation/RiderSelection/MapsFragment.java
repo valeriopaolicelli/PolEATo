@@ -89,6 +89,8 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback,
     private static final int MY_PERMISSION_REQUEST_CODE = 0001;
     private static final int PLAY_SERVICES_RESOLUTION_REQUEST = 000001;
 
+    private static final int EARTH_RADIUS = 6371; // Approx Earth radius in KM
+
     private LocationRequest mLocationRequest;
     private GoogleApiClient mGoogleApiClient;
     private Location mLastLocation;
@@ -118,8 +120,6 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback,
 
     private FloatingActionButton mapButton;
     private SupportMapFragment mapFragment;
-
-    private static final int EARTH_RADIUS = 6371; // Approx Earth radius in KM
 
     private List<MyDatabaseReference> dbReferenceList;
 
@@ -607,70 +607,74 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback,
                           public void onDataChange(@NonNull final DataSnapshot dataSnapshot) {
                               if (dataSnapshot.hasChild("Busy") &&
                                       dataSnapshot.child("Busy").getValue().toString().equals("false") &&
-                                        dataSnapshot.hasChild("IsActive") &&
-                                        dataSnapshot.child("IsActive").getValue().toString().equals("true") &&
-                                        reservation.getStatus().equals(Status.COOKING) &&
-                                        getContext() != null) {
+                                      dataSnapshot.hasChild("IsActive") &&
+                                      dataSnapshot.child("IsActive").getValue().toString().equals("true") &&
+                                      reservation.getStatus().equals(Status.COOKING) &&
+                                      getContext() != null) {
                                   final double latRider = location.latitude;
                                   final double longRider = location.longitude;
-                                  if (!riders.containsKey(riderID)) {
-                                      Rider rider = new Rider(riderID, latRider, longRider, latitudeRest, longitudeRest);
-                                      riders.put(riderID, rider);
-                                      listAdapter.addRider(riders.get(riderID));
-                                  } else {
-                                      riders.get(riderID).setLatitude(latRider);
-                                      riders.get(riderID).setLongitude(longRider);
-                                      riders.get(riderID).setDistance(latitudeRest, longitudeRest);
-                                      for (int i = 0; i < listAdapter.getCount(); i++) {
-                                          if (listAdapter.getItem(i).getId().equals(riderID)) {
-                                              listAdapter.getItem(i).setLatitude(latRider);
-                                              listAdapter.getItem(i).setLongitude(longRider);
-                                              listAdapter.getItem(i).setDistance(latitudeRest, longitudeRest);
+
+                                  final double distance = computeDistance(latitudeRest, longitudeRest, latRider, longRider);
+                                  if (distance <= 2) {
+                                      if (!riders.containsKey(riderID)) {
+                                          Rider rider = new Rider(riderID, latRider, longRider, latitudeRest, longitudeRest);
+                                          riders.put(riderID, rider);
+                                          listAdapter.addRider(riders.get(riderID));
+                                      } else {
+                                          riders.get(riderID).setLatitude(latRider);
+                                          riders.get(riderID).setLongitude(longRider);
+                                          riders.get(riderID).setDistance(latitudeRest, longitudeRest);
+                                          for (int i = 0; i < listAdapter.getCount(); i++) {
+                                              if (listAdapter.getItem(i).getId().equals(riderID)) {
+                                                  listAdapter.getItem(i).setLatitude(latRider);
+                                                  listAdapter.getItem(i).setLongitude(longRider);
+                                                  listAdapter.getItem(i).setDistance(latitudeRest, longitudeRest);
+                                              }
                                           }
                                       }
-                                  }
 
-                                  listAdapter.notifyDataSetChanged();
-
-
-                                  //Update restaurant map
-                                  geoFire.setLocation(riderID,
-                                          new GeoLocation(latRider, longRider), new GeoFire.CompletionListener() {
-                                              @Override
-                                              public void onComplete(String key, DatabaseError error) {
-                                                  if (dataSnapshot.child("Busy").getValue().toString().equals("false") &&
-                                                          reservation.getStatus().equals(Status.COOKING) &&
-                                                          getContext() != null) {
-
-                                                      //Add marker
-                                                      if (riders.get(riderID).getMarker() != null)
-                                                          riders.get(riderID).getMarker().remove();
-                                                      Drawable icon = ContextCompat.getDrawable(getContext(), R.drawable.ic_baseline_directions_bike_24px);
-                                                      BitmapDescriptor markerIcon = getMarkerIconFromDrawable(icon);
-                                                      riders.get(riderID).setMarker(mMap.addMarker(new MarkerOptions()
-                                                              .position(new LatLng(latRider, longRider))
-                                                              .title(riderID)
-                                                              .icon(markerIcon)
-                                                      ));
-                                                  }
-                                              }
-                                          });
-                              } else if(dataSnapshot.hasChild("Busy") &&
-                                      dataSnapshot.child("Busy").getValue().toString().equals("true") &&
-                                      reservation.getStatus().equals(Status.COOKING) &&
-                                      getContext() != null){
-                                  /*
-                                   * remove busy rider if is in the adapter
-                                   */
-                                  if (riders.containsKey(riderID)) {
-                                      riders.get(riderID).getMarker().remove();
-                                      riders.remove(riderID);
-                                      listAdapter.removeRider(riderID);
                                       listAdapter.notifyDataSetChanged();
+
+
+                                      //Update restaurant map
+                                      geoFire.setLocation(riderID,
+                                              new GeoLocation(latRider, longRider), new GeoFire.CompletionListener() {
+                                                  @Override
+                                                  public void onComplete(String key, DatabaseError error) {
+                                                      if (dataSnapshot.child("Busy").getValue().toString().equals("false") &&
+                                                              reservation.getStatus().equals(Status.COOKING) &&
+                                                              getContext() != null) {
+
+                                                          //Add marker
+                                                          if (riders.get(riderID).getMarker() != null)
+                                                              riders.get(riderID).getMarker().remove();
+                                                          Drawable icon = ContextCompat.getDrawable(getContext(), R.drawable.ic_baseline_directions_bike_24px);
+                                                          BitmapDescriptor markerIcon = getMarkerIconFromDrawable(icon);
+                                                          riders.get(riderID).setMarker(mMap.addMarker(new MarkerOptions()
+                                                                  .position(new LatLng(latRider, longRider))
+                                                                  .title(riderID)
+                                                                  .icon(markerIcon)
+                                                          ));
+                                                      }
+                                                  }
+                                              });
                                   }
                               }
-                          }
-
+                              else if (dataSnapshot.hasChild("Busy") &&
+                                          dataSnapshot.child("Busy").getValue().toString().equals("true") &&
+                                          reservation.getStatus().equals(Status.COOKING) &&
+                                          getContext() != null) {
+                                      /*
+                                       * remove busy rider if is in the adapter
+                                       */
+                                      if (riders.containsKey(riderID)) {
+                                          riders.get(riderID).getMarker().remove();
+                                          riders.remove(riderID);
+                                          listAdapter.removeRider(riderID);
+                                          listAdapter.notifyDataSetChanged();
+                                      }
+                                  }
+                              }
                           @Override
                           public void onCancelled(@NonNull DatabaseError databaseError) {
                               Log.d("ValerioMap", "onCancelled referenceRider -> " + databaseError.getMessage());

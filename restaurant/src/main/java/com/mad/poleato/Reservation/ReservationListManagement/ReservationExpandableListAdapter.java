@@ -181,7 +181,14 @@ public class ReservationExpandableListAdapter extends BaseExpandableListAdapter{
         if(r.getStatus() == Status.DELIVERED){
             //Adding reservation to History
             DatabaseReference dbReference = FirebaseDatabase.getInstance().getReference("restaurants").child(loggedID).child("History");
-            dbReference.child(r.getOrder_id()).setValue(r);
+            dbReference.child(r.getOrder_id()).child("customerID").setValue(r.getCustomerID());
+            dbReference.child(r.getOrder_id()).child("date").setValue(r.getDate());
+            dbReference.child(r.getOrder_id()).child("time").setValue(r.getTime());
+            dbReference.child(r.getOrder_id()).child("totalPrice").setValue(r.getTotalPrice());
+            dbReference.child(r.getOrder_id()).child("status/it").setValue("Consegnato");
+            dbReference.child(r.getOrder_id()).child("status/en").setValue("Delivered");
+            dbReference.child(r.getOrder_id()).child("dishes").setValue(r.getDishes());
+
             //Delete reservation from pending reservations
             FirebaseDatabase.getInstance().getReference("restaurants").child(loggedID).child("reservations").child(r.getOrder_id()).removeValue();
         }
