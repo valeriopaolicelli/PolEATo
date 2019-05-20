@@ -30,6 +30,9 @@
     <string name="title_bottombar_deliveryHistory">Storico</string>
     <string name="title_actionbar_deliveryHistory">Storico</string>
 
+    <string name="title_bottombar_deliveryStatistics">Statistiche</string>
+    <string name="title_actionbar_deliveryStatistics">Statistiche</string>
+
     <string name="title_bottombar_account">Account</string>
     <string name="title_actionbar_account">Account</string>
     <string name="title_actionbar_edit_account">Edit Account</string>
