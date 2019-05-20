@@ -99,7 +99,7 @@
     <string name="creation_succ">Account creato!</string>
     <string name="creation_fail">Creazione account fallita! Devi inserire una mail valida e una password di almeno 6 caratteri</string>
 
-    <!-- Address convertion -->
+    <!-- Address conversion -->
     <string name="no_address">Indirizzo non valido</string>
 
     <!-- Rides layout -->
@@ -117,5 +117,17 @@
     <string name="internet_title">Abilita connession a Internet</string>
     <string name="internet_message">Per utilizzare l\'applicazione devi essere connesso ad Internet</string>
     <string name="interner_confirm">Impostazioni Internet</string>
+
+    <!-- Statistics fragment -->
+    <string name="riderID_label">ID Rider</string>
+    <string name="workingDays_label">Giorni di lavoro:</string>
+    <string name="totRevenues_label">Totale guadagni</string>
+    <string name="totKm_label">Km totali:</string>
+    <string name="kmPerDay_label">Km al giorno:</string>
+    <string name="revenuePerDay_label">Guadagno giornaliero:</string>
+    <string name="revenuePerKm_label">Guadagno per km:</string>
+    <string name="chart_title">I tuoi guadagni</string>
+
+
 
 </resources>

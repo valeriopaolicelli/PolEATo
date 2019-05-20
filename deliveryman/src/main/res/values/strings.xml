@@ -97,7 +97,7 @@
     <string name="creation_succ">Account created!</string>
     <string name="creation_fail">Account creation failed! Email must be valid and password composed by at least 6 characters</string>
 
-    <!-- Address convertion -->
+    <!-- Address conversion -->
     <string name="no_address">Address not valid</string>
 
     <!-- Rides layout -->
@@ -110,10 +110,21 @@
     <!-- Show more fragment -->
     <string name="address_semicolon">Address:</string>
     <string name="show_more_title">Restaurant info:</string>
+
     <!--- Internet dialog -->
     <string name="internet_title">Enable Internet Connection</string>
     <string name="internet_message">To use this application you must be connected to the Internet</string>
     <string name="interner_confirm">Data settings</string>
+
+    <!-- Statistics fragment -->
+    <string name="riderID_label">Rider ID:</string>
+    <string name="workingDays_label">Working days:</string>
+    <string name="totRevenues_label">Total revenues:</string>
+    <string name="totKm_label">Total Km:</string>
+    <string name="kmPerDay_label">Km per day:</string>
+    <string name="revenuePerDay_label">Revenues per day:</string>
+    <string name="revenuePerKm_label">Revenues per km:</string>
+    <string name="chart_title">Your revenues</string>
 
 
 </resources>
