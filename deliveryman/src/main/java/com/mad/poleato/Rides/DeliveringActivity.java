@@ -357,12 +357,9 @@ public class DeliveringActivity extends FragmentActivity implements OnMapReadyCa
                                 //here returns and close this ride
                                 Intent returnIntent = new Intent();
 
-                                /*Date currentDate = Calendar.getInstance().getTime();
-                                SimpleDateFormat sdf = new SimpleDateFormat("HH:mm");
-                                String currentTime = sdf.format(currentDate);*/
                                 //retrieve actual time and terminate the order
-                                DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
-                                Date date = new Date();
+                                DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm");
+                                Date date = new Date(); //initialized with current time
                                 String currentTime = dateFormat.format(date);
 
                                 returnIntent.putExtra("deliveryHour", currentTime);

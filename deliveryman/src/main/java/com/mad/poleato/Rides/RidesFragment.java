@@ -338,7 +338,8 @@ public class RidesFragment extends Fragment {
                         dataSnapshot.hasChild("totalPrice") &&
                         dataSnapshot.hasChild("phoneCustomer") &&
                         dataSnapshot.hasChild("phoneRestaurant") &&
-                        dataSnapshot.hasChild("deliveryTime")) {
+                        dataSnapshot.hasChild("deliveryTime") &&
+                        dataSnapshot.hasChild("notifiedTime")) {
 
                     //retrieve order infos from DB
                     reservationKey = dataSnapshot.getKey();
@@ -362,6 +363,9 @@ public class RidesFragment extends Fragment {
                     String deliveryTime = dataSnapshot.child("deliveryTime").getValue().toString();
                     String customerPhone = dataSnapshot.child("phoneCustomer").getValue().toString();
                     String restaurantPhone = dataSnapshot.child("phoneRestaurant").getValue().toString();
+
+                    //time at which reservation notification arrived to the rider
+                    String notifiedTime = dataSnapshot.child("notifiedTime").getValue().toString();
 
                     delivering = (Boolean) dataSnapshot.child("delivering").getValue();
 
@@ -396,7 +400,7 @@ public class RidesFragment extends Fragment {
                     ride = new Ride(orderID, customerAddress, restaurantAddress,
                             nameCustomer, nameRestaurant, priceStr,
                             numDishes, customerPhone, restaurantPhone,
-                            deliveryTime, customerID, restaurantID);
+                            deliveryTime, customerID, restaurantID, notifiedTime);
                     //lock the rider
                     isRunning = true;
 
@@ -421,7 +425,8 @@ public class RidesFragment extends Fragment {
                         dataSnapshot.hasChild("totalPrice") &&
                         dataSnapshot.hasChild("phoneCustomer") &&
                         dataSnapshot.hasChild("phoneRestaurant") &&
-                        dataSnapshot.hasChild("deliveryTime")) {
+                        dataSnapshot.hasChild("deliveryTime") &&
+                        dataSnapshot.hasChild("notifiedTime")) {
 
                     //a new reservation can be created only if the rider is not busy
                     if (!isRunning) {
@@ -449,6 +454,9 @@ public class RidesFragment extends Fragment {
                         String customerPhone = dataSnapshot.child("phoneCustomer").getValue().toString();
                         String restaurantPhone = dataSnapshot.child("phoneRestaurant").getValue().toString();
 
+                        //time at which reservation notification arrived to the rider
+                        String notifiedTime = dataSnapshot.child("notifiedTime").getValue().toString();
+
                         //fill the fields
                         tv_Fields.get("address").setText(customerAddress);
                         tv_Fields.get("name").setText(nameCustomer);
@@ -461,7 +469,7 @@ public class RidesFragment extends Fragment {
                         ride = new Ride(orderID, customerAddress, restaurantAddress,
                                 nameCustomer, nameRestaurant, priceStr,
                                 numDishes, customerPhone, restaurantPhone,
-                                deliveryTime, customerID, restaurantID);
+                                deliveryTime, customerID, restaurantID, notifiedTime);
 
                         //lock the rider
                         isRunning = true;
@@ -587,13 +595,9 @@ public class RidesFragment extends Fragment {
                                 myToast.show();
 
                                 //retrieve actual time and terminate the order
-                                DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
-                                Date date = new Date();
+                                DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm");
+                                Date date = new Date(); //initialized with current time
                                 terminateRide(dateFormat.format(date));
-
-                                /*Date currentDate = Calendar.getInstance().getTime();
-                                SimpleDateFormat sdf = new SimpleDateFormat("HH:mm");
-                                String currentTime = sdf.format(currentDate);*/
                             }
 
 

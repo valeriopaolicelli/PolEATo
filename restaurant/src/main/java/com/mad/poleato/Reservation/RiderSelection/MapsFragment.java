@@ -67,7 +67,10 @@ import com.onesignal.OneSignal;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
@@ -1021,8 +1024,6 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback,
                     reservationRider.child("totalPrice").setValue(reservation.getTotalPrice());
                     reservationRider.child("phoneCustomer").setValue(reservation.getPhone());
                     reservationRider.child("phoneRestaurant").setValue(phoneRestaurant);
-                    //reservationRider.child("time").setValue(reservation.getTime());
-                    //reservationRider.child("date").setValue(reservation.getDate());
 
                     // compose the date in the format YYYY/MM/DD HH:mm
                     String[] date_components = reservation.getDate().split("/"); //format: dd/mm/yyyy
@@ -1030,6 +1031,11 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback,
                                     reservation.getTime();
                     reservationRider.child("deliveryTime").setValue(timeStr);
 
+                    //send actual time of notification
+                    DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm");
+                    Date date = new Date(); //initialized with current time
+                    String currentTime = dateFormat.format(date);
+                    reservationRider.child("notifiedTime").setValue(currentTime);
 
 
                     FirebaseDatabase.getInstance().getReference("restaurants").child(loggedID).child("reservations").child(reservation.getOrder_id()).child("status").child("en").setValue("Delivering");

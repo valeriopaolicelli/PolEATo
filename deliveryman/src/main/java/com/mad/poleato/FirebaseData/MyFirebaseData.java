@@ -87,8 +87,7 @@ public class MyFirebaseData {
                         dataSnapshot.hasChild("totalPrice") &&
                         dataSnapshot.hasChild("numberOfDishes") &&
                         dataSnapshot.hasChild("expectedTime") &&
-                        dataSnapshot.hasChild("deliveredTime") &&
-                        dataSnapshot.hasChild("deliveredDate")) {
+                        dataSnapshot.hasChild("deliveredTime")) {
 
                     //retrieve history infos from DB
                     String nameRestaurant = dataSnapshot.child("nameRestaurant").getValue().toString();
@@ -99,11 +98,10 @@ public class MyFirebaseData {
                     String restaurantAddress = dataSnapshot.child("addressRestaurant").getValue().toString();
                     String expectedTime = dataSnapshot.child("expectedTime").getValue().toString();
                     String deliveredTime = dataSnapshot.child("deliveredTime").getValue().toString();
-                    String deliveredDate = dataSnapshot.child("deliveredDate").getValue().toString();
 
 
                     HistoryItem historyObj = new HistoryItem(orderID, restaurantAddress,
-                            nameRestaurant, priceStr, numDishes, expectedTime, deliveredTime, deliveredDate);
+                            nameRestaurant, priceStr, numDishes, expectedTime, deliveredTime);
 
                     mapDataHistory.getValue().put(historyObj.getOrderID(), historyObj);
                     mapDataHistory.setValue(mapDataHistory.getValue());
@@ -119,8 +117,7 @@ public class MyFirebaseData {
                         dataSnapshot.hasChild("totalPrice") &&
                         dataSnapshot.hasChild("numberOfDishes") &&
                         dataSnapshot.hasChild("expectedTime") &&
-                        dataSnapshot.hasChild("deliveredTime") &&
-                        dataSnapshot.hasChild("deliveredDate")) {
+                        dataSnapshot.hasChild("deliveredTime")) {
 
                     //retrieve history infos from DB
                     String nameRestaurant = dataSnapshot.child("nameRestaurant").getValue().toString();
@@ -131,11 +128,10 @@ public class MyFirebaseData {
                     String restaurantAddress = dataSnapshot.child("addressRestaurant").getValue().toString();
                     String expectedTime = dataSnapshot.child("expectedTime").getValue().toString();
                     String deliveredTime = dataSnapshot.child("deliveredTime").getValue().toString();
-                    String deliveredDate = dataSnapshot.child("deliveredDate").getValue().toString();
 
 
                     HistoryItem historyObj = new HistoryItem(orderID, restaurantAddress,
-                            nameRestaurant, priceStr, numDishes, expectedTime, deliveredTime, deliveredDate);
+                            nameRestaurant, priceStr, numDishes, expectedTime, deliveredTime);
 
                     mapDataHistory.getValue().put(historyObj.getOrderID(), historyObj);
                     mapDataHistory.setValue(mapDataHistory.getValue());

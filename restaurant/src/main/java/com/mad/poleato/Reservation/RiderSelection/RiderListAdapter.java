@@ -39,10 +39,13 @@ import com.mad.poleato.Rider;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.text.DateFormat;
 import java.text.DecimalFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 import java.util.Scanner;
@@ -222,8 +225,6 @@ public class RiderListAdapter extends ArrayAdapter<Rider>
                     reservationRider.child("totalPrice").setValue(reservation.getTotalPrice());
                     reservationRider.child("phoneCustomer").setValue(reservation.getPhone());
                     reservationRider.child("phoneRestaurant").setValue(phoneRestaurant);
-                    //reservationRider.child("time").setValue(reservation.getTime());
-                    //reservationRider.child("date").setValue(reservation.getDate());
 
 
                     // compose the date in the format YYYY/MM/DD HH:mm
@@ -231,6 +232,12 @@ public class RiderListAdapter extends ArrayAdapter<Rider>
                     String timeStr = date_components[2]+"/"+date_components[1]+"/"+date_components[0]+" "+
                             reservation.getTime();
                     reservationRider.child("deliveryTime").setValue(timeStr);
+
+                    //send actual time of notification
+                    DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm");
+                    Date date = new Date(); //initialized with current time
+                    String currentTime = dateFormat.format(date);
+                    reservationRider.child("notifiedTime").setValue(currentTime);
 
 
                     FirebaseDatabase.getInstance().getReference("restaurants").child(loggedID).child("reservations").child(reservation.getOrder_id()).child("status").child("en").setValue("Delivering");
