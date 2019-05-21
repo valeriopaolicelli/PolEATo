@@ -125,5 +125,14 @@
     <string name="internet_message">Per utilizzare l\'applicazione devi essere connesso ad Internet</string>
     <string name="interner_confirm">Impostazioni Internet</string>
 
+    <!-- Ratings -->
+    <string name="reviewLabel">Lascia una recensione per il ristorante </string>
+    <string name="very_bad">Molto male!</string>
+    <string name="not_good">Non bene</string>
+    <string name="neutral">Normale</string>
+    <string name="good">Bene</string>
+    <string name="very_good">Benissimo!</string>
+    <!-- Favorite restaurant and foods -->
+    <string name="favorite_list_button">I tuoi ristoranti preferiti</string>
 
 </resources>

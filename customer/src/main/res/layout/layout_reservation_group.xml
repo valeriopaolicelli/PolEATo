@@ -41,8 +41,8 @@
 
         <TextView
             android:id="@+id/tvDateField"
-            android:layout_width="0dp"
-            android:layout_height="22dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:layout_marginStart="24dp"
             android:layout_marginEnd="8dp"
             android:maxLength="40"
@@ -69,8 +69,8 @@
 
         <TextView
             android:id="@+id/tvTimeField"
-            android:layout_width="0dp"
-            android:layout_height="22dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:layout_marginStart="24dp"
             android:layout_marginEnd="8dp"
             android:maxLength="40"
@@ -100,8 +100,8 @@
 
         <TextView
             android:id="@+id/tvRestaurantField"
-            android:layout_width="0dp"
-            android:layout_height="22dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:layout_marginStart="24dp"
             android:layout_marginEnd="8dp"
             android:maxLength="40"
@@ -116,22 +116,20 @@
 
         <TextView
             android:id="@+id/totalPriceLabel"
-            android:layout_width="105dp"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="12dp"
-            android:layout_marginBottom="8dp"
             android:singleLine="true"
             android:text="@string/total_price"
             android:textColor="@color/colorTextField"
             android:textSize="20sp"
-            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintBottom_toTopOf="@+id/reviewtv"
             app:layout_constraintStart_toStartOf="@+id/timeLabel"
             app:layout_constraintTop_toBottomOf="@+id/timeLabel" />
 
         <TextView
             android:id="@+id/tvTotalPrice"
-            android:layout_width="206dp"
-            android:layout_height="22dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:layout_marginStart="20dp"
             android:layout_marginEnd="8dp"
             android:maxLength="40"
@@ -142,7 +140,20 @@
             app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toEndOf="@+id/totalPriceLabel"
             app:layout_constraintTop_toTopOf="@+id/totalPriceLabel"
-            app:layout_constraintVertical_bias="1.0" />
+             />
+
+        <TextView
+            android:id="@+id/reviewtv"
+            android:layout_width="wrap_content"
+            android:layout_height="31dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginEnd="8dp"
+            android:gravity="center_vertical|center_horizontal"
+            android:text="Review"
+            android:textSize="18sp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent" />
 
     </android.support.constraint.ConstraintLayout>
 </android.support.design.circularreveal.cardview.CircularRevealCardView>

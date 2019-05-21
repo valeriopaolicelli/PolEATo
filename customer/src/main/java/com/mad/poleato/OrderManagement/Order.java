@@ -156,11 +156,12 @@ public class Order implements Serializable {
         final String customerID= this.customerID;
 
         DatabaseReference referenceRestaurantOfReservation = dbReferenceRestaurant.child(this.getRestaurantID());
-        referenceRestaurantOfReservation.addValueEventListener(new ValueEventListener() {
+        referenceRestaurantOfReservation.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                if(dataSnapshot.exists())
-                    restaurantName[0] = dataSnapshot.child("Name").getValue().toString();
+
+                    if(dataSnapshot.exists())
+                        restaurantName[0] = dataSnapshot.child("Name").getValue().toString();
                     List<Dish> selectedDishes= new ArrayList<>();
                     String name, notes;
                     int quantity;
@@ -178,6 +179,9 @@ public class Order implements Serializable {
                     referenceCustomer.child("reservations").child(orderID).setValue(reservation);
                     referenceCustomer.child("reservations").child(orderID).child("date").setValue(ServerValue.TIMESTAMP);
                     referenceCustomer.child("reservations").child(orderID).child("dishes").setValue(selectedDishes);
+                    referenceCustomer.child("reservations").child(orderID).child("restaurantID").setValue(restaurantID);
+                    referenceCustomer.child("reservations").child(orderID).child("reviewFlag").setValue("false");
+
             }
 
             @Override

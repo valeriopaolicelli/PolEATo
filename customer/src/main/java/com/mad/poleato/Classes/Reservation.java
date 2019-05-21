@@ -12,10 +12,12 @@ import java.util.List;
 public class Reservation {
     private String orderID;
     private String restaurantName;
+    private String restaurantID;
     private String date;
     private String time;
     private String totalPrice;
     private List<Dish> dishes;
+    private boolean reviewFlag;
 
     public Reservation(String orderID, String restaurantName, String date, String time,
                        String totalPrice) {
@@ -41,6 +43,9 @@ public class Reservation {
         return time;
     }
 
+    public void setOrderID(String orderID){
+        this.orderID=orderID;
+    }
     public String getOrderID() {
         return orderID;
     }
@@ -99,4 +104,20 @@ public class Reservation {
             }
         }
     };
+
+    public String getRestaurantID() {
+        return restaurantID;
+    }
+
+    public void setRestaurantID(String restaurantID) {
+        this.restaurantID = restaurantID;
+    }
+
+    public boolean isReviewFlag() {
+        return reviewFlag;
+    }
+
+    public void setReviewFlag(boolean reviewFlag) {
+        this.reviewFlag = reviewFlag;
+    }
 }
