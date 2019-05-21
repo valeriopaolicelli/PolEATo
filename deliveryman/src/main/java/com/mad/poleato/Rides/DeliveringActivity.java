@@ -64,6 +64,7 @@ import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -355,9 +356,15 @@ public class DeliveringActivity extends FragmentActivity implements OnMapReadyCa
 
                                 //here returns and close this ride
                                 Intent returnIntent = new Intent();
-                                Date currentDate = Calendar.getInstance().getTime();
+
+                                /*Date currentDate = Calendar.getInstance().getTime();
                                 SimpleDateFormat sdf = new SimpleDateFormat("HH:mm");
-                                String currentTime = sdf.format(currentDate);
+                                String currentTime = sdf.format(currentDate);*/
+                                //retrieve actual time and terminate the order
+                                DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
+                                Date date = new Date();
+                                String currentTime = dateFormat.format(date);
+
                                 returnIntent.putExtra("deliveryHour", currentTime);
                                 Log.d("matte", "Delivering finished at "+currentTime);
                                 setResult(RESULT_OK,returnIntent);

@@ -125,7 +125,7 @@
     <string name="totKm_label">Km totali:</string>
     <string name="kmPerDay_label">Km al giorno:</string>
     <string name="revenuePerDay_label">Guadagno giornaliero:</string>
-    <string name="revenuePerKm_label">Guadagno per km:</string>
+    <string name="revenuePerHour_label">Guadagno ad ora:</string>
     <string name="chart_title">I tuoi guadagni</string>
 
 

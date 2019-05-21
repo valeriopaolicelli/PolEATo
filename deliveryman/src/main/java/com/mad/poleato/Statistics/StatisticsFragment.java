@@ -17,6 +17,8 @@ import androidx.navigation.Navigation;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.jjoe64.graphview.GraphView;
+import com.jjoe64.graphview.helper.GraphViewXML;
+import com.jjoe64.graphview.helper.StaticLabelsFormatter;
 import com.jjoe64.graphview.series.DataPoint;
 import com.jjoe64.graphview.series.LineGraphSeries;
 import com.mad.poleato.R;
@@ -42,7 +44,9 @@ public class StatisticsFragment extends Fragment {
 
 
     private Map<String, TextView> tv_Fields;    //TextView map
-    private GraphView graphView;
+    private GraphView graphView;                //statistics graph
+
+    private static final int REVENUE_HOUR = 7;
 
 
 
@@ -114,13 +118,23 @@ public class StatisticsFragment extends Fragment {
         tv_Fields.put("totKm", (TextView) fragView.findViewById(R.id.totKm_tv));
         tv_Fields.put("kmPerDay", (TextView) fragView.findViewById(R.id.kmPerDay_tv));
         tv_Fields.put("revenuesPerDay", (TextView) fragView.findViewById(R.id.revenuePerDay_tv));
-        tv_Fields.put("revenuesPerKm", (TextView) fragView.findViewById(R.id.revenuePerKm_tv));
+        tv_Fields.put("revenuesPerHour", (TextView) fragView.findViewById(R.id.revenuePerHour_tv));
 
         graphView = (GraphView) fragView.findViewById(R.id.graphView);
     }
 
 
     private void fillFields(){
+
+
+        setGraph();
+
+        tv_Fields.get("revenuesPerHour").setText(REVENUE_HOUR+".00 €"); //constant
+
+
+    }
+
+    private void setGraph(){
 
         // activate horizontal zooming and scrolling
         /*graphView.getViewport().setScalable(true);
@@ -138,17 +152,26 @@ public class StatisticsFragment extends Fragment {
         // set manual X bounds
         graphView.getViewport().setXAxisBoundsManual(true);
         graphView.getViewport().setMinX(0);
-        graphView.getViewport().setMaxX(3.5);
+        graphView.getViewport().setMaxX(10);
 
         // set manual Y bounds
         graphView.getViewport().setYAxisBoundsManual(true);
         graphView.getViewport().setMinY(0);
-        graphView.getViewport().setMaxY(10);
+        graphView.getViewport().setMaxY(100);
 
         // enable scaling and scrolling
         graphView.getViewport().setScalable(true);
         graphView.getViewport().setScalableY(true);
 
+
+        graphView.setTitle(hostActivity.getString(R.string.chart_title));
+        graphView.setTitleTextSize(80);
+        //graphView.getGridLabelRenderer().setHorizontalAxisTitle("WEEEEEEEEEEEE");
+        //graphView.getGridLabelRenderer().setVerticalAxisTitle("y axis");
+
+        graphView.getGridLabelRenderer().setHorizontalLabelsVisible(true);
+        //graphView.getGridLabelRenderer().setLabelsSpace(100);
+        graphView.getGridLabelRenderer().setNumHorizontalLabels(5);
 
         LineGraphSeries<DataPoint> series = new LineGraphSeries<DataPoint>(new DataPoint[] {
                 new DataPoint(0, 1),
@@ -159,16 +182,6 @@ public class StatisticsFragment extends Fragment {
         });
 
         graphView.addSeries(series);
-
-        graphView.setTitle(hostActivity.getString(R.string.chart_title));
-        graphView.setTitleTextSize(80);
-        graphView.getGridLabelRenderer().setHorizontalAxisTitle("WEEEEEEEEEEEE");
-        graphView.getGridLabelRenderer().setVerticalAxisTitle("y axis");
-
-        graphView.getGridLabelRenderer().setHorizontalLabelsVisible(true);
-        graphView.getGridLabelRenderer().setLabelsSpace(20);
-        graphView.getGridLabelRenderer().setNumHorizontalLabels(4);
-
     }
 
 

@@ -15,14 +15,13 @@ public class Ride implements Serializable {
     private String numberOfDishes;
     private String phoneCustomer;
     private String phoneRestaurant;
-    private String time;
-    private String date;
+    private String deliveryTime;
 
 
     public Ride(String orderID, String addressCustomer, String addressRestaurant,
                 String nameCustomer, String nameRestaurant, String totalPrice,
                 String numberOfDishes, String phoneCustomer, String phoneRestaurant,
-                String time, String customerID, String restaurantID, String date) {
+                String deliveryTime, String customerID, String restaurantID) {
         this.orderID = orderID;
         this.nameCustomer = nameCustomer;
         this.nameRestaurant = nameRestaurant;
@@ -35,8 +34,7 @@ public class Ride implements Serializable {
         this.phoneRestaurant = phoneRestaurant;
         this.restaurantID= restaurantID;
         this.customerID= customerID;
-        this.time = time;
-        this.date = date;
+        this.deliveryTime = deliveryTime;
     }
 
     public String getCustomerID() {
@@ -84,10 +82,6 @@ public class Ride implements Serializable {
     }
 
     public String getTime() {
-        return time;
-    }
-
-    public String getDate() {
-        return date;
+        return deliveryTime;
     }
 }

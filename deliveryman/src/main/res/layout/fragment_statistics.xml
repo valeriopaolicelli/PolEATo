@@ -198,35 +198,35 @@
                 android:textColor="@color/browser_actions_title_color"
                 android:textSize="15sp"
                 app:layout_constraintBottom_toBottomOf="@+id/revenuePerDay_label"
-                app:layout_constraintEnd_toStartOf="@id/revenuePerKm_label"
+                app:layout_constraintEnd_toStartOf="@id/revenuePerHour_label"
                 app:layout_constraintTop_toTopOf="@id/revenuePerDay_label"
                 app:layout_constraintStart_toEndOf="@id/revenuePerDay_label" />
 
             <TextView
-                android:id="@+id/revenuePerKm_label"
+                android:id="@+id/revenuePerHour_label"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginEnd="8dp"
-                android:text="@string/revenuePerKm_label"
+                android:text="@string/revenuePerHour_label"
                 android:textColor="@color/colorPrimaryDark"
                 android:textSize="15sp"
-                app:layout_constraintBottom_toBottomOf="@id/revenuePerDay_tv"
-                app:layout_constraintEnd_toStartOf="@id/revenuePerKm_tv"
+                app:layout_constraintBottom_toBottomOf="@id/revenuePerHour_tv"
+                app:layout_constraintEnd_toStartOf="@id/revenuePerHour_tv"
                 app:layout_constraintHorizontal_bias="0.0"
                 app:layout_constraintStart_toStartOf="@id/kmPerDay_label"
                 app:layout_constraintTop_toTopOf="@id/revenuePerDay_tv" />
 
             <TextView
-                android:id="@+id/revenuePerKm_tv"
+                android:id="@+id/revenuePerHour_tv"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginEnd="8dp"
                 android:textColor="@color/browser_actions_title_color"
                 android:textSize="15sp"
-                app:layout_constraintBottom_toBottomOf="@id/revenuePerKm_label"
+                app:layout_constraintBottom_toBottomOf="@id/revenuePerHour_label"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toTopOf="@id/revenuePerKm_label"
-                app:layout_constraintStart_toEndOf="@id/revenuePerKm_label"/>
+                app:layout_constraintTop_toTopOf="@id/revenuePerHour_label"
+                app:layout_constraintStart_toEndOf="@id/revenuePerHour_label"/>
         </android.support.constraint.ConstraintLayout>
     </android.support.v7.widget.CardView>
 

@@ -48,6 +48,7 @@ import com.onesignal.OneSignal;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.text.DateFormat;
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -337,8 +338,7 @@ public class RidesFragment extends Fragment {
                         dataSnapshot.hasChild("totalPrice") &&
                         dataSnapshot.hasChild("phoneCustomer") &&
                         dataSnapshot.hasChild("phoneRestaurant") &&
-                        dataSnapshot.hasChild("time") &&
-                        dataSnapshot.hasChild("date")) {
+                        dataSnapshot.hasChild("deliveryTime")) {
 
                     //retrieve order infos from DB
                     reservationKey = dataSnapshot.getKey();
@@ -359,10 +359,9 @@ public class RidesFragment extends Fragment {
                     priceStr = decimalFormat.format(d);
 
                     String restaurantAddress = dataSnapshot.child("addressRestaurant").getValue().toString();
-                    String deliveryTime = dataSnapshot.child("time").getValue().toString();
+                    String deliveryTime = dataSnapshot.child("deliveryTime").getValue().toString();
                     String customerPhone = dataSnapshot.child("phoneCustomer").getValue().toString();
                     String restaurantPhone = dataSnapshot.child("phoneRestaurant").getValue().toString();
-                    String deliveryDate = dataSnapshot.child("date").getValue().toString();
 
                     delivering = (Boolean) dataSnapshot.child("delivering").getValue();
 
@@ -390,13 +389,14 @@ public class RidesFragment extends Fragment {
                     tv_Fields.get("restaurant").setText(nameRestaurant);
                     tv_Fields.get("phone").setText(customerPhone);
                     tv_Fields.get("dishes").setText(numDishes);
-                    tv_Fields.get("hour").setText(deliveryTime);
-                    tv_Fields.get("price").setText(priceStr + "€");
+                    tv_Fields.get("hour").setText(deliveryTime.split(" ")[1]);
+                    priceStr += "€";
+                    tv_Fields.get("price").setText(priceStr);
 
                     ride = new Ride(orderID, customerAddress, restaurantAddress,
                             nameCustomer, nameRestaurant, priceStr,
                             numDishes, customerPhone, restaurantPhone,
-                            deliveryTime, customerID, restaurantID, deliveryDate);
+                            deliveryTime, customerID, restaurantID);
                     //lock the rider
                     isRunning = true;
 
@@ -421,8 +421,7 @@ public class RidesFragment extends Fragment {
                         dataSnapshot.hasChild("totalPrice") &&
                         dataSnapshot.hasChild("phoneCustomer") &&
                         dataSnapshot.hasChild("phoneRestaurant") &&
-                        dataSnapshot.hasChild("time") &&
-                        dataSnapshot.hasChild("date")) {
+                        dataSnapshot.hasChild("deliveryTime")) {
 
                     //a new reservation can be created only if the rider is not busy
                     if (!isRunning) {
@@ -446,8 +445,7 @@ public class RidesFragment extends Fragment {
                         priceStr = decimalFormat.format(d);
 
                         String restaurantAddress = dataSnapshot.child("addressRestaurant").getValue().toString();
-                        String deliveryTime = dataSnapshot.child("time").getValue().toString();
-                        String deliveryDate = dataSnapshot.child("date").getValue().toString();
+                        String deliveryTime = dataSnapshot.child("deliveryTime").getValue().toString();
                         String customerPhone = dataSnapshot.child("phoneCustomer").getValue().toString();
                         String restaurantPhone = dataSnapshot.child("phoneRestaurant").getValue().toString();
 
@@ -457,13 +455,13 @@ public class RidesFragment extends Fragment {
                         tv_Fields.get("restaurant").setText(nameRestaurant);
                         tv_Fields.get("phone").setText(customerPhone);
                         tv_Fields.get("dishes").setText(numDishes);
-                        tv_Fields.get("hour").setText(deliveryTime);
+                        tv_Fields.get("hour").setText(deliveryTime.split(" ")[1]);
                         tv_Fields.get("price").setText(priceStr + "€");
 
                         ride = new Ride(orderID, customerAddress, restaurantAddress,
                                 nameCustomer, nameRestaurant, priceStr,
                                 numDishes, customerPhone, restaurantPhone,
-                                deliveryTime, customerID, restaurantID, deliveryDate);
+                                deliveryTime, customerID, restaurantID);
 
                         //lock the rider
                         isRunning = true;
@@ -528,7 +526,6 @@ public class RidesFragment extends Fragment {
         historyReference.child("numberOfDishes").setValue(ride.getNumberOfDishes());
         historyReference.child("expectedTime").setValue(ride.getTime());
         historyReference.child("deliveredTime").setValue(deliveredHour);
-        historyReference.child("deliveredDate").setValue(ride.getDate());
 
         //remove the ride
         DatabaseReference reservationReference = FirebaseDatabase.getInstance().getReference("deliveryman/" + currentUserID);
@@ -590,10 +587,13 @@ public class RidesFragment extends Fragment {
                                 myToast.show();
 
                                 //retrieve actual time and terminate the order
-                                Date currentDate = Calendar.getInstance().getTime();
+                                DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
+                                Date date = new Date();
+                                terminateRide(dateFormat.format(date));
+
+                                /*Date currentDate = Calendar.getInstance().getTime();
                                 SimpleDateFormat sdf = new SimpleDateFormat("HH:mm");
-                                String currentTime = sdf.format(currentDate);
-                                terminateRide(currentTime);
+                                String currentTime = sdf.format(currentDate);*/
                             }
 
 

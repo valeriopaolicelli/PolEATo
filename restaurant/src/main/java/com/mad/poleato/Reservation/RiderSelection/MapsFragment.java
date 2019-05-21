@@ -1021,8 +1021,17 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback,
                     reservationRider.child("totalPrice").setValue(reservation.getTotalPrice());
                     reservationRider.child("phoneCustomer").setValue(reservation.getPhone());
                     reservationRider.child("phoneRestaurant").setValue(phoneRestaurant);
-                    reservationRider.child("time").setValue(reservation.getTime());
-                    reservationRider.child("date").setValue(reservation.getDate());
+                    //reservationRider.child("time").setValue(reservation.getTime());
+                    //reservationRider.child("date").setValue(reservation.getDate());
+
+                    // compose the date in the format YYYY/MM/DD HH:mm
+                    String[] date_components = reservation.getDate().split("/"); //format: dd/mm/yyyy
+                    String timeStr = date_components[2]+"/"+date_components[1]+"/"+date_components[0]+" "+
+                                    reservation.getTime();
+                    reservationRider.child("deliveryTime").setValue(timeStr);
+
+
+
                     FirebaseDatabase.getInstance().getReference("restaurants").child(loggedID).child("reservations").child(reservation.getOrder_id()).child("status").child("en").setValue("Delivering");
                     FirebaseDatabase.getInstance().getReference("restaurants").child(loggedID).child("reservations").child(reservation.getOrder_id()).child("status").child("it").setValue("In consegna");
                     sendNotification(riderID);
