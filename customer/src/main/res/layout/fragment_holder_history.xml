@@ -3,7 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".Holder_history">
+    tools:context=".History.Holder_history">
 
     <ExpandableListView
         android:id="@+id/reservationslv"

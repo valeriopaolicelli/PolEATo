@@ -1,4 +1,4 @@
-package com.mad.poleato;
+package com.mad.poleato.RestaurantSearch;
 
 import android.content.Context;
 import android.content.Intent;
@@ -22,6 +22,9 @@ import android.widget.ToggleButton;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.FirebaseDatabase;
+import com.mad.poleato.OrderManagement.OrderActivity;
+import com.mad.poleato.R;
+import com.mad.poleato.Classes.Restaurant;
 import com.squareup.picasso.Picasso;
 
 import java.text.DecimalFormat;

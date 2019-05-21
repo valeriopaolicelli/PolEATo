@@ -7,7 +7,7 @@
 
     <fragment
         android:id="@+id/restaurantSearchFragment_id"
-        android:name="com.mad.poleato.RestaurantSearchFragment"
+        android:name="com.mad.poleato.RestaurantSearch.RestaurantSearchFragment"
         android:label="@string/title_actionbar_restaurantSearch"
         tools:layout="@layout/restaurant_recyclerview" >
         <action
@@ -19,7 +19,7 @@
 
     <fragment
         android:id="@+id/holder_history_id"
-        android:name="com.mad.poleato.Holder_history"
+        android:name="com.mad.poleato.History.Holder_history"
         android:label="@string/title_actionbar_historyOrder"
         tools:layout="@layout/fragment_holder_history" >
         <action
@@ -32,7 +32,7 @@
 
     <fragment
         android:id="@+id/mainProfile_id"
-        android:name="com.mad.poleato.MainProfile"
+        android:name="com.mad.poleato.Account.MainProfile"
         android:label="@string/title_actionbar_account"
         tools:layout="@layout/fragment_main_profile" >
         <action
@@ -48,7 +48,7 @@
     </fragment>
     <fragment
         android:id="@+id/editProfile_id"
-        android:name="com.mad.poleato.EditProfile"
+        android:name="com.mad.poleato.Account.EditProfile"
         android:label="@string/title_actionbar_edit_account"
         tools:layout="@layout/fragment_edit_profile">
         <action

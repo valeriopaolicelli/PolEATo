@@ -42,13 +42,13 @@
             android:windowSoftInputMode="adjustPan"
             android:screenOrientation="portrait"/>
 
-        <activity android:name=".CartActivity"
+        <activity android:name=".OrderManagement.CartManagement.CartActivity"
             android:windowSoftInputMode="stateHidden|adjustPan"
             android:screenOrientation="portrait">
         </activity>
 
 
-        <activity android:name=".OrderActivity"
+        <activity android:name=".OrderManagement.OrderActivity"
             android:theme="@style/AppThemeOrder"
             android:windowSoftInputMode="stateHidden|adjustPan"
             android:screenOrientation="portrait"/>

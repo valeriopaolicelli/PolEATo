@@ -1,4 +1,4 @@
-package com.mad.poleato;
+package com.mad.poleato.History;
 
 
 import android.app.ProgressDialog;
@@ -29,6 +29,10 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.mad.poleato.Classes.Dish;
+import com.mad.poleato.MyDatabaseReference;
+import com.mad.poleato.R;
+import com.mad.poleato.Classes.Reservation;
 import com.onesignal.OneSignal;
 
 import java.text.DateFormat;

@@ -1,4 +1,4 @@
-package com.mad.poleato;
+package com.mad.poleato.RestaurantSearch;
 
 import android.app.Activity;
 import android.app.ProgressDialog;
@@ -11,7 +11,6 @@ import android.os.Handler;
 import android.os.Message;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.widget.DividerItemDecoration;
@@ -48,6 +47,9 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
+import com.mad.poleato.MyDatabaseReference;
+import com.mad.poleato.R;
+import com.mad.poleato.Classes.Restaurant;
 import com.onesignal.OneSignal;
 
 import java.util.ArrayList;
@@ -57,7 +59,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Set;
-import java.util.concurrent.locks.Condition;
 
 
 public class RestaurantSearchFragment extends Fragment {

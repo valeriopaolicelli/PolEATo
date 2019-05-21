@@ -1,10 +1,6 @@
-package com.mad.poleato;
+package com.mad.poleato.OrderManagement;
 import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-import android.util.Log;
 
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -12,6 +8,10 @@ import com.google.firebase.database.Exclude;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ServerValue;
 import com.google.firebase.database.ValueEventListener;
+import com.mad.poleato.Classes.Dish;
+import com.mad.poleato.Classes.Food;
+import com.mad.poleato.Classes.Reservation;
+import com.mad.poleato.Classes.Restaurant;
 
 import java.io.Serializable;
 import java.text.DecimalFormat;
@@ -21,7 +21,7 @@ import java.util.List;
 
 public class Order implements Serializable {
 
-   private HashMap<String,Food> selectedFoods;
+   private HashMap<String, Food> selectedFoods;
    private List<Food> dishes;
    private Double totalPrice;
    private String customerID; //TODO: must be implemented with login phase

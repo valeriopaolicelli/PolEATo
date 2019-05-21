@@ -1,4 +1,4 @@
-package com.mad.poleato;
+package com.mad.poleato.OrderManagement;
 
 import android.app.Activity;
 import android.content.BroadcastReceiver;
@@ -25,6 +25,13 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.mad.poleato.ConnectionManager;
+import com.mad.poleato.Interface;
+import com.mad.poleato.MyDatabaseReference;
+import com.mad.poleato.OrderManagement.CartManagement.CartActivity;
+import com.mad.poleato.PageAdapter;
+import com.mad.poleato.R;
+import com.mad.poleato.Classes.Restaurant;
 import com.onesignal.OneSignal;
 
 import java.util.ArrayList;
