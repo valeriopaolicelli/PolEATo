@@ -132,4 +132,8 @@
     <string name="neutral">Neutral</string>
     <string name="good">Good</string>
     <string name="very_good">I loved it!</string>
+    <!-- Favorite restaurant and foods -->
+    <string name="favorite_list_button">Your favorite restaurants</string>
+
+
 </resources>

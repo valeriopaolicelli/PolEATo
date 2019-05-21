@@ -15,6 +15,21 @@
             app:destination="@id/signInActivity"
             app:popUpTo="@+id/signInActivity"
             app:popUpToInclusive="true" />
+        <action
+            android:id="@+id/action_restaurantSearchFragment_id_to_favoriteRestaurantFragment_id"
+            app:destination="@id/favoriteRestaurantFragment_id" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/favoriteRestaurantFragment_id"
+        android:name="com.mad.poleato.FavoriteRestaurant.FavoriteRestaurantFragment"
+        android:label="@string/favorite_list_button"
+        tools:layout="@layout/favorite_restaurant_recyclerview" >
+        <action
+            android:id="@+id/action_restaurantSearchFragment_id_to_restaurantSearchFragment_id"
+            app:destination="@id/restaurantSearchFragment_id"
+            app:popUpTo="@+id/restaurantSearchFragment_id"
+            app:popUpToInclusive="true" />
     </fragment>
 
     <fragment

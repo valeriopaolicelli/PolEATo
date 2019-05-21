@@ -23,10 +23,16 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.Animation;
+import android.view.animation.BounceInterpolator;
+import android.view.animation.ScaleAnimation;
+import android.widget.Button;
+import android.widget.CompoundButton;
 import android.widget.ImageButton;
 import android.widget.PopupMenu;
 import android.widget.SearchView;
 import android.widget.Toast;
+import android.widget.ToggleButton;
 
 
 import androidx.navigation.Navigation;
@@ -68,6 +74,7 @@ public class RestaurantSearchFragment extends Fragment {
     private ImageButton sortBtn;
     private ImageButton filterBtn;
     private DatabaseReference dbReference;
+    private Button favoriteListButton;
 
     private HashMap<String, Restaurant> restaurantMap;
     private List<Restaurant> restaurantList; //original list of all restaurants
@@ -86,8 +93,8 @@ public class RestaurantSearchFragment extends Fragment {
     //id for the filter fragment
     public static final int FILTER_FRAGMENT = 26;
 
+    // list to collect the firebase reference and its listener (to remove listener at the end of this fragment)
     private List<MyDatabaseReference> dbReferenceList;
-
 
     @Override
     public void onAttach(Context context) {
@@ -158,8 +165,6 @@ public class RestaurantSearchFragment extends Fragment {
         return fragView;
 
     }
-
-
 
     private void fillFields() {
         Locale locale = Locale.getDefault();
@@ -487,6 +492,15 @@ public class RestaurantSearchFragment extends Fragment {
                 filterFrag.show(ft, "filter_fragment");
             }
         });
+
+        favoriteListButton = (Button) fragView.findViewById(R.id.favorite_list);
+        favoriteListButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Navigation.findNavController(v).navigate(R.id.action_restaurantSearchFragment_id_to_favoriteRestaurantFragment_id);
+            }
+        });
+
     }
 
     @Override
