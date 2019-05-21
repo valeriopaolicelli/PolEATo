@@ -1,12 +1,16 @@
-package com.mad.poleato;
+package com.mad.poleato.History;
 
 import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseExpandableListAdapter;
-import android.widget.CheckBox;
 import android.widget.TextView;
+
+import com.mad.poleato.Classes.Dish;
+import com.mad.poleato.R;
+import com.mad.poleato.Classes.Reservation;
+
 import java.util.HashMap;
 import java.util.List;
 
@@ -16,7 +20,6 @@ public class ReservationExpandableListAdapter extends BaseExpandableListAdapter 
     private List<Reservation> reservations;
     private HashMap<String, List<Dish>>listHashMap;
     private String loggedID;
-    //TODO retrieve proper id
 
     public ReservationExpandableListAdapter(Context context, List<Reservation> reservations, HashMap<String, List<Dish>> listHashMap, String currentUserID) {
         this.context = context;

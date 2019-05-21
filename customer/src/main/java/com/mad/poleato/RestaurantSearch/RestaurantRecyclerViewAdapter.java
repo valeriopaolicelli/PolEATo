@@ -1,4 +1,4 @@
-package com.mad.poleato;
+package com.mad.poleato.RestaurantSearch;
 
 import android.content.Context;
 import android.content.Intent;
@@ -14,6 +14,9 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 
+import com.mad.poleato.OrderManagement.OrderActivity;
+import com.mad.poleato.R;
+import com.mad.poleato.Classes.Restaurant;
 import com.squareup.picasso.Picasso;
 
 import java.text.DecimalFormat;

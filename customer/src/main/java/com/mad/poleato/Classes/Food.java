@@ -1,4 +1,4 @@
-package com.mad.poleato;
+package com.mad.poleato.Classes;
 
 
 import com.google.firebase.database.Exclude;
@@ -18,7 +18,7 @@ public class Food implements Serializable {
     private String foodID;
 
 
-    Food(String foodID, String img, String name, String description, Double price, int quantity){
+    public Food(String foodID, String img, String name, String description, Double price, int quantity){
 
         this.img = img;
         this.name = name;

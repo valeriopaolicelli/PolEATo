@@ -1,4 +1,4 @@
-package com.mad.poleato;
+package com.mad.poleato.OrderManagement.CartManagement;
 
 import android.content.Context;
 import android.support.annotation.NonNull;
@@ -12,6 +12,10 @@ import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
+
+import com.mad.poleato.Classes.Food;
+import com.mad.poleato.OrderManagement.Order;
+import com.mad.poleato.R;
 
 import java.text.DecimalFormat;
 import java.util.List;

@@ -1,4 +1,4 @@
-package com.mad.poleato;
+package com.mad.poleato.OrderManagement.CartManagement;
 
 import android.app.Activity;
 import android.app.TimePickerDialog;
@@ -27,6 +27,12 @@ import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.mad.poleato.ConnectionManager;
+import com.mad.poleato.Classes.Food;
+import com.mad.poleato.Interface;
+import com.mad.poleato.OrderManagement.Order;
+import com.mad.poleato.R;
+import com.mad.poleato.TimePickerFragment;
 import com.onesignal.OneSignal;
 
 import java.io.OutputStream;

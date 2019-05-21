@@ -1,4 +1,4 @@
-package com.mad.poleato;
+package com.mad.poleato.RestaurantSearch;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -13,6 +13,8 @@ import android.view.ViewGroup;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.RadioGroup;
+
+import com.mad.poleato.R;
 
 import java.util.ArrayList;
 import java.util.HashMap;

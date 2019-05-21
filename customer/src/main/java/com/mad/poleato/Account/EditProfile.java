@@ -1,4 +1,4 @@
-package com.mad.poleato;
+package com.mad.poleato.Account;
 
 
 import android.app.AlertDialog;
@@ -57,6 +57,8 @@ import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
+import com.mad.poleato.MyDatabaseReference;
+import com.mad.poleato.R;
 import com.onesignal.OneSignal;
 
 import java.io.ByteArrayOutputStream;

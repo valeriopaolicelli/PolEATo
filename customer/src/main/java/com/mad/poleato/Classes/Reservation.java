@@ -1,12 +1,9 @@
-package com.mad.poleato;
-
-import android.content.Context;
+package com.mad.poleato.Classes;
 
 import com.google.firebase.database.Exclude;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.List;

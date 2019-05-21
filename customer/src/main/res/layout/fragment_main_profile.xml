@@ -7,7 +7,7 @@
     android:layout_height="match_parent"
     android:layout_marginBottom="?attr/actionBarSize"
     android:background="@color/colorBodyPrimary"
-    tools:context="MainProfile">
+    tools:context=".Account.MainProfile">
 
     <android.support.constraint.ConstraintLayout
         android:layout_width="match_parent"

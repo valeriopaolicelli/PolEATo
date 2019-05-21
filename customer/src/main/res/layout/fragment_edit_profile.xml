@@ -8,7 +8,7 @@
     android:layout_marginBottom="?attr/actionBarSize"
     android:background="@color/colorBodyPrimary"
     android:id="@+id/editScrollView"
-    tools:context="EditProfile">
+    tools:context=".Account.EditProfile">
     <android.support.constraint.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
