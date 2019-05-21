@@ -17,13 +17,12 @@ import androidx.navigation.Navigation;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.jjoe64.graphview.GraphView;
-import com.jjoe64.graphview.helper.GraphViewXML;
-import com.jjoe64.graphview.helper.StaticLabelsFormatter;
 import com.jjoe64.graphview.series.DataPoint;
 import com.jjoe64.graphview.series.LineGraphSeries;
 import com.mad.poleato.R;
 import com.onesignal.OneSignal;
 
+import java.text.DecimalFormat;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -46,7 +45,7 @@ public class StatisticsFragment extends Fragment {
     private Map<String, TextView> tv_Fields;    //TextView map
     private GraphView graphView;                //statistics graph
 
-    private static final int REVENUE_HOUR = 7;
+    private static final double REVENUE_HOUR = 7.50;
 
 
 
@@ -100,7 +99,7 @@ public class StatisticsFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        fragView = inflater.inflate(R.layout.fragment_statistics, container, false);
+        fragView = inflater.inflate(R.layout.statistics_layout, container, false);
 
         collectFields();
 
@@ -113,12 +112,15 @@ public class StatisticsFragment extends Fragment {
     private void collectFields(){
 
         tv_Fields.put("riderID", (TextView) fragView.findViewById(R.id.riderID_tv));
+
         tv_Fields.put("workingDays", (TextView) fragView.findViewById(R.id.workingDays_tv));
+        tv_Fields.put("workingHours", (TextView) fragView.findViewById(R.id.totHours_tv));
+
         tv_Fields.put("totRevenues", (TextView) fragView.findViewById(R.id.totRevenues_tv));
+        tv_Fields.put("revenuesPerDay", (TextView) fragView.findViewById(R.id.revenuesPerDay_tv));
+
         tv_Fields.put("totKm", (TextView) fragView.findViewById(R.id.totKm_tv));
         tv_Fields.put("kmPerDay", (TextView) fragView.findViewById(R.id.kmPerDay_tv));
-        tv_Fields.put("revenuesPerDay", (TextView) fragView.findViewById(R.id.revenuePerDay_tv));
-        tv_Fields.put("revenuesPerHour", (TextView) fragView.findViewById(R.id.revenuePerHour_tv));
 
         graphView = (GraphView) fragView.findViewById(R.id.graphView);
     }
@@ -128,9 +130,6 @@ public class StatisticsFragment extends Fragment {
 
 
         setGraph();
-
-        tv_Fields.get("revenuesPerHour").setText(REVENUE_HOUR+".00 €"); //constant
-
 
     }
 
@@ -163,8 +162,9 @@ public class StatisticsFragment extends Fragment {
         graphView.getViewport().setScalable(true);
         graphView.getViewport().setScalableY(true);
 
-
-        graphView.setTitle(hostActivity.getString(R.string.chart_title));
+        DecimalFormat decimalFormat = new DecimalFormat("#0.00"); //two decimal
+        String revenueHourStr = decimalFormat.format(REVENUE_HOUR);
+        graphView.setTitle(hostActivity.getString(R.string.chart_title) +" (" + revenueHourStr + "€)");
         graphView.setTitleTextSize(80);
         //graphView.getGridLabelRenderer().setHorizontalAxisTitle("WEEEEEEEEEEEE");
         //graphView.getGridLabelRenderer().setVerticalAxisTitle("y axis");

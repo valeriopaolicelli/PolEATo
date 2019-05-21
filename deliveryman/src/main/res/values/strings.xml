@@ -119,11 +119,11 @@
     <!-- Statistics fragment -->
     <string name="riderID_label">Rider ID:</string>
     <string name="workingDays_label">Working days:</string>
+    <string name="workingHours_label">Working hours:</string>
     <string name="totRevenues_label">Total revenues:</string>
     <string name="totKm_label">Total Km:</string>
     <string name="kmPerDay_label">Km per day:</string>
     <string name="revenuePerDay_label">Revenues per day:</string>
-    <string name="revenuePerHour_label">Revenues per hour:</string>
     <string name="chart_title">Your revenues</string>
 
 
