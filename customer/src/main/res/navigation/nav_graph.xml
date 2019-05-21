@@ -27,8 +27,33 @@
             app:destination="@id/signInActivity"
             app:popUpTo="@+id/signInActivity"
             app:popUpToInclusive="true" />
+        <action
+            android:id="@+id/action_holder_history_id_to_ratingFragment"
+            app:destination="@id/rating_fragment_id"
+            app:enterAnim="@anim/fui_slide_in_right"
+            app:popExitAnim="@anim/nav_default_pop_exit_anim"
+            app:popUpToInclusive="true">
+            <argument
+                android:name="restaurantID"
+                app:argType="string"
+                android:defaultValue=" " />
+            <argument
+                android:name="orderID"
+                app:argType="string"
+                android:defaultValue=" "/>
+        </action>
     </fragment>
 
+    <fragment
+        android:id="@+id/rating_fragment_id"
+        android:name="com.mad.poleato.History.RatingManagement.RatingFragment"
+        android:label="Rating"
+        tools:layout="@layout/rating_fragment_layout">
+        <action
+            android:id="@+id/action_ratingFragment_to_holderHistory"
+            app:destination="@id/holder_history_id"
+            app:popUpToInclusive="true" />
+    </fragment>
 
     <fragment
         android:id="@+id/mainProfile_id"

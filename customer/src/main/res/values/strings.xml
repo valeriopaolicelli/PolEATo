@@ -125,5 +125,11 @@
     <string name="internet_message">To use this application you must be connected to the Internet</string>
     <string name="interner_confirm">Data settings</string>
 
-
+    <!-- Ratings -->
+    <string name="reviewLabel">Leave a review for</string>
+    <string name="very_bad">Very bad!</string>
+    <string name="not_good">Not so good</string>
+    <string name="neutral">Neutral</string>
+    <string name="good">Good</string>
+    <string name="very_good">I loved it!</string>
 </resources>
