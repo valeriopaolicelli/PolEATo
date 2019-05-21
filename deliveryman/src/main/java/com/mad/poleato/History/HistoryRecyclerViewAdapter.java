@@ -44,7 +44,7 @@ public class HistoryRecyclerViewAdapter extends RecyclerView.Adapter<HistoryRecy
 
     public void setAllHistories(List<HistoryItem> histories) {
         this.historyList = histories;
-        Collections.sort(this.historyList, HistoryItem.timeComparator);
+        Collections.sort(this.historyList, HistoryItem.timeInverseComparator); //TODO inverse comparator
         notifyDataSetChanged();
     }
 
@@ -67,8 +67,8 @@ public class HistoryRecyclerViewAdapter extends RecyclerView.Adapter<HistoryRecy
         historyViewHolder.restaurantAddress_tv.setText(historyList.get(position).getAddressRestaurant());
         historyViewHolder.price_tv.setText(historyList.get(position).getTotalPrice());
         historyViewHolder.date_tv.setText(historyList.get(position).getDeliveredDate());
-        historyViewHolder.expectedTime_tv.setText(historyList.get(position).getExpectedTime());
-        historyViewHolder.deliveredTime_tv.setText(historyList.get(position).getDeliveredTime());
+        historyViewHolder.expectedTime_tv.setText(historyList.get(position).getExpectedHour());
+        historyViewHolder.deliveredTime_tv.setText(historyList.get(position).getDeliveredHour());
 
     }
 

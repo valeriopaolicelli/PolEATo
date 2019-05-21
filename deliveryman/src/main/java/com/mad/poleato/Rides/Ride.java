@@ -16,12 +16,13 @@ public class Ride implements Serializable {
     private String phoneCustomer;
     private String phoneRestaurant;
     private String deliveryTime;
+    private String notifiedTime; //time at which reservation notification arrived to the rider
 
 
     public Ride(String orderID, String addressCustomer, String addressRestaurant,
                 String nameCustomer, String nameRestaurant, String totalPrice,
                 String numberOfDishes, String phoneCustomer, String phoneRestaurant,
-                String deliveryTime, String customerID, String restaurantID) {
+                String deliveryTime, String customerID, String restaurantID, String notifiedTime) {
         this.orderID = orderID;
         this.nameCustomer = nameCustomer;
         this.nameRestaurant = nameRestaurant;
@@ -35,6 +36,8 @@ public class Ride implements Serializable {
         this.restaurantID= restaurantID;
         this.customerID= customerID;
         this.deliveryTime = deliveryTime;
+        this.notifiedTime = notifiedTime;
+
     }
 
     public String getCustomerID() {
@@ -83,5 +86,9 @@ public class Ride implements Serializable {
 
     public String getTime() {
         return deliveryTime;
+    }
+
+    public String getNotifiedTime() {
+        return notifiedTime;
     }
 }
