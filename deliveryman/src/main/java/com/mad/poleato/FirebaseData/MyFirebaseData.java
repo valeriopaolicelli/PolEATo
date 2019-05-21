@@ -88,7 +88,8 @@ public class MyFirebaseData {
                         dataSnapshot.hasChild("numberOfDishes") &&
                         dataSnapshot.hasChild("expectedTime") &&
                         dataSnapshot.hasChild("deliveredTime") &&
-                        dataSnapshot.hasChild("totKm")) {
+                        dataSnapshot.hasChild("totKm") &&
+                        dataSnapshot.hasChild("notifiedTime")) {
 
                     //retrieve history infos from DB
                     String nameRestaurant = dataSnapshot.child("nameRestaurant").getValue().toString();
@@ -119,7 +120,8 @@ public class MyFirebaseData {
                         dataSnapshot.hasChild("numberOfDishes") &&
                         dataSnapshot.hasChild("expectedTime") &&
                         dataSnapshot.hasChild("deliveredTime") &&
-                        dataSnapshot.hasChild("totKm")) {
+                        dataSnapshot.hasChild("totKm") &&
+                        dataSnapshot.hasChild("notifiedTime")) {
 
                     //retrieve history infos from DB
                     String nameRestaurant = dataSnapshot.child("nameRestaurant").getValue().toString();

@@ -484,6 +484,7 @@ public class RidesFragment extends Fragment implements OnMapReadyCallback {
         historyReference.child("expectedTime").setValue(ride.getTime());
         historyReference.child("deliveredTime").setValue(deliveredHour);
         historyReference.child("totKm").setValue(ride.getKm());
+        historyReference.child("notifiedTime").setValue(ride.getNotifiedTime());
 
         //remove the ride
         DatabaseReference reservationReference = FirebaseDatabase.getInstance().getReference("deliveryman/" + currentUserID);

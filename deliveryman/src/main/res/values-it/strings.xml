@@ -121,11 +121,11 @@
     <!-- Statistics fragment -->
     <string name="riderID_label">ID Rider</string>
     <string name="workingDays_label">Giorni di lavoro:</string>
-    <string name="workingHours_label">Ore di lavorative:</string>
+    <string name="workingHours_label">Ore di lavoro:</string>
     <string name="totRevenues_label">Totale guadagni</string>
     <string name="totKm_label">Km totali:</string>
     <string name="kmPerDay_label">Km al giorno:</string>
-    <string name="revenuePerDay_label">Guadagno giornaliero:</string>
+    <string name="revenuePerDay_label">Guadagno/giorno:</string>
     <string name="chart_title">I tuoi guadagni</string>
 
 
