@@ -125,5 +125,7 @@
     <string name="internet_message">Per utilizzare l\'applicazione devi essere connesso ad Internet</string>
     <string name="interner_confirm">Impostazioni Internet</string>
 
+    <!-- Favorite restaurant and foods -->
+    <string name="favorite_list_button">I tuoi ristoranti preferiti</string>
 
 </resources>

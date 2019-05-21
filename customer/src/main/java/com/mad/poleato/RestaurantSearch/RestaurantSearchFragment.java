@@ -26,6 +26,7 @@ import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.BounceInterpolator;
 import android.view.animation.ScaleAnimation;
+import android.widget.Button;
 import android.widget.CompoundButton;
 import android.widget.ImageButton;
 import android.widget.PopupMenu;
@@ -73,6 +74,7 @@ public class RestaurantSearchFragment extends Fragment {
     private ImageButton sortBtn;
     private ImageButton filterBtn;
     private DatabaseReference dbReference;
+    private Button favoriteListButton;
 
     private HashMap<String, Restaurant> restaurantMap;
     private List<Restaurant> restaurantList; //original list of all restaurants
@@ -490,6 +492,15 @@ public class RestaurantSearchFragment extends Fragment {
                 filterFrag.show(ft, "filter_fragment");
             }
         });
+
+        favoriteListButton = (Button) fragView.findViewById(R.id.favorite_list);
+        favoriteListButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Navigation.findNavController(v).navigate(R.id.action_restaurantSearchFragment_id_to_favoriteRestaurantFragment_id);
+            }
+        });
+
     }
 
     @Override
