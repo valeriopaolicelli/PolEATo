@@ -4,6 +4,7 @@ package com.mad.poleato.Rides;
 import android.Manifest;
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.app.ProgressDialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -137,6 +138,11 @@ public class RidesFragment extends Fragment implements OnMapReadyCallback {
     if not the directions are not updated each time */
     private LatLng oldLocation;
 
+    // this flag is to notify that the next retrieved distance must be uploaded on firebase (the total distance of the ride before it starts)
+    private Boolean isKmUploadNeeded;
+
+    private ProgressDialog progressDialog; //ran only the first time to wait for the distance to be uploaded on FireBase
+
 
 
 
@@ -187,6 +193,10 @@ public class RidesFragment extends Fragment implements OnMapReadyCallback {
         createMap();
 
         tv_Fields = new HashMap<>();
+
+        //this value is always false. Can be changed only in 2 points of the code:
+        //      when for the fist time this reservation is received (Firebase `totKm` field not present) or during status switching
+        isKmUploadNeeded = false;
     }
 
 
@@ -212,8 +222,6 @@ public class RidesFragment extends Fragment implements OnMapReadyCallback {
         fragView = inflater.inflate(R.layout.ride_layout, container, false);
         //collects all the TextView inside the HashMap tv_Fields and attach the listeners
         collectFields();
-
-        //createMap();
 
         //download the ride data from firebase
         retrieveOrderInfo();
@@ -475,6 +483,7 @@ public class RidesFragment extends Fragment implements OnMapReadyCallback {
         historyReference.child("numberOfDishes").setValue(ride.getNumberOfDishes());
         historyReference.child("expectedTime").setValue(ride.getTime());
         historyReference.child("deliveredTime").setValue(deliveredHour);
+        historyReference.child("totKm").setValue(ride.getKm());
 
         //remove the ride
         DatabaseReference reservationReference = FirebaseDatabase.getInstance().getReference("deliveryman/" + currentUserID);
@@ -526,7 +535,9 @@ public class RidesFragment extends Fragment implements OnMapReadyCallback {
                             if(!delivering)
                             {
                                 delivering = true;
-
+                                isKmUploadNeeded = true; //need to upload the distance of the next leg (restaurant -> customer)
+                                if(hostActivity != null) //run until the distance is uploaded
+                                    progressDialog = ProgressDialog.show(hostActivity, "", getString(R.string.loading));
                                 //show the new directions immediately based on the last detected position
                                 mMap.clear();
                                 if(oldLocation != null && customerPosition != null)
@@ -778,6 +789,15 @@ public class RidesFragment extends Fragment implements OnMapReadyCallback {
         //lock the rider
         isRunning = true;
 
+        if(dataSnapshot.hasChild("totKm"))
+            ride.addKm(Double.parseDouble(dataSnapshot.child("totKm").getValue().toString()));
+        else {
+            isKmUploadNeeded = true; //need to upload the distance of the first leg (current location -> restaurant)
+            if(hostActivity != null) //start until the first distance is uploaded
+                progressDialog = ProgressDialog.show(hostActivity, "", getString(R.string.loading));
+        }
+
+
         //set the visibility
         show_order_view();
 
@@ -834,7 +854,7 @@ public class RidesFragment extends Fragment implements OnMapReadyCallback {
 
             LatLng currLocation = new LatLng(latitude, longitude);
 
-            if (oldLocation != null) {
+            if (oldLocation != null  && !isKmUploadNeeded) { //if the km upload is need the call the API anyway
                 //check if the rider moved of at least 'X' m.
                 double d = computeDistance(oldLocation, currLocation) * 1000;
                 if (d <= MIN_DISTANCE_LOC_UPDATE)
@@ -1063,6 +1083,9 @@ public class RidesFragment extends Fragment implements OnMapReadyCallback {
                         //save the current distance and duration
                         currDistance = ( (JSONObject)jLegs.get(i)).getJSONObject("distance").get("text").toString();
                         currDuration = ( (JSONObject)jLegs.get(i)).getJSONObject("duration").get("text").toString();
+                        //upload the total km for this order if needed
+                        if(isKmUploadNeeded)
+                            uploadKm(currDistance);
 
                         jSteps = ( (JSONObject)jLegs.get(j)).getJSONArray("steps");
                         /** Traversing all steps */
@@ -1127,6 +1150,20 @@ public class RidesFragment extends Fragment implements OnMapReadyCallback {
 
 
 
+
+    private void uploadKm(String distance){
+        //distance = "2.43 km" -> take only the floating point number
+        Double km = Double.parseDouble(distance.split(" ")[0]);
+        ride.addKm(km);
+
+        FirebaseDatabase.getInstance().getReference("deliveryman")
+                                        .child(currentUserID+"/reservations/"+reservationKey+"/totKm")
+                                        .setValue(ride.getKm());
+        isKmUploadNeeded = false;
+        if(progressDialog.isShowing())
+            progressDialog.dismiss();
+
+    }
 
         /*private class OnClickRideStatus implements View.OnClickListener {
 

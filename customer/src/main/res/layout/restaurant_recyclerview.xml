@@ -6,7 +6,8 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="#ffffff"
-    android:id="@+id/restaurant_search_layout">
+    android:id="@+id/restaurant_search_layout"
+    android:layout_marginBottom="?attr/actionBarSize">
 
     <SearchView
         android:id="@+id/searchView"
