@@ -6,6 +6,20 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
 
+    <ToggleButton
+        android:id="@+id/button_favorite"
+        android:layout_width="20dp"
+        android:layout_height="20dp"
+        android:background="@drawable/button_favorite"
+        android:checked="false"
+        android:text=""
+        android:textOff=""
+        android:textOn=""
+        app:layout_constraintStart_toEndOf="@id/textViewTitle"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toTopOf="@id/textViewOpen"/>
+
     <TextView
         android:id="@+id/textViewOpen"
         android:layout_width="wrap_content"

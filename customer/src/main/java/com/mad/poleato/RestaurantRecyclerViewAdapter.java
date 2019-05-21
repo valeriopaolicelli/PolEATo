@@ -9,11 +9,19 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.Animation;
+import android.view.animation.BounceInterpolator;
+import android.view.animation.ScaleAnimation;
+import android.widget.CompoundButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
+import android.widget.ToggleButton;
 
 
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.FirebaseDatabase;
 import com.squareup.picasso.Picasso;
 
 import java.text.DecimalFormat;
@@ -27,6 +35,9 @@ public class RestaurantRecyclerViewAdapter extends RecyclerView.Adapter<Restaura
     private List<Restaurant> list; //current displayed list
     private Context context;
     private Toast myToast;
+
+    private String currentUserID;
+    private FirebaseAuth mAuth;
 
     /**
      * current order state of the list
@@ -49,6 +60,7 @@ public class RestaurantRecyclerViewAdapter extends RecyclerView.Adapter<Restaura
     private SortByPriceInverse priceInverseComparator;
     private SortByDelivery deliveryComparator;
 
+
     // Provide a reference to the views for each data item
     // Complex data items may need more than one view per item, and
     // you provide access to all the views for a data item in a view holder
@@ -58,15 +70,28 @@ public class RestaurantRecyclerViewAdapter extends RecyclerView.Adapter<Restaura
         public ImageView img;
         public View itemView;
 
+        // attributes for togglebutton favorite
+        public ScaleAnimation scaleAnimation;
+        public BounceInterpolator bounceInterpolator;
+        public ToggleButton buttonFavorite;
+
         public RestaurantViewHolder(View itemView) {
             super(itemView);
             this.itemView = itemView;
+
             this.title = (TextView) itemView.findViewById(R.id.textViewTitle);
             this.type = (TextView) itemView.findViewById(R.id.textViewType);
             this.open = (TextView) itemView.findViewById(R.id.textViewOpen);
             this.img = (ImageView) itemView.findViewById(R.id.imageView);
             this.delivery = (TextView) itemView.findViewById(R.id.textViewDelivery);
             this.priceRange = (TextView) itemView.findViewById(R.id.textViewPriceRange);
+
+            // initialize attributes for favorite toggle
+            this.buttonFavorite= (ToggleButton) itemView.findViewById(R.id.button_favorite);
+            scaleAnimation = new ScaleAnimation(0.7f, 1.0f, 0.7f, 1.0f, Animation.RELATIVE_TO_SELF, 0.7f, Animation.RELATIVE_TO_SELF, 0.7f);
+            scaleAnimation.setDuration(500);
+            bounceInterpolator = new BounceInterpolator();
+            scaleAnimation.setInterpolator(bounceInterpolator);
         }
     }
 
@@ -84,7 +109,6 @@ public class RestaurantRecyclerViewAdapter extends RecyclerView.Adapter<Restaura
         this.priceComparator = new SortByPrice();
         this.priceInverseComparator = new SortByPriceInverse();
         this.deliveryComparator = new SortByDelivery();
-
     }
 
     // Create new views (invoked by the layout manager)
@@ -96,14 +120,16 @@ public class RestaurantRecyclerViewAdapter extends RecyclerView.Adapter<Restaura
         final View listItem = layoutInflater.inflate(R.layout.restaurant_item, parent, false);
         final RestaurantViewHolder viewHolder = new RestaurantViewHolder(listItem);
 
+        mAuth = FirebaseAuth.getInstance();
+        FirebaseUser currentUser = mAuth.getCurrentUser();
+        currentUserID = currentUser.getUid();
+
         return viewHolder;
-
-
     }
 
     // Replace the contents of a view (invoked by the layout manager)
     @Override
-    public void onBindViewHolder(RestaurantViewHolder holder, final int position) {
+    public void onBindViewHolder(final RestaurantViewHolder holder, final int position) {
         // - get element from your dataset at this position
         // - replace the contents of the view with that element
         holder.title.setText(list.get(position).getName());
@@ -159,8 +185,27 @@ public class RestaurantRecyclerViewAdapter extends RecyclerView.Adapter<Restaura
             }
         });
 
+        // animate button favorite
+        holder.buttonFavorite.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener(){
+            @Override
+            public void onCheckedChanged(CompoundButton compoundButton, boolean isChecked) {
+                //animation
+                compoundButton.startAnimation(holder.scaleAnimation);
 
-
+                // add or remove restaurant from favorite
+                if(isChecked){
+                    // add restaurant to favorite list
+                    String restaurantID= list.get(position).getId();
+                    String restaurantName= list.get(position).getName();
+                    FirebaseDatabase.getInstance().getReference("customers/"+currentUserID+"/favorite/"+restaurantID).setValue(restaurantName);
+                }
+                else{
+                    // remove restaurant from favorite list
+                    String restaurantID= list.get(position).getId();
+                    FirebaseDatabase.getInstance().getReference("customers/"+currentUserID+"/favorite/"+restaurantID).removeValue();
+                }
+            }
+        });
     }
 
     // Return the size of your dataset (invoked by the layout manager)
@@ -168,8 +213,6 @@ public class RestaurantRecyclerViewAdapter extends RecyclerView.Adapter<Restaura
     public int getItemCount() {
         return list.size();
     }
-
-
 
 
     public void display(List<Restaurant> list) {
@@ -232,8 +275,6 @@ public class RestaurantRecyclerViewAdapter extends RecyclerView.Adapter<Restaura
 
     }
 
-
-
     private class SortByName implements Comparator<Restaurant>{
 
         @Override
@@ -264,6 +305,4 @@ public class RestaurantRecyclerViewAdapter extends RecyclerView.Adapter<Restaura
             return Double.compare(r1.getDeliveryCost(), r2.getDeliveryCost());
         }
     }
-
-
 }

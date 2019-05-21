@@ -24,10 +24,15 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.Animation;
+import android.view.animation.BounceInterpolator;
+import android.view.animation.ScaleAnimation;
+import android.widget.CompoundButton;
 import android.widget.ImageButton;
 import android.widget.PopupMenu;
 import android.widget.SearchView;
 import android.widget.Toast;
+import android.widget.ToggleButton;
 
 
 import androidx.navigation.Navigation;
@@ -85,8 +90,8 @@ public class RestaurantSearchFragment extends Fragment {
     //id for the filter fragment
     public static final int FILTER_FRAGMENT = 26;
 
+    // list to collect the firebase reference and its listener (to remove listener at the end of this fragment)
     private List<MyDatabaseReference> dbReferenceList;
-
 
     @Override
     public void onAttach(Context context) {
@@ -157,8 +162,6 @@ public class RestaurantSearchFragment extends Fragment {
         return fragView;
 
     }
-
-
 
     private void fillFields() {
         Locale locale = Locale.getDefault();
