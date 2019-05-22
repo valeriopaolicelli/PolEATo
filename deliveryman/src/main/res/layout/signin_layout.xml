@@ -11,7 +11,7 @@
         android:id="@+id/signin_main_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        tools:context=".SignInActivity">
+        tools:context=".SignActivities.SignInActivity">
 
         <ImageButton
             android:id="@+id/app_icon"

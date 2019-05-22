@@ -26,6 +26,7 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.mad.poleato.ConnectionManager;
+import com.mad.poleato.FavoritePlates.FavoriteMenuFragment;
 import com.mad.poleato.Interface;
 import com.mad.poleato.MyDatabaseReference;
 import com.mad.poleato.OrderManagement.CartManagement.CartActivity;
@@ -59,6 +60,9 @@ public class OrderActivity extends AppCompatActivity implements Interface {
 
     private MenuFragment menuFragment;
     private InfoFragment infoFragment;
+    private FavoriteMenuFragment favoriteMenuFragment;
+
+    private String localeShort;
 
     BroadcastReceiver networkReceiver = new BroadcastReceiver() {
         @Override
@@ -71,6 +75,7 @@ public class OrderActivity extends AppCompatActivity implements Interface {
     private void addFragmentToAdapter(Bundle bundle) {
         infoFragment = null;
         menuFragment = null;
+        favoriteMenuFragment= null;
 
         FragmentManager fm = getSupportFragmentManager();
         adapter = new PageAdapter(fm);
@@ -82,6 +87,8 @@ public class OrderActivity extends AppCompatActivity implements Interface {
                     menuFragment = (MenuFragment) fragmentList.get(idx);
                 if (fragmentList.get(idx) instanceof InfoFragment)
                     infoFragment = (InfoFragment) fragmentList.get(idx);
+                if (fragmentList.get(idx) instanceof FavoriteMenuFragment)
+                    favoriteMenuFragment = (FavoriteMenuFragment) fragmentList.get(idx);
             }
         }
         if (menuFragment == null) {
@@ -92,7 +99,15 @@ public class OrderActivity extends AppCompatActivity implements Interface {
             infoFragment = new InfoFragment();
             infoFragment.setArguments(bundle);
         }
+        if(favoriteMenuFragment == null){
+            favoriteMenuFragment = new FavoriteMenuFragment();
+            favoriteMenuFragment.setArguments(bundle);
+        }
         adapter.addFragment(menuFragment, "Menu");
+        if(localeShort.equals("en"))
+            adapter.addFragment(favoriteMenuFragment, "Favorite");
+        else
+            adapter.addFragment(favoriteMenuFragment, "Preferiti");
         adapter.addFragment(infoFragment, "Info");
 
         onViewPager.setAdapter(adapter);
@@ -123,12 +138,12 @@ public class OrderActivity extends AppCompatActivity implements Interface {
         dbReferenceList= new ArrayList<>();
 
         order = new Order(currentUserID);
+
+        Locale locale= Locale.getDefault();
+        localeShort = locale.toString().substring(0, 2);
+
         //gettin id of restaurant selected by user
         Bundle bundle = getIntent().getExtras();
-
-        Locale locale = Locale.getDefault();
-        // get "en" or "it"
-        final String localeShort = locale.toString().substring(0, 2);
 
         order.setRestaurantID(bundle.getString("id"));
         dbReferece = FirebaseDatabase.getInstance().getReference("restaurants").child(order.getRestaurantID());

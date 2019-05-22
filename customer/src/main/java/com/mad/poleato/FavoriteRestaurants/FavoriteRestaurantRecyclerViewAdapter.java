@@ -1,4 +1,4 @@
-package com.mad.poleato.RestaurantSearch.FavoriteRestaurant;
+package com.mad.poleato.FavoriteRestaurants;
 
 import android.content.Context;
 import android.content.Intent;
@@ -71,10 +71,10 @@ public class FavoriteRestaurantRecyclerViewAdapter extends RecyclerView.Adapter<
 
             // initialize attributes for favorite toggle
             this.buttonFavorite= (ToggleButton) itemView.findViewById(R.id.button_favorite);
-            scaleAnimation = new ScaleAnimation(0.7f, 1.0f, 0.7f, 1.0f, Animation.RELATIVE_TO_SELF, 0.7f, Animation.RELATIVE_TO_SELF, 0.7f);
-            scaleAnimation.setDuration(500);
-            bounceInterpolator = new BounceInterpolator();
-            scaleAnimation.setInterpolator(bounceInterpolator);
+            this.scaleAnimation = new ScaleAnimation(0.7f, 1.0f, 0.7f, 1.0f, Animation.RELATIVE_TO_SELF, 0.7f, Animation.RELATIVE_TO_SELF, 0.7f);
+            this.scaleAnimation.setDuration(500);
+            this.bounceInterpolator = new BounceInterpolator();
+            this.scaleAnimation.setInterpolator(bounceInterpolator);
         }
     }
 
@@ -173,13 +173,7 @@ public class FavoriteRestaurantRecyclerViewAdapter extends RecyclerView.Adapter<
                 compoundButton.startAnimation(holder.scaleAnimation);
 
                 // add or remove restaurant from favorite
-                if(isChecked){
-                    // add restaurant to favorite list
-                    String restaurantID= list.get(position).getId();
-                    String restaurantName= list.get(position).getName();
-                    FirebaseDatabase.getInstance().getReference("customers/"+currentUserID+"/Favorite/"+restaurantID).setValue(restaurantName);
-                }
-                else{
+                if(!isChecked){
                     // remove restaurant from favorite list
                     String restaurantID= list.get(position).getId();
                     FirebaseDatabase.getInstance().getReference("customers/"+currentUserID+"/Favorite/"+restaurantID).removeValue();

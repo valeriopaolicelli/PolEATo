@@ -3,6 +3,7 @@ package com.mad.poleato.Statistics;
 
 import android.app.Activity;
 import android.content.Context;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -20,21 +21,30 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.jjoe64.graphview.DefaultLabelFormatter;
 import com.jjoe64.graphview.GraphView;
+import com.jjoe64.graphview.GridLabelRenderer;
+import com.jjoe64.graphview.helper.DateAsXAxisLabelFormatter;
 import com.jjoe64.graphview.series.DataPoint;
+import com.jjoe64.graphview.series.DataPointInterface;
 import com.jjoe64.graphview.series.LineGraphSeries;
-import com.mad.poleato.History.HistoryComparator;
+import com.jjoe64.graphview.series.OnDataPointTapListener;
+import com.jjoe64.graphview.series.Series;
+import com.mad.poleato.FirebaseData.MyDatabaseReference;
 import com.mad.poleato.R;
 import com.onesignal.OneSignal;
 
+import java.text.DateFormat;
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.TreeMap;
 
 
 /**
@@ -51,14 +61,18 @@ public class StatisticsFragment extends Fragment {
     private String currentUserID;
     private FirebaseAuth mAuth;
 
+    private MyDatabaseReference historyFireBaseReference;
+
 
     private Map<String, TextView> tv_Fields;    //TextView map
     private GraphView graphView;                //statistics graph
 
-    private static final double REVENUE_HOUR = 7.50;
+    private static final double REVENUE_HOUR = 7.00;
+    private static final int NUM_DAYS_GRAPH = 7; //num of days to show on a single graph window
 
     //contains <Day, sum(Millis)>
-    private Map<String, Long> workingHourPerDay;
+    private Map<Date, Long> workingHourPerDay;
+    private Map<Date, Double> revenues;
     private double totKm;
 
 
@@ -80,7 +94,7 @@ public class StatisticsFragment extends Fragment {
         this.hostActivity = this.getActivity();
 
         if (hostActivity != null) {
-            myToast = Toast.makeText(hostActivity, "", Toast.LENGTH_LONG);
+            myToast = Toast.makeText(hostActivity, "", Toast.LENGTH_SHORT);
         }
     }
 
@@ -104,10 +118,21 @@ public class StatisticsFragment extends Fragment {
         OneSignal.sendTag("User_ID", currentUserID);
 
         tv_Fields = new HashMap<>();
-        workingHourPerDay = new HashMap<>();
+        workingHourPerDay = new TreeMap<>();
+        revenues = new TreeMap<>();
 
         totKm = 0;
 
+    }
+
+
+    private void logout(){
+        FirebaseAuth.getInstance().signOut();
+        OneSignal.setSubscription(false);
+
+        //logout
+        Navigation.findNavController(fragView).navigate(R.id.action_statisticsFragment_to_signInActivity); //TODO mich
+        getActivity().finish();
     }
 
 
@@ -121,15 +146,20 @@ public class StatisticsFragment extends Fragment {
 
         readHistory();
 
-        setGraph();
 
         return fragView;
     }
 
 
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        historyFireBaseReference.removeAllListener();
+    }
+
     private void collectFields(){
 
-        tv_Fields.put("riderID", (TextView) fragView.findViewById(R.id.riderID_tv));
+        tv_Fields.put("today", (TextView) fragView.findViewById(R.id.today_tv));
 
         tv_Fields.put("workingDays", (TextView) fragView.findViewById(R.id.workingDays_tv));
         tv_Fields.put("workingHours", (TextView) fragView.findViewById(R.id.totHours_tv));
@@ -141,16 +171,20 @@ public class StatisticsFragment extends Fragment {
         tv_Fields.put("kmPerDay", (TextView) fragView.findViewById(R.id.kmPerDay_tv));
 
         graphView = (GraphView) fragView.findViewById(R.id.graphView);
+
+        //set current day in the upper TextView
+        SimpleDateFormat dateFormat = new SimpleDateFormat("EEE MM/dd");
+        String today = dateFormat.format(new Date());
+        tv_Fields.get("today").setText(today);
     }
 
 
     private void readHistory(){
 
+        historyFireBaseReference = new MyDatabaseReference(FirebaseDatabase.getInstance().getReference("deliveryman")
+                                                        .child(currentUserID+"/history"));
 
-        DatabaseReference historyReference = FirebaseDatabase.getInstance().getReference("deliveryman")
-                                                                .child(currentUserID+"/history");
-
-        historyReference.addValueEventListener(new ValueEventListener() {
+        historyFireBaseReference.setValueListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
 
@@ -159,30 +193,43 @@ public class StatisticsFragment extends Fragment {
 
                 for(DataSnapshot historyItem : dataSnapshot.getChildren()){
 
-                    //a day is considered working days if the rider receives at least 1 reservation no matter if it is delivered after 00:00
-                    String workDay = historyItem.child("notifiedTime").getValue().toString().split(" ")[0];
-                    String startTime = historyItem.child("notifiedTime").getValue().toString();
-                    String endTime = historyItem.child("deliveredTime").getValue().toString();
+                    try{
+                        //a day is considered working days if the rider receives at least 1 reservation no matter if it is delivered after 00:00
+                        String workDay = historyItem.child("notifiedTime").getValue().toString().split(" ")[0];
+                        String startTime = historyItem.child("notifiedTime").getValue().toString();
+                        String endTime = historyItem.child("deliveredTime").getValue().toString();
 
-                    Long workHour = timeDiff(startTime, endTime);
+                        Long workHour = timeDiff(startTime, endTime);
 
-                    if(workingHourPerDay.containsKey(workDay)){
-                        //then increment the working hours value
-                        Long prevMillis = workingHourPerDay.get(workDay);
-                        workHour += prevMillis;
-                        workingHourPerDay.put(workDay, workHour);
+                        Date day = new SimpleDateFormat("yyyy/MM/dd").parse(workDay);
 
+                        if(workingHourPerDay.containsKey(day)){
+                            //then increment the working hours value
+                            Long prevMillis = workingHourPerDay.get(day);
+                            workHour += prevMillis;
+                            workingHourPerDay.put(day, workHour);
+
+                        }
+                        else
+                            workingHourPerDay.put(day, workHour);
+
+                        //count km
+                        double curr_km = Double.parseDouble(historyItem.child("totKm").getValue().toString());
+                        totKm += curr_km;
+
+
+                    }catch(Exception e){
+                        Log.d("matte", e.getMessage());
                     }
-                    else
-                        workingHourPerDay.put(workDay, workHour);
 
-                    //count km
-                    double curr_km = Double.parseDouble(historyItem.child("totKm").getValue().toString());
-                    totKm += curr_km;
 
                 }
 
-                computeStatistics();
+                computeStatistics(); //fill the TextViews
+
+                computeRevenues();//fill the revenues map
+
+                setGraph(); //draw data on graph
 
             }
 
@@ -228,61 +275,120 @@ public class StatisticsFragment extends Fragment {
     }
 
 
+    private void computeRevenues(){
+
+        for(Date day : workingHourPerDay.keySet()){
+            //compute the total revenues for each single day
+            long totMillis = workingHourPerDay.get(day);
+            long totHours = totMillis / (60 * 60 * 1000) % 24;
+            double rev = totHours * REVENUE_HOUR;
+            revenues.put(day, rev);
+        }
+
+    }
+
+
     private void setGraph(){
-
-        // activate horizontal zooming and scrolling
-        /*graphView.getViewport().setScalable(true);
-
-        // activate horizontal scrolling
-        graphView.getViewport().setScrollable(true);
-
-        // activate horizontal and vertical zooming and scrolling
-        graphView.getViewport().setScalableY(true);
-
-        // activate vertical scrolling
-        graphView.getViewport().setScrollableY(true);*/
-
-
-        // set manual X bounds
-        graphView.getViewport().setXAxisBoundsManual(true);
-        graphView.getViewport().setMinX(0);
-        graphView.getViewport().setMaxX(10);
-
-        // set manual Y bounds
-        graphView.getViewport().setYAxisBoundsManual(true);
-        graphView.getViewport().setMinY(0);
-        graphView.getViewport().setMaxY(100);
 
         // enable scaling and scrolling
         graphView.getViewport().setScalable(true);
-        graphView.getViewport().setScalableY(true);
+        //graphView.getViewport().setScalableY(true);
 
         DecimalFormat decimalFormat = new DecimalFormat("#0.00"); //two decimal
         String revenueHourStr = decimalFormat.format(REVENUE_HOUR);
-        graphView.setTitle(hostActivity.getString(R.string.chart_title) +" (" + revenueHourStr + "€)");
-        graphView.setTitleTextSize(80);
-        //graphView.getGridLabelRenderer().setHorizontalAxisTitle("WEEEEEEEEEEEE");
-        //graphView.getGridLabelRenderer().setVerticalAxisTitle("y axis");
+        graphView.setTitle(hostActivity.getString(R.string.chart_title) +" (" + revenueHourStr + "€/h)");
+        graphView.setTitleTextSize(40);
+        graphView.setTitleColor(Color.GRAY);
 
-        graphView.getGridLabelRenderer().setHorizontalLabelsVisible(true);
-        //graphView.getGridLabelRenderer().setLabelsSpace(100);
-        graphView.getGridLabelRenderer().setNumHorizontalLabels(5);
 
-        LineGraphSeries<DataPoint> series = new LineGraphSeries<DataPoint>(new DataPoint[] {
-                new DataPoint(0, 1),
-                new DataPoint(1, 5),
-                new DataPoint(2, 3),
-                new DataPoint(3, 2),
-                new DataPoint(4, 6)
+        DataPoint[] dp = new DataPoint[revenues.size()];
+        int curr_idx = 0;
+        for(Date day : revenues.keySet()){
+
+            dp[curr_idx] = new DataPoint(day.getTime(), revenues.get(day));
+            curr_idx ++;
+        }
+
+        LineGraphSeries<DataPoint> series = new LineGraphSeries<DataPoint>(dp);
+
+        series.setOnDataPointTapListener(new OnDataPointTapListener() {
+            @Override
+            public void onTap(Series series, DataPointInterface dataPoint) {
+
+                Log.d("matte", "clicked");
+                DateFormat simple = new SimpleDateFormat("MM/dd");
+                long millis = (long)dataPoint.getX();
+
+                // Creating date from milliseconds
+                // using Date() constructor
+                Date result = new Date(millis);
+
+                myToast.setText(simple.format(result));
+                myToast.show();
+            }
         });
 
+
         graphView.addSeries(series);
+
+        // set date label formatter
+        graphView.getGridLabelRenderer().setLabelFormatter(new DateAsXAxisLabelFormatter(getActivity()));
+
+        // set manual x bounds to have nice steps
+        Date minDate, maxDate;
+        List<Date> dates = new ArrayList<>(revenues.keySet());
+        if(dates.size() >= NUM_DAYS_GRAPH) {
+
+            minDate = dates.get(dates.size() - NUM_DAYS_GRAPH);
+            maxDate = dates.get(dates.size() - 1);
+        }
+        else{
+
+            minDate = dates.get(0);
+            maxDate = dates.get(dates.size() - 1);
+        }
+        graphView.getViewport().setMinX(minDate.getTime());
+        graphView.getViewport().setMaxX(maxDate.getTime());
+        graphView.getViewport().setXAxisBoundsManual(true);
+
+        // set manual Y bounds
+        graphView.getViewport().setMinY(0);
+        graphView.getViewport().setMaxY(110);
+        graphView.getViewport().setYAxisBoundsManual(true);
+
+        // as we use dates as labels, the human rounding to nice readable numbers
+        // is not necessary
+        graphView.getGridLabelRenderer().setHumanRounding(false);
+        graphView.getGridLabelRenderer().setNumVerticalLabels(10);
+        //graphView.getGridLabelRenderer().setHighlightZeroLines(true);
+        graphView.getGridLabelRenderer().setGridStyle(GridLabelRenderer.GridStyle.VERTICAL);
+
+        graphView.getGridLabelRenderer().setLabelFormatter(new DefaultLabelFormatter(){
+
+            @Override
+            public String formatLabel(double value, boolean isValueX){
+
+                if(isValueX){
+                    return "-";
+                }
+                Double v = value;
+                Integer i = v.intValue();
+                Boolean b1 = value % 1 == 0;
+                Boolean b2 = i % 10 == 0;
+                if(b1 && b2)
+                    return ""+value+"€";
+                return null;
+
+            }
+        });
+
+
     }
 
 
     private Long timeDiff(String start, String end){
 
-        SimpleDateFormat format = new SimpleDateFormat("YYYY/mm/dd HH:mm");
+        SimpleDateFormat format = new SimpleDateFormat("yyy/mm/dd HH:mm");
         long difference = 0;
         try {
             Date startTime = format.parse(start);
@@ -305,17 +411,5 @@ public class StatisticsFragment extends Fragment {
 
     }
 
-
-    private void logout(){
-        FirebaseAuth.getInstance().signOut();
-        //                OneSignal.sendTag("User_ID", "");
-        OneSignal.setSubscription(false);
-
-        /**
-         *  GO TO LOGIN ****
-         */
-        Navigation.findNavController(fragView).navigate(R.id.action_statisticsFragment_to_signInActivity);
-        getActivity().finish();
-    }
 
 }

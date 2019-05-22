@@ -1,4 +1,4 @@
-package com.mad.poleato;
+package com.mad.poleato.LocationService;
 
 import android.app.IntentService;
 import android.content.Intent;
@@ -9,7 +9,6 @@ import com.firebase.geofire.GeoFire;
 import com.firebase.geofire.GeoLocation;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
@@ -76,7 +75,7 @@ public class UploadService extends IntentService {
 
             if (oldLocation != null) {
                 //check if the rider moved of at least 'X' m.
-                double d = computeDistance(oldLocation, currLocation) * 1000;
+                double d = LocationUtilities.computeDistance(oldLocation, currLocation) * 1000;
                 if (d <= 7)
                     return;
             }
@@ -109,24 +108,6 @@ public class UploadService extends IntentService {
             });
             Log.d("fabio", "Upload completed with Lat & Long: " + latitude + " " + longitude);
         }
-    }
-
-
-    public double computeDistance(LatLng origin, LatLng destination) {
-
-        double dLat  = Math.toRadians((destination.latitude - origin.latitude));
-        double dLong = Math.toRadians((destination.longitude - origin.longitude));
-
-        double a = haversin(dLat) + Math.cos(origin.latitude) * Math.cos(destination.latitude) * haversin(dLong);
-        double c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-
-        double distance = EARTH_RADIUS * c;
-        return distance;
-    }
-
-
-    public static double haversin(double val) {
-        return Math.pow(Math.sin(val / 2), 2);
     }
 
 }

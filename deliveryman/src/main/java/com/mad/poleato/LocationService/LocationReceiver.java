@@ -1,29 +1,24 @@
-package com.mad.poleato;
+package com.mad.poleato.LocationService;
 
 import android.app.PendingIntent;
-import android.app.Service;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
-import android.os.IBinder;
 import android.util.Log;
 
-import com.firebase.geofire.GeoFire;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationResult;
 import com.google.android.gms.location.LocationServices;
-import com.google.firebase.database.DatabaseReference;
 
 public class LocationReceiver extends BroadcastReceiver {
 
     private String TAG = this.getClass().getSimpleName();
 
     private LocationResult mLocationResult;
-    FusedLocationProviderClient fusedLocationProviderClient;
+    private FusedLocationProviderClient fusedLocationProviderClient;
 
-    DatabaseReference ref;
-    Double latitude;
-    Double longitude;
+    private Double latitude;
+    private Double longitude;
 
     @Override
     public void onReceive(Context context, Intent intent) {

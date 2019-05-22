@@ -2,12 +2,9 @@ package com.mad.poleato.Account;
 
 import android.app.ProgressDialog;
 import android.content.Context;
-import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.Message;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
@@ -20,7 +17,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
-import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -37,16 +33,13 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
-import com.mad.poleato.MyDatabaseReference;
-import com.mad.poleato.NavigatorActivity;
+import com.mad.poleato.FirebaseData.MyDatabaseReference;
 import com.mad.poleato.R;
-import com.mad.poleato.SignInActivity;
 import com.onesignal.OneSignal;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 
 
@@ -60,20 +53,13 @@ public class MainProfile extends Fragment {
     private ImageView profileImage;
 
     private ProgressDialog progressDialog;
-    private Handler handler = new Handler() {
-        @Override
-        public void handleMessage(Message msg) {
-            progressDialog.dismiss();
-        }
-    };
 
 
-    private String localeShort;
     private View view;
     private String currentUserID;
     private FirebaseAuth mAuth;
 
-    private List<MyDatabaseReference> dbReferenceList;
+    private MyDatabaseReference deliveryProfileReference;
 
 
     @Override
@@ -82,16 +68,13 @@ public class MainProfile extends Fragment {
         setHasOptionsMenu(true);
         super.onCreate(savedInstanceState);
         if(getActivity() != null)
-            myToast = Toast.makeText(getActivity(), "", Toast.LENGTH_LONG);
-
-        //download Type base on the current active Locale
-        String locale = Locale.getDefault().toString();
-        Log.d("matte", "LOCALE: "+locale);
-        localeShort = locale.substring(0, 2);
+            myToast = Toast.makeText(getActivity(), "", Toast.LENGTH_SHORT);
 
         mAuth = FirebaseAuth.getInstance();
         FirebaseUser currentUser = mAuth.getCurrentUser();
         currentUserID = currentUser.getUid();
+        if(currentUserID == null)
+            logout();
 
 
         OneSignal.startInit(getContext())
@@ -102,14 +85,27 @@ public class MainProfile extends Fragment {
         OneSignal.setSubscription(true);
         OneSignal.sendTag("User_ID", currentUserID);
 
-        dbReferenceList= new ArrayList<>();
     }
+
 
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
 
     }
+
+
+    private void logout(){
+        //logout
+        Log.d("matte", "Logout");
+        FirebaseAuth.getInstance().signOut();
+        OneSignal.setSubscription(false);
+
+        //go to login
+        Navigation.findNavController(view).navigate(R.id.action_mainProfile_id_to_signInActivity);
+        getActivity().finish();
+    }
+
 
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
@@ -120,16 +116,9 @@ public class MainProfile extends Fragment {
             @Override
             public boolean onMenuItemClick(MenuItem item) {
                 //logout
-                Log.d("matte", "Logout");
-                FirebaseAuth.getInstance().signOut();
-                //                OneSignal.sendTag("User_ID", "");
-                OneSignal.setSubscription(false);
-
-                /**
-                 *  GO TO LOGIN ****
-                 */
-                Navigation.findNavController(view).navigate(R.id.action_mainProfile_id_to_signInActivity);
-                getActivity().finish();
+                FirebaseDatabase.getInstance().getReference("deliveryman/")
+                                                .child(currentUserID+"/IsActive").setValue(false); //set inactive
+                logout();
                 return true;
             }
         });
@@ -178,15 +167,11 @@ public class MainProfile extends Fragment {
 
     }
 
-    public void fillFields() {
+    private void fillFields() {
 
-        DatabaseReference reference = FirebaseDatabase.getInstance()
-                .getReference("deliveryman/"+ currentUserID);
-        dbReferenceList.add(new MyDatabaseReference(reference));
-        int indexReference= dbReferenceList.size()-1;
-        ValueEventListener valueEventListener;
-
-        dbReferenceList.get(indexReference).getReference().addValueEventListener(valueEventListener= new ValueEventListener() {
+        deliveryProfileReference = new MyDatabaseReference(FirebaseDatabase.getInstance()
+                                            .getReference("deliveryman/"+ currentUserID));
+        deliveryProfileReference.setValueListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
 
@@ -224,7 +209,7 @@ public class MainProfile extends Fragment {
                 myToast.show();
             }
         });
-        dbReferenceList.get(indexReference).setValueListener(valueEventListener);
+
 
         //Download the profile pic
         StorageReference storageReference = FirebaseStorage.getInstance().getReference();
@@ -238,7 +223,7 @@ public class MainProfile extends Fragment {
                 profileImage.setImageBitmap(bmp);
                 //send message to main thread
                 if(progressDialog.isShowing())
-                    handler.sendEmptyMessage(0);
+                    progressDialog.dismiss();
             }
         }).addOnFailureListener(new OnFailureListener() {
             @Override
@@ -248,7 +233,7 @@ public class MainProfile extends Fragment {
                 profileImage.setImageResource(R.drawable.image_empty);
                 //send message to main thread
                 if(progressDialog.isShowing())
-                    handler.sendEmptyMessage(0);
+                    progressDialog.dismiss();
             }
         });
 
@@ -257,8 +242,7 @@ public class MainProfile extends Fragment {
     @Override
     public void onDestroy() {
         super.onDestroy();
-        for (int i=0; i < dbReferenceList.size(); i++)
-            dbReferenceList.get(i).removeAllListener();
+        deliveryProfileReference.removeAllListener();
     }
 }
 

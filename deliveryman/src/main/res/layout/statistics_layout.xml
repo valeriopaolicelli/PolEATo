@@ -37,27 +37,27 @@
                 android:layout_marginBottom="8dp"
                 android:src="@drawable/ic_baseline_directions_bike_24px"
                 app:layout_constraintBottom_toTopOf="@id/workingDays_label"
-                app:layout_constraintEnd_toStartOf="@id/riderID_label"
+                app:layout_constraintEnd_toStartOf="@id/today_label"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
 
             <TextView
-                android:id="@+id/riderID_label"
+                android:id="@+id/today_label"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="16dp"
                 android:layout_marginEnd="8dp"
-                android:text="@string/riderID_label"
+                android:text="@string/today_label"
                 android:textAlignment="center"
                 android:textColor="@color/colorPrimaryDark"
                 android:textSize="15sp"
                 app:layout_constraintBottom_toBottomOf="@id/delivery_icon"
-                app:layout_constraintEnd_toStartOf="@id/riderID_tv"
+                app:layout_constraintEnd_toStartOf="@id/today_tv"
                 app:layout_constraintStart_toEndOf="@id/delivery_icon"
                 app:layout_constraintTop_toTopOf="@id/delivery_icon" />
 
             <TextView
-                android:id="@+id/riderID_tv"
+                android:id="@+id/today_tv"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginEnd="8dp"
@@ -65,7 +65,7 @@
                 android:textSize="15sp"
                 app:layout_constraintBottom_toBottomOf="@id/delivery_icon"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toEndOf="@id/riderID_label"
+                app:layout_constraintStart_toEndOf="@id/today_label"
                 app:layout_constraintTop_toTopOf="@id/delivery_icon" />
 
             <TextView
@@ -230,12 +230,29 @@
         </android.support.constraint.ConstraintLayout>
     </android.support.v7.widget.CardView>
 
-    <com.jjoe64.graphview.GraphView
-        android:id="@+id/graphView"
-        android:layout_width="wrap_content"
+    <android.support.constraint.ConstraintLayout
+        android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="75"
-        app:seriesType="line"
-        app:seriesColor="@color/colorPrimary"/>
+        android:layout_weight="75">
+
+        <com.jjoe64.graphview.GraphView
+            android:id="@+id/graphView"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginEnd="16dp"
+            android:layout_marginBottom="8dp"
+            android:background="#ffffff"
+            android:backgroundTint="#ffffff"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:seriesColor="@color/colorPrimary"
+            app:seriesType="line" />
+
+    </android.support.constraint.ConstraintLayout>
+
 
 </LinearLayout>

@@ -1,7 +1,6 @@
 package com.mad.poleato;
 
 import android.Manifest;
-import android.app.Notification;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -13,10 +12,10 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
 import android.support.v4.app.ActivityCompat;
-import android.support.v4.app.NotificationCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
@@ -29,6 +28,7 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.mad.poleato.LocationService.BackgroundLocationService;
 import com.onesignal.OneSignal;
 
 public class NavigatorActivity extends AppCompatActivity {
@@ -77,6 +77,9 @@ BroadcastReceiver networkReceiver = new BroadcastReceiver() {
         mAuth = FirebaseAuth.getInstance();
         FirebaseUser currentUser = mAuth.getCurrentUser();
         currentUserID = currentUser.getUid();
+        if(currentUserID == null)
+            logout();
+
         OneSignal.startInit(this)
                 .inFocusDisplaying(OneSignal.OSInFocusDisplayOption.Notification)
                 .unsubscribeWhenNotificationsAreDisabled(true)
@@ -107,6 +110,18 @@ BroadcastReceiver networkReceiver = new BroadcastReceiver() {
         NavigationUI.setupWithNavController(navigation, navController);
         NavigationUI.setupActionBarWithNavController(this, navController);
 
+    }
+
+
+    private void logout(){
+        //logout
+        Log.d("matte", "Logout");
+        FirebaseAuth.getInstance().signOut();
+        OneSignal.setSubscription(false);
+
+        //go to login
+        //Navigation.findNavController(view).navigate(R.id.action_mainProfile_id_to_signInActivity); TODO mich
+        finish();
     }
 
     @Override

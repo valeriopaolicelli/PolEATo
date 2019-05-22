@@ -139,6 +139,7 @@
     <string name="very_good">I loved it!</string>
     <!-- Favorite restaurant and foods -->
     <string name="favorite_list_button">Your favorite restaurants</string>
+    <string name="favorite_list_plates_button">Your favorite plates</string>
 
     
 </resources>

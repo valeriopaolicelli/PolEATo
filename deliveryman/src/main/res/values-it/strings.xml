@@ -119,10 +119,10 @@
     <string name="interner_confirm">Impostazioni Internet</string>
 
     <!-- Statistics fragment -->
-    <string name="riderID_label">ID Rider</string>
+    <string name="today_label">Data corrente:</string>
     <string name="workingDays_label">Giorni di lavoro:</string>
     <string name="workingHours_label">Ore di lavoro:</string>
-    <string name="totRevenues_label">Totale guadagni</string>
+    <string name="totRevenues_label">Totale guadagni:</string>
     <string name="totKm_label">Km totali:</string>
     <string name="kmPerDay_label">Km al giorno:</string>
     <string name="revenuePerDay_label">Guadagno/giorno:</string>

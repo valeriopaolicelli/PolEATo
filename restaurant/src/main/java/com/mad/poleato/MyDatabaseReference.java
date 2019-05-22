@@ -9,6 +9,10 @@ import java.util.List;
 
 public class MyDatabaseReference {
 
+    /**
+     * This class is a wrapper for a Database reference to easily add and remove listeners
+     */
+
     private DatabaseReference reference;
     private List<ValueEventListener> valueListener;
     private List<ChildEventListener> childListener;

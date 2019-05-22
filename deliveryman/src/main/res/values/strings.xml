@@ -117,7 +117,7 @@
     <string name="interner_confirm">Data settings</string>
 
     <!-- Statistics fragment -->
-    <string name="riderID_label">Rider ID:</string>
+    <string name="today_label">Today:</string>
     <string name="workingDays_label">Working days:</string>
     <string name="workingHours_label">Working hours:</string>
     <string name="totRevenues_label">Total revenues:</string>
