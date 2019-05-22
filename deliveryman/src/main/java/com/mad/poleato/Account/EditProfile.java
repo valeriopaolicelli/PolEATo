@@ -6,13 +6,10 @@ import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Matrix;
 import android.graphics.drawable.BitmapDrawable;
-import android.location.Address;
-import android.location.Geocoder;
 import android.media.ExifInterface;
 import android.net.Uri;
 import android.os.Bundle;
@@ -29,7 +26,6 @@ import android.support.v4.content.FileProvider;
 import android.support.v7.widget.PopupMenu;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.util.Base64;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -42,7 +38,6 @@ import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ScrollView;
 import android.widget.Switch;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.navigation.Navigation;
@@ -59,7 +54,7 @@ import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
-import com.mad.poleato.MyDatabaseReference;
+import com.mad.poleato.FirebaseData.MyDatabaseReference;
 import com.mad.poleato.R;
 import com.onesignal.OneSignal;
 
@@ -68,14 +63,10 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
-import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
-import java.util.TreeMap;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
@@ -91,11 +82,10 @@ public class EditProfile extends Fragment {
     private DatabaseReference reference;
     private Toast myToast;
 
-    static final int REQUEST_TAKE_PHOTO = 1;
+    private static final int REQUEST_TAKE_PHOTO = 1;
     private static int RESULT_LOAD_IMG = 2;
 
     private String currentPhotoPath;
-    private Bitmap image;
     private View v;
     private static CircleImageView profileImage;
     private FloatingActionButton change_im;
@@ -103,18 +93,9 @@ public class EditProfile extends Fragment {
     private Switch statusSwitch;
 
     private ProgressDialog progressDialog;
-    private Handler handler = new Handler() {
-        @Override
-        public void handleMessage(Message msg) {
-            progressDialog.dismiss();
-        }
-    };
 
     private String currentUserID;
     private FirebaseAuth mAuth;
-
-    private double latitude;
-    private double longitude;
 
     private List<MyDatabaseReference> dbReferenceList;
 
@@ -130,6 +111,8 @@ public class EditProfile extends Fragment {
         mAuth = FirebaseAuth.getInstance();
         FirebaseUser currentUser = mAuth.getCurrentUser();
         currentUserID = currentUser.getUid();
+        if(currentUserID == null)
+            logout();
 
 
         OneSignal.startInit(getContext())
@@ -149,6 +132,17 @@ public class EditProfile extends Fragment {
         dbReferenceList= new ArrayList<>();
     }
 
+
+    private void logout(){
+        //logout
+        Log.d("matte", "Logout");
+        FirebaseAuth.getInstance().signOut();
+        OneSignal.setSubscription(false);
+
+        //go to signIn activity
+        //Navigation.findNavController(view).navigate(R.id.action_rides_id_to_signInActivity); //TODO mich
+        getActivity().finish();
+    }
 
 
     @Override
@@ -294,8 +288,8 @@ public class EditProfile extends Fragment {
             public void onSuccess(byte[] bytes) {
                 Bitmap bmp = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
                 profileImage.setImageBitmap(bmp);
-                image = bmp;
-                handler.sendEmptyMessage(0);
+                if(progressDialog.isShowing())
+                    progressDialog.dismiss();
 
             }
         }).addOnFailureListener(new OnFailureListener() {
@@ -304,7 +298,8 @@ public class EditProfile extends Fragment {
                 Log.d("matte", "No image found. Default img setting");
                 //set default image if no image was set
                 profileImage.setImageResource(R.drawable.image_empty);
-                handler.sendEmptyMessage(0);
+                if(progressDialog.isShowing())
+                    progressDialog.dismiss();
             }
         });
 
@@ -354,7 +349,7 @@ public class EditProfile extends Fragment {
 
 
 
-    public void changeImage() {
+    private void changeImage() {
         android.support.v7.widget.PopupMenu popup = new android.support.v7.widget.PopupMenu(getContext(), change_im);
         popup.getMenuInflater().inflate(
                 R.menu.popup_menu, popup.getMenu());
@@ -430,7 +425,7 @@ public class EditProfile extends Fragment {
     }
 
 
-    public void removeProfileImage(){
+    private void removeProfileImage(){
         profileImage.setImageResource(R.drawable.image_empty);
     }
 
@@ -495,7 +490,7 @@ public class EditProfile extends Fragment {
     }
 
 
-    public void saveChanges() {
+    private void saveChanges() {
 
         // TODO HERE MAKE UI NON RESPONSIVE
 
@@ -606,33 +601,6 @@ public class EditProfile extends Fragment {
             }
         }
 
-        Geocoder geocoder = new Geocoder(getActivity());
-        List<Address> addresses;
-        try {
-            addresses = geocoder.getFromLocationName(editTextFields.get("Address").getText().toString(), 1);
-
-            if(addresses.size() > 0) {
-                if(addresses.get(0).getThoroughfare() == null) {
-                    wrongField = true;
-                    myToast.setText("Invalid Address");
-                    myToast.show();
-                }
-                else {
-                    latitude = addresses.get(0).getLatitude();
-                    longitude = addresses.get(0).getLongitude();
-                }
-            }
-            else{
-                wrongField = true;
-                myToast.setText("Invalid Address");
-                myToast.show();
-            }
-
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-
 
         /* --------------- SAVING TO FIREBASE --------------- */
         if(!wrongField){
@@ -648,12 +616,6 @@ public class EditProfile extends Fragment {
                 }
             }
 
-            /*
-             * save latitude and longitude of inserted address
-             */
-            reference.child("Latitude").setValue(latitude);
-            reference.child("Longitude").setValue(longitude);
-
             // Save profile pic to the DB
             Bitmap img = ((BitmapDrawable) profileImage.getDrawable()).getBitmap();
             /*Navigation controller is moved inside this method. The image must be loaded totally to FireBase
@@ -662,7 +624,7 @@ public class EditProfile extends Fragment {
 
         }else{
             if(progressDialog.isShowing())
-                handler.sendEmptyMessage(0);
+                progressDialog.dismiss();
         }
     }
 
@@ -693,7 +655,7 @@ public class EditProfile extends Fragment {
                                         .setValue(downloadUrl);
 
                                 if(progressDialog.isShowing())
-                                    handler.sendEmptyMessage(0);
+                                    progressDialog.dismiss();
                             }
                         });
                         // taskSnapshot.getMetadata() contains file metadata such as size, content-type, and download URL.
@@ -725,7 +687,7 @@ public class EditProfile extends Fragment {
                             myToast.show();
 
                             if(progressDialog.isShowing())
-                                handler.sendEmptyMessage(0);
+                                progressDialog.dismiss();
                         }
                         /**
                          * GO TO ACCOUNT_FRAGMENT
@@ -740,7 +702,7 @@ public class EditProfile extends Fragment {
     }
 
 
-    public void clearText(View view) {
+    private void clearText(View view) {
         if (view.getId() == R.id.cancel_name)
             editTextFields.get("Name").setText("");
         else if(view.getId() == R.id.cancel_surname)
@@ -760,7 +722,7 @@ public class EditProfile extends Fragment {
     }
 
 
-    public void handleButton(){
+    private void handleButton(){
         for(ImageButton b : imageButtons.values())
             b.setVisibility(View.INVISIBLE);
 
@@ -788,7 +750,7 @@ public class EditProfile extends Fragment {
         }
     }
 
-    public void buttonListener(){
+    private void buttonListener(){
 
         for (String fieldName : editTextFields.keySet()){
             final EditText field= editTextFields.get(fieldName);
@@ -820,14 +782,14 @@ public class EditProfile extends Fragment {
     }
 
 
-    public void showButton(EditText field, ImageButton button){
+    private void showButton(EditText field, ImageButton button){
         if(field.getText().toString().length()>0)
             button.setVisibility(View.VISIBLE);
         else
             button.setVisibility(View.INVISIBLE);
     }
 
-    public void hideButton(ImageButton button){
+    private void hideButton(ImageButton button){
         button.setVisibility(View.INVISIBLE);
     }
 
@@ -901,18 +863,7 @@ public class EditProfile extends Fragment {
         }
     }
 
-
-
-
-   /* @Override
-    public void onResume() {
-        super.onResume();
-        handleButton();
-        buttonListener();
-        handleSwitch();
-    }*/
-
-    public void handleSwitch(){
+    private void handleSwitch(){
         if(switchPass.isChecked()){
             editTextFields.get("OldPassword").setEnabled(true);
             editTextFields.get("NewPassword").setEnabled(true);

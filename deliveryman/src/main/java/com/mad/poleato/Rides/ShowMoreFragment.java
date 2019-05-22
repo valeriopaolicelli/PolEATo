@@ -1,7 +1,5 @@
 package com.mad.poleato.Rides;
 
-import android.content.Intent;
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -13,14 +11,12 @@ import android.widget.TextView;
 
 import com.mad.poleato.R;
 
-import org.w3c.dom.Text;
-
 import java.util.HashMap;
 import java.util.Map;
 
 public class ShowMoreFragment extends DialogFragment {
 
-    View fragView;
+    private View fragView;
     private String rName;
     private String rAddress;
     private String rPhone;

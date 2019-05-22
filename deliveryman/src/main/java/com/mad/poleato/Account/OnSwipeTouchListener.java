@@ -5,6 +5,12 @@ import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.View;
 
+
+/**
+ * This class is used to handle all the possible actions of the SwitchButton in the EditProfile.
+ * The class is needed because of the difficulty to control the switch OnClick and OnSlide with the same logic.
+ * Thanks to this we can always detect status change when user interacts with the switch
+ */
 public class OnSwipeTouchListener implements View.OnTouchListener {
 
     private GestureDetector gestureDetector;

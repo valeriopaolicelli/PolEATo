@@ -68,7 +68,7 @@ public class StatisticsFragment extends Fragment {
     private GraphView graphView;                //statistics graph
 
     private static final double REVENUE_HOUR = 7.00;
-    private static final int NUM_DAYS_GRAPH = 4;
+    private static final int NUM_DAYS_GRAPH = 7; //num of days to show on a single graph window
 
     //contains <Day, sum(Millis)>
     private Map<Date, Long> workingHourPerDay;
@@ -94,7 +94,7 @@ public class StatisticsFragment extends Fragment {
         this.hostActivity = this.getActivity();
 
         if (hostActivity != null) {
-            myToast = Toast.makeText(hostActivity, "", Toast.LENGTH_LONG);
+            myToast = Toast.makeText(hostActivity, "", Toast.LENGTH_SHORT);
         }
     }
 
@@ -265,25 +265,10 @@ public class StatisticsFragment extends Fragment {
             revenues.put(day, rev);
         }
 
-        Log.d("matte", "ok");
-
     }
 
 
     private void setGraph(){
-
-        // activate horizontal zooming and scrolling
-        //graphView.getViewport().setScalable(true);
-
-        // activate horizontal scrolling
-        //graphView.getViewport().setScrollable(true);
-
-        // activate horizontal and vertical zooming and scrolling
-        //graphView.getViewport().setScalableY(true);
-
-        // activate vertical scrolling
-        //graphView.getViewport().setScrollableY(true);
-
 
         // enable scaling and scrolling
         graphView.getViewport().setScalable(true);
@@ -310,6 +295,7 @@ public class StatisticsFragment extends Fragment {
             @Override
             public void onTap(Series series, DataPointInterface dataPoint) {
 
+                Log.d("matte", "clicked");
                 DateFormat simple = new SimpleDateFormat("MM/dd");
                 long millis = (long)dataPoint.getX();
 
@@ -408,13 +394,10 @@ public class StatisticsFragment extends Fragment {
 
     private void logout(){
         FirebaseAuth.getInstance().signOut();
-        //                OneSignal.sendTag("User_ID", "");
         OneSignal.setSubscription(false);
 
-        /**
-         *  GO TO LOGIN ****
-         */
-        Navigation.findNavController(fragView).navigate(R.id.action_statisticsFragment_to_signInActivity);
+        //logout
+        Navigation.findNavController(fragView).navigate(R.id.action_statisticsFragment_to_signInActivity); //TODO mich
         getActivity().finish();
     }
 

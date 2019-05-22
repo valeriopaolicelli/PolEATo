@@ -1,6 +1,5 @@
-package com.mad.poleato;
+package com.mad.poleato.SignActivities;
 
-import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -37,6 +36,10 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.mad.poleato.ConnectionManager;
+import com.mad.poleato.FirebaseData.MyDatabaseReference;
+import com.mad.poleato.NavigatorActivity;
+import com.mad.poleato.R;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -169,14 +172,14 @@ public class SignInActivity extends AppCompatActivity {
     }
 
     //access to the app
-    public void access(){
+    private void access(){
         Intent myIntent = new Intent(SignInActivity.this, NavigatorActivity.class);
         SignInActivity.this.startActivity(myIntent);
         finish();
     }
 
 
-    public void signIn(String email, String password){
+    private void signIn(String email, String password){
         mAuth.signInWithEmailAndPassword(email, password)
                 .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
                     @Override
@@ -325,7 +328,7 @@ public class SignInActivity extends AppCompatActivity {
                 });
     }
 
-    public void clearText(View view) {
+    private void clearText(View view) {
         if(view.getId() == R.id.cancel_email)
             edEmail.setText("");
         else if(view.getId() == R.id.cancel_password)
@@ -333,7 +336,7 @@ public class SignInActivity extends AppCompatActivity {
     }
 
 
-    public void handleButton(){
+    private void handleButton(){
         cancEmail.setVisibility(View.INVISIBLE);
         cancPassword.setVisibility(View.INVISIBLE);
 
@@ -372,7 +375,7 @@ public class SignInActivity extends AppCompatActivity {
         });
     }
 
-    public void buttonListener(){
+    private void buttonListener(){
         edEmail.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -414,14 +417,14 @@ public class SignInActivity extends AppCompatActivity {
         });
     }
 
-    public void showButton(EditText field, ImageButton button){
+    private void showButton(EditText field, ImageButton button){
         if(field.getText().toString().length()>0)
             button.setVisibility(View.VISIBLE);
         else
             button.setVisibility(View.INVISIBLE);
     }
 
-    public void hideButton(ImageButton button){
+    private void hideButton(ImageButton button){
         button.setVisibility(View.INVISIBLE);
     }
 

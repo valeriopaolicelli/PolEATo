@@ -1,4 +1,4 @@
-package com.mad.poleato;
+package com.mad.poleato.FirebaseData;
 
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DatabaseReference;

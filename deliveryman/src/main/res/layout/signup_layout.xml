@@ -9,7 +9,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="@color/colorPanelPrimary"
-        tools:context=".SignUpActivity">
+        tools:context=".SignActivities.SignUpActivity">
 
         <ImageButton
             android:id="@+id/app_icon"

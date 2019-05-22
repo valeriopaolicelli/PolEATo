@@ -115,7 +115,7 @@
 
     <activity
         android:id="@+id/signInActivity"
-        android:name="com.mad.poleato.SignInActivity"
+        android:name="com.mad.poleato.SignActivities.SignInActivity"
         android:label="signin_layout"
         tools:layout="@layout/signin_layout" />
 

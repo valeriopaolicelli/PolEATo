@@ -16,13 +16,13 @@ import android.graphics.Canvas;
 import android.graphics.drawable.Drawable;
 import android.location.Address;
 import android.location.Geocoder;
+import android.location.Location;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.StrictMode;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
-import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
@@ -39,11 +39,8 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import androidx.navigation.Navigation;
-
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
-import com.google.android.gms.maps.MapFragment;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.BitmapDescriptor;
@@ -58,7 +55,8 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.mad.poleato.MyDatabaseReference;
+import com.mad.poleato.FirebaseData.MyDatabaseReference;
+import com.mad.poleato.LocationService.LocationUtilities;
 import com.mad.poleato.R;
 import com.onesignal.OneSignal;
 
@@ -153,9 +151,6 @@ public class RidesFragment extends Fragment implements OnMapReadyCallback {
         super.onAttach(context);
         this.hostActivity = this.getActivity();
 
-        if (hostActivity != null) {
-            myToast = Toast.makeText(hostActivity, "", Toast.LENGTH_LONG);
-        }
     }
 
 
@@ -163,7 +158,7 @@ public class RidesFragment extends Fragment implements OnMapReadyCallback {
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        myToast = Toast.makeText(hostActivity, "", Toast.LENGTH_LONG);
+        myToast = Toast.makeText(hostActivity, "", Toast.LENGTH_SHORT);
 
         //initially the rider is free from work
         isRunning = false;
@@ -204,13 +199,10 @@ public class RidesFragment extends Fragment implements OnMapReadyCallback {
         //logout
         Log.d("matte", "Logout");
         FirebaseAuth.getInstance().signOut();
-        //                OneSignal.sendTag("User_ID", "");
         OneSignal.setSubscription(false);
 
-        /**
-         *  GO TO LOGIN ****
-         */
-        Navigation.findNavController(fragView).navigate(R.id.action_rides_id_to_signInActivity);
+        //go to signIn activity
+        //Navigation.findNavController(fragView).navigate(R.id.action_rides_id_to_signInActivity); //TODO mich
         getActivity().finish();
     }
 
@@ -575,24 +567,6 @@ public class RidesFragment extends Fragment implements OnMapReadyCallback {
     }
 
 
-    public double computeDistance(LatLng origin, LatLng destination) {
-
-        double dLat  = Math.toRadians((destination.latitude - origin.latitude));
-        double dLong = Math.toRadians((destination.longitude - origin.longitude));
-
-        double a = haversin(dLat) + Math.cos(origin.latitude) * Math.cos(destination.latitude) * haversin(dLong);
-        double c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-
-        double distance = EARTH_RADIUS * c;
-        return distance;
-    }
-
-
-    public static double haversin(double val) {
-        return Math.pow(Math.sin(val / 2), 2);
-    }
-
-
     private void sendNotificationToCustomer() {
         AsyncTask.execute(new Runnable() {
             @Override
@@ -857,7 +831,7 @@ public class RidesFragment extends Fragment implements OnMapReadyCallback {
 
             if (oldLocation != null  && !isKmUploadNeeded) { //if the km upload is need the call the API anyway
                 //check if the rider moved of at least 'X' m.
-                double d = computeDistance(oldLocation, currLocation) * 1000;
+                double d = LocationUtilities.computeDistance(oldLocation, currLocation) * 1000;
                 if (d <= MIN_DISTANCE_LOC_UPDATE)
                     return;
             }
@@ -906,7 +880,7 @@ public class RidesFragment extends Fragment implements OnMapReadyCallback {
         moveCameraToCurrentLocation(origin);
 
         // check if already arrived
-        double distance = computeDistance(origin, destination)*1000; //in meters
+        double distance = LocationUtilities.computeDistance(origin, destination)*1000; //in meters
         if(distance < ARRIVED_DISTANCE){
             myToast.setText(getString(R.string.you_arrived));
             myToast.show();
