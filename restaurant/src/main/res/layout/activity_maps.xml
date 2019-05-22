@@ -26,22 +26,22 @@
         tools:context=".Reservation.RiderSelection.MapsFragment"
         tools:listitem="@layout/rider_layout" />
 
-    <android.support.design.widget.FloatingActionButton
-        android:id="@+id/map_button"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:backgroundTint="@color/colorBodyPrimary"
-        android:src="@mipmap/map_icon_round"
-        app:maxImageSize="40dp"
-        app:fabCustomSize="40dp"
-        app:fabSize="auto"
-        android:elevation="8dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.967"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@id/rider_listview"
-        app:layout_constraintVertical_bias="0.967" />
+    <!--<android.support.design.widget.FloatingActionButton-->
+        <!--android:id="@+id/map_button"-->
+        <!--android:layout_width="wrap_content"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:backgroundTint="@color/colorBodyPrimary"-->
+        <!--android:src="@mipmap/map_icon_round"-->
+        <!--app:maxImageSize="40dp"-->
+        <!--app:fabCustomSize="40dp"-->
+        <!--app:fabSize="auto"-->
+        <!--android:elevation="8dp"-->
+        <!--app:layout_constraintBottom_toBottomOf="parent"-->
+        <!--app:layout_constraintEnd_toEndOf="parent"-->
+        <!--app:layout_constraintHorizontal_bias="0.967"-->
+        <!--app:layout_constraintStart_toStartOf="parent"-->
+        <!--app:layout_constraintTop_toTopOf="@id/rider_listview"-->
+        <!--app:layout_constraintVertical_bias="0.967" />-->
 
     <fragment
         android:id="@+id/map_view"

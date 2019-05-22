@@ -97,37 +97,12 @@ public class HistoryFragment extends Fragment {
         OneSignal.setSubscription(true);
         OneSignal.sendTag("User_ID", currentUserID);
 
-//        if (getActivity() != null) {
-//            progressDialog = ProgressDialog.show(getActivity(), "", hostActivity.getString(R.string.loading));
-//        }
+        if (getActivity() != null) {
+            progressDialog = ProgressDialog.show(getActivity(), "", hostActivity.getString(R.string.loading));
+        }
 
 
 
-    }
-
-    @Override
-    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-        menu.clear();
-        // Inflate the menu; this adds items to the action bar if it is present.
-        inflater.inflate(R.menu.popup_account_settings, menu);
-        menu.findItem(R.id.logout).setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
-            @Override
-            public boolean onMenuItemClick(MenuItem item) {
-                //logout
-                Log.d("matte", "Logout");
-                FirebaseAuth.getInstance().signOut();
-                //                OneSignal.sendTag("User_ID", "");
-                OneSignal.setSubscription(false);
-
-                /**
-                 *  GO TO LOGIN ****
-                 */
-                Navigation.findNavController(fragView).navigate(R.id.action_rides_id_to_signInActivity);
-                getActivity().finish();
-                return true;
-            }
-        });
-        super.onCreateOptionsMenu(menu,inflater);
     }
 
 
@@ -167,9 +142,9 @@ public class HistoryFragment extends Fragment {
             public void onChanged(@Nullable HashMap<String, HistoryItem> stringHistoryHashMap) {
                 if(stringHistoryHashMap.values() != null)
                     historyAdapter.setAllHistories( new ArrayList<HistoryItem>(stringHistoryHashMap.values()));
-//                    if(progressDialog.isShowing()){
-//                        progressDialog.dismiss();
-//                    }
+                    if(progressDialog.isShowing()){
+                        progressDialog.dismiss();
+                    }
             }
         });
     }

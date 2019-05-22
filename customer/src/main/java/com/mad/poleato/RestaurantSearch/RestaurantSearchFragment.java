@@ -108,8 +108,8 @@ public class RestaurantSearchFragment extends Fragment {
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
-        //in order to create the logout menu (don't move!)
-        setHasOptionsMenu(true);
+//        //in order to create the logout menu (don't move!)
+//        setHasOptionsMenu(true);
         super.onCreate(savedInstanceState);
 
         restaurantMap = new HashMap<>();
@@ -126,30 +126,31 @@ public class RestaurantSearchFragment extends Fragment {
 
     }
 
-    @Override
-    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-        menu.clear();
-        // Inflate the menu; this adds items to the action bar if it is present.
-        inflater.inflate(R.menu.popup_account_settings, menu);
-        menu.findItem(R.id.logout).setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
-            @Override
-            public boolean onMenuItemClick(MenuItem item) {
-                //logout
-                Log.d("matte", "Logout");
-                FirebaseAuth.getInstance().signOut();
-                //                OneSignal.sendTag("User_ID", "");
-                OneSignal.setSubscription(false);
-
-                /**
-                 *  GO TO LOGIN ****
-                 */
-                Navigation.findNavController(fragView).navigate(R.id.action_restaurantSearchFragment_id_to_signInActivity);
-                getActivity().finish();
-                return true;
-            }
-        });
-        super.onCreateOptionsMenu(menu,inflater);
-    }
+    //TODO Scegliere se inserire ristoranti preferiti nell'actionbar
+//    @Override
+//    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+//        menu.clear();
+//        // Inflate the menu; this adds items to the action bar if it is present.
+//        inflater.inflate(R.menu.popup_account_settings, menu);
+//        menu.findItem(R.id.logout).setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
+//            @Override
+//            public boolean onMenuItemClick(MenuItem item) {
+//                //logout
+//                Log.d("matte", "Logout");
+//                FirebaseAuth.getInstance().signOut();
+//                //                OneSignal.sendTag("User_ID", "");
+//                OneSignal.setSubscription(false);
+//
+//                /**
+//                 *  GO TO LOGIN ****
+//                 */
+//                Navigation.findNavController(fragView).navigate(R.id.action_restaurantSearchFragment_id_to_signInActivity);
+//                getActivity().finish();
+//                return true;
+//            }
+//        });
+//        super.onCreateOptionsMenu(menu,inflater);
+//    }
 
     @Override
     public void onResume() {

@@ -17,6 +17,7 @@ public class Ride implements Serializable {
     private String phoneRestaurant;
     private String deliveryTime;
     private String notifiedTime; //time at which reservation notification arrived to the rider
+    private double km;
 
 
     public Ride(String orderID, String addressCustomer, String addressRestaurant,
@@ -37,6 +38,7 @@ public class Ride implements Serializable {
         this.customerID= customerID;
         this.deliveryTime = deliveryTime;
         this.notifiedTime = notifiedTime;
+        this.km = 0.0; //the first time this value is set to 0 and the it will update with the setter
 
     }
 
@@ -91,4 +93,8 @@ public class Ride implements Serializable {
     public String getNotifiedTime() {
         return notifiedTime;
     }
+
+    public double getKm(){ return this.km; }
+
+    public void addKm(double km) { this.km += km; }
 }

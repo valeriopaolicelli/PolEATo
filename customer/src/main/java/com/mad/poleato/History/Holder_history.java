@@ -77,8 +77,6 @@ public class Holder_history extends Fragment {
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
-        //in order to create the logout menu (don't move!)
-        setHasOptionsMenu(true);
         super.onCreate(savedInstanceState);
 
         mAuth = FirebaseAuth.getInstance();
@@ -101,40 +99,16 @@ public class Holder_history extends Fragment {
         display.getSize(size);
         width = size.x;
 
-        dbReferenceList= new ArrayList<>();
+        dbReferenceList = new ArrayList<>();
     }
 
-    @Override
-    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-        menu.clear();
-        // Inflate the menu; this adds items to the action bar if it is present.
-        inflater.inflate(R.menu.popup_account_settings, menu);
-        menu.findItem(R.id.logout).setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
-            @Override
-            public boolean onMenuItemClick(MenuItem item) {
-                //logout
-                Log.d("matte", "Logout");
-                FirebaseAuth.getInstance().signOut();
-                //                OneSignal.sendTag("User_ID", "");
-                OneSignal.setSubscription(false);
-
-                /**
-                 *  GO TO LOGIN ****
-                 */
-                Navigation.findNavController(view).navigate(R.id.action_holder_history_id_to_signInActivity);
-                getActivity().finish();
-                return true;
-            }
-        });
-        super.onCreateOptionsMenu(menu,inflater);
-    }
-
+    
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         view = inflater.inflate(R.layout.fragment_holder_history, container, false);
-        if(getActivity() != null)
+        if (getActivity() != null)
             progressDialog = ProgressDialog.show(getActivity(), "", getString(R.string.loading));
 
         initData();
@@ -172,25 +146,28 @@ public class Holder_history extends Fragment {
         reference.addChildEventListener(new ChildEventListener() {
             @Override
             public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
-                if(dataSnapshot.hasChild("orderID") &&
-                    dataSnapshot.hasChild("restaurantName") &&
-                    dataSnapshot.hasChild("date") &&
-                    dataSnapshot.hasChild("time") &&
-                    dataSnapshot.hasChild("totalPrice") &&
-                    dataSnapshot.hasChild("dishes")){
+                if (dataSnapshot.hasChild("orderID") &&
+                        dataSnapshot.hasChild("restaurantName") &&
+                        dataSnapshot.hasChild("date") &&
+                        dataSnapshot.hasChild("time") &&
+                        dataSnapshot.hasChild("totalPrice") &&
+                        dataSnapshot.hasChild("dishes") &&
+                        dataSnapshot.hasChild("restaurantID") &&
+                        dataSnapshot.hasChild("reviewFlag")) {
 
                     String nameDish;
                     int quantity;
                     String note;
-                    List<Dish> dishes= new ArrayList<>();
+                    List<Dish> dishes = new ArrayList<>();
                     Reservation r;
 
                     /*
                      *   Retrieve all fields
                      */
-                    final String orderID= dataSnapshot.child("orderID").getValue().toString();
-                    final String restaurantName= dataSnapshot.child("restaurantName").getValue().toString();
-                    final Long dateInMills= Long.parseLong(dataSnapshot.child("date").getValue().toString());
+                    final String orderID = dataSnapshot.child("orderID").getValue().toString();
+                    final String restaurantName = dataSnapshot.child("restaurantName").getValue().toString();
+                    final Long dateInMills = Long.parseLong(dataSnapshot.child("date").getValue().toString());
+                    Boolean reviewFlag = Boolean.parseBoolean(dataSnapshot.child("reviewFlag").getValue().toString());
 
                     DateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
                     Calendar calendar = Calendar.getInstance();
@@ -199,19 +176,20 @@ public class Holder_history extends Fragment {
 
                     final String date = formatter.format(calendar.getTime());
 
-                    final String time= dataSnapshot.child("time").getValue().toString();
-                    final String totalPrice= dataSnapshot.child("totalPrice").getValue().toString();
-
+                    final String time = dataSnapshot.child("time").getValue().toString();
+                    final String totalPrice = dataSnapshot.child("totalPrice").getValue().toString();
+                    String restaurantID = dataSnapshot.child("restaurantID").getValue().toString();
                     DataSnapshot dishesOfReservation = dataSnapshot.child("dishes");
                     for (DataSnapshot dish : dishesOfReservation.getChildren()) {
                         nameDish = dish.child("name").getValue().toString();
                         quantity = Integer.parseInt(dish.child("quantity").getValue().toString());
-                        note= dish.child("notes").getValue().toString();
+                        note = dish.child("notes").getValue().toString();
                         dishes.add(new Dish(nameDish, quantity, note));
                     }
-                    r= new Reservation(orderID, restaurantName, date, time, totalPrice);
+                    r = new Reservation(orderID, restaurantName, date, time, totalPrice);
                     r.setDishes(dishes);
-
+                    r.setRestaurantID(restaurantID);
+                    r.setReviewFlag(reviewFlag);
                     /*
                      * Update the expandable list adapter
                      */
@@ -224,56 +202,71 @@ public class Holder_history extends Fragment {
 
             @Override
             public void onChildChanged(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
-                if(dataSnapshot.hasChild("orderID") &&
+                if (dataSnapshot.hasChild("orderID") &&
                         dataSnapshot.hasChild("restaurantName") &&
                         dataSnapshot.hasChild("date") &&
                         dataSnapshot.hasChild("time") &&
                         dataSnapshot.hasChild("totalPrice") &&
-                        dataSnapshot.hasChild("dishes")){
+                        dataSnapshot.hasChild("dishes") &&
+                        dataSnapshot.hasChild("restaurantID") &&
+                        dataSnapshot.hasChild("reviewFlag") &&
+                        dataSnapshot.hasChild("name")) {
 
                     String nameDish;
                     int quantity;
                     String note;
-                    List<Dish> dishes= new ArrayList<>();
+                    List<Dish> dishes = new ArrayList<>();
                     Reservation r;
 
                     /*
                      *   Retrieve all fields
                      */
-                    final String orderID= dataSnapshot.child("orderID").getValue().toString();
-                    final String restaurantName= dataSnapshot.child("restaurantName").getValue().toString();
-                    final String date= dataSnapshot.child("date").getValue().toString();
-                    final String time= dataSnapshot.child("time").getValue().toString();
-                    final String totalPrice= dataSnapshot.child("totalPrice").getValue().toString();
+                    final String orderID = dataSnapshot.child("orderID").getValue().toString();
+                    final String restaurantName = dataSnapshot.child("restaurantName").getValue().toString();
+                    final String date = dataSnapshot.child("date").getValue().toString();
+                    final String time = dataSnapshot.child("time").getValue().toString();
+                    final String totalPrice = dataSnapshot.child("totalPrice").getValue().toString();
+                    Boolean reviewFlag = Boolean.parseBoolean(dataSnapshot.child("reviewFlag").getValue().toString());
+                    String restaurantID = dataSnapshot.child("restaurantID").getValue().toString();
 
                     DataSnapshot dishesOfReservation = dataSnapshot.child("dishes");
                     for (DataSnapshot dish : dishesOfReservation.getChildren()) {
                         nameDish = dish.child("name").getValue().toString();
                         quantity = Integer.parseInt(dish.child("quantity").getValue().toString());
-                        note= dish.child("notes").getValue().toString();
+                        note = dish.child("notes").getValue().toString();
 
                         dishes.add(new Dish(nameDish, quantity, note));
                     }
-                    r= new Reservation(orderID, restaurantName, date, time, totalPrice);
+                    r = new Reservation(orderID, restaurantName, date, time, totalPrice);
                     r.setDishes(dishes);
-
+                    r.setRestaurantID(restaurantID);
+                    r.setReviewFlag(reviewFlag);
                     /*
                      * Update the expandable list adapter
                      */
                     listHash.put(r.getOrderID(), r.getDishes());
-                    if(!listHash.containsKey(orderID)){
+                    if (!listHash.containsKey(orderID)) {
                         reservations.add(r);
+                    } else {
+                        for (Reservation reservation : reservations) {
+                            if (reservation.getOrderID().equals(r.getOrderID())) {
+                                reservation.setDishes(dishes);
+                                reservation.setRestaurantID(restaurantID);
+                                reservation.setReviewFlag(reviewFlag);
+                            }
+                        }
                     }
                     Collections.sort(reservations, Reservation.timeComparator);
+                    listAdapter.updateReservations(reservations);
                     listAdapter.notifyDataSetChanged();
                 }
             }
 
             @Override
             public void onChildRemoved(@NonNull DataSnapshot dataSnapshot) {
-                String order_id= dataSnapshot.getKey();
-                for(int i=0; i<reservations.size(); i++)
-                    if(reservations.get(i).getOrderID().equals(order_id)) {
+                String order_id = dataSnapshot.getKey();
+                for (int i = 0; i < reservations.size(); i++)
+                    if (reservations.get(i).getOrderID().equals(order_id)) {
                         reservations.remove(i);
                         break;
                     }
@@ -305,7 +298,7 @@ public class Holder_history extends Fragment {
     @Override
     public void onDestroy() {
         super.onDestroy();
-        for (int i=0; i < dbReferenceList.size(); i++)
+        for (int i = 0; i < dbReferenceList.size(); i++)
             dbReferenceList.get(i).removeAllListener();
     }
 }

@@ -90,6 +90,10 @@
     <string name="title_bottombar_historyOrder">Ordini</string>
     <string name="title_actionbar_historyOrder">Ordini</string>
 
+    <string name="title_bottombar_myReviews">Recensioni</string>
+    <string name="title_actionbar_myReviews">Recensioni</string>
+
+
     <string name="title_bottombar_account">Account</string>
     <string name="title_actionbar_account">Account</string>
     <string name="title_actionbar_edit_account">Modifica Account</string>
@@ -125,6 +129,13 @@
     <string name="internet_message">Per utilizzare l\'applicazione devi essere connesso ad Internet</string>
     <string name="interner_confirm">Impostazioni Internet</string>
 
+    <!-- Ratings -->
+    <string name="reviewLabel">Lascia una recensione per il ristorante </string>
+    <string name="very_bad">Molto male!</string>
+    <string name="not_good">Non bene</string>
+    <string name="neutral">Normale</string>
+    <string name="good">Bene</string>
+    <string name="very_good">Benissimo!</string>
     <!-- Favorite restaurant and foods -->
     <string name="favorite_list_button">I tuoi ristoranti preferiti</string>
     <string name="favorite_list_plates_button">I tuoi piatti preferiti</string>

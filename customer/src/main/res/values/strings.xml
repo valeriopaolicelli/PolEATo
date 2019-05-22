@@ -89,6 +89,9 @@
     <string name="title_bottombar_historyOrder">Orders</string>
     <string name="title_actionbar_historyOrder">Orders</string>
 
+    <string name="title_bottombar_myReviews">Reviews</string>
+    <string name="title_actionbar_myReviews">Reviews</string>
+
 
     <string name="title_bottombar_account">Account</string>
     <string name="title_actionbar_account">Account</string>
@@ -125,9 +128,19 @@
     <string name="internet_message">To use this application you must be connected to the Internet</string>
     <string name="interner_confirm">Data settings</string>
 
+    <!-- Ratings -->
+    <string name="reviewLabel">Leave a review for</string>
+    <string name="very_bad">Very bad!</string>
+    <string name="not_good">Not so good</string>
+    <string name="neutral">Neutral</string>
+    <string name="good">Good</string>
+    <string name="very_good">I loved it!</string>
     <!-- Favorite restaurant and foods -->
     <string name="favorite_list_button">Your favorite restaurants</string>
     <string name="favorite_list_plates_button">Your favorite plates</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 
 
 </resources>

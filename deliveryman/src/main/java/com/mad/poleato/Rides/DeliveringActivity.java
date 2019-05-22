@@ -81,7 +81,6 @@ public class DeliveringActivity extends FragmentActivity implements OnMapReadyCa
     private static final int EARTH_RADIUS = 6371; // Approx Earth radius in KM
 
     //two costant for frequency update tuning
-    private static final int MIN_TIME_LOC_UPDATE = 5000;
     private static final int MIN_DISTANCE_LOC_UPDATE = 7;
     private static final double ARRIVED_DISTANCE = 8.0; //if closer to 8 meters than notify arrived
 
@@ -98,7 +97,6 @@ public class DeliveringActivity extends FragmentActivity implements OnMapReadyCa
     private LatLng customerPosition;
     private LatLng restaurantPosition;
     private Geocoder geocoder;
-    private LocationManager locationManager;
 
     //current distance and duration of the ride
     private String currDistance;
@@ -160,6 +158,15 @@ public class DeliveringActivity extends FragmentActivity implements OnMapReadyCa
             }
         }
     };
+
+
+
+
+
+
+
+
+
 
 
     @Override
