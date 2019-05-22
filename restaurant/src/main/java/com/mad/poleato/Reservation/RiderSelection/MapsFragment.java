@@ -3,6 +3,7 @@ package com.mad.poleato.Reservation.RiderSelection;
 import android.Manifest;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
@@ -26,6 +27,9 @@ import android.os.Bundle;
 import android.support.v4.content.ContextCompat;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ListView;
@@ -121,7 +125,6 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback,
     private ListView listView;
     private RiderListAdapter listAdapter;
 
-    private FloatingActionButton mapButton;
     private SupportMapFragment mapFragment;
 
     private List<MyDatabaseReference> dbReferenceList;
@@ -130,6 +133,12 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback,
         // Required empty public constructor
     }
 
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        //in order to create the logout menu (don't move!)
+        setHasOptionsMenu(true);
+        super.onCreate(savedInstanceState);
+    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -141,9 +150,9 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback,
          */
 
         loggedID = MapsFragmentArgs.fromBundle(getArguments()).getLoggedId();
-        reservation= MapsFragmentArgs.fromBundle(getArguments()).getReservation();
+        reservation = MapsFragmentArgs.fromBundle(getArguments()).getReservation();
 
-        Locale locale= Locale.getDefault();
+        Locale locale = Locale.getDefault();
         localeShort = locale.toString().substring(0, 2);
 
         /**
@@ -161,22 +170,21 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback,
 
         OneSignal.setSubscription(true);
         OneSignal.sendTag("User_ID", currentUserID);
-        dbReferenceList= new ArrayList<>();
+        dbReferenceList = new ArrayList<>();
 
-        // Obtain the SupportMapFragment and get notified when the map is ready to be used.
+        /** Obtain the SupportMapFragment and get notified when the map is ready to be used.*/
         mapFragment = (SupportMapFragment) getChildFragmentManager()
                 .findFragmentById(R.id.map_view);
         mapFragment.getMapAsync(this);
         mapFragment.getView().setVisibility(View.GONE);
 
-        mapButton= fragView.findViewById(R.id.map_button);
 
-        referenceDB= FirebaseDatabase.getInstance().getReference("Map");
+        referenceDB = FirebaseDatabase.getInstance().getReference("Map");
         //ref = FirebaseDatabase.getInstance().getReference("restaurants").child(currentUserID);
         //referenceRiders = FirebaseDatabase.getInstance().getReference("deliveryman");
         geoFire = new GeoFire(referenceDB);
 
-        /*
+        /**
          * setup listview and adapter that will contain the list of riders;
          */
         riders = new HashMap<>();
@@ -191,42 +199,45 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback,
     }
 
     @Override
-    public void onResume() {
-        super.onResume();
-        handleButton();
-    }
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        menu.clear();
+        /** Inflate the menu; this adds items to the action bar if it is present.*/
+        inflater.inflate(R.menu.map_menu, menu);
 
-    private void handleButton() {
-        mapButton.setOnClickListener(new View.OnClickListener() {
+        /** Button to show map */
+        menu.findItem(R.id.map_id).setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
             @Override
-            public void onClick(View v) {
-                if(mapFragment.getView().getVisibility() == View.VISIBLE) {
+            public boolean onMenuItemClick(MenuItem item) {
+                if (mapFragment.getView().getVisibility() == View.VISIBLE) {
                     mapFragment.getView().setVisibility(View.GONE);
-                    mapButton.setImageResource(R.mipmap.map_icon_round);
-                }
-                else {
+                    item.setIcon(R.mipmap.map_icon_round);
+                } else {
                     mapFragment.getView().setVisibility(View.VISIBLE);
-                    mapButton.setImageResource(R.mipmap.list_icon_round);
+                    item.setIcon(R.mipmap.list_icon_round);
                 }
+
+                return true;
             }
         });
+
+        super.onCreateOptionsMenu(menu, inflater);
     }
 
-    /*
+
+    /**
      * Functions related to location and google play services
      */
 
     private void setUpLocation() {
-        if(ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED &&
-                ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED){
+        if (ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED &&
+                ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             // Request routine permission
             ActivityCompat.requestPermissions(getActivity(), new String[]{
                     Manifest.permission.ACCESS_COARSE_LOCATION,
                     Manifest.permission.ACCESS_FINE_LOCATION
             }, MY_PERMISSION_REQUEST_CODE);
-        }
-        else{
-            if(checkPlayServices()){
+        } else {
+            if (checkPlayServices()) {
                 buildGoogleApiClient();
                 createLocationRequest();
                 displayLocation();
@@ -235,7 +246,7 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback,
     }
 
     private void createLocationRequest() {
-        mLocationRequest= new LocationRequest();
+        mLocationRequest = new LocationRequest();
         mLocationRequest.setInterval(UPDATE_INTERVAL);
         mLocationRequest.setFastestInterval(FASTEST_INTERVAL);
         mLocationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
@@ -244,7 +255,7 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback,
     }
 
     private void buildGoogleApiClient() {
-        mGoogleApiClient= new GoogleApiClient.Builder(getContext())
+        mGoogleApiClient = new GoogleApiClient.Builder(getContext())
                 .addConnectionCallbacks(this)
                 .addOnConnectionFailedListener(this)
                 .addApi(LocationServices.API)
@@ -253,11 +264,11 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback,
     }
 
     private boolean checkPlayServices() {
-        int resultCode= GoogleApiAvailability.getInstance().isGooglePlayServicesAvailable(getContext());
-        if(resultCode != ConnectionResult.SUCCESS){
-            if(GoogleApiAvailability.getInstance().isUserResolvableError(resultCode))
+        int resultCode = GoogleApiAvailability.getInstance().isGooglePlayServicesAvailable(getContext());
+        if (resultCode != ConnectionResult.SUCCESS) {
+            if (GoogleApiAvailability.getInstance().isUserResolvableError(resultCode))
                 GoogleApiAvailability.getInstance().getErrorDialog(getActivity(), resultCode, PLAY_SERVICES_RESOLUTION_REQUEST).show();
-            else{
+            else {
                 Toast.makeText(getContext(), "This device is not suppoted", Toast.LENGTH_SHORT).show();
 
                 /**
@@ -272,10 +283,10 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback,
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        switch(requestCode){
+        switch (requestCode) {
             case MY_PERMISSION_REQUEST_CODE:
-                if(grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED){
-                    if(checkPlayServices()){
+                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    if (checkPlayServices()) {
                         buildGoogleApiClient();
                         createLocationRequest();
                         displayLocation();
@@ -302,7 +313,7 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback,
 
     @Override
     public void onLocationChanged(Location location) {
-        mLastLocation= location;
+        mLastLocation = location;
         displayLocation();
     }
 
@@ -321,14 +332,14 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback,
 
     }
 
-    /*
+    /**
      * ********************************************************************************
      * body of activity
      * ********************************************************************************
      */
 
     private void displayLocation() {
-        if(ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED &&
+        if (ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED &&
                 ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             return;
         }
@@ -338,10 +349,10 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback,
          */
         final DatabaseReference referenceRestaurant = FirebaseDatabase.getInstance().getReference("restaurants").child(currentUserID);
         dbReferenceList.add(new MyDatabaseReference(referenceRestaurant));
-        int indexReference= dbReferenceList.size()-1;
+        int indexReference = dbReferenceList.size() - 1;
         ChildEventListener childEventListener;
 
-        dbReferenceList.get(indexReference).getReference().child("Name").addChildEventListener(childEventListener= new ChildEventListener() {
+        dbReferenceList.get(indexReference).getReference().child("Name").addChildEventListener(childEventListener = new ChildEventListener() {
             @Override
             public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
                 restaurant_name = dataSnapshot.getValue().toString();
@@ -370,14 +381,14 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback,
 
         dbReferenceList.get(indexReference).setChildListener(childEventListener);
 
-        /*
+        /**
          * retrieve coordinates of restaurant to put the marker in the map
          */
 
-        dbReferenceList.get(indexReference).getReference().child("Coordinates").addChildEventListener(childEventListener= new ChildEventListener() {
+        dbReferenceList.get(indexReference).getReference().child("Coordinates").addChildEventListener(childEventListener = new ChildEventListener() {
             @Override
             public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
-                if(reservation.getStatus().equals(Status.COOKING) && getContext() != null) {
+                if (reservation.getStatus().equals(Status.COOKING) && getContext() != null) {
                     latitudeRest = Double.parseDouble(dataSnapshot.child("Latitude").getValue().toString());
                     longitudeRest = Double.parseDouble(dataSnapshot.child("Longitude").getValue().toString());
                     Log.d("Valerio", String.format("Restaurant location was changed: %f / %f", latitudeRest, longitudeRest));
@@ -385,7 +396,7 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback,
                     geoFire.setLocation(currentUserID, new GeoLocation(latitudeRest, longitudeRest), new GeoFire.CompletionListener() {
                         @Override
                         public void onComplete(String key, DatabaseError error) {
-                            if(reservation.getStatus().equals(Status.COOKING) && getContext() != null) {
+                            if (reservation.getStatus().equals(Status.COOKING) && getContext() != null) {
                                 //Add marker
                                 Drawable icon = ContextCompat.getDrawable(getContext(), R.drawable.restaurant_icon);
                                 BitmapDescriptor markerIcon = getMarkerIconFromDrawable(icon);
@@ -398,7 +409,7 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback,
                                         .icon(markerIcon)
                                 );
 
-                                //Move camera to this position
+                                /**Move camera to this position*/
                                 mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(latitudeRest, longitudeRest), 15.0f));
                             }
                         }
@@ -408,7 +419,7 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback,
 
             @Override
             public void onChildChanged(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
-                if(reservation.getStatus().equals(Status.COOKING) && getContext() != null) {
+                if (reservation.getStatus().equals(Status.COOKING) && getContext() != null) {
                     latitudeRest = Double.parseDouble(dataSnapshot.child("Latitude").getValue().toString());
                     longitudeRest = Double.parseDouble(dataSnapshot.child("Longitude").getValue().toString());
                     Log.d("Valerio", String.format("Restaurant location was changed: %f / %f", latitudeRest, longitudeRest));
@@ -416,7 +427,7 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback,
                     geoFire.setLocation(currentUserID, new GeoLocation(latitudeRest, longitudeRest), new GeoFire.CompletionListener() {
                         @Override
                         public void onComplete(String key, DatabaseError error) {
-                            if(reservation.getStatus().equals(Status.COOKING) && getContext() != null) {
+                            if (reservation.getStatus().equals(Status.COOKING) && getContext() != null) {
                                 //Add marker
                                 Drawable icon = ContextCompat.getDrawable(getContext(), R.drawable.restaurant_icon);
                                 BitmapDescriptor markerIcon = getMarkerIconFromDrawable(icon);
@@ -429,7 +440,7 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback,
                                         .icon(markerIcon)
                                 );
 
-                                //Move camera to this position
+                                /**Move camera to this position*/
                                 mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(latitudeRest, longitudeRest), 15.0f));
                             }
                         }
@@ -444,7 +455,7 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback,
 
             @Override
             public void onChildMoved(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
-                if(reservation.getStatus().equals(Status.COOKING) && getContext() != null) {
+                if (reservation.getStatus().equals(Status.COOKING) && getContext() != null) {
                     latitudeRest = Double.parseDouble(dataSnapshot.child("Latitude").getValue().toString());
                     longitudeRest = Double.parseDouble(dataSnapshot.child("Longitude").getValue().toString());
                     Log.d("Valerio", String.format("Restaurant location was changed: %f / %f", latitudeRest, longitudeRest));
@@ -452,7 +463,7 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback,
                     geoFire.setLocation(currentUserID, new GeoLocation(latitudeRest, longitudeRest), new GeoFire.CompletionListener() {
                         @Override
                         public void onComplete(String key, DatabaseError error) {
-                            if(reservation.getStatus().equals(Status.COOKING) && getContext() != null) {
+                            if (reservation.getStatus().equals(Status.COOKING) && getContext() != null) {
                                 //Add marker
                                 Drawable icon = ContextCompat.getDrawable(getContext(), R.drawable.restaurant_icon);
                                 BitmapDescriptor markerIcon = getMarkerIconFromDrawable(icon);
@@ -465,7 +476,7 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback,
                                         .icon(markerIcon)
                                 );
 
-                                //Move camera to this position
+                                /**Move camera to this position*/
                                 mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(latitudeRest, longitudeRest), 15.0f));
                             }
                         }
@@ -480,7 +491,7 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback,
         });
         dbReferenceList.get(indexReference).setChildListener(childEventListener);
 
-        /*
+        /**
          * retrieve rider coordinates and update the list and the map
          */
 
@@ -488,322 +499,322 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback,
         geoQuery = geoFire.queryAtLocation(new GeoLocation(latitudeRest, longitudeRest), 2);
 
         geoQuery.addGeoQueryEventListener(new GeoQueryEventListener() {
-              @Override
-              public void onKeyEntered(String key, final GeoLocation location) {
-                  final String riderID = key;
+            @Override
+            public void onKeyEntered(String key, final GeoLocation location) {
+                final String riderID = key;
 
-                  if(!riderID.equals(currentUserID)) {
-                      DatabaseReference referenceRider = FirebaseDatabase.getInstance().getReference("deliveryman/" + riderID);
-                      dbReferenceList.add(new MyDatabaseReference(referenceRider));
-                      int indexReference= dbReferenceList.size()-1;
-                      ValueEventListener valueEventListener;
+                if (!riderID.equals(currentUserID)) {
+                    DatabaseReference referenceRider = FirebaseDatabase.getInstance().getReference("deliveryman/" + riderID);
+                    dbReferenceList.add(new MyDatabaseReference(referenceRider));
+                    int indexReference = dbReferenceList.size() - 1;
+                    ValueEventListener valueEventListener;
 
-                      dbReferenceList.get(indexReference).getReference().addValueEventListener(valueEventListener= new ValueEventListener() {
-                          @Override
-                          public void onDataChange(@NonNull final DataSnapshot dataSnapshot) {
-                              if (dataSnapshot.hasChild("Busy") &&
-                                      dataSnapshot.child("Busy").getValue().toString().equals("false") &&
-                                        dataSnapshot.hasChild("IsActive") &&
-                                        dataSnapshot.child("IsActive").getValue().toString().equals("true") &&
-                                        reservation.getStatus().equals(Status.COOKING) &&
-                                        getContext() != null) {
-                                  final double latRider = location.latitude;
-                                  final double longRider = location.longitude;
-                                  if (!riders.containsKey(riderID)) {
-                                      Rider rider = new Rider(riderID, latRider, longRider, latitudeRest, longitudeRest);
-                                      riders.put(riderID, rider);
-                                      listAdapter.addRider(riders.get(riderID));
-                                  } else {
-                                      riders.get(riderID).setLatitude(latRider);
-                                      riders.get(riderID).setLongitude(longRider);
-                                      riders.get(riderID).setDistance(latitudeRest, longitudeRest);
-                                      for (int i = 0; i < listAdapter.getCount(); i++) {
-                                          if (listAdapter.getItem(i).getId().equals(riderID)) {
-                                              listAdapter.getItem(i).setLatitude(latRider);
-                                              listAdapter.getItem(i).setLongitude(longRider);
-                                              listAdapter.getItem(i).setDistance(latitudeRest, longitudeRest);
-                                          }
-                                      }
-                                  }
+                    dbReferenceList.get(indexReference).getReference().addValueEventListener(valueEventListener = new ValueEventListener() {
+                        @Override
+                        public void onDataChange(@NonNull final DataSnapshot dataSnapshot) {
+                            if (dataSnapshot.hasChild("Busy") &&
+                                    dataSnapshot.child("Busy").getValue().toString().equals("false") &&
+                                    dataSnapshot.hasChild("IsActive") &&
+                                    dataSnapshot.child("IsActive").getValue().toString().equals("true") &&
+                                    reservation.getStatus().equals(Status.COOKING) &&
+                                    getContext() != null) {
+                                final double latRider = location.latitude;
+                                final double longRider = location.longitude;
+                                if (!riders.containsKey(riderID)) {
+                                    Rider rider = new Rider(riderID, latRider, longRider, latitudeRest, longitudeRest);
+                                    riders.put(riderID, rider);
+                                    listAdapter.addRider(riders.get(riderID));
+                                } else {
+                                    riders.get(riderID).setLatitude(latRider);
+                                    riders.get(riderID).setLongitude(longRider);
+                                    riders.get(riderID).setDistance(latitudeRest, longitudeRest);
+                                    for (int i = 0; i < listAdapter.getCount(); i++) {
+                                        if (listAdapter.getItem(i).getId().equals(riderID)) {
+                                            listAdapter.getItem(i).setLatitude(latRider);
+                                            listAdapter.getItem(i).setLongitude(longRider);
+                                            listAdapter.getItem(i).setDistance(latitudeRest, longitudeRest);
+                                        }
+                                    }
+                                }
 
-                                  listAdapter.notifyDataSetChanged();
-
-
-                                  //Update restaurant map
-                                  geoFire.setLocation(riderID,
-                                          new GeoLocation(latRider, longRider), new GeoFire.CompletionListener() {
-                                              @Override
-                                              public void onComplete(String key, DatabaseError error) {
-                                                  if (dataSnapshot.child("Busy").getValue().toString().equals("false") &&
-                                                          reservation.getStatus().equals(Status.COOKING) &&
-                                                          getContext() != null) {
-
-                                                      //Add marker
-                                                      if (riders.get(riderID).getMarker() != null)
-                                                          riders.get(riderID).getMarker().remove();
-                                                      Drawable icon = ContextCompat.getDrawable(getContext(), R.drawable.ic_baseline_directions_bike_24px);
-                                                      BitmapDescriptor markerIcon = getMarkerIconFromDrawable(icon);
-                                                      riders.get(riderID).setMarker(mMap.addMarker(new MarkerOptions()
-                                                              .position(new LatLng(latRider, longRider))
-                                                              .title(riderID)
-                                                              .icon(markerIcon)
-                                                      ));
-                                                  }
-                                              }
-                                          });
-                              } else if(dataSnapshot.hasChild("Busy") &&
-                                      dataSnapshot.child("Busy").getValue().toString().equals("true") &&
-                                      reservation.getStatus().equals(Status.COOKING) &&
-                                      getContext() != null) {
-                                  /*
-                                   * remove busy rider if is in the adapter
-                                   */
-                                  if (riders.containsKey(riderID)) {
-                                      riders.get(riderID).getMarker().remove();
-                                      riders.remove(riderID);
-                                      listAdapter.removeRider(riderID);
-                                      listAdapter.notifyDataSetChanged();
-                                  }
-                              }
-                          }
-
-                          @Override
-                          public void onCancelled(@NonNull DatabaseError databaseError) {
-                              Log.d("ValerioMap", "onCancelled referenceRider -> " + databaseError.getMessage());
-                          }
-                      });
-
-                      dbReferenceList.get(indexReference).setValueListener(valueEventListener);
-                  }
-                  Log.d("ValerioMap", String.format("Key %s entered the search area at [%f,%f]", key, location.latitude, location.longitude));
-              }
-
-              @Override
-              public void onKeyExited(String key) {
-                  String riderID = key;
-                  if(!riderID.equals(currentUserID)) {
-                      /*
-                       * remove busy rider if is in the adapter
-                       */
-                      if (riders.containsKey(riderID)) {
-                          riders.get(riderID).getMarker().remove();
-                          riders.remove(riderID);
-                          listAdapter.removeRider(riderID);
-                          listAdapter.notifyDataSetChanged();
-                      }
-                  }
-                  Log.d("ValerioMap", String.format("Key %s is no longer in the search area", key));
-              }
-
-              @Override
-              public void onKeyMoved(String key, final GeoLocation location) {
-                  final String riderID = key;
-
-                  if(!riderID.equals(currentUserID)) {
-                      DatabaseReference referenceRider = FirebaseDatabase.getInstance().getReference("deliveryman/" + riderID);
-                      dbReferenceList.add(new MyDatabaseReference(referenceRider));
-                      int indexReference= dbReferenceList.size()-1;
-                      ValueEventListener valueEventListener;
-
-                      dbReferenceList.get(indexReference).getReference().addValueEventListener(valueEventListener= new ValueEventListener() {
-                          @Override
-                          public void onDataChange(@NonNull final DataSnapshot dataSnapshot) {
-                              if (dataSnapshot.hasChild("Busy") &&
-                                      dataSnapshot.child("Busy").getValue().toString().equals("false") &&
-                                      dataSnapshot.hasChild("IsActive") &&
-                                      dataSnapshot.child("IsActive").getValue().toString().equals("true") &&
-                                      reservation.getStatus().equals(Status.COOKING) &&
-                                      getContext() != null) {
-                                  final double latRider = location.latitude;
-                                  final double longRider = location.longitude;
-
-                                  final double distance = computeDistance(latitudeRest, longitudeRest, latRider, longRider);
-                                  if (distance <= 2) {
-                                      if (!riders.containsKey(riderID)) {
-                                          Rider rider = new Rider(riderID, latRider, longRider, latitudeRest, longitudeRest);
-                                          riders.put(riderID, rider);
-                                          listAdapter.addRider(riders.get(riderID));
-                                      } else {
-                                          riders.get(riderID).setLatitude(latRider);
-                                          riders.get(riderID).setLongitude(longRider);
-                                          riders.get(riderID).setDistance(latitudeRest, longitudeRest);
-                                          for (int i = 0; i < listAdapter.getCount(); i++) {
-                                              if (listAdapter.getItem(i).getId().equals(riderID)) {
-                                                  listAdapter.getItem(i).setLatitude(latRider);
-                                                  listAdapter.getItem(i).setLongitude(longRider);
-                                                  listAdapter.getItem(i).setDistance(latitudeRest, longitudeRest);
-                                              }
-                                          }
-                                      }
-
-                                      listAdapter.notifyDataSetChanged();
+                                listAdapter.notifyDataSetChanged();
 
 
-                                      //Update restaurant map
-                                      geoFire.setLocation(riderID,
-                                              new GeoLocation(latRider, longRider), new GeoFire.CompletionListener() {
-                                                  @Override
-                                                  public void onComplete(String key, DatabaseError error) {
-                                                      if (dataSnapshot.child("Busy").getValue().toString().equals("false") &&
-                                                              reservation.getStatus().equals(Status.COOKING) &&
-                                                              getContext() != null) {
+                                /**Update restaurant map*/
+                                geoFire.setLocation(riderID,
+                                        new GeoLocation(latRider, longRider), new GeoFire.CompletionListener() {
+                                            @Override
+                                            public void onComplete(String key, DatabaseError error) {
+                                                if (dataSnapshot.child("Busy").getValue().toString().equals("false") &&
+                                                        reservation.getStatus().equals(Status.COOKING) &&
+                                                        getContext() != null) {
 
-                                                          //Add marker
-                                                          if (riders.get(riderID).getMarker() != null)
-                                                              riders.get(riderID).getMarker().remove();
-                                                          Drawable icon = ContextCompat.getDrawable(getContext(), R.drawable.ic_baseline_directions_bike_24px);
-                                                          BitmapDescriptor markerIcon = getMarkerIconFromDrawable(icon);
-                                                          riders.get(riderID).setMarker(mMap.addMarker(new MarkerOptions()
-                                                                  .position(new LatLng(latRider, longRider))
-                                                                  .title(riderID)
-                                                                  .icon(markerIcon)
-                                                          ));
-                                                      }
-                                                  }
-                                              });
-                                  }
-                              }
-                              else if (dataSnapshot.hasChild("Busy") &&
-                                          dataSnapshot.child("Busy").getValue().toString().equals("true") &&
-                                          reservation.getStatus().equals(Status.COOKING) &&
-                                          getContext() != null) {
-                                      /*
-                                       * remove busy rider if is in the adapter
-                                       */
-                                      if (riders.containsKey(riderID)) {
-                                          riders.get(riderID).getMarker().remove();
-                                          riders.remove(riderID);
-                                          listAdapter.removeRider(riderID);
-                                          listAdapter.notifyDataSetChanged();
-                                      }
-                                  }
-                              }
-                          @Override
-                          public void onCancelled(@NonNull DatabaseError databaseError) {
-                              Log.d("ValerioMap", "onCancelled referenceRider -> " + databaseError.getMessage());
-                          }
-                      });
-                      dbReferenceList.get(indexReference).setValueListener(valueEventListener);
-                  }
-                  Log.d("ValerioMap", String.format("Key %s moved within the search area to [%f,%f]", key, location.latitude, location.longitude));
-              }
+                                                    //Add marker
+                                                    if (riders.get(riderID).getMarker() != null)
+                                                        riders.get(riderID).getMarker().remove();
+                                                    Drawable icon = ContextCompat.getDrawable(getContext(), R.drawable.ic_baseline_directions_bike_24px);
+                                                    BitmapDescriptor markerIcon = getMarkerIconFromDrawable(icon);
+                                                    riders.get(riderID).setMarker(mMap.addMarker(new MarkerOptions()
+                                                            .position(new LatLng(latRider, longRider))
+                                                            .title(riderID)
+                                                            .icon(markerIcon)
+                                                    ));
+                                                }
+                                            }
+                                        });
+                            } else if (dataSnapshot.hasChild("Busy") &&
+                                    dataSnapshot.child("Busy").getValue().toString().equals("true") &&
+                                    reservation.getStatus().equals(Status.COOKING) &&
+                                    getContext() != null) {
+                                /**
+                                 * remove busy rider if is in the adapter
+                                 */
+                                if (riders.containsKey(riderID)) {
+                                    riders.get(riderID).getMarker().remove();
+                                    riders.remove(riderID);
+                                    listAdapter.removeRider(riderID);
+                                    listAdapter.notifyDataSetChanged();
+                                }
+                            }
+                        }
 
-              @Override
-              public void onGeoQueryReady() {
-                  DatabaseReference referenceMap= FirebaseDatabase.getInstance().getReference("Map");
-                  dbReferenceList.add(new MyDatabaseReference(referenceMap));
-                  int indexReference= dbReferenceList.size()-1;
-                  ValueEventListener valueEventListener;
+                        @Override
+                        public void onCancelled(@NonNull DatabaseError databaseError) {
+                            Log.d("ValerioMap", "onCancelled referenceRider -> " + databaseError.getMessage());
+                        }
+                    });
 
-                  dbReferenceList.get(indexReference).getReference().addValueEventListener(valueEventListener= new ValueEventListener() {
-                     @Override
-                     public void onDataChange(@NonNull final DataSnapshot dataSnapshot) {
-                         for (DataSnapshot currentPosition : dataSnapshot.getChildren()) {
-                             if (!currentPosition.getKey().equals(currentUserID)) {
-                                 final String riderID= currentPosition.getKey();
-                                 final double latRider = Double.parseDouble(currentPosition.child("l/0").getValue().toString());
-                                 final double longRider = Double.parseDouble(currentPosition.child("l/1").getValue().toString());
+                    dbReferenceList.get(indexReference).setValueListener(valueEventListener);
+                }
+                Log.d("ValerioMap", String.format("Key %s entered the search area at [%f,%f]", key, location.latitude, location.longitude));
+            }
 
-                                 final double distance = computeDistance(latitudeRest, longitudeRest, latRider, longRider);
-                                 if(distance <= 2) {
-                                     DatabaseReference referenceRider = FirebaseDatabase.getInstance().getReference("deliveryman/" + riderID);
-                                     dbReferenceList.add(new MyDatabaseReference(referenceRider));
-                                     int indexReference = dbReferenceList.size() - 1;
-                                     ValueEventListener valueEventListener;
+            @Override
+            public void onKeyExited(String key) {
+                String riderID = key;
+                if (!riderID.equals(currentUserID)) {
+                    /**
+                     * remove busy rider if is in the adapter
+                     */
+                    if (riders.containsKey(riderID)) {
+                        riders.get(riderID).getMarker().remove();
+                        riders.remove(riderID);
+                        listAdapter.removeRider(riderID);
+                        listAdapter.notifyDataSetChanged();
+                    }
+                }
+                Log.d("ValerioMap", String.format("Key %s is no longer in the search area", key));
+            }
 
-                                     dbReferenceList.get(indexReference).getReference().addValueEventListener(valueEventListener = new ValueEventListener() {
-                                         @Override
-                                         public void onDataChange(@NonNull final DataSnapshot dataSnapshotRider) {
-                                             if (dataSnapshotRider.hasChild("Busy") &&
-                                                     dataSnapshotRider.child("Busy").getValue().toString().equals("false") &&
-                                                     dataSnapshotRider.hasChild("IsActive") &&
-                                                     dataSnapshotRider.child("IsActive").getValue().toString().equals("true") &&
-                                                     reservation.getStatus().equals(Status.COOKING) &&
-                                                     getContext() != null) {
-                                                 if (!riders.containsKey(riderID)) {
-                                                     Rider rider = new Rider(riderID, latRider, longRider, latitudeRest, longitudeRest);
-                                                     riders.put(riderID, rider);
-                                                     listAdapter.addRider(riders.get(riderID));
-                                                 } else {
-                                                     riders.get(riderID).setLatitude(latRider);
-                                                     riders.get(riderID).setLongitude(longRider);
-                                                     riders.get(riderID).setDistance(latitudeRest, longitudeRest);
-                                                     for (int i = 0; i < listAdapter.getCount(); i++) {
-                                                         if (listAdapter.getItem(i).getId().equals(riderID)) {
-                                                             listAdapter.getItem(i).setLatitude(latRider);
-                                                             listAdapter.getItem(i).setLongitude(longRider);
-                                                             listAdapter.getItem(i).setDistance(latitudeRest, longitudeRest);
-                                                         }
-                                                     }
-                                                 }
+            @Override
+            public void onKeyMoved(String key, final GeoLocation location) {
+                final String riderID = key;
 
-                                                 listAdapter.notifyDataSetChanged();
+                if (!riderID.equals(currentUserID)) {
+                    DatabaseReference referenceRider = FirebaseDatabase.getInstance().getReference("deliveryman/" + riderID);
+                    dbReferenceList.add(new MyDatabaseReference(referenceRider));
+                    int indexReference = dbReferenceList.size() - 1;
+                    ValueEventListener valueEventListener;
+
+                    dbReferenceList.get(indexReference).getReference().addValueEventListener(valueEventListener = new ValueEventListener() {
+                        @Override
+                        public void onDataChange(@NonNull final DataSnapshot dataSnapshot) {
+                            if (dataSnapshot.hasChild("Busy") &&
+                                    dataSnapshot.child("Busy").getValue().toString().equals("false") &&
+                                    dataSnapshot.hasChild("IsActive") &&
+                                    dataSnapshot.child("IsActive").getValue().toString().equals("true") &&
+                                    reservation.getStatus().equals(Status.COOKING) &&
+                                    getContext() != null) {
+                                final double latRider = location.latitude;
+                                final double longRider = location.longitude;
+
+                                final double distance = computeDistance(latitudeRest, longitudeRest, latRider, longRider);
+                                if (distance <= 2) {
+                                    if (!riders.containsKey(riderID)) {
+                                        Rider rider = new Rider(riderID, latRider, longRider, latitudeRest, longitudeRest);
+                                        riders.put(riderID, rider);
+                                        listAdapter.addRider(riders.get(riderID));
+                                    } else {
+                                        riders.get(riderID).setLatitude(latRider);
+                                        riders.get(riderID).setLongitude(longRider);
+                                        riders.get(riderID).setDistance(latitudeRest, longitudeRest);
+                                        for (int i = 0; i < listAdapter.getCount(); i++) {
+                                            if (listAdapter.getItem(i).getId().equals(riderID)) {
+                                                listAdapter.getItem(i).setLatitude(latRider);
+                                                listAdapter.getItem(i).setLongitude(longRider);
+                                                listAdapter.getItem(i).setDistance(latitudeRest, longitudeRest);
+                                            }
+                                        }
+                                    }
+
+                                    listAdapter.notifyDataSetChanged();
 
 
-                                                 //Update restaurant map
-                                                 geoFire.setLocation(riderID,
-                                                         new GeoLocation(latRider, longRider), new GeoFire.CompletionListener() {
-                                                             @Override
-                                                             public void onComplete(String key, DatabaseError error) {
-                                                                 if (dataSnapshotRider.child("Busy").getValue().toString().equals("false") &&
-                                                                         reservation.getStatus().equals(Status.COOKING) &&
-                                                                         getContext() != null) {
+                                    /**Update restaurant map*/
+                                    geoFire.setLocation(riderID,
+                                            new GeoLocation(latRider, longRider), new GeoFire.CompletionListener() {
+                                                @Override
+                                                public void onComplete(String key, DatabaseError error) {
+                                                    if (dataSnapshot.child("Busy").getValue().toString().equals("false") &&
+                                                            reservation.getStatus().equals(Status.COOKING) &&
+                                                            getContext() != null) {
 
-                                                                     //Add marker
-                                                                     if (riders.get(riderID).getMarker() != null)
-                                                                         riders.get(riderID).getMarker().remove();
-                                                                     Drawable icon = ContextCompat.getDrawable(getContext(), R.drawable.ic_baseline_directions_bike_24px);
-                                                                     BitmapDescriptor markerIcon = getMarkerIconFromDrawable(icon);
-                                                                     riders.get(riderID).setMarker(mMap.addMarker(new MarkerOptions()
-                                                                             .position(new LatLng(latRider, longRider))
-                                                                             .title(riderID)
-                                                                             .icon(markerIcon)
-                                                                     ));
-                                                                 }
-                                                             }
-                                                         }); // end geofire set location
-                                             } // end if busy= false
-                                             else if (dataSnapshotRider.hasChild("Busy") &&
-                                                     dataSnapshotRider.child("Busy").getValue().toString().equals("true") &&
-                                                     reservation.getStatus().equals(Status.COOKING) &&
-                                                     getContext() != null) {
-                                                 /*
-                                                  * remove busy rider if is in the adapter
-                                                  */
-                                                 if (riders.containsKey(riderID)) {
-                                                     riders.get(riderID).getMarker().remove();
-                                                     riders.remove(riderID);
-                                                     listAdapter.removeRider(riderID);
-                                                     listAdapter.notifyDataSetChanged();
-                                                 }
-                                             }// end else busy= true
-                                         }
+                                                        //Add marker
+                                                        if (riders.get(riderID).getMarker() != null)
+                                                            riders.get(riderID).getMarker().remove();
+                                                        Drawable icon = ContextCompat.getDrawable(getContext(), R.drawable.ic_baseline_directions_bike_24px);
+                                                        BitmapDescriptor markerIcon = getMarkerIconFromDrawable(icon);
+                                                        riders.get(riderID).setMarker(mMap.addMarker(new MarkerOptions()
+                                                                .position(new LatLng(latRider, longRider))
+                                                                .title(riderID)
+                                                                .icon(markerIcon)
+                                                        ));
+                                                    }
+                                                }
+                                            });
+                                }
+                            } else if (dataSnapshot.hasChild("Busy") &&
+                                    dataSnapshot.child("Busy").getValue().toString().equals("true") &&
+                                    reservation.getStatus().equals(Status.COOKING) &&
+                                    getContext() != null) {
+                                /*
+                                 * remove busy rider if is in the adapter
+                                 */
+                                if (riders.containsKey(riderID)) {
+                                    riders.get(riderID).getMarker().remove();
+                                    riders.remove(riderID);
+                                    listAdapter.removeRider(riderID);
+                                    listAdapter.notifyDataSetChanged();
+                                }
+                            }
+                        }
 
-                                         @Override
-                                         public void onCancelled(@NonNull DatabaseError databaseError) {
+                        @Override
+                        public void onCancelled(@NonNull DatabaseError databaseError) {
+                            Log.d("ValerioMap", "onCancelled referenceRider -> " + databaseError.getMessage());
+                        }
+                    });
+                    dbReferenceList.get(indexReference).setValueListener(valueEventListener);
+                }
+                Log.d("ValerioMap", String.format("Key %s moved within the search area to [%f,%f]", key, location.latitude, location.longitude));
+            }
 
-                                         }
-                                     });
-                                     dbReferenceList.get(indexReference).setValueListener(valueEventListener);
-                                 }// end if check distance
-                             } // end if check currentID
-                         } // end for children
-                     }// end onDataChange
+            @Override
+            public void onGeoQueryReady() {
+                DatabaseReference referenceMap = FirebaseDatabase.getInstance().getReference("Map");
+                dbReferenceList.add(new MyDatabaseReference(referenceMap));
+                int indexReference = dbReferenceList.size() - 1;
+                ValueEventListener valueEventListener;
 
-                      @Override
-                      public void onCancelled (@NonNull DatabaseError databaseError){
+                dbReferenceList.get(indexReference).getReference().addValueEventListener(valueEventListener = new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull final DataSnapshot dataSnapshot) {
+                        for (DataSnapshot currentPosition : dataSnapshot.getChildren()) {
+                            if (!currentPosition.getKey().equals(currentUserID)) {
+                                final String riderID = currentPosition.getKey();
+                                final double latRider = Double.parseDouble(currentPosition.child("l/0").getValue().toString());
+                                final double longRider = Double.parseDouble(currentPosition.child("l/1").getValue().toString());
 
-                      }
-                  });
+                                final double distance = computeDistance(latitudeRest, longitudeRest, latRider, longRider);
+                                if (distance <= 2) {
+                                    DatabaseReference referenceRider = FirebaseDatabase.getInstance().getReference("deliveryman/" + riderID);
+                                    dbReferenceList.add(new MyDatabaseReference(referenceRider));
+                                    int indexReference = dbReferenceList.size() - 1;
+                                    ValueEventListener valueEventListener;
 
-                  dbReferenceList.get(indexReference).setValueListener(valueEventListener);
-                  Log.d("ValerioMap", "onGeoQueryReady -> AllReady");
-              }
+                                    dbReferenceList.get(indexReference).getReference().addValueEventListener(valueEventListener = new ValueEventListener() {
+                                        @Override
+                                        public void onDataChange(@NonNull final DataSnapshot dataSnapshotRider) {
+                                            if (dataSnapshotRider.hasChild("Busy") &&
+                                                    dataSnapshotRider.child("Busy").getValue().toString().equals("false") &&
+                                                    dataSnapshotRider.hasChild("IsActive") &&
+                                                    dataSnapshotRider.child("IsActive").getValue().toString().equals("true") &&
+                                                    reservation.getStatus().equals(Status.COOKING) &&
+                                                    getContext() != null) {
+                                                if (!riders.containsKey(riderID)) {
+                                                    Rider rider = new Rider(riderID, latRider, longRider, latitudeRest, longitudeRest);
+                                                    riders.put(riderID, rider);
+                                                    listAdapter.addRider(riders.get(riderID));
+                                                } else {
+                                                    riders.get(riderID).setLatitude(latRider);
+                                                    riders.get(riderID).setLongitude(longRider);
+                                                    riders.get(riderID).setDistance(latitudeRest, longitudeRest);
+                                                    for (int i = 0; i < listAdapter.getCount(); i++) {
+                                                        if (listAdapter.getItem(i).getId().equals(riderID)) {
+                                                            listAdapter.getItem(i).setLatitude(latRider);
+                                                            listAdapter.getItem(i).setLongitude(longRider);
+                                                            listAdapter.getItem(i).setDistance(latitudeRest, longitudeRest);
+                                                        }
+                                                    }
+                                                }
 
-              @Override
-              public void onGeoQueryError(DatabaseError error) {
-                  Log.d("ValerioMap", "onGeoQueryError -> " + error.getMessage());
-              }
+                                                listAdapter.notifyDataSetChanged();
+
+
+                                                //Update restaurant map
+                                                geoFire.setLocation(riderID,
+                                                        new GeoLocation(latRider, longRider), new GeoFire.CompletionListener() {
+                                                            @Override
+                                                            public void onComplete(String key, DatabaseError error) {
+                                                                if (dataSnapshotRider.child("Busy").getValue().toString().equals("false") &&
+                                                                        reservation.getStatus().equals(Status.COOKING) &&
+                                                                        getContext() != null) {
+
+                                                                    //Add marker
+                                                                    if (riders.get(riderID).getMarker() != null)
+                                                                        riders.get(riderID).getMarker().remove();
+                                                                    Drawable icon = ContextCompat.getDrawable(getContext(), R.drawable.ic_baseline_directions_bike_24px);
+                                                                    BitmapDescriptor markerIcon = getMarkerIconFromDrawable(icon);
+                                                                    riders.get(riderID).setMarker(mMap.addMarker(new MarkerOptions()
+                                                                            .position(new LatLng(latRider, longRider))
+                                                                            .title(riderID)
+                                                                            .icon(markerIcon)
+                                                                    ));
+                                                                }
+                                                            }
+                                                        }); // end geofire set location
+                                            } // end if busy= false
+                                            else if (dataSnapshotRider.hasChild("Busy") &&
+                                                    dataSnapshotRider.child("Busy").getValue().toString().equals("true") &&
+                                                    reservation.getStatus().equals(Status.COOKING) &&
+                                                    getContext() != null) {
+                                                /*
+                                                 * remove busy rider if is in the adapter
+                                                 */
+                                                if (riders.containsKey(riderID)) {
+                                                    riders.get(riderID).getMarker().remove();
+                                                    riders.remove(riderID);
+                                                    listAdapter.removeRider(riderID);
+                                                    listAdapter.notifyDataSetChanged();
+                                                }
+                                            }// end else busy= true
+                                        }
+
+                                        @Override
+                                        public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                                        }
+                                    });
+                                    dbReferenceList.get(indexReference).setValueListener(valueEventListener);
+                                }// end if check distance
+                            } // end if check currentID
+                        } // end for children
+                    }// end onDataChange
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                    }
+                });
+
+                dbReferenceList.get(indexReference).setValueListener(valueEventListener);
+                Log.d("ValerioMap", "onGeoQueryReady -> AllReady");
+            }
+
+            @Override
+            public void onGeoQueryError(DatabaseError error) {
+                Log.d("ValerioMap", "onGeoQueryError -> " + error.getMessage());
+            }
         });
 
 
@@ -938,8 +949,8 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback,
 
     @Override
     public boolean onMarkerClick(Marker marker) {
-        if(!marker.getTitle().equals(restaurant_name)){
-            final String riderID= marker.getTitle();
+        if (!marker.getTitle().equals(restaurant_name)) {
+            final String riderID = marker.getTitle();
             final AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
             builder.setTitle(this.getString(R.string.rider_selected) + ": " + riderID);
 
@@ -949,22 +960,22 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback,
                 public void onClick(DialogInterface dialogInterface, int i) {
                     DatabaseReference referenceRider = FirebaseDatabase.getInstance().getReference("deliveryman").child(riderID);
                     referenceRider.runTransaction(new Transaction.Handler() {
-                          @NonNull
-                          @Override
-                          public Transaction.Result doTransaction(@NonNull MutableData mutableData) {
-                              mutableData.child("Busy").setValue(true);
-                              reservation.setStat(getContext().getString(R.string.delivery));
-                              reservation.setStatus(Status.DELIVERY);
-                              notifyRider(riderID);
-                              return Transaction.success(mutableData);
-                          }
+                                                      @NonNull
+                                                      @Override
+                                                      public Transaction.Result doTransaction(@NonNull MutableData mutableData) {
+                                                          mutableData.child("Busy").setValue(true);
+                                                          reservation.setStat(getContext().getString(R.string.delivery));
+                                                          reservation.setStatus(Status.DELIVERY);
+                                                          notifyRider(riderID);
+                                                          return Transaction.success(mutableData);
+                                                      }
 
-                          @Override
-                          public void onComplete(@Nullable DatabaseError databaseError, boolean b, @Nullable DataSnapshot dataSnapshot) {
-                              // Transaction completed
-                              Log.d("Valerio", "postTransaction:onComplete:" + databaseError);
-                          }
-                      }
+                                                      @Override
+                                                      public void onComplete(@Nullable DatabaseError databaseError, boolean b, @Nullable DataSnapshot dataSnapshot) {
+                                                          // Transaction completed
+                                                          Log.d("Valerio", "postTransaction:onComplete:" + databaseError);
+                                                      }
+                                                  }
                     );
                 }
             });
@@ -979,34 +990,33 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback,
             dialog.show();
 
             return true;
-        }
-        else
+        } else
             return false;
     }
 
     private void notifyRider(final String riderID) {
 
-        /* retrieve the restaurant information */
+        /** retrieve the restaurant information */
         final DatabaseReference referenceRestaurant = FirebaseDatabase.getInstance().getReference("restaurants").child(loggedID);
         referenceRestaurant.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshotRestaurant) {
-                if(getContext() != null &&
+                if (getContext() != null &&
                         dataSnapshotRestaurant.exists() &&
                         dataSnapshotRestaurant.hasChild("Address") &&
                         dataSnapshotRestaurant.hasChild("Name") &&
                         dataSnapshotRestaurant.hasChild("Phone") &&
                         dataSnapshotRestaurant.hasChild("reservations") &&
                         dataSnapshotRestaurant.child("reservations").hasChild(reservation.getOrder_id()) &&
-                        dataSnapshotRestaurant.child("reservations/"+reservation.getOrder_id()).hasChild("status") &&
-                        dataSnapshotRestaurant.child("reservations/"+reservation.getOrder_id()+"/status").hasChild("it") &&
-                        dataSnapshotRestaurant.child("reservations/"+reservation.getOrder_id()+"/status").hasChild("en") &&
+                        dataSnapshotRestaurant.child("reservations/" + reservation.getOrder_id()).hasChild("status") &&
+                        dataSnapshotRestaurant.child("reservations/" + reservation.getOrder_id() + "/status").hasChild("it") &&
+                        dataSnapshotRestaurant.child("reservations/" + reservation.getOrder_id() + "/status").hasChild("en") &&
                         dataSnapshotRestaurant.child("reservations/" + reservation.getOrder_id()
-                                +"/status/it").getValue().toString().equals("Preparazione") &&
+                                + "/status/it").getValue().toString().equals("Preparazione") &&
                         dataSnapshotRestaurant.child("reservations/" + reservation.getOrder_id()
-                                +"/status/en").getValue().toString().equals("Cooking")) {
+                                + "/status/en").getValue().toString().equals("Cooking")) {
 
-                    DatabaseReference referenceRider= FirebaseDatabase.getInstance().getReference("deliveryman").child(riderID);
+                    DatabaseReference referenceRider = FirebaseDatabase.getInstance().getReference("deliveryman").child(riderID);
                     DatabaseReference reservationRider = referenceRider.child("reservations").push();
                     final String addressRestaurant = dataSnapshotRestaurant.child("Address").getValue().toString();
                     final String nameRestaurant = dataSnapshotRestaurant.child("Name").getValue().toString();
@@ -1025,13 +1035,13 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback,
                     reservationRider.child("phoneCustomer").setValue(reservation.getPhone());
                     reservationRider.child("phoneRestaurant").setValue(phoneRestaurant);
 
-                    // compose the date in the format YYYY/MM/DD HH:mm
+                    /** compose the date in the format YYYY/MM/DD HH:mm */
                     String[] date_components = reservation.getDate().split("/"); //format: dd/mm/yyyy
-                    String timeStr = date_components[2]+"/"+date_components[1]+"/"+date_components[0]+" "+
-                                    reservation.getTime();
+                    String timeStr = date_components[2] + "/" + date_components[1] + "/" + date_components[0] + " " +
+                            reservation.getTime();
                     reservationRider.child("deliveryTime").setValue(timeStr);
 
-                    //send actual time of notification
+                    /** send actual time of notification */
                     DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm");
                     Date date = new Date(); //initialized with current time
                     String currentTime = dateFormat.format(date);
@@ -1062,8 +1072,8 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback,
                     StrictMode.setThreadPolicy(policy);
                     String send_email;
 
-                    //This is a Simple Logic to Send Notification different Device Programmatically....
-                    send_email= childID;
+                    /** This is a Simple Logic to Send Notification different Device Programmatically.... */
+                    send_email = childID;
 
                     try {
                         String jsonResponse;
@@ -1124,24 +1134,26 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback,
         Navigation.findNavController(fragView).navigate(R.id.action_mapsFragment_id_to_reservation_id);
     }
 
-    public double computeDistance (double latitudeRest, double longitudeRest, double latitudeRider, double longitudeRider) {
-        double startLat= latitudeRest;
-        double endLat= latitudeRider;
+    public double computeDistance(double latitudeRest, double longitudeRest, double latitudeRider, double longitudeRider) {
+        double startLat = latitudeRest;
+        double endLat = latitudeRider;
 
-        double startLong= longitudeRest;
-        double endLong= longitudeRest;
+        double startLong = longitudeRest;
+        double endLong = longitudeRest;
 
-        double dLat  = Math.toRadians((endLat - startLat));
+        double dLat = Math.toRadians((endLat - startLat));
         double dLong = Math.toRadians((endLong - startLong));
 
         startLat = Math.toRadians(startLat);
-        endLat   = Math.toRadians(endLat);
+        endLat = Math.toRadians(endLat);
 
         double a = haversin(dLat) + Math.cos(startLat) * Math.cos(endLat) * haversin(dLong);
         double c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
 
         return EARTH_RADIUS * c; // <-- d
-    };
+    }
+
+    ;
 
     public static double haversin(double val) {
         return Math.pow(Math.sin(val / 2), 2);
@@ -1151,10 +1163,10 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback,
     @Override
     public void onDestroy() {
         super.onDestroy();
-        for(int i=0; i < dbReferenceList.size(); i++){
+        for (int i = 0; i < dbReferenceList.size(); i++) {
             dbReferenceList.get(i).removeAllListener();
         }
-        if(geoQuery != null)
+        if (geoQuery != null)
             geoQuery.removeAllListeners();
     }
 }

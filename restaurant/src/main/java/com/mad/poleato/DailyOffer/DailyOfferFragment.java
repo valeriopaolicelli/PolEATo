@@ -103,8 +103,6 @@ public class DailyOfferFragment extends Fragment {
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
-        //in order to create the logout menu (don't move!)
-        setHasOptionsMenu(true);
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
             mParam1 = getArguments().getString(ARG_PARAM1);
@@ -144,32 +142,6 @@ public class DailyOfferFragment extends Fragment {
             }
         });
     }
-
-    @Override
-    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-        menu.clear();
-        // Inflate the menu; this adds items to the action bar if it is present.
-        inflater.inflate(R.menu.popup_account_settings, menu);
-        menu.findItem(R.id.logout).setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
-            @Override
-            public boolean onMenuItemClick(MenuItem item) {
-                //logout
-                Log.d("matte", "Logout");
-                FirebaseAuth.getInstance().signOut();
-//                OneSignal.sendTag("User_ID", "");
-                OneSignal.setSubscription(false);
-
-                /**
-                 *  GO TO LOGIN ****
-                 */
-                Navigation.findNavController(fragView).navigate(R.id.action_daily_offer_id_to_signInActivity);
-                getActivity().finish();
-                return true;
-            }
-        });
-        super.onCreateOptionsMenu(menu,inflater);
-    }
-
 
 
     @Override
