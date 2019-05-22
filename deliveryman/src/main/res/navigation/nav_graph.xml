@@ -33,7 +33,7 @@
         android:id="@+id/statistics_id"
         android:name="com.mad.poleato.Statistics.StatisticsFragment"
         android:label="@string/title_actionbar_deliveryStatistics"
-        tools:layout="@layout/fragment_statistics" >
+        tools:layout="@layout/statistics_layout" >
         <action
             android:id="@+id/action_statisticsFragment_to_signInActivity"
             app:destination="@id/signInActivity" />
