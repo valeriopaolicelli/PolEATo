@@ -131,6 +131,8 @@
 
     <!-- Ratings -->
     <string name="reviewLabel">Lascia una recensione per il ristorante </string>
+    <string name="reviewText">Lascia un commento (Facoltativo)</string>
+    <string name="feedbackBtnText">Invia!</string>
     <string name="very_bad">Molto male!</string>
     <string name="not_good">Non bene</string>
     <string name="neutral">Normale</string>

@@ -35,6 +35,7 @@ import com.mad.poleato.R;
 import com.onesignal.OneSignal;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
@@ -99,7 +100,7 @@ public class MenuFragment extends Fragment {
         size = new Point();
         display.getSize(size);
         width = size.x;
-
+        sortMenu = new SortMenu();
         mAuth = FirebaseAuth.getInstance();
         FirebaseUser currentUser = mAuth.getCurrentUser();
         currentUserID = currentUser.getUid();
@@ -273,7 +274,7 @@ public class MenuFragment extends Fragment {
                             setImg(category, curr_index, s);
                         }
                     });
-
+                    Collections.sort(listDataGroup,sortMenu);
                     listAdapter.notifyDataSetChanged();
                 }
             }
@@ -345,7 +346,7 @@ public class MenuFragment extends Fragment {
                             setImg(category,curr_index,s);
                         }
                     });
-
+                    Collections.sort(listDataGroup,sortMenu);
                     listAdapter.notifyDataSetChanged();
                 }
             }

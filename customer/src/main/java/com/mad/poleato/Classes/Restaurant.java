@@ -13,6 +13,8 @@ public class Restaurant implements Serializable {
     Boolean isOpen;
     Integer priceRange;
     Double deliveryCost;
+    Double avgStars;
+     Long totalReviews;
 
     public Restaurant(String id, String img, String name, String type, Boolean isOpen, int priceRange, double deliveryCost){
         setId(id);
@@ -83,4 +85,19 @@ public class Restaurant implements Serializable {
     public double getDeliveryCost() {
         return deliveryCost;
     }
+
+    public void computeAvgStars(Integer totalStars){
+        this.avgStars = ((double) totalStars/totalReviews);
+    }
+
+    public void setTotalReviews(Long totalReviews){
+        this.totalReviews = totalReviews;
+    }
+    public Double getAvgStars(){
+        return avgStars;
+    }
+    public Long getTotalReviews(){
+        return totalReviews;
+    }
+
 }

@@ -130,6 +130,8 @@
 
     <!-- Ratings -->
     <string name="reviewLabel">Leave a review for</string>
+    <string name="reviewText">Leave a comment (Optional)</string>
+    <string name="feedbackBtnText">Send Feedback</string>
     <string name="very_bad">Very bad!</string>
     <string name="not_good">Not so good</string>
     <string name="neutral">Neutral</string>
@@ -138,8 +140,5 @@
     <!-- Favorite restaurant and foods -->
     <string name="favorite_list_button">Your favorite restaurants</string>
 
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
-
-
+    
 </resources>

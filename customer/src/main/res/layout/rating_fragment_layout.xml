@@ -12,7 +12,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:gravity="center_horizontal"
-        android:text="Leave a review for "
+        android:text="Leave a review for *restaurantName "
         android:textSize="20sp"
         android:textStyle="italic"
         app:layout_constraintEnd_toEndOf="parent"
@@ -28,6 +28,7 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
         android:layout_marginTop="40dp"
+        style="@style/RatingBar"
         android:layout_marginEnd="8dp"
         android:numStars="5"
         android:stepSize="1"
@@ -51,20 +52,21 @@
 
     <EditText
         android:id="@+id/textReview"
-        android:layout_width="369dp"
-        android:layout_height="115dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
         android:layout_marginEnd="8dp"
         android:layout_marginBottom="8dp"
         android:gravity="top"
-        android:hint="Tell us what you loved"
+        android:hint="@string/reviewText"
         android:inputType="textMultiLine"
-        android:lines="5"
+        android:lines="15"
         app:layout_constraintBottom_toTopOf="@+id/btnSubmit"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/tvRatingScale" />
+        app:layout_constraintTop_toBottomOf="@+id/tvRatingScale"
+        app:layout_constraintVertical_bias="0.0" />
 
 
     <Button
@@ -73,12 +75,10 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
         android:layout_marginEnd="8dp"
-        android:layout_marginBottom="112dp"
         android:background="#e57373"
-        android:text="Send feedback"
+        android:text="@string/feedbackBtnText"
         android:textColor="@android:color/white"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent" />
 </android.support.constraint.ConstraintLayout>

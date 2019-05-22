@@ -213,6 +213,7 @@ public class RestaurantSearchFragment extends Fragment {
                         dataSnapshot.hasChild("photoUrl")
                 )
                 {
+
                     final String id = dataSnapshot.getKey();
                     String name = dataSnapshot.child("Name").getValue().toString();
                     String type = dataSnapshot.child("Type").child(localeShort).getValue().toString();
@@ -223,6 +224,21 @@ public class RestaurantSearchFragment extends Fragment {
                     //insert before the download because otherwise it can happen that the download finish before
                     //  and the put raise exception
                     Restaurant resObj = new Restaurant(id, "", name, type, isOpen, priceRange, deliveryCost);
+
+                    //Check if restaurant has reviews
+                    if(!dataSnapshot.hasChild("Ratings")){
+                        resObj.setTotalReviews((long)0);
+                        resObj.computeAvgStars(0);
+                    }else{
+                        //If yes, compute avg rating
+                        int totalStars = 0;
+                        resObj.setTotalReviews(dataSnapshot.child("Ratings").getChildrenCount());
+                        for (DataSnapshot ds : dataSnapshot.child("Ratings").getChildren()){
+                            totalStars += Integer.parseInt(ds.child("rate").getValue().toString());
+                        }
+                        resObj.computeAvgStars(totalStars);
+                    }
+
                     //add to the original list
                     restaurantMap.put(id, resObj);
                     restaurantList.add(resObj);
@@ -277,6 +293,20 @@ public class RestaurantSearchFragment extends Fragment {
                     int priceRange = Integer.parseInt(dataSnapshot.child("PriceRange").getValue().toString());
                     double deliveryCost = Double.parseDouble(dataSnapshot.child("DeliveryCost").getValue().toString().replace(",", "."));
                     final String imageUrl = dataSnapshot.child("photoUrl").getValue().toString();
+                    int totalStars = 0;
+                    long totalReviews;
+
+                    //Check if restaurant has reviews
+                    if(!dataSnapshot.hasChild("Ratings")){
+                        totalReviews=0;
+                        totalStars=0;
+                    }else{
+                        //If yes, compute avg rating
+                        totalReviews = dataSnapshot.child("Ratings").getChildrenCount();
+                        for (DataSnapshot ds : dataSnapshot.child("Ratings").getChildren()){
+                            totalStars += Integer.parseInt(ds.child("rate").getValue().toString());
+                        }
+                    }
 
                     Restaurant resObj;
                     if(restaurantMap.containsKey(id)) {
@@ -286,6 +316,8 @@ public class RestaurantSearchFragment extends Fragment {
                         resObj.setIsOpen(isOpen);
                         resObj.setPriceRange(priceRange);
                         resObj.setDeliveryCost(deliveryCost);
+                        resObj.setTotalReviews(totalReviews);
+                        resObj.computeAvgStars(totalStars);
                         //recyclerAdapter.updateLayout();
                         //insert the element by keeping the actual order after checking the filter
                         if (isValidToDisplay(resObj)) {
@@ -299,6 +331,8 @@ public class RestaurantSearchFragment extends Fragment {
                     }
                     else {
                         resObj= new Restaurant(id, "", name, type, isOpen, priceRange, deliveryCost);
+                        resObj.setTotalReviews(totalReviews);
+                        resObj.computeAvgStars(totalStars);
                         restaurantMap.put(id, resObj);
                         restaurantList.add(resObj);
                         if (isValidToDisplay(resObj))
