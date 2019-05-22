@@ -15,35 +15,24 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
-import androidx.navigation.Navigation;
-
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-import com.mad.poleato.FirebaseData.MyFirebaseData;
 import com.mad.poleato.R;
 import com.mad.poleato.View.ViewModel.MyViewModel;
 import com.onesignal.OneSignal;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 
 /**
  * A simple {@link Fragment} subclass.
  */
 public class HistoryFragment extends Fragment {
-
-    private View view;
-
 
     //auth
     private String currentUserID;
@@ -74,7 +63,7 @@ public class HistoryFragment extends Fragment {
         this.hostActivity = this.getActivity();
 
         if (hostActivity != null) {
-            myToast = Toast.makeText(hostActivity, "", Toast.LENGTH_LONG);
+            myToast = Toast.makeText(hostActivity, "", Toast.LENGTH_SHORT);
         }
     }
 
@@ -88,6 +77,8 @@ public class HistoryFragment extends Fragment {
         mAuth = FirebaseAuth.getInstance();
         FirebaseUser currentUser = mAuth.getCurrentUser();
         currentUserID = currentUser.getUid();
+        if(currentUserID == null)
+            logout();
 
         OneSignal.startInit(getContext())
                 .inFocusDisplaying(OneSignal.OSInFocusDisplayOption.Notification)
@@ -101,10 +92,19 @@ public class HistoryFragment extends Fragment {
             progressDialog = ProgressDialog.show(getActivity(), "", hostActivity.getString(R.string.loading));
         }
 
-
-
     }
 
+
+    private void logout(){
+        //logout
+        Log.d("matte", "Logout");
+        FirebaseAuth.getInstance().signOut();
+        OneSignal.setSubscription(false);
+
+        //go to login
+        //Navigation.findNavController(view).navigate(R.id.action_mainProfile_id_to_signInActivity); TODO mich
+        getActivity().finish();
+    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,

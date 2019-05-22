@@ -1,4 +1,4 @@
-package com.mad.poleato;
+package com.mad.poleato.LocationService;
 
 import android.Manifest;
 import android.app.Notification;
@@ -24,13 +24,15 @@ import com.google.android.gms.location.FusedLocationProviderClient;
 
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
+import com.mad.poleato.NavigatorActivity;
+import com.mad.poleato.R;
 
 
 public class BackgroundLocationService extends Service {
 
-    FusedLocationProviderClient fusedLocationProviderClient;
-    IBinder mBinder = new LocalBinder();
-    Notification notification;
+    private FusedLocationProviderClient fusedLocationProviderClient;
+    private IBinder mBinder = new LocalBinder();
+    private Notification notification;
     //  private PowerManager.WakeLock mWakeLock;
     private LocationRequest mLocationRequest;
     // Flag that indicates if a request is underway.

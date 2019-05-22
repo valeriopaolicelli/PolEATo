@@ -1,8 +1,5 @@
 package com.mad.poleato.History;
 
-import com.google.firebase.database.DatabaseReference;
-
-import java.text.SimpleDateFormat;
 import java.util.Comparator;
 import java.util.Date;
 

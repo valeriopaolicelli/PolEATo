@@ -1,4 +1,4 @@
-package com.mad.poleato;
+package com.mad.poleato.SignActivities;
 
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -32,6 +32,9 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
+import com.mad.poleato.ConnectionManager;
+import com.mad.poleato.NavigatorActivity;
+import com.mad.poleato.R;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -88,7 +91,7 @@ public class SignUpActivity extends AppCompatActivity {
         buttonListener();
     }
 
-    public void collectFields(){
+    private void collectFields(){
         editTextFields.put("Name",(EditText)findViewById(R.id.edName));
         editTextFields.put("Surname",(EditText)findViewById(R.id.edSurname));
         editTextFields.put("Address",(EditText)findViewById(R.id.edAddress));
@@ -105,7 +108,7 @@ public class SignUpActivity extends AppCompatActivity {
 
     }
 
-    public void clearText(View view) {
+    private void clearText(View view) {
         if(view.getId() == R.id.cancel_email)
             editTextFields.get("Email").setText("");
         else if(view.getId() == R.id.cancel_password)
@@ -121,7 +124,7 @@ public class SignUpActivity extends AppCompatActivity {
     }
 
 
-    public void handleButton(){
+    private void handleButton(){
         for(ImageButton b : imageButtons.values())
             b.setVisibility(View.INVISIBLE);
 
@@ -149,7 +152,7 @@ public class SignUpActivity extends AppCompatActivity {
         }
     }
 
-    public void buttonListener(){
+    private void buttonListener(){
 
         for (String fieldName : editTextFields.keySet()){
             final EditText field= editTextFields.get(fieldName);
@@ -180,14 +183,14 @@ public class SignUpActivity extends AppCompatActivity {
         }
     }
 
-    public void showButton(EditText field, ImageButton button){
+    private void showButton(EditText field, ImageButton button){
         if(field.getText().toString().length()>0)
             button.setVisibility(View.VISIBLE);
         else
             button.setVisibility(View.INVISIBLE);
     }
 
-    public void hideButton(ImageButton button){
+    private void hideButton(ImageButton button){
         button.setVisibility(View.INVISIBLE);
     }
 
@@ -198,7 +201,7 @@ public class SignUpActivity extends AppCompatActivity {
     }
 
     //access to the app
-    public void access(){
+    private void access(){
         Intent myIntent = new Intent(SignUpActivity.this, NavigatorActivity.class);
         SignUpActivity.this.startActivity(myIntent);
         finish();
@@ -206,7 +209,7 @@ public class SignUpActivity extends AppCompatActivity {
 
 
 
-    public void signUp(){
+    private void signUp(){
 
         mAuth.createUserWithEmailAndPassword(editTextFields.get("Email").getText().toString(),
                 editTextFields.get("Password").getText().toString())
@@ -332,7 +335,7 @@ public class SignUpActivity extends AppCompatActivity {
         }
     };
 
-    public boolean wrongFields() {
+    private boolean wrongFields() {
 
         boolean wrongField = false;
 

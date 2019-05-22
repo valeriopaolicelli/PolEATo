@@ -1,13 +1,8 @@
 package com.mad.poleato.FirebaseData;
 
-import android.app.Activity;
-import android.app.ProgressDialog;
-import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.MutableLiveData;
-import android.arch.lifecycle.ViewModelProviders;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.v4.app.FragmentActivity;
 import android.util.Log;
 
 import com.google.firebase.auth.FirebaseAuth;
@@ -19,17 +14,13 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.mad.poleato.History.HistoryItem;
-import com.mad.poleato.View.ViewModel.MyViewModel;
 
 import java.util.HashMap;
-import java.util.logging.Handler;
 
 public class MyFirebaseData {
 
     private MutableLiveData<HashMap<String, HistoryItem>> mapDataHistory;
     private MutableLiveData<Boolean> showProgressBar;
-    private Handler handler;
-    private boolean progressDialog;
 
     private String currentUserID;
     private FirebaseAuth mAuth;

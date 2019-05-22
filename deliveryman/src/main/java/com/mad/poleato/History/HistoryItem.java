@@ -43,14 +43,6 @@ public class HistoryItem {
         return totalPrice;
     }
 
-    public String getNumberOfDishes() {
-        return numberOfDishes;
-    }
-
-    public String getExpectedTime() {
-        return expectedTime;
-    }
-
     public String getDeliveredTime() {
         return deliveredTime;
     }
@@ -60,8 +52,6 @@ public class HistoryItem {
     public String getDeliveredDate(){ return deliveredTime.split(" ")[0];}
 
     public String getExpectedHour(){ return expectedTime.split(" ")[1]; }
-
-    public String getExpectedDate() { return  expectedTime.split(" ")[0]; }
 
 
 }
