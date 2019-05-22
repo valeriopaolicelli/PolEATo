@@ -90,6 +90,10 @@
     <string name="title_bottombar_historyOrder">Ordini</string>
     <string name="title_actionbar_historyOrder">Ordini</string>
 
+    <string name="title_bottombar_myReviews">Recensioni</string>
+    <string name="title_actionbar_myReviews">Recensioni</string>
+
+
     <string name="title_bottombar_account">Account</string>
     <string name="title_actionbar_account">Account</string>
     <string name="title_actionbar_edit_account">Modifica Account</string>

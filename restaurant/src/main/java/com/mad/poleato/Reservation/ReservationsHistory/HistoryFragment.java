@@ -77,8 +77,6 @@ public class HistoryFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        //in order to create the logout menu (don't move!)
-        setHasOptionsMenu(true);
 
         /** Calculate position of ExpandableListView indicator. */
         display = getActivity().getWindowManager().getDefaultDisplay();
@@ -98,31 +96,6 @@ public class HistoryFragment extends Fragment {
         dbReferenceList = new ArrayList<>();
     }
 
-    @Override
-    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-        menu.clear();
-        // Inflate the menu; this adds items to the action bar if it is present.
-        inflater.inflate(R.menu.popup_account_settings, menu);
-        menu.findItem(R.id.logout).setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
-            @Override
-            public boolean onMenuItemClick(MenuItem item) {
-                //logout
-                Log.d("matte", "Logout");
-                FirebaseAuth.getInstance().signOut();
-                OneSignal.setSubscription(false);
-                //                OneSignal.sendTag("User_ID", "");
-                OneSignal.setSubscription(false);
-
-                /**
-                 *  GO TO LOGIN ****
-                 */
-                Navigation.findNavController(view).navigate(R.id.action_history_id_to_signInActivity);
-                getActivity().finish();
-                return true;
-            }
-        });
-        super.onCreateOptionsMenu(menu, inflater);
-    }
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,

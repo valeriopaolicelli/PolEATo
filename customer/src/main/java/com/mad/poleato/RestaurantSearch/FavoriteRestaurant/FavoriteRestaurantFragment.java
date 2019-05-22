@@ -1,19 +1,16 @@
-package com.mad.poleato.FavoriteRestaurant;
+package com.mad.poleato.RestaurantSearch.FavoriteRestaurant;
 
 import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Context;
-import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.hardware.camera2.CameraConstrainedHighSpeedCaptureSession;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentTransaction;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -21,16 +18,9 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
-import android.widget.ImageButton;
-import android.widget.PopupMenu;
-import android.widget.SearchView;
 import android.widget.Toast;
-
-import androidx.navigation.Navigation;
 
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -47,14 +37,10 @@ import com.google.firebase.storage.StorageReference;
 import com.mad.poleato.Classes.Restaurant;
 import com.mad.poleato.MyDatabaseReference;
 import com.mad.poleato.R;
-import com.mad.poleato.RestaurantSearch.FilterFragment;
-import com.mad.poleato.RestaurantSearch.RestaurantRecyclerViewAdapter;
-import com.onesignal.OneSignal;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Set;
