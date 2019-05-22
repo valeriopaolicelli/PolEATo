@@ -142,9 +142,8 @@ public class SignInActivity extends AppCompatActivity {
             DatabaseReference reference = FirebaseDatabase.getInstance().getReference("users").child(currentUser.getUid());
             dbReferenceList.add(new MyDatabaseReference(reference));
             int indexReference= dbReferenceList.size()-1;
-            ValueEventListener valueEventListener;
 
-            dbReferenceList.get(indexReference).getReference().addValueEventListener(valueEventListener= new ValueEventListener() {
+            dbReferenceList.get(indexReference).setValueListener(new ValueEventListener() {
                 @Override
                 public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                     if (dataSnapshot.exists())
@@ -161,7 +160,6 @@ public class SignInActivity extends AppCompatActivity {
                     Log.d("Valerio", "SignIn deliveryman -> onStart -> onCancelled: " + databaseError.getMessage());
                 }
             });
-            dbReferenceList.get(indexReference).setValueListener(valueEventListener);
         }
         else
             show_login_form();
@@ -191,9 +189,8 @@ public class SignInActivity extends AppCompatActivity {
                             DatabaseReference reference = FirebaseDatabase.getInstance().getReference("users").child(user.getUid());
                             dbReferenceList.add(new MyDatabaseReference(reference));
                             int indexReference= dbReferenceList.size()-1;
-                            ValueEventListener valueEventListener;
 
-                            dbReferenceList.get(indexReference).getReference().addValueEventListener(valueEventListener= new ValueEventListener() {
+                            dbReferenceList.get(indexReference).setValueListener(new ValueEventListener() {
                                 @Override
                                 public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                                     if (dataSnapshot.exists())
@@ -214,7 +211,6 @@ public class SignInActivity extends AppCompatActivity {
                                 }
                             });
 
-                            dbReferenceList.get(indexReference).setValueListener(valueEventListener);
                         } else {
                             // If sign in fails, display a message to the user.
                             Log.d("matte", "signInWithEmail:failure", task.getException());

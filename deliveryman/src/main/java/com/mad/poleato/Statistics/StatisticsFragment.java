@@ -21,7 +21,6 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.jjoe64.graphview.DefaultLabelFormatter;
@@ -33,7 +32,7 @@ import com.jjoe64.graphview.series.DataPointInterface;
 import com.jjoe64.graphview.series.LineGraphSeries;
 import com.jjoe64.graphview.series.OnDataPointTapListener;
 import com.jjoe64.graphview.series.Series;
-import com.mad.poleato.History.HistoryComparator;
+import com.mad.poleato.FirebaseData.MyDatabaseReference;
 import com.mad.poleato.R;
 import com.onesignal.OneSignal;
 
@@ -43,7 +42,6 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
@@ -62,6 +60,8 @@ public class StatisticsFragment extends Fragment {
     //auth
     private String currentUserID;
     private FirebaseAuth mAuth;
+
+    private MyDatabaseReference historyFireBaseReference;
 
 
     private Map<String, TextView> tv_Fields;    //TextView map
@@ -126,6 +126,16 @@ public class StatisticsFragment extends Fragment {
     }
 
 
+    private void logout(){
+        FirebaseAuth.getInstance().signOut();
+        OneSignal.setSubscription(false);
+
+        //logout
+        Navigation.findNavController(fragView).navigate(R.id.action_statisticsFragment_to_signInActivity); //TODO mich
+        getActivity().finish();
+    }
+
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -141,9 +151,15 @@ public class StatisticsFragment extends Fragment {
     }
 
 
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        historyFireBaseReference.removeAllListener();
+    }
+
     private void collectFields(){
 
-        tv_Fields.put("riderID", (TextView) fragView.findViewById(R.id.riderID_tv));
+        tv_Fields.put("today", (TextView) fragView.findViewById(R.id.today_tv));
 
         tv_Fields.put("workingDays", (TextView) fragView.findViewById(R.id.workingDays_tv));
         tv_Fields.put("workingHours", (TextView) fragView.findViewById(R.id.totHours_tv));
@@ -155,16 +171,20 @@ public class StatisticsFragment extends Fragment {
         tv_Fields.put("kmPerDay", (TextView) fragView.findViewById(R.id.kmPerDay_tv));
 
         graphView = (GraphView) fragView.findViewById(R.id.graphView);
+
+        //set current day in the upper TextView
+        SimpleDateFormat dateFormat = new SimpleDateFormat("EEE MM/dd");
+        String today = dateFormat.format(new Date());
+        tv_Fields.get("today").setText(today);
     }
 
 
     private void readHistory(){
 
+        historyFireBaseReference = new MyDatabaseReference(FirebaseDatabase.getInstance().getReference("deliveryman")
+                                                        .child(currentUserID+"/history"));
 
-        DatabaseReference historyReference = FirebaseDatabase.getInstance().getReference("deliveryman")
-                                                                .child(currentUserID+"/history");
-
-        historyReference.addValueEventListener(new ValueEventListener() {
+        historyFireBaseReference.setValueListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
 
@@ -391,14 +411,5 @@ public class StatisticsFragment extends Fragment {
 
     }
 
-
-    private void logout(){
-        FirebaseAuth.getInstance().signOut();
-        OneSignal.setSubscription(false);
-
-        //logout
-        Navigation.findNavController(fragView).navigate(R.id.action_statisticsFragment_to_signInActivity); //TODO mich
-        getActivity().finish();
-    }
 
 }

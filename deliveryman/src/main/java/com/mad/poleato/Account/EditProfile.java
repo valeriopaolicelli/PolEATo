@@ -79,7 +79,6 @@ public class EditProfile extends Fragment {
 
     private Map<String, ImageButton> imageButtons;
     private Map<String, EditText> editTextFields;
-    private DatabaseReference reference;
     private Toast myToast;
 
     private static final int REQUEST_TAKE_PHOTO = 1;
@@ -97,7 +96,7 @@ public class EditProfile extends Fragment {
     private String currentUserID;
     private FirebaseAuth mAuth;
 
-    private List<MyDatabaseReference> dbReferenceList;
+    private MyDatabaseReference deliveryProfileReference;
 
     public EditProfile() {
         // Required empty public constructor
@@ -128,8 +127,6 @@ public class EditProfile extends Fragment {
         editTextFields = new HashMap<>();
         imageButtons = new HashMap<>();
         imageButtons = new HashMap<>();
-
-        dbReferenceList= new ArrayList<>();
     }
 
 
@@ -237,12 +234,9 @@ public class EditProfile extends Fragment {
     private void fillFields(){
 
         //Download text infos
-        reference = FirebaseDatabase.getInstance().getReference("deliveryman/"+ currentUserID);
-        dbReferenceList.add(new MyDatabaseReference(reference));
-        int indexReference= dbReferenceList.size()-1;
-        ValueEventListener valueEventListener;
-
-        dbReferenceList.get(indexReference).getReference().addValueEventListener(valueEventListener= new ValueEventListener() {
+        deliveryProfileReference = new MyDatabaseReference(FirebaseDatabase.getInstance()
+                                                .getReference("deliveryman/"+ currentUserID));
+        deliveryProfileReference.setValueListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
 
@@ -276,7 +270,6 @@ public class EditProfile extends Fragment {
                 myToast.show();
             }
         });
-        dbReferenceList.get(indexReference).setValueListener(valueEventListener);
 
         //Download the profile pic
         StorageReference storageReference = FirebaseStorage.getInstance().getReference();
@@ -605,14 +598,14 @@ public class EditProfile extends Fragment {
         /* --------------- SAVING TO FIREBASE --------------- */
         if(!wrongField){
 
-            reference.child("IsActive").setValue(statusSwitch.isChecked());
+            deliveryProfileReference.getReference().child("IsActive").setValue(statusSwitch.isChecked());
             EditText ed;
             for(String fieldName : editTextFields.keySet()){
                 if(!fieldName.equals("OldPassword")
                         && !fieldName.equals("NewPassword")
                         && !fieldName.equals("ReNewPassword")){
                     ed = editTextFields.get(fieldName);
-                    reference.child(fieldName).setValue(ed.getText().toString());
+                    deliveryProfileReference.getReference().child(fieldName).setValue(ed.getText().toString());
                 }
             }
 
@@ -901,7 +894,6 @@ public class EditProfile extends Fragment {
     @Override
     public void onDestroy() {
         super.onDestroy();
-        for (int i=0; i < dbReferenceList.size(); i++)
-            dbReferenceList.get(i).removeAllListener();
+        deliveryProfileReference.removeAllListener();
     }
 }

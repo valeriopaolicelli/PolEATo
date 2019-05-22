@@ -130,7 +130,7 @@ public class RidesFragment extends Fragment implements OnMapReadyCallback {
 
     // object representing the actual ride (if presents)
     private Ride ride;
-    private List<MyDatabaseReference> dbReferenceList;
+    private MyDatabaseReference deliveryReservationReference;
 
     /*the latest location received from the backgound service. It is needed to check if the rider is moving
     if not the directions are not updated each time */
@@ -181,9 +181,6 @@ public class RidesFragment extends Fragment implements OnMapReadyCallback {
 
         OneSignal.setSubscription(true);
         OneSignal.sendTag("User_ID", currentUserID);
-
-        //init the database references list
-        dbReferenceList = new ArrayList<>();
 
         createMap();
 
@@ -371,13 +368,9 @@ public class RidesFragment extends Fragment implements OnMapReadyCallback {
 
     private void retrieveOrderInfo() {
 
-        DatabaseReference reference = FirebaseDatabase.getInstance()
-                .getReference("deliveryman/" + currentUserID + "/reservations");
-        dbReferenceList.add(new MyDatabaseReference(reference));
-        int indexReference = dbReferenceList.size() - 1;
-        ChildEventListener childEventListener;
-
-        dbReferenceList.get(indexReference).getReference().addChildEventListener(childEventListener = new ChildEventListener() {
+        deliveryReservationReference = new MyDatabaseReference(FirebaseDatabase.getInstance()
+                                            .getReference("deliveryman/" + currentUserID + "/reservations"));
+        deliveryReservationReference.setChildListener(new ChildEventListener() {
             @Override
             public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
                 if (dataSnapshot.exists() &&
@@ -460,7 +453,6 @@ public class RidesFragment extends Fragment implements OnMapReadyCallback {
             }
         });
 
-        dbReferenceList.get(indexReference).setChildListener(childEventListener);
     }
 
 
@@ -706,8 +698,7 @@ public class RidesFragment extends Fragment implements OnMapReadyCallback {
     @Override
     public void onDestroy() {
         super.onDestroy();
-        for (int i = 0; i < dbReferenceList.size(); i++)
-            dbReferenceList.get(i).removeAllListener();
+        deliveryReservationReference.removeAllListener();
         //delete the listener inside a try catch block because we cannot know if it was registered
         try{
             hostActivity.unregisterReceiver(locationReceiver); //TODO check if already registered

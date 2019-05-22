@@ -9,7 +9,6 @@ import android.util.Log;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationResult;
 import com.google.android.gms.location.LocationServices;
-import com.google.firebase.database.DatabaseReference;
 
 public class LocationReceiver extends BroadcastReceiver {
 
