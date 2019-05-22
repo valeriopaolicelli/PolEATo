@@ -10,11 +10,13 @@ import android.os.Message;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentTransaction;
 import android.util.Log;
 import android.view.Display;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ExpandableListView;
 
 import com.google.android.gms.tasks.OnFailureListener;
@@ -29,6 +31,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.mad.poleato.Classes.Food;
+import com.mad.poleato.FavoritePlates.FavoriteMenuFragment;
 import com.mad.poleato.Interface;
 import com.mad.poleato.MyDatabaseReference;
 import com.mad.poleato.R;
@@ -133,6 +136,7 @@ public class MenuFragment extends Fragment {
 
         return fragView;
     }
+
     public int GetDipsFromPixel(float pixels){
         // Get the screen's density scale
         final float scale = getResources().getDisplayMetrics().density;
@@ -157,6 +161,7 @@ public class MenuFragment extends Fragment {
                 lastExpandedPosition = groupPosition;
             }
         });
+
         setList();
         // list Adapter of ExpandableList
         listAdapter = new MenuExpandableListAdapter(hostActivity, listDataGroup, listDataChild, order);
@@ -205,8 +210,6 @@ public class MenuFragment extends Fragment {
         listAdapter.notifyDataSetChanged();
         expListView.setAdapter(listAdapter);
     }
-
-
 
     public void setList(){
         DatabaseReference reference = FirebaseDatabase.getInstance().getReference("restaurants")
@@ -386,6 +389,8 @@ public class MenuFragment extends Fragment {
         });
 
         dbReferenceList.get(indexReference).setChildListener(childEventListener);
+
+
 
     }
 

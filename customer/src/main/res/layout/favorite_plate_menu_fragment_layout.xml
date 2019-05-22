@@ -3,7 +3,6 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/containerMenuFragment"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:layout_below="@id/toolbar_order"
@@ -18,6 +17,7 @@
             android:id="@+id/menuList"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            android:layout_marginTop="8dp"
             android:layout_marginBottom="?attr/actionBarSize"
             android:divider="@null"
             android:dividerHeight="0dp"
@@ -25,10 +25,7 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            tools:listitem="@layout/layout_menu_group">
-
-        </ExpandableListView>
+            tools:listitem="@layout/layout_menu_group" />
     </android.support.constraint.ConstraintLayout>
-
 
 </android.support.design.widget.CoordinatorLayout>

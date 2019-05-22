@@ -1,8 +1,7 @@
-package com.mad.poleato.OrderManagement;
+package com.mad.poleato.FavoritePlates;
 
 import android.app.Activity;
 import android.support.annotation.NonNull;
-import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -26,7 +25,7 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.mad.poleato.Classes.Food;
-import com.mad.poleato.MyDatabaseReference;
+import com.mad.poleato.OrderManagement.Order;
 import com.mad.poleato.R;
 import com.squareup.picasso.Picasso;
 
@@ -34,7 +33,7 @@ import java.text.DecimalFormat;
 import java.util.HashMap;
 import java.util.List;
 
-public class MenuExpandableListAdapter extends BaseExpandableListAdapter {
+public class FavoriteMenuExpandableListAdapter extends BaseExpandableListAdapter {
 
     private Toast myToast;
 
@@ -47,8 +46,8 @@ public class MenuExpandableListAdapter extends BaseExpandableListAdapter {
     private String currentUserID;
     private FirebaseAuth mAuth;
 
-    public MenuExpandableListAdapter(Activity host, List<String> listDataHeader,
-                                     HashMap<String, List<Food>> listChildData, Order order) {
+    public FavoriteMenuExpandableListAdapter(Activity host, List<String> listDataHeader,
+                                             HashMap<String, List<Food>> listChildData, Order order) {
 
         myToast = Toast.makeText(host, "", Toast.LENGTH_SHORT);
 
@@ -195,30 +194,10 @@ public class MenuExpandableListAdapter extends BaseExpandableListAdapter {
                 }
             }
         });
-
-        // animate button favorite
+// animate button favorite
         String restaurantID = order.getRestaurantID();
-        DatabaseReference reference= FirebaseDatabase.getInstance().getReference("customers/" + currentUserID +
-                                                                                       "/Favorite/" + restaurantID +
-                                                                                       "/dishes");
 
-        reference.addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                if(dataSnapshot.exists()) {
-                    String foodID= food.getFoodID();
-                    if (dataSnapshot.hasChild(foodID))
-                        holder.buttonFavorite.setChecked(true);
-                    else
-                        holder.buttonFavorite.setChecked(false);
-                }
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
-
-            }
-        });
+        holder.buttonFavorite.setChecked(true);
 
         holder.buttonFavorite.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener(){
             @Override
@@ -227,27 +206,18 @@ public class MenuExpandableListAdapter extends BaseExpandableListAdapter {
                 compoundButton.startAnimation(holder.scaleAnimation);
 
                 // add or remove restaurant from favorite
-                if(isChecked){
-                    // add restaurant to favorite list
-                    String foodID= food.getFoodID();
-                    String foodName= food.getName();
-                    String restaurantID= order.getRestaurantID();
-                    FirebaseDatabase.getInstance().getReference(    "customers/" + currentUserID
-                                                                        + "/Favorite/" + restaurantID
-                                                                        + "/dishes/" + foodID).setValue(foodName);
-                }
-                else{
+                if(!isChecked){
                     // remove restaurant from favorite list
                     String foodID= food.getFoodID();
                     final String restaurantID= order.getRestaurantID();
                     FirebaseDatabase.getInstance().getReference( "customers/" + currentUserID
-                                                                     + "/Favorite/" + restaurantID
-                                                                     + "/dishes/" + foodID).removeValue();
+                            + "/Favorite/" + restaurantID
+                            + "/dishes/" + foodID).removeValue();
                     // at this point if this is the last food in the favorite list, also the restaurant is removed from the favorite
                     // but I want that the restaurant remains in the favorite list of restaurants, so I put it again
                     DatabaseReference referenceCustomerFavorite= FirebaseDatabase.getInstance().getReference("customers/" +
-                                                                                                                    currentUserID +
-                                                                                                                    "/Favorite");
+                            currentUserID +
+                            "/Favorite");
 
                     referenceCustomerFavorite.addListenerForSingleValueEvent(new ValueEventListener() {
                         @Override
@@ -255,8 +225,8 @@ public class MenuExpandableListAdapter extends BaseExpandableListAdapter {
                             if(!dataSnapshot.hasChild(restaurantID)) {
                                 // restore restaurant without plates in the favorite list
                                 FirebaseDatabase.getInstance().getReference("customers/" +
-                                                                                    currentUserID +
-                                                                                    "/Favorite/" + restaurantID).setValue("none");
+                                        currentUserID +
+                                        "/Favorite/" + restaurantID).setValue("none");
                             }
                         }
 
@@ -268,7 +238,6 @@ public class MenuExpandableListAdapter extends BaseExpandableListAdapter {
                 }
             }
         });
-
         return convertView;
     }
 
@@ -358,7 +327,6 @@ public class MenuExpandableListAdapter extends BaseExpandableListAdapter {
         TextView selectedQuantity;
         ImageButton decrease;
         ImageButton increase;
-
 
         // attributes for togglebutton favorite
         public ScaleAnimation scaleAnimation;

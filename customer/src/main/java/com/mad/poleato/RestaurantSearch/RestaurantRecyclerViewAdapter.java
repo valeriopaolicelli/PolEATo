@@ -204,9 +204,9 @@ public class RestaurantRecyclerViewAdapter extends RecyclerView.Adapter<Restaura
         DatabaseReference reference= FirebaseDatabase.getInstance().getReference("customers/"+currentUserID+"/Favorite");
         dbReferenceList.add(new MyDatabaseReference(reference));
         int indexReference= dbReferenceList.size()-1;
-        ValueEventListener valueEventListener;
+        final ValueEventListener valueEventListener;
 
-        dbReferenceList.get(indexReference).getReference().addValueEventListener(valueEventListener= new ValueEventListener() {
+        dbReferenceList.get(indexReference).getReference().addListenerForSingleValueEvent(valueEventListener= new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 if(dataSnapshot.exists()) {
@@ -235,9 +235,28 @@ public class RestaurantRecyclerViewAdapter extends RecyclerView.Adapter<Restaura
                 // add or remove restaurant from favorite
                 if(isChecked){
                     // add restaurant to favorite list
-                    String restaurantID= list.get(position).getId();
-                    String restaurantName= list.get(position).getName();
-                    FirebaseDatabase.getInstance().getReference("customers/"+currentUserID+"/Favorite/"+restaurantID).setValue(restaurantName);
+                    final String restaurantID= list.get(position).getId();
+                    DatabaseReference refFavoriteRestaurant= FirebaseDatabase.getInstance()
+                                                                    .getReference("customers/" + currentUserID
+                                                                                       +"/Favorite/");
+                    dbReferenceList.add(new MyDatabaseReference(refFavoriteRestaurant));
+                    int indexReference= dbReferenceList.size()-1;
+                    ValueEventListener valueEventListener1;
+
+                    dbReferenceList.get(indexReference).getReference().addListenerForSingleValueEvent(valueEventListener1= new ValueEventListener() {
+                        @Override
+                        public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                            if(!dataSnapshot.hasChild(restaurantID)){
+                                FirebaseDatabase.getInstance().getReference("customers/"+currentUserID+"/Favorite/"+restaurantID).setValue("none");
+                            }
+                        }
+
+                        @Override
+                        public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                        }
+                    });
+                    dbReferenceList.get(indexReference).setValueListener(valueEventListener1);
                 }
                 else{
                     // remove restaurant from favorite list

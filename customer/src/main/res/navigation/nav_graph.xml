@@ -22,7 +22,7 @@
 
     <fragment
         android:id="@+id/favoriteRestaurantFragment_id"
-        android:name="com.mad.poleato.FavoriteRestaurant.FavoriteRestaurantFragment"
+        android:name="com.mad.poleato.FavoriteRestaurants.FavoriteRestaurantFragment"
         android:label="@string/favorite_list_button"
         tools:layout="@layout/favorite_restaurant_recyclerview" >
         <action

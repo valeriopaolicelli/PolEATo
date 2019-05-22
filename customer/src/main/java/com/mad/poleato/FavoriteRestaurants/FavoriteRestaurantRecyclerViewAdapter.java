@@ -1,4 +1,4 @@
-package com.mad.poleato.FavoriteRestaurant;
+package com.mad.poleato.FavoriteRestaurants;
 
 import android.content.Context;
 import android.content.Intent;
@@ -21,11 +21,7 @@ import android.widget.ToggleButton;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ValueEventListener;
 import com.mad.poleato.Classes.Restaurant;
 import com.mad.poleato.MyDatabaseReference;
 import com.mad.poleato.OrderManagement.OrderActivity;
@@ -34,8 +30,6 @@ import com.squareup.picasso.Picasso;
 
 import java.text.DecimalFormat;
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
 
 public class FavoriteRestaurantRecyclerViewAdapter extends RecyclerView.Adapter<FavoriteRestaurantRecyclerViewAdapter.FavoriteRestaurantViewHolder> {
@@ -77,10 +71,10 @@ public class FavoriteRestaurantRecyclerViewAdapter extends RecyclerView.Adapter<
 
             // initialize attributes for favorite toggle
             this.buttonFavorite= (ToggleButton) itemView.findViewById(R.id.button_favorite);
-            scaleAnimation = new ScaleAnimation(0.7f, 1.0f, 0.7f, 1.0f, Animation.RELATIVE_TO_SELF, 0.7f, Animation.RELATIVE_TO_SELF, 0.7f);
-            scaleAnimation.setDuration(500);
-            bounceInterpolator = new BounceInterpolator();
-            scaleAnimation.setInterpolator(bounceInterpolator);
+            this.scaleAnimation = new ScaleAnimation(0.7f, 1.0f, 0.7f, 1.0f, Animation.RELATIVE_TO_SELF, 0.7f, Animation.RELATIVE_TO_SELF, 0.7f);
+            this.scaleAnimation.setDuration(500);
+            this.bounceInterpolator = new BounceInterpolator();
+            this.scaleAnimation.setInterpolator(bounceInterpolator);
         }
     }
 
@@ -179,13 +173,7 @@ public class FavoriteRestaurantRecyclerViewAdapter extends RecyclerView.Adapter<
                 compoundButton.startAnimation(holder.scaleAnimation);
 
                 // add or remove restaurant from favorite
-                if(isChecked){
-                    // add restaurant to favorite list
-                    String restaurantID= list.get(position).getId();
-                    String restaurantName= list.get(position).getName();
-                    FirebaseDatabase.getInstance().getReference("customers/"+currentUserID+"/Favorite/"+restaurantID).setValue(restaurantName);
-                }
-                else{
+                if(!isChecked){
                     // remove restaurant from favorite list
                     String restaurantID= list.get(position).getId();
                     FirebaseDatabase.getInstance().getReference("customers/"+currentUserID+"/Favorite/"+restaurantID).removeValue();
