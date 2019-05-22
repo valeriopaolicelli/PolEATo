@@ -12,6 +12,11 @@
         android:title="@string/title_bottombar_historyOrder" />
 
     <item
+        android:id="@+id/myReviewsFragment_id"
+        android:icon="@drawable/ic_baseline_stars_24px"
+        android:title="@string/title_bottombar_myReviews" />
+
+    <item
         android:id="@+id/mainProfile_id"
         android:icon="@drawable/ic_baseline_person_24px"
         android:title="@string/title_bottombar_account" />

@@ -5,6 +5,7 @@
     android:id="@+id/nav_graph"
     app:startDestination="@id/restaurantSearchFragment_id">
 
+
     <fragment
         android:id="@+id/restaurantSearchFragment_id"
         android:name="com.mad.poleato.RestaurantSearch.RestaurantSearchFragment"
@@ -20,6 +21,7 @@
             app:destination="@id/favoriteRestaurantFragment_id" />
     </fragment>
 
+
     <fragment
         android:id="@+id/favoriteRestaurantFragment_id"
         android:name="com.mad.poleato.FavoriteRestaurant.FavoriteRestaurantFragment"
@@ -31,6 +33,7 @@
             app:popUpTo="@+id/restaurantSearchFragment_id"
             app:popUpToInclusive="true" />
     </fragment>
+
 
     <fragment
         android:id="@+id/holder_history_id"
@@ -58,7 +61,6 @@
                 android:defaultValue=" "/>
         </action>
     </fragment>
-
     <fragment
         android:id="@+id/rating_fragment_id"
         android:name="com.mad.poleato.History.RatingManagement.RatingFragment"
@@ -69,6 +71,18 @@
             app:destination="@id/holder_history_id"
             app:popUpToInclusive="true" />
     </fragment>
+
+
+    <fragment
+        android:id="@+id/myReviewsFragment_id"
+        android:name="com.mad.poleato.MyReviews.MyReviewsFragment"
+        android:label="@string/title_actionbar_myReviews"
+        tools:layout="@layout/fragment_my_reviews" >
+        <action
+            android:id="@+id/action_myReviewsFragment_to_signInActivity"
+            app:destination="@id/signInActivity" />
+    </fragment>
+
 
     <fragment
         android:id="@+id/mainProfile_id"
@@ -104,5 +118,6 @@
         android:name="com.mad.poleato.SignInActivity"
         android:label="signin_layout"
         tools:layout="@layout/signin_layout" />
+
 
 </navigation>

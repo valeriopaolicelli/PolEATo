@@ -89,6 +89,9 @@
     <string name="title_bottombar_historyOrder">Orders</string>
     <string name="title_actionbar_historyOrder">Orders</string>
 
+    <string name="title_bottombar_myReviews">Reviews</string>
+    <string name="title_actionbar_myReviews">Reviews</string>
+
 
     <string name="title_bottombar_account">Account</string>
     <string name="title_actionbar_account">Account</string>
@@ -134,6 +137,9 @@
     <string name="very_good">I loved it!</string>
     <!-- Favorite restaurant and foods -->
     <string name="favorite_list_button">Your favorite restaurants</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 
 
 </resources>

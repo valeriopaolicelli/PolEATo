@@ -12,11 +12,6 @@
             android:title="@string/title_bottombar_history" />
 
         <item
-            android:id="@+id/history_id"
-            android:icon="@drawable/ic_baseline_history_24px"
-            android:title="@string/title_bottombar_history" />
-
-        <item
             android:id="@+id/daily_offer_id"
             android:icon="@drawable/ic_dashboard_black_24dp"
             android:title="@string/title_bottombar_dailyoffer" />
