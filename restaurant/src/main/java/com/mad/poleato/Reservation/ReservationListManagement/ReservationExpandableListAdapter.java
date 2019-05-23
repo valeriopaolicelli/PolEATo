@@ -38,6 +38,7 @@ import com.mad.poleato.Reservation.Status;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 
 
 import static android.view.View.GONE;
@@ -303,7 +304,12 @@ public class ReservationExpandableListAdapter extends BaseExpandableListAdapter{
                                                 for( Dish d : reservation.getDishes()){
                                                     if(d.getID().equals(foodID)){
                                                         if(quantity - d.getQuantity()< 0 ){
-                                                            showToast("Not enough quantity, please update");
+                                                            Locale locale= Locale.getDefault();
+                                                            String localeShort = locale.toString().substring(0, 2);
+                                                            if(localeShort.equals("en"))
+                                                                showToast("Not enough " + d.getName().toLowerCase() +" to accept this order");
+                                                            else
+                                                                showToast("Non hai abbastanza " + d.getName().toLowerCase() +" per accettare quest'ordine");
                                                             return Transaction.success(mutableData);
                                                         }
                                                         m.child("Quantity").setValue((quantity-d.getQuantity()));
