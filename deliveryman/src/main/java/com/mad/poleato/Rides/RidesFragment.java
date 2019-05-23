@@ -591,7 +591,7 @@ public class RidesFragment extends Fragment implements OnMapReadyCallback {
                                 + "\"filters\": [{\"field\": \"tag\", \"key\": \"User_ID\", \"relation\": \"=\", \"value\": \"" + send_email + "\"}],"
 
                                 + "\"data\": {\"Order\": \"PolEATo\"},"
-                                + "\"contents\": {\"en\": \"Il fattorino ha lasciato il ristorante\"}"
+                                + "\"contents\": {\"it\": \"Il fattorino ha lasciato il ristorante\"}"
                                 + "}";
 
 
@@ -659,7 +659,7 @@ public class RidesFragment extends Fragment implements OnMapReadyCallback {
                                 + "\"filters\": [{\"field\": \"tag\", \"key\": \"User_ID\", \"relation\": \"=\", \"value\": \"" + send_email + "\"}],"
 
                                 + "\"data\": {\"Order\": \"PolEATo\"},"
-                                + "\"contents\": {\"en\": \"Ordine " + ride.getOrderID() + " consegnato!\"}"
+                                + "\"contents\": {\"it\": \"Ordine " + ride.getOrderID() + " consegnato!\"}"
                                 + "}";
 
 

@@ -5,7 +5,9 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.graphics.Color;
 import android.graphics.Paint;
+import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.StrictMode;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -21,8 +23,12 @@ import com.mad.poleato.Classes.Dish;
 import com.mad.poleato.R;
 import com.mad.poleato.Classes.Reservation;
 
+import java.io.OutputStream;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Scanner;
 
 
 public class ReservationExpandableListAdapter extends BaseExpandableListAdapter {
@@ -168,7 +174,9 @@ public class ReservationExpandableListAdapter extends BaseExpandableListAdapter 
                                         FirebaseDatabase.getInstance()
                                                 .getReference("customers/" + loggedID + "/reservations/" + c.getOrderID()
                                                         + "/status/it").setValue("Consegnato");
-                                        //TODO: notify restaurants of delivery
+
+                                        sendNotification(c.getRestaurantID(), c.getOrderID());
+
                                         notifyDataSetChanged();
 
                                         AlertDialog.Builder builder1 = new AlertDialog.Builder(context)
@@ -267,6 +275,74 @@ public class ReservationExpandableListAdapter extends BaseExpandableListAdapter 
     public void updateReservations(List<Reservation> reservations) {
         this.reservations=reservations;
     }
+
+    private void sendNotification(final String restaurantID, final String orderID) {
+        AsyncTask.execute(new Runnable() {
+            @Override
+            public void run() {
+                int SDK_INT = android.os.Build.VERSION.SDK_INT;
+                if (SDK_INT > 8) {
+                    StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder()
+                            .permitAll().build();
+                    StrictMode.setThreadPolicy(policy);
+                    String send_email;
+
+                    //This is a Simple Logic to Send Notification different Device Programmatically....
+                    send_email= restaurantID;
+
+                    try {
+                        String jsonResponse;
+
+                        URL url = new URL("https://onesignal.com/api/v1/notifications");
+                        HttpURLConnection con = (HttpURLConnection) url.openConnection();
+                        con.setUseCaches(false);
+                        con.setDoOutput(true);
+                        con.setDoInput(true);
+
+                        con.setRequestProperty("Content-Type", "application/json; charset=UTF-8");
+                        con.setRequestProperty("Authorization", "Basic YjdkNzQzZWQtYTlkYy00MmIzLTg0NDUtZmQ3MDg0ODc4YmQ1");
+                        con.setRequestMethod("POST");
+                        String strJsonBody = "{"
+                                + "\"app_id\": \"a2d0eb0d-4b93-4b96-853e-dcfe6c34778e\","
+
+                                + "\"filters\": [{\"field\": \"tag\", \"key\": \"User_ID\", \"relation\": \"=\", \"value\": \"" + send_email + "\"}],"
+
+                                + "\"data\": {\"Order\": \"PolEATo\"},"
+                                + "\"contents\": {\"it\": \"Ordine " + orderID + " pagato\"}"
+                                + "}";
+
+
+                        System.out.println("strJsonBody:\n" + strJsonBody);
+
+                        byte[] sendBytes = strJsonBody.getBytes("UTF-8");
+                        con.setFixedLengthStreamingMode(sendBytes.length);
+
+                        OutputStream outputStream = con.getOutputStream();
+                        outputStream.write(sendBytes);
+
+                        int httpResponse = con.getResponseCode();
+                        System.out.println("httpResponse: " + httpResponse);
+
+                        if (httpResponse >= HttpURLConnection.HTTP_OK
+                                && httpResponse < HttpURLConnection.HTTP_BAD_REQUEST) {
+                            Scanner scanner = new Scanner(con.getInputStream(), "UTF-8");
+                            jsonResponse = scanner.useDelimiter("\\A").hasNext() ? scanner.next() : "";
+                            scanner.close();
+                        } else {
+                            Scanner scanner = new Scanner(con.getErrorStream(), "UTF-8");
+                            jsonResponse = scanner.useDelimiter("\\A").hasNext() ? scanner.next() : "";
+                            scanner.close();
+                        }
+                        System.out.println("jsonResponse:\n" + jsonResponse);
+
+                    } catch (Throwable t) {
+                        t.printStackTrace();
+                    }
+                }
+            }
+        });
+    }
+
 
     private class ViewHolder {
         TextView tv_date;

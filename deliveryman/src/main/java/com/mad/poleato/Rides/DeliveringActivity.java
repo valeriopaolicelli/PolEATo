@@ -731,7 +731,7 @@ public class DeliveringActivity extends FragmentActivity implements OnMapReadyCa
                                 + "\"filters\": [{\"field\": \"tag\", \"key\": \"User_ID\", \"relation\": \"=\", \"value\": \"" + send_email + "\"}],"
 
                                 + "\"data\": {\"Order\": \"PolEATo\"},"
-                                + "\"contents\": {\"en\": \"Il fattorino ha lasciato il ristorante\"}"
+                                + "\"contents\": {\"it\": \"Il fattorino ha lasciato il ristorante\"}"
                                 + "}";
 
 

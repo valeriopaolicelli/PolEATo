@@ -484,10 +484,6 @@ public class EditProfile extends Fragment {
 
 
     private void saveChanges() {
-
-        // TODO HERE MAKE UI NON RESPONSIVE
-
-
         if(getActivity() != null)
             progressDialog = ProgressDialog.show(getActivity(), "", getActivity().getString(R.string.loading));
 

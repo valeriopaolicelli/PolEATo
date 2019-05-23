@@ -292,7 +292,7 @@ public class RiderListAdapter extends ArrayAdapter<Rider>
                                 + "\"filters\": [{\"field\": \"tag\", \"key\": \"User_ID\", \"relation\": \"=\", \"value\": \"" + send_email + "\"}],"
 
                                 + "\"data\": {\"Order\": \"PolEATo\"},"
-                                + "\"contents\": {\"en\": \"Nuovo ordine da consegnare\"}"
+                                + "\"contents\": {\"it\": \"Nuovo ordine da consegnare\"}"
                                 + "}";
 
 

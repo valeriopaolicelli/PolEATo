@@ -237,7 +237,7 @@ public class CartActivity extends AppCompatActivity implements Interface,TimePic
                                 + "\"filters\": [{\"field\": \"tag\", \"key\": \"User_ID\", \"relation\": \"=\", \"value\": \"" + send_email + "\"}],"
 
                                 + "\"data\": {\"Order\": \"PolEATo\"},"
-                                + "\"contents\": {\"en\": \"Nuovo ordine\"}"
+                                + "\"contents\": {\"it\": \"Nuovo ordine\"}"
                                 + "}";
 
 

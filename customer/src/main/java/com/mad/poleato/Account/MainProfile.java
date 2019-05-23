@@ -61,7 +61,7 @@ public class MainProfile extends Fragment {
     private Toast myToast;
 
     private FloatingActionButton buttEdit;
-    private CircleImageView profileImage; //TODO retrieve image from DB
+    private CircleImageView profileImage;
     private DatabaseReference reference;
     private Map<String, TextView> tvFields;
     private View view;
