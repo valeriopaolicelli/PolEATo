@@ -224,7 +224,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="5dp"
                 android:hint="@string/quantity"
-                android:imeOptions="actionNext"
+                android:imeOptions="actionDone"
                 android:inputType="number"
                 android:maxLength="40"
                 android:singleLine="true"
