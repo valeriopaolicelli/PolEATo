@@ -42,6 +42,7 @@ import java.util.Calendar;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 
 
 /**
@@ -52,6 +53,7 @@ public class Holder_history extends Fragment {
     private ExpandableListView lv;
     private ReservationExpandableListAdapter listAdapter;
     private List<Reservation> reservations;
+    private String localeShort;
     private HashMap<String, List<Dish>> listHash = new HashMap<>();
     private View view;
     private Display display;
@@ -82,6 +84,8 @@ public class Holder_history extends Fragment {
         mAuth = FirebaseAuth.getInstance();
         FirebaseUser currentUser = mAuth.getCurrentUser();
         currentUserID = currentUser.getUid();
+        Locale locale= Locale.getDefault();
+        localeShort = locale.toString().substring(0, 2);
 
 // OneSignal is used to send notifications between applications
 
@@ -153,7 +157,9 @@ public class Holder_history extends Fragment {
                         dataSnapshot.hasChild("totalPrice") &&
                         dataSnapshot.hasChild("dishes") &&
                         dataSnapshot.hasChild("restaurantID") &&
-                        dataSnapshot.hasChild("reviewFlag")) {
+                        dataSnapshot.hasChild("reviewFlag") &&
+                        dataSnapshot.child("status").hasChild("it") &&
+                        dataSnapshot.child("status").hasChild("en")) {
 
                     String nameDish;
                     int quantity;
@@ -168,6 +174,7 @@ public class Holder_history extends Fragment {
                     final String restaurantName = dataSnapshot.child("restaurantName").getValue().toString();
                     final Long dateInMills = Long.parseLong(dataSnapshot.child("date").getValue().toString());
                     Boolean reviewFlag = Boolean.parseBoolean(dataSnapshot.child("reviewFlag").getValue().toString());
+                    final String status = dataSnapshot.child("status").child(localeShort).getValue().toString();
 
                     DateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
                     Calendar calendar = Calendar.getInstance();
@@ -190,6 +197,7 @@ public class Holder_history extends Fragment {
                     r.setDishes(dishes);
                     r.setRestaurantID(restaurantID);
                     r.setReviewFlag(reviewFlag);
+                    r.setStatus(status);
                     /*
                      * Update the expandable list adapter
                      */
@@ -210,7 +218,9 @@ public class Holder_history extends Fragment {
                         dataSnapshot.hasChild("dishes") &&
                         dataSnapshot.hasChild("restaurantID") &&
                         dataSnapshot.hasChild("reviewFlag") &&
-                        dataSnapshot.hasChild("name")) {
+                        dataSnapshot.hasChild("name") &&
+                        dataSnapshot.child("status").hasChild("it") &&
+                        dataSnapshot.child("status").hasChild("en")) {
 
                     String nameDish;
                     int quantity;
@@ -226,6 +236,8 @@ public class Holder_history extends Fragment {
                     final String date = dataSnapshot.child("date").getValue().toString();
                     final String time = dataSnapshot.child("time").getValue().toString();
                     final String totalPrice = dataSnapshot.child("totalPrice").getValue().toString();
+                    final String status = dataSnapshot.child("status").child(localeShort).getValue().toString();
+
                     Boolean reviewFlag = Boolean.parseBoolean(dataSnapshot.child("reviewFlag").getValue().toString());
                     String restaurantID = dataSnapshot.child("restaurantID").getValue().toString();
 
@@ -241,6 +253,7 @@ public class Holder_history extends Fragment {
                     r.setDishes(dishes);
                     r.setRestaurantID(restaurantID);
                     r.setReviewFlag(reviewFlag);
+                    r.setStatus(status);
                     /*
                      * Update the expandable list adapter
                      */
@@ -253,6 +266,7 @@ public class Holder_history extends Fragment {
                                 reservation.setDishes(dishes);
                                 reservation.setRestaurantID(restaurantID);
                                 reservation.setReviewFlag(reviewFlag);
+                                reservation.setStatus(status);
                             }
                         }
                     }

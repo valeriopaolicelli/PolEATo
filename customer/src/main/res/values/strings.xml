@@ -137,9 +137,25 @@
     <string name="neutral">Neutral</string>
     <string name="good">Good</string>
     <string name="very_good">I loved it!</string>
+
+    <!-- Review holder history -->
+    <string name="review_history_done">Reviewed!</string>
+    <string name="confirm_button">Confirm Delivery</string>
+
     <!-- Favorite restaurant and foods -->
     <string name="favorite_list_button">Your favorite restaurants</string>
     <string name="favorite_list_plates_button">Your favorite plates</string>
 
-    
+    <!-- dialogs -->
+    <string name="title_confirm_dialog">Confirm Delivery</string>
+    <string name="message_confirm_dialog">Has your order arrived? Have you payed the rider?</string>
+    <string name="confirm_btn">Confirm</string>
+
+    <string name="title_review_dialog">Leave a review</string>
+    <string name="review_history_request">Leave a review</string>
+
+    <string name="cancelBTn">Cancel</string>
+
+    <string name="notnowBtn">Not now</string>
+    <string name="message_review">Thank you for your order. Please do not forget to leave a review, is really important for us and the restaurant.</string>
 </resources>

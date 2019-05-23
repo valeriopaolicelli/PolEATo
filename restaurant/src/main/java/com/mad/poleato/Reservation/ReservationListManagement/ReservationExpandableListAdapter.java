@@ -28,21 +28,14 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.MutableData;
 import com.google.firebase.database.Transaction;
-import com.google.firebase.database.ValueEventListener;
-import com.mad.poleato.MyDatabaseReference;
 import com.mad.poleato.R;
 import com.mad.poleato.Reservation.Dish;
 import com.mad.poleato.Reservation.Reservation;
 import com.mad.poleato.Reservation.ReservationFragmentDirections;
 import com.mad.poleato.Reservation.Status;
-
-import java.io.OutputStream;
-import java.net.HttpURLConnection;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Scanner;
 
 
 import static android.view.View.GONE;
@@ -65,24 +58,6 @@ public class ReservationExpandableListAdapter extends BaseExpandableListAdapter{
         this.listHashMap = listHashMap;
         this.loggedID= currentUserID;
     }
-
-    /**
-     * Called to initialize the default check states of items
-     * @param defaultState : false
-     */
-//    public void initCheckStates(boolean defaultState) {
-//        for(int i = 0 ; i <reservations.size(); i++){
-//            groupChecked.put(reservations.get(i).getOrder_id(), defaultState);
-//            Reservation r = reservations.get(i);
-//            ArrayList<Boolean> childStates = new ArrayList<>();
-//            for(int j = 0; j < listHashMap.get(r.getOrder_id()).size(); j++){
-//                childStates.add(defaultState);
-//            }
-//
-//            childsChecked.put(r.getOrder_id(), childStates);
-//        }
-//    }
-//
 
     //This method add add a new value to the collections that handle the check states
     //Only if there is a new reservation
@@ -339,6 +314,13 @@ public class ReservationExpandableListAdapter extends BaseExpandableListAdapter{
                                                             r.setStatus(Status.COOKING);
                                                             FirebaseDatabase.getInstance().getReference("restaurants").child(loggedID).child("reservations").child(r.getOrder_id()).child("status").child("en").setValue("Cooking");
                                                             FirebaseDatabase.getInstance().getReference("restaurants").child(loggedID).child("reservations").child(r.getOrder_id()).child("status").child("it").setValue("Preparazione");
+
+                                                            FirebaseDatabase.getInstance().getReference("customers").child(r.getCustomerID()).child("reservations").child(r.getOrder_id()).child("status").child("en").setValue("Cooking");
+                                                            FirebaseDatabase.getInstance().getReference("customers").child(r.getCustomerID()).child("reservations").child(r.getOrder_id()).child("status").child("it").setValue("Preparazione");
+
+//                                                            FirebaseDatabase.getInstance().getReference("customers/"+r.getCustomerID()+"/reservations/"+r.getOrder_id()).child("status").child("it").setValue("Preparazione");
+
+
                                                             r.setButtonText(context.getString(R.string.title_deliver));
                                                             return Transaction.success(mutableData);
                                                         }

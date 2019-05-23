@@ -1,19 +1,22 @@
 package com.mad.poleato.History;
 
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.graphics.Color;
+import android.graphics.Paint;
 import android.os.Bundle;
-import android.util.Log;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseExpandableListAdapter;
+import android.widget.Button;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.navigation.Navigation;
 
+import com.google.firebase.database.FirebaseDatabase;
 import com.mad.poleato.Classes.Dish;
 import com.mad.poleato.R;
 import com.mad.poleato.Classes.Reservation;
@@ -85,38 +88,133 @@ public class ReservationExpandableListAdapter extends BaseExpandableListAdapter 
             holder.tv_restaurant_name= (TextView)view.findViewById(R.id.tvRestaurantField);
             holder.tv_total_price= (TextView) view.findViewById(R.id.tvTotalPrice);
             holder.tv_review = (TextView) view.findViewById(R.id.reviewtv);
+            holder.tv_status = (TextView) view.findViewById(R.id.statusTv);
+            holder.confirm_button = (Button) view.findViewById(R.id.confirmBtn);
             view.setTag(holder);
         }else{
             holder = (ViewHolder) view.getTag();
         }
         String price= c.getTotalPrice() + "€";
-        //Check if this order has been reviewed
-        if(c.isReviewFlag()) {
-            holder.tv_review.setText("Reviewed!");
-            holder.tv_review.setClickable(false);
-            holder.tv_review.setTextColor(Color.GREEN);
+
+
+        if(c.getStatus().equals("Delivered") || c.getStatus().equals("Consegnato")){
+            // The order has been delivered
+            holder.tv_review.setVisibility(View.VISIBLE);
+            holder.confirm_button.setVisibility(View.GONE);
+            holder.tv_status.setText(c.getStatus());
+            holder.tv_status.setTextColor(context.getResources().getColor(R.color.colorTextAccepted));
+            holder.tv_status.setPaintFlags(holder.tv_review.getPaintFlags() | Paint.UNDERLINE_TEXT_FLAG);
+            //Check if this order has been reviewed
+            if (c.isReviewFlag()) {
+                holder.tv_review.setText(context.getResources().getString(R.string.review_history_done));
+                holder.tv_review.setClickable(false);
+                holder.tv_review.setTextColor(Color.GREEN);
+                holder.tv_review.setPaintFlags(holder.tv_review.getPaintFlags() & (~Paint.UNDERLINE_TEXT_FLAG));
+            } else {
+                holder.tv_review.setText(context.getResources().getString(R.string.review_history_request));
+                holder.tv_review.setClickable(true);
+                holder.tv_review.setPaintFlags(holder.tv_review.getPaintFlags() | Paint.UNDERLINE_TEXT_FLAG);
+                holder.tv_review.setTextColor(context.getResources().getColor(R.color.colorTextField));
+                TypedValue outValue = new TypedValue();
+                context.getTheme().resolveAttribute(android.R.attr.selectableItemBackground, outValue, true);
+                holder.tv_review.setBackgroundResource(outValue.resourceId);
+                holder.tv_review.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        Bundle bundle = new Bundle();
+                        bundle.putString("restaurantID", c.getRestaurantID());
+                        bundle.putString("restaurantName", c.getRestaurantName());
+                        bundle.putString("orderID", c.getOrderID());
+
+                        Navigation.findNavController(view).navigate(R.id.action_holder_history_id_to_ratingFragment, bundle);
+                        //Toast.makeText(context, "Review Text Clicked", Toast.LENGTH_SHORT).show();
+                    }
+                });
+            }
         }
         else {
-            holder.tv_review.setText("Leave a review");
-            holder.tv_review.setClickable(true);
-            holder.tv_review.setTextColor(context.getResources().getColor(R.color.colorTextField));
-            TypedValue outValue = new TypedValue();
-            context.getTheme().resolveAttribute(android.R.attr.selectableItemBackground,outValue,true);
-            holder.tv_review.setBackgroundResource(outValue.resourceId);
-            holder.tv_review.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    //TODO: start RatingFragment and pass with bundle restaurantID,restaurantName and orderID
-                    //TODO: use getter of reservation object to do so with keys equals to the string name
-                    Bundle bundle = new Bundle();
-                    bundle.putString("restaurantID",c.getRestaurantID());
-                    bundle.putString("restaurantName",c.getRestaurantName());
-                    bundle.putString("orderID",c.getOrderID());
+            //The order has still not been delivered, customer has to confirm the order arrival
+            holder.tv_status.setPaintFlags(holder.tv_review.getPaintFlags() & (~Paint.UNDERLINE_TEXT_FLAG));
+            if (c.getStatus().equals("Delivering") || c.getStatus().equals("In Consegna")) {
+                holder.tv_review.setVisibility(View.GONE);
+                holder.confirm_button.setVisibility(View.VISIBLE);
+                holder.tv_status.setText(c.getStatus());
+                holder.tv_status.setTextColor(context.getResources().getColor(R.color.colorTextAccepted));
+                holder.confirm_button.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        final View viewClicked = view;
+                        AlertDialog.Builder builder = new AlertDialog.Builder(context)
+                                .setTitle(context.getResources().getString(R.string.title_confirm_dialog))
+                                .setMessage(context.getResources().getString(R.string.message_confirm_dialog))
+                                .setPositiveButton(context.getResources().getString(R.string.confirm_btn), new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialogInterface, int i) {
+                                        //Upload status for restaurant
+                                        FirebaseDatabase.getInstance()
+                                                .getReference("restautants/" + c.getRestaurantID() + "/reservations/" + c.getOrderID()
+                                                        + "/status/en").setValue("Delivered");
 
-                    Navigation.findNavController(view).navigate(R.id.action_holder_history_id_to_ratingFragment,bundle);
-                    Toast.makeText(context, "Review Text Clicked",Toast.LENGTH_SHORT).show();
+                                        FirebaseDatabase.getInstance()
+                                                .getReference("restautants/" + c.getRestaurantID() + "/reservations/" + c.getOrderID()
+                                                        + "/status/it").setValue("Consegnato");
+                                        c.setStatus("Delivered");
+
+                                        //Upload status for customer
+                                        FirebaseDatabase.getInstance()
+                                                .getReference("customers/" + loggedID + "/reservations/" + c.getOrderID()
+                                                        + "/status/en").setValue("Delivered");
+                                        FirebaseDatabase.getInstance()
+                                                .getReference("customers/" + loggedID + "/reservations/" + c.getOrderID()
+                                                        + "/status/it").setValue("Consegnato");
+                                        //TODO: notify restaurants of delivery
+                                        notifyDataSetChanged();
+
+                                        AlertDialog.Builder builder1 = new AlertDialog.Builder(context)
+                                                .setTitle(context.getResources().getString(R.string.title_review_dialog))
+                                                .setMessage(context.getResources().getString(R.string.message_review))
+                                                .setPositiveButton(context.getResources().getString(R.string.review_history_request), new DialogInterface.OnClickListener() {
+                                                    @Override
+                                                    public void onClick(DialogInterface dialogInterface, int i) {
+                                                        Bundle bundle = new Bundle();
+                                                        bundle.putString("restaurantID", c.getRestaurantID());
+                                                        bundle.putString("restaurantName", c.getRestaurantName());
+                                                        bundle.putString("orderID", c.getOrderID());
+
+                                                        Navigation.findNavController(viewClicked).navigate(R.id.action_holder_history_id_to_ratingFragment, bundle);
+                                                        dialogInterface.dismiss();
+                                                    }
+                                                }).setNeutralButton(context.getResources().getString(R.string.notnowBtn), new DialogInterface.OnClickListener() {
+                                                    @Override
+                                                    public void onClick(DialogInterface dialogInterface, int i) {
+                                                        dialogInterface.dismiss();
+                                                    }
+                                                });
+                                        AlertDialog dialog1 = builder1.create();
+                                        dialog1.show();
+                                    }
+                                })
+                                .setNeutralButton(context.getResources().getString(R.string.cancelBTn), new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialogInterface, int i) {
+                                        dialogInterface.dismiss();
+                                    }
+                                });
+                        AlertDialog dialog = builder.create();
+                        dialog.show();
+                    }
+                });
+            }else{
+                if (c.getStatus().equals("New Order") || c.getStatus().equals("Nuovo Ordine")) {
+                    holder.tv_status.setTextColor(context.getResources().getColor(R.color.colorTextSubField));
+                    holder.tv_status.setText(c.getStatus());
+                } else if (c.getStatus().equals("Cooking") || c.getStatus().equals("Preparazione")) {
+                    holder.tv_status.setTextColor(context.getResources().getColor(R.color.colorTextSubField));
+                    holder.tv_status.setText(c.getStatus());
                 }
-            });
+                holder.confirm_button.setVisibility(View.GONE);
+                holder.tv_review.setVisibility(View.GONE);
+            }
         }
         holder.tv_date.setText(c.getDate());
         holder.tv_time.setText(c.getTime());
@@ -175,6 +273,8 @@ public class ReservationExpandableListAdapter extends BaseExpandableListAdapter 
         TextView tv_restaurant_name;
         TextView tv_total_price;
         TextView tv_review;
+        TextView tv_status;
+        Button confirm_button;
     }
 
     private class ChildHolder{

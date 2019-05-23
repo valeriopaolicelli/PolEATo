@@ -18,6 +18,9 @@ public class Reservation {
     private String totalPrice;
     private List<Dish> dishes;
     private boolean reviewFlag;
+    private String Status;
+
+
 
     public Reservation(String orderID, String restaurantName, String date, String time,
                        String totalPrice) {
@@ -26,6 +29,15 @@ public class Reservation {
         this.date = date;
         this.time= time;
         this.totalPrice= totalPrice;
+    }
+
+
+    public String getStatus() {
+        return Status;
+    }
+
+    public void setStatus(String status) {
+        Status = status;
     }
     public String getName() {
         return restaurantName;

@@ -138,11 +138,30 @@
     <string name="neutral">Normale</string>
     <string name="good">Bene</string>
     <string name="very_good">Benissimo!</string>
+
+
+    <!-- Review holder history -->
+    <string name="review_history_done">Recensito!</string>
     <!-- Favorite restaurant and foods -->
     <string name="favorite_list_button">I tuoi ristoranti preferiti</string>
     <string name="favorite_list_plates_button">I tuoi piatti preferiti</string>
+    <string name="confirm_button">Conferma la consegna</string>
 
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
+
+    <!-- Dialog -->
+    <string name="title_confirm_dialog">Conferma la consegna</string>
+    <string name="message_confirm_dialog">Il tuo ordine è stato consegnato? Hai pagato il rider?</string>
+    <string name="confirm_btn">Conferma</string>
+
+    <string name="title_review_dialog">Lascia una recensione</string>
+    <string name="review_history_request">Lascia una recensione</string>
+    <string name="cancelBTn">Indietro</string>
+
+    <string name="notnowBtn">Non ora</string>
+
+
+
+    <string name="message_review">Grazie per il tuo ordine. Ti ricordiamo di lasciare una recensione, è molto importante per noi e per il ristorante. Grazie!</string>
+
 
 </resources>

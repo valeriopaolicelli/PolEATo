@@ -966,6 +966,8 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback,
                                                           mutableData.child("Busy").setValue(true);
                                                           reservation.setStat(getContext().getString(R.string.delivery));
                                                           reservation.setStatus(Status.DELIVERY);
+                                                          FirebaseDatabase.getInstance().getReference("customers/"+reservation.getCustomerID()+"/reservations/"+reservation.getOrder_id()).child("status").child("en").setValue("Delivering");
+                                                          FirebaseDatabase.getInstance().getReference("customers/"+reservation.getCustomerID()+"/reservations/"+reservation.getOrder_id()).child("status").child("it").setValue("In Consegna");
                                                           notifyRider(riderID);
                                                           return Transaction.success(mutableData);
                                                       }

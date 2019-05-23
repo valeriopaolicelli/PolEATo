@@ -122,7 +122,6 @@
             android:text="@string/total_price"
             android:textColor="@color/colorTextField"
             android:textSize="20sp"
-            app:layout_constraintBottom_toTopOf="@+id/reviewtv"
             app:layout_constraintStart_toStartOf="@+id/timeLabel"
             app:layout_constraintTop_toBottomOf="@+id/timeLabel" />
 
@@ -139,21 +138,60 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toEndOf="@+id/totalPriceLabel"
-            app:layout_constraintTop_toTopOf="@+id/totalPriceLabel"
-             />
+            app:layout_constraintTop_toTopOf="@+id/totalPriceLabel" />
+
+        <TextView
+            android:id="@+id/statusLabel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:singleLine="true"
+            android:text="Status"
+            android:textColor="@color/colorTextField"
+            android:textSize="20sp"
+            app:layout_constraintStart_toStartOf="@+id/totalPriceLabel"
+            app:layout_constraintTop_toBottomOf="@+id/totalPriceLabel" />
+
+        <TextView
+            android:id="@+id/statusTv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="20dp"
+            android:layout_marginEnd="8dp"
+            android:text="STATUS"
+            android:textSize="15sp"
+            app:layout_constraintBottom_toBottomOf="@+id/statusLabel"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.101"
+            app:layout_constraintStart_toEndOf="@+id/statusLabel"
+            app:layout_constraintTop_toTopOf="@+id/statusLabel"
+            app:layout_constraintVertical_bias="1.0" />
 
         <TextView
             android:id="@+id/reviewtv"
             android:layout_width="wrap_content"
             android:layout_height="31dp"
             android:layout_marginStart="8dp"
+            android:layout_marginTop="8dp"
             android:layout_marginEnd="8dp"
             android:gravity="center_vertical|center_horizontal"
             android:text="Review"
             android:textSize="18sp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent" />
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/statusLabel" />
+
+        <Button
+            android:id="@+id/confirmBtn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:focusable="false"
+            android:text="@string/title_confirm_dialog"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/statusLabel"/>
+
 
     </android.support.constraint.ConstraintLayout>
 </android.support.design.circularreveal.cardview.CircularRevealCardView>

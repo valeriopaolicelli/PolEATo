@@ -181,7 +181,8 @@ public class Order implements Serializable {
                     referenceCustomer.child("reservations").child(orderID).child("dishes").setValue(selectedDishes);
                     referenceCustomer.child("reservations").child(orderID).child("restaurantID").setValue(restaurantID);
                     referenceCustomer.child("reservations").child(orderID).child("reviewFlag").setValue("false");
-
+                    referenceCustomer.child("reservations").child(orderID).child("status").child("it").setValue("Nuovo Ordine");
+                    referenceCustomer.child("reservations").child(orderID).child("status").child("en").setValue("New Order");
             }
 
             @Override
