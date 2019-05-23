@@ -144,19 +144,20 @@ public class ReservationExpandableListAdapter extends BaseExpandableListAdapter 
                     @Override
                     public void onClick(View view) {
                         final View viewClicked = view;
-                        AlertDialog.Builder builder = new AlertDialog.Builder(context)
+                        final AlertDialog.Builder builder = new AlertDialog.Builder(context)
                                 .setTitle(context.getResources().getString(R.string.title_confirm_dialog))
                                 .setMessage(context.getResources().getString(R.string.message_confirm_dialog))
                                 .setPositiveButton(context.getResources().getString(R.string.confirm_btn), new DialogInterface.OnClickListener() {
                                     @Override
                                     public void onClick(DialogInterface dialogInterface, int i) {
+                                        dialogInterface.dismiss();
                                         //Upload status for restaurant
                                         FirebaseDatabase.getInstance()
-                                                .getReference("restautants/" + c.getRestaurantID() + "/reservations/" + c.getOrderID()
+                                                .getReference("restaurants/" + c.getRestaurantID() + "/reservations/" + c.getOrderID()
                                                         + "/status/en").setValue("Delivered");
 
                                         FirebaseDatabase.getInstance()
-                                                .getReference("restautants/" + c.getRestaurantID() + "/reservations/" + c.getOrderID()
+                                                .getReference("restaurants/" + c.getRestaurantID() + "/reservations/" + c.getOrderID()
                                                         + "/status/it").setValue("Consegnato");
                                         c.setStatus("Delivered");
 
