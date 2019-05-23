@@ -7,6 +7,8 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.AsyncTask;
+import android.os.Handler;
+import android.os.Looper;
 import android.os.StrictMode;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -115,7 +117,7 @@ public class ReservationExpandableListAdapter extends BaseExpandableListAdapter{
     }
 
     @Override
-    public View getGroupView(int i, boolean b, View view, ViewGroup viewGroup) {
+    public View getGroupView(int i, boolean b, View view, final ViewGroup viewGroup) {
         final Reservation r = (Reservation) getGroup(i);
         final ViewHolder holder;
         final List<Dish> dishes = r.getDishes();
@@ -301,7 +303,7 @@ public class ReservationExpandableListAdapter extends BaseExpandableListAdapter{
                                                 for( Dish d : reservation.getDishes()){
                                                     if(d.getID().equals(foodID)){
                                                         if(quantity - d.getQuantity()< 0 ){
-                                                            Toast.makeText(context, "Not enough quantity, please update", Toast.LENGTH_LONG).show();
+                                                            showToast("Not enough quantity, please update");
                                                             return Transaction.success(mutableData);
                                                         }
                                                         m.child("Quantity").setValue((quantity-d.getQuantity()));
@@ -317,9 +319,6 @@ public class ReservationExpandableListAdapter extends BaseExpandableListAdapter{
 
                                                             FirebaseDatabase.getInstance().getReference("customers").child(r.getCustomerID()).child("reservations").child(r.getOrder_id()).child("status").child("en").setValue("Cooking");
                                                             FirebaseDatabase.getInstance().getReference("customers").child(r.getCustomerID()).child("reservations").child(r.getOrder_id()).child("status").child("it").setValue("Preparazione");
-
-//                                                            FirebaseDatabase.getInstance().getReference("customers/"+r.getCustomerID()+"/reservations/"+r.getOrder_id()).child("status").child("it").setValue("Preparazione");
-
 
                                                             r.setButtonText(context.getString(R.string.title_deliver));
                                                             return Transaction.success(mutableData);
@@ -462,6 +461,20 @@ public class ReservationExpandableListAdapter extends BaseExpandableListAdapter{
     @Override
     public void notifyDataSetChanged() {
         super.notifyDataSetChanged();
+    }
+
+    public void showToast(final String text)
+    {
+        Handler mainHandler = new Handler(Looper.getMainLooper());
+
+        java.lang.Runnable runnableToast = new Runnable() {
+            @Override
+            public void run() {
+                Toast.makeText(context, text, Toast.LENGTH_LONG).show();
+            }
+        };
+
+        mainHandler.post(runnableToast);
     }
 
     private class ViewHolder {
