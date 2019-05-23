@@ -32,11 +32,13 @@ import com.google.firebase.storage.StorageReference;
 import com.mad.poleato.Classes.Food;
 import com.mad.poleato.Interface;
 import com.mad.poleato.MyDatabaseReference;
+import com.mad.poleato.OrderManagement.MenuFragment;
 import com.mad.poleato.OrderManagement.Order;
 import com.mad.poleato.R;
 import com.onesignal.OneSignal;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
@@ -101,6 +103,9 @@ public class FavoriteMenuFragment extends Fragment {
         size = new Point();
         display.getSize(size);
         width = size.x;
+
+        //to sort the categories
+        sortMenu = new SortMenu();
 
         mAuth = FirebaseAuth.getInstance();
         FirebaseUser currentUser = mAuth.getCurrentUser();
@@ -292,6 +297,7 @@ public class FavoriteMenuFragment extends Fragment {
                                                     }
                                                 });
 
+                                                Collections.sort(listDataGroup,sortMenu);
                                                 listAdapter.notifyDataSetChanged();
                                             }
                                         }
@@ -363,6 +369,7 @@ public class FavoriteMenuFragment extends Fragment {
                                                     }
                                                 });
 
+                                                Collections.sort(listDataGroup,sortMenu);
                                                 listAdapter.notifyDataSetChanged();
                                             }
                                         }
@@ -387,6 +394,8 @@ public class FavoriteMenuFragment extends Fragment {
                                                     listDataChild.remove(category);
                                                     listDataGroup.remove(category);
                                                 }
+
+                                                Collections.sort(listDataGroup,sortMenu);
                                                 listAdapter.notifyDataSetChanged();
                                             }
                                         }
@@ -443,6 +452,8 @@ public class FavoriteMenuFragment extends Fragment {
                                                         listDataChild.remove(category);
                                                         listDataGroup.remove(category);
                                                     }
+
+                                                    Collections.sort(listDataGroup,sortMenu);
                                                     listAdapter.notifyDataSetChanged();
                                                 }
                                             }

@@ -103,7 +103,10 @@ public class MenuFragment extends Fragment {
         size = new Point();
         display.getSize(size);
         width = size.x;
+
+        //to sort the categories
         sortMenu = new SortMenu();
+
         mAuth = FirebaseAuth.getInstance();
         FirebaseUser currentUser = mAuth.getCurrentUser();
         currentUserID = currentUser.getUid();

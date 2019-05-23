@@ -52,15 +52,16 @@
         android:layout_width="20dp"
         android:layout_height="20dp"
         android:layout_marginStart="8dp"
+        android:layout_marginEnd="8dp"
         android:background="@drawable/button_favorite"
         android:checked="false"
         android:text=""
         android:textOff=""
         android:textOn=""
-        app:layout_constraintBottom_toTopOf="@id/textViewOpen"
+        app:layout_constraintBottom_toBottomOf="@id/reviews_counter_tv"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@+id/reviews_counter_tv"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="@id/reviews_counter_tv" />
 
     <TextView
         android:id="@+id/textViewOpen"
