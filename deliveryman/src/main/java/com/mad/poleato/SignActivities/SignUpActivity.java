@@ -291,7 +291,7 @@ public class SignUpActivity extends AppCompatActivity {
                                 final String downloadUrl =
                                         uri.toString();
                                 FirebaseDatabase.getInstance()
-                                        .getReference("restaurants")
+                                        .getReference("deliveryman")
                                         .child(currentUserID + "/photoUrl")
                                         .setValue(downloadUrl);
                             }
