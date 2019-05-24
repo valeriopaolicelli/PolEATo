@@ -1097,7 +1097,7 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback,
                                 + "\"filters\": [{\"field\": \"tag\", \"key\": \"User_ID\", \"relation\": \"=\", \"value\": \"" + send_email + "\"}],"
 
                                 + "\"data\": {\"Delivery\": \"New order\"},"
-                                + "\"contents\": {\"it\": \"New order to deliver\"}"
+                                + "\"contents\": {\"en\": \"New order to deliver\"}"
                                 + "}";
 
 
