@@ -131,6 +131,7 @@ public class ReservationExpandableListAdapter extends BaseExpandableListAdapter 
                         bundle.putString("restaurantID", c.getRestaurantID());
                         bundle.putString("restaurantName", c.getRestaurantName());
                         bundle.putString("orderID", c.getOrderID());
+                        bundle.putString("date", c.getDate());
 
                         Navigation.findNavController(view).navigate(R.id.action_holder_history_id_to_ratingFragment, bundle);
                         //Toast.makeText(context, "Review Text Clicked", Toast.LENGTH_SHORT).show();
@@ -189,6 +190,7 @@ public class ReservationExpandableListAdapter extends BaseExpandableListAdapter 
                                                         bundle.putString("restaurantID", c.getRestaurantID());
                                                         bundle.putString("restaurantName", c.getRestaurantName());
                                                         bundle.putString("orderID", c.getOrderID());
+                                                        bundle.putString("date", c.getDate());
 
                                                         Navigation.findNavController(viewClicked).navigate(R.id.action_holder_history_id_to_ratingFragment, bundle);
                                                         dialogInterface.dismiss();

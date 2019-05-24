@@ -265,7 +265,18 @@ public class OrderActivity extends AppCompatActivity implements Interface {
     @Override
     public void onDestroy() {
         super.onDestroy();
+
+        /*
+         * remove all listeners of this activity
+         */
         for (int i=0; i < dbReferenceList.size(); i++)
             dbReferenceList.get(i).removeAllListener();
+
+        /*
+         * remove all inner listeners of order class
+         */
+        for (int i=0; i < order.getDbReferenceList().size(); i++)
+            order.getDbReferenceList().get(i).removeAllListener();
+
     }
 }

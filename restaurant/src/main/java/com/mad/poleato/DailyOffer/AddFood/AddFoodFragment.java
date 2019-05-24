@@ -194,8 +194,6 @@ public class AddFoodFragment extends Fragment {
         imageFood = v.findViewById(R.id.imageFood);
         buttonSave = v.findViewById(R.id.button_frag_save);
 
-
-
         // Set listener to send DATA to main activity that sends them to DailyOfferFragment
 
         buttonSave.setOnClickListener(new View.OnClickListener() {
@@ -243,8 +241,6 @@ public class AddFoodFragment extends Fragment {
             } else
                 return;
         }
-
-
 
 
         // REGEX FOR FIELDS VALIDATION BEFORE COMMIT
@@ -306,16 +302,13 @@ public class AddFoodFragment extends Fragment {
             reference.child("Quantity").setValue(quantity);
             reference.child("Price").setValue(priceString);
             reference.child("Category").setValue(category);
-
-
+            reference.child("PopularityCounter").setValue("0");
             Food f = new Food(id, null, name, description, Double.parseDouble(priceString), Integer.parseInt(quantity));
 
             // Save profile pic to the DB
             /*Navigation controller is moved inside this method. The image must be loaded totally to FireBase
                 before come back to the AccountFragment. This is due to the fact that the image download is async */
             uploadFile(img, f);
-
-
         }
         else{
             if(progressDialog.isShowing())

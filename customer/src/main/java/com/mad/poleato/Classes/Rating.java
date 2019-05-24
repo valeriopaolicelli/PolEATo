@@ -6,13 +6,23 @@ public class Rating {
     private String comment;
     private String restaurantID;
     private String orderID;
+    private String date;
 
-    public Rating(String customerID, Integer rate, String comment, String restaurantID, String orderID) {
+    public Rating(String customerID, Integer rate, String comment, String restaurantID, String orderID, String date) {
         this.customerID = customerID;
         this.rate = rate;
         this.comment = comment;
         this.restaurantID = restaurantID;
         this.orderID = orderID;
+        this.date= date;
+    }
+
+    public String getDate() {
+        return date;
+    }
+
+    public void setDate(String date) {
+        this.date = date;
     }
 
     public String getCustomerID() {
