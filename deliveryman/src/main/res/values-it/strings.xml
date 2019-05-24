@@ -23,6 +23,8 @@
 
     <string name="title_activity_main">MainActivity</string>
 
+    <string name="title_bottombar_pendingReservations">Richieste</string>
+    <string name="title_actionbar_pendingReservations">Richieste</string>
 
     <string name="title_bottombar_deliveryRide">Corse</string>
     <string name="title_actionbar_deliveryRide">Corse</string>

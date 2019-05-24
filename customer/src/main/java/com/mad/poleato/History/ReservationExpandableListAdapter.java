@@ -308,7 +308,7 @@ public class ReservationExpandableListAdapter extends BaseExpandableListAdapter 
                                 + "\"filters\": [{\"field\": \"tag\", \"key\": \"User_ID\", \"relation\": \"=\", \"value\": \"" + send_email + "\"}],"
 
                                 + "\"data\": {\"Order\": \"PolEATo\"},"
-                                + "\"contents\": {\"it\": \"Ordine " + orderID + " pagato\"}"
+                                + "\"contents\": {\"en\": \"Order " + orderID + " paid\"}"
                                 + "}";
 
 

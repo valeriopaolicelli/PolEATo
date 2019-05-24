@@ -210,15 +210,15 @@ public class RiderListAdapter extends ArrayAdapter<Rider>
                                                                  +"/status/en").getValue().toString().equals("Cooking")) {
 
                     DatabaseReference referenceRider = FirebaseDatabase.getInstance().getReference("deliveryman").child(riderID);
-                    DatabaseReference reservationRider = referenceRider.child("reservations").push();
+                    DatabaseReference reservationRider = referenceRider.child("requests").push();
                     final String addressRestaurant = dataSnapshotRestaurant.child("Address").getValue().toString();
                     final String nameRestaurant = dataSnapshotRestaurant.child("Name").getValue().toString();
                     final String phoneRestaurant = dataSnapshotRestaurant.child("Phone").getValue().toString();
                     reservationRider.child("addressCustomer").setValue(reservation.getAddress());
                     reservationRider.child("addressRestaurant").setValue(addressRestaurant);
                     reservationRider.child("CustomerID").setValue(reservation.getCustomerID());
+
                     //update the delivery status
-                    reservationRider.child("delivering").setValue(false);
                     reservationRider.child("nameRestaurant").setValue(nameRestaurant);
                     reservationRider.child("numberOfDishes").setValue(reservation.getNumberOfDishes());
                     reservationRider.child("orderID").setValue(reservation.getOrder_id());
@@ -234,12 +234,6 @@ public class RiderListAdapter extends ArrayAdapter<Rider>
                     String timeStr = date_components[2]+"/"+date_components[1]+"/"+date_components[0]+" "+
                             reservation.getTime();
                     reservationRider.child("deliveryTime").setValue(timeStr);
-
-                    //send actual time of notification
-                    DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm");
-                    Date date = new Date(); //initialized with current time
-                    String currentTime = dateFormat.format(date);
-                    reservationRider.child("notifiedTime").setValue(currentTime);
 
 
                     FirebaseDatabase.getInstance().getReference("restaurants").child(loggedID).child("reservations").child(reservation.getOrder_id()).child("status").child("en").setValue("Delivering");
@@ -292,7 +286,7 @@ public class RiderListAdapter extends ArrayAdapter<Rider>
                                 + "\"filters\": [{\"field\": \"tag\", \"key\": \"User_ID\", \"relation\": \"=\", \"value\": \"" + send_email + "\"}],"
 
                                 + "\"data\": {\"Order\": \"PolEATo\"},"
-                                + "\"contents\": {\"it\": \"Nuovo ordine da consegnare\"}"
+                                + "\"contents\": {\"en\": \"New order to deliver\"}"
                                 + "}";
 
 

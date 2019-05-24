@@ -1,6 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
 
+
+    <item
+        android:id="@+id/pendingReservations_id"
+        android:icon="@drawable/ic_baseline_format_list_bulleted_24px"
+        android:title="@string/title_bottombar_pendingReservations" />
+
     <item
         android:id="@+id/rides_id"
         android:icon="@drawable/ic_baseline_directions_bike_24px"

@@ -130,13 +130,44 @@ public class HistoryFragment extends Fragment {
         listHash = new HashMap<>();
         customerDetails= new ArrayList<>();
 
+        /*
+         * check if there are some orders delivered or also paid in the reservation tab
+         * in that case, update the reservation list, remove this orders and add them to history
+         */
+        DatabaseReference referenceReservation= FirebaseDatabase.getInstance()
+                .getReference("restaurants/"+currentUserID+"/reservations");
+        dbReferenceList.add(new MyDatabaseReference(referenceReservation));
+        int indexOfReferenceInList= dbReferenceList.size()-1;
+        ValueEventListener valueEventListener;
+
+        dbReferenceList.get(indexOfReferenceInList).getReference()
+                .addValueEventListener(valueEventListener= new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                if(dataSnapshot.exists()){
+
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+        dbReferenceList.get(indexOfReferenceInList).setValueListener(valueEventListener);
+
+        /*
+         * retrieve the history of restaurant:
+         * there are all orders delivered, paid and rejected
+         */
+
         DatabaseReference reference = FirebaseDatabase.getInstance().getReference("restaurants")
                 .child(currentUserID).child("History");
         dbReferenceList.add(new MyDatabaseReference(reference));
-        int indexOfReferenceInList= dbReferenceList.size()-1;
+        indexOfReferenceInList= dbReferenceList.size()-1;
 
-        ValueEventListener valueEventListener;
-        dbReferenceList.get(indexOfReferenceInList).getReference().addValueEventListener(valueEventListener= new ValueEventListener() {
+        ValueEventListener valueEventListener1;
+        dbReferenceList.get(indexOfReferenceInList).getReference().addValueEventListener(valueEventListener1= new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 handler.sendEmptyMessage(0);
@@ -147,7 +178,7 @@ public class HistoryFragment extends Fragment {
                 handler.sendEmptyMessage(0);
             }
         });
-        dbReferenceList.get(indexOfReferenceInList).setValueListener(valueEventListener);
+        dbReferenceList.get(indexOfReferenceInList).setValueListener(valueEventListener1);
 
         ChildEventListener childEventListener;
         dbReferenceList.get(indexOfReferenceInList).getReference().addChildEventListener(childEventListener= new ChildEventListener() {

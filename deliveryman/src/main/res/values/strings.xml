@@ -22,6 +22,8 @@
 
     <string name="title_activity_main">MainActivity</string>
 
+    <string name="title_bottombar_pendingReservations">Requests</string>
+    <string name="title_actionbar_pendingReservations">Requests</string>
 
     <string name="title_bottombar_deliveryRide">Rides</string>
     <string name="title_actionbar_deliveryRide">Rides</string>

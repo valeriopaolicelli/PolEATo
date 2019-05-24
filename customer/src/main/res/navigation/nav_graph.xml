@@ -72,16 +72,26 @@
             app:popUpToInclusive="true" />
     </fragment>
 
-
     <fragment
         android:id="@+id/myReviewsFragment_id"
         android:name="com.mad.poleato.MyReviews.MyReviewsFragment"
-        android:label="@string/title_actionbar_myReviews"
+        android:label="fragment_my_reviews"
         tools:layout="@layout/fragment_my_reviews" >
         <action
-            android:id="@+id/action_myReviewsFragment_to_signInActivity"
-            app:destination="@id/signInActivity" />
+            android:id="@+id/action_myReviewsFragment_id_to_signInActivity"
+            app:destination="@id/signInActivity"
+            app:popUpTo="@+id/signInActivity"
+            app:popUpToInclusive="true" />
     </fragment>
+    <!--<fragment-->
+        <!--android:id="@+id/myReviewsFragment_id"-->
+        <!--android:name="com.mad.poleato.MyReviews.MyReviewsFragment"-->
+        <!--android:label="@string/title_actionbar_myReviews"-->
+        <!--tool-->
+        <!--<actions:layout="@layout/fragment_my_reviews" >-->
+            <!--android:id="@+id/action_myReviewsFragment_to_signInActivity"-->
+            <!--app:destination="@id/signInActivity" />-->
+    <!--</fragment>-->
 
 
     <fragment
@@ -118,6 +128,7 @@
         android:name="com.mad.poleato.SignInActivity"
         android:label="signin_layout"
         tools:layout="@layout/signin_layout" />
+
 
 
 </navigation>
