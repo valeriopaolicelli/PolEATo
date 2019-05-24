@@ -27,6 +27,7 @@
     <string name="name_sort">Sort by name(A-Z)</string>
     <string name="price_sort_inverse">Sort by price(from the highest)</string>
     <string name="delivery_sort">Sort by delivery cost(from the lowest)</string>
+    <string name="star_sort">Sort by star</string>
     <string name="delivery_cost"><font size="18">Delivery</font></string>
     <string name="price_range"><font size="18">Price</font></string>
     <string name="free_delivery">Free</string>

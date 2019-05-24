@@ -62,7 +62,8 @@ public class RestaurantRecyclerViewAdapter extends RecyclerView.Adapter<Restaura
         NAME_SORTED,
         PRICE_SORTED,
         PRICE_INVERSE_SORTED,
-        DELIVERY_SORTED
+        DELIVERY_SORTED,
+        STAR_SORTED
     }
     private State currState;
 
@@ -74,6 +75,7 @@ public class RestaurantRecyclerViewAdapter extends RecyclerView.Adapter<Restaura
     private SortByPrice priceComparator;
     private SortByPriceInverse priceInverseComparator;
     private SortByDelivery deliveryComparator;
+    private SortByStar starComparator;
 
 
     // Provide a reference to the views for each data item
@@ -127,6 +129,7 @@ public class RestaurantRecyclerViewAdapter extends RecyclerView.Adapter<Restaura
         this.priceComparator = new SortByPrice();
         this.priceInverseComparator = new SortByPriceInverse();
         this.deliveryComparator = new SortByDelivery();
+        this.starComparator = new SortByStar();
 
         this.dbReferenceList= new ArrayList<>();
     }
@@ -296,29 +299,31 @@ public class RestaurantRecyclerViewAdapter extends RecyclerView.Adapter<Restaura
 
     public void sortByName(){
         Collections.sort(this.list, this.nameComparator);
-        //this.list.sort(this.nameComparator);
         currState = State.NAME_SORTED;
         notifyDataSetChanged();
     }
 
     public void sortByPrice(){
         Collections.sort(this.list, this.priceComparator);
-        //this.list.sort(this.priceComparator);
         currState = State.PRICE_SORTED;
         notifyDataSetChanged();
     }
 
     public void sortByPriceInverse(){
         Collections.sort(this.list, this.priceInverseComparator);
-        //this.list.sort(this.priceInverseComparator);
         currState = State.PRICE_INVERSE_SORTED;
         notifyDataSetChanged();
     }
 
     public void sortByDelivery(){
         Collections.sort(this.list, this.deliveryComparator);
-        //this.list.sort(deliveryComparator);
         currState = State.DELIVERY_SORTED;
+        notifyDataSetChanged();
+    }
+
+    public void sortByStar(){
+        Collections.sort(this.list, this.starComparator);
+        currState = State.STAR_SORTED;
         notifyDataSetChanged();
     }
 
@@ -338,6 +343,9 @@ public class RestaurantRecyclerViewAdapter extends RecyclerView.Adapter<Restaura
         }
         else if(currState == State.DELIVERY_SORTED){
             sortByDelivery();
+        }
+        else if(currState == State.STAR_SORTED){
+            sortByStar();
         }
 
     }
@@ -370,6 +378,14 @@ public class RestaurantRecyclerViewAdapter extends RecyclerView.Adapter<Restaura
         @Override
         public int compare(Restaurant r1, Restaurant r2) {
             return Double.compare(r1.getDeliveryCost(), r2.getDeliveryCost());
+        }
+    }
+
+    private class SortByStar implements Comparator<Restaurant>{
+
+        @Override
+        public int compare(Restaurant r1, Restaurant r2) {
+            return Double.compare(r1.getAvgStars(), r2.getAvgStars());
         }
     }
 

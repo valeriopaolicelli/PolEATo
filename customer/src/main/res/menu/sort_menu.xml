@@ -3,22 +3,22 @@
 
     <item
         android:id="@+id/sortByName"
-        android:title="@string/name_sort">
-    </item>
+        android:title="@string/name_sort"/>
 
     <item
         android:id="@+id/sortByPrice"
-        android:title="@string/price_sort">
-    </item>
+        android:title="@string/price_sort"/>
 
     <item
         android:id="@+id/sortByPriceInverse"
-        android:title="@string/price_sort_inverse">
-    </item>
+        android:title="@string/price_sort_inverse"/>
 
     <item
         android:id="@+id/sortByDelivery"
-        android:title="@string/delivery_sort">
-    </item>
+        android:title="@string/delivery_sort"/>
+
+    <item
+        android:id="@+id/sortByStar"
+        android:title="@string/star_sort"/>
 
 </menu>
