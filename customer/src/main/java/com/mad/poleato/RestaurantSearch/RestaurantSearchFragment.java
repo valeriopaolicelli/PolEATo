@@ -498,6 +498,12 @@ public class RestaurantSearchFragment extends Fragment {
                             return true;
                         }
 
+                        if(itemName[1].equals("sortByStar")) {
+                            Log.d("matte", "SORT: byStar");
+                            recyclerAdapter.sortByStar();
+                            return true;
+                        }
+
                         return false;
                     }
                 });

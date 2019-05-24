@@ -486,10 +486,17 @@ public class RidesFragment extends Fragment implements OnMapReadyCallback {
             sendNotificationToRestaurant("ordine" + ride.getOrderID() + "consegnato! :)");
 
         FirebaseDatabase.getInstance().getReference("restaurants/" + ride.getRestaurantID()
-                + "/ride/" + ride.getOrderID()
+                + "/reservations/" + ride.getOrderID()
                 + "/status/it/").setValue("Consegnato");
         FirebaseDatabase.getInstance().getReference("restaurants/" + ride.getRestaurantID()
-                + "/ride/" + ride.getOrderID()
+                + "/reservations/" + ride.getOrderID()
+                + "/status/en/").setValue("Delivered");
+
+        FirebaseDatabase.getInstance().getReference("customers/" + ride.getCustomerID()
+                + "/reservations/" + ride.getOrderID()
+                + "/status/it/").setValue("Consegnato");
+        FirebaseDatabase.getInstance().getReference("customers/" + ride.getCustomerID()
+                + "/reservations/" + ride.getOrderID()
                 + "/status/en/").setValue("Delivered");
 
     }
