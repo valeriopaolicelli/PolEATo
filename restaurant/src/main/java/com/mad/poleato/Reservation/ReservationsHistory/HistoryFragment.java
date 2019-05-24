@@ -130,7 +130,7 @@ public class HistoryFragment extends Fragment {
         listHash = new HashMap<>();
         customerDetails= new ArrayList<>();
 
-        /*
+        /**
          * check if there are some orders delivered or also paid in the reservation tab
          * in that case, update the reservation list, remove this orders and add them to history
          */
@@ -145,7 +145,60 @@ public class HistoryFragment extends Fragment {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 if(dataSnapshot.exists()){
+                    for(DataSnapshot dataSnapshotReservation : dataSnapshot.getChildren()){
+                        if(dataSnapshotReservation.hasChild("status") &&
+                                dataSnapshotReservation.hasChild("status/it") &&
+                                dataSnapshotReservation.hasChild("status/en") &&
+                                dataSnapshotReservation.hasChild("customerID") &&
+                                dataSnapshotReservation.hasChild("date") &&
+                                dataSnapshotReservation.hasChild("dishes") &&
+                                dataSnapshotReservation.hasChild("restaurantID") &&
+                                dataSnapshotReservation.hasChild("time") &&
+                                dataSnapshotReservation.hasChild("totalPrice")){
 
+                            String status= dataSnapshotReservation.child("status/"+localeShort).getValue().toString();
+                            if(status.equals("Delivered") || status.equals("Consegnato")){
+                                String orderID= dataSnapshotReservation.getKey();
+                                String customerID= dataSnapshotReservation.child("customerID").getValue().toString();
+                                String time= dataSnapshotReservation.child("time").getValue().toString();
+                                String totalPrice= dataSnapshotReservation.child("totalPrice").getValue().toString();
+                                final Long dateInMills= Long.parseLong(dataSnapshotReservation.child("date").getValue().toString());
+
+                                DateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
+                                Calendar calendar = Calendar.getInstance();
+                                calendar.setTimeInMillis(dateInMills);
+                                final String date = formatter.format(calendar.getTime());
+
+                                List<Dish> dishes= new ArrayList<>();
+                                String nameDish, foodID, note;
+                                int quantity;
+                                Dish d;
+                                for(DataSnapshot dataSnapshotDishes : dataSnapshotReservation.child("dishes").getChildren()){
+                                    nameDish = dataSnapshotDishes.child("name").getValue().toString();
+                                    quantity = Integer.parseInt(dataSnapshotDishes.child("selectedQuantity").getValue().toString());
+                                    foodID = dataSnapshotDishes.child("foodID").getValue().toString();
+                                    note = dataSnapshotDishes.child("customerNotes").getValue().toString();
+                                    d = new Dish(nameDish, quantity, note, foodID);
+
+                                    dishes.add(d);
+                                }
+
+                                //Adding reservation to History
+                                DatabaseReference dbReference = FirebaseDatabase.getInstance().getReference("restaurants/"+currentUserID+"/History");
+                                dbReference.child(orderID).child("customerID").setValue(customerID);
+                                dbReference.child(orderID).child("date").setValue(date);
+                                dbReference.child(orderID).child("time").setValue(time);
+                                dbReference.child(orderID).child("totalPrice").setValue(totalPrice);
+                                dbReference.child(orderID).child("status/it").setValue("Consegnato");
+                                dbReference.child(orderID).child("status/en").setValue("Delivered");
+                                dbReference.child(orderID).child("dishes").setValue(dishes);
+
+                                //Delete reservation from pending reservations
+                                FirebaseDatabase.getInstance().getReference("restaurants/"+currentUserID+"/reservations/"+orderID).removeValue();
+
+                            }
+                        }
+                    }
                 }
             }
 
@@ -156,7 +209,7 @@ public class HistoryFragment extends Fragment {
         });
         dbReferenceList.get(indexOfReferenceInList).setValueListener(valueEventListener);
 
-        /*
+        /**
          * retrieve the history of restaurant:
          * there are all orders delivered, paid and rejected
          */
