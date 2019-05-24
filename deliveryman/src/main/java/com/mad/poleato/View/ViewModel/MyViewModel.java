@@ -31,7 +31,7 @@ public class MyViewModel extends ViewModel {
         return _MapDataHistory;
     }
 
-    public void insertChild(String orderID, HistoryItem history) {
+/*    public void insertChild(String orderID, HistoryItem history) {
         this._MapDataHistory.getValue().put(orderID, history);
         this._MapDataHistory.postValue(_MapDataHistory.getValue());
     }
@@ -43,5 +43,5 @@ public class MyViewModel extends ViewModel {
     public void initChild(){
         _MapDataHistory.setValue(new HashMap<String, HistoryItem>());
     }
-
+*/
 }

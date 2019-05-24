@@ -14,7 +14,7 @@ public class Restaurant implements Serializable {
     Integer priceRange;
     Double deliveryCost;
     Double avgStars;
-     Long totalReviews;
+    Long totalReviews;
 
     public Restaurant(String id, String img, String name, String type, Boolean isOpen, int priceRange, double deliveryCost){
         setId(id);
