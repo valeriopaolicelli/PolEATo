@@ -1026,8 +1026,8 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback,
                     reservationRider.child("addressCustomer").setValue(reservation.getAddress());
                     reservationRider.child("addressRestaurant").setValue(addressRestaurant);
                     reservationRider.child("CustomerID").setValue(reservation.getCustomerID());
+
                     //update the delivery status
-                    reservationRider.child("delivering").setValue(false);
                     reservationRider.child("nameRestaurant").setValue(nameRestaurant);
                     reservationRider.child("numberOfDishes").setValue(reservation.getNumberOfDishes());
                     reservationRider.child("orderID").setValue(reservation.getOrder_id());

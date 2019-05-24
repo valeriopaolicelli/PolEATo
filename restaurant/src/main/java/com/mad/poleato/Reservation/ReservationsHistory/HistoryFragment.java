@@ -144,7 +144,9 @@ public class HistoryFragment extends Fragment {
                 .addValueEventListener(valueEventListener= new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                if(dataSnapshot.exists()){
 
+                }
             }
 
             @Override
