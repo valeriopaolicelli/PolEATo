@@ -71,9 +71,14 @@
     <string name="you_string">Tu</string>
     <string name="you_arrived">Sei arrivato!</string>
     <string name="maps_button_to_restaurant">Vai dal cliente</string>
-    <string name="maps_button_order_delivered">Termina corsa</string>
-    <string name="dialog_message_order_completed">Sei sicuro di voler terminare la corsa?</string>
+    <string name="maps_button_order_delivered">Consegna/Abbandona</string>
+    <string name="maps_button_order_failure">Termina corsa</string>
+    <string name="dialog_message_order_outcome">Hai consegnato il cibo al cliente? Se hai avuto problemi con la consegna clicca su "Abbandona"</string>
+    <string name="dialog_message_order_failure">Conferma per completare la corsa</string>
     <string name="message_order_completed">Ordine completato!</string>
+    <string name="quit_run">Abbandona</string>
+
+
 
 
     <string name="current_status"><font size="18">Il tuo stato</font></string>

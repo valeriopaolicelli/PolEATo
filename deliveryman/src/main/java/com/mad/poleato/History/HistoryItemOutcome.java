@@ -1,4 +1,7 @@
 package com.mad.poleato.History;
 
-public class HistoryItemOutcome {
+public enum HistoryItemOutcome {
+
+    SUCCESS,
+    FAILURE
 }

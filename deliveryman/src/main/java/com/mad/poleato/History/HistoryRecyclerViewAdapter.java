@@ -68,7 +68,11 @@ public class HistoryRecyclerViewAdapter extends RecyclerView.Adapter<HistoryRecy
         historyViewHolder.price_tv.setText(historyList.get(position).getTotalPrice());
         historyViewHolder.date_tv.setText(historyList.get(position).getDeliveredDate());
         historyViewHolder.expectedTime_tv.setText(historyList.get(position).getExpectedHour());
-        historyViewHolder.deliveredTime_tv.setText(historyList.get(position).getDeliveredHour());
+        String deliveredTime = historyList.get(position).getDeliveredHour();
+        if(historyList.get(position).getOutcome() == HistoryItemOutcome.FAILURE)
+            historyViewHolder.deliveredTime_tv.setText("-");
+        else
+            historyViewHolder.deliveredTime_tv.setText(deliveredTime);
 
     }
 

@@ -16,14 +16,16 @@ public class Ride implements Serializable {
     private String phoneCustomer;
     private String phoneRestaurant;
     private String deliveryTime;
-    private String notifiedTime; //time at which reservation notification arrived to the rider
+    private String startTime; //time at which reservation notification arrived to the rider
     private double km;
+    private RideStatus status;
 
 
     public Ride(String orderID, String addressCustomer, String addressRestaurant,
                 String nameCustomer, String nameRestaurant, String totalPrice,
                 String numberOfDishes, String phoneCustomer, String phoneRestaurant,
-                String deliveryTime, String customerID, String restaurantID, String notifiedTime) {
+                String deliveryTime, String customerID, String restaurantID,
+                String startTime, RideStatus status) {
         this.orderID = orderID;
         this.nameCustomer = nameCustomer;
         this.nameRestaurant = nameRestaurant;
@@ -37,9 +39,19 @@ public class Ride implements Serializable {
         this.restaurantID= restaurantID;
         this.customerID= customerID;
         this.deliveryTime = deliveryTime;
-        this.notifiedTime = notifiedTime;
+        this.startTime = startTime;
         this.km = 0.0; //the first time this value is set to 0 and the it will update with the setter
 
+        this.status = status;
+
+    }
+
+    public RideStatus getStatus() {
+        return status;
+    }
+
+    public void setStatus(RideStatus status) {
+        this.status = status;
     }
 
     public String getCustomerID() {
@@ -90,8 +102,8 @@ public class Ride implements Serializable {
         return deliveryTime;
     }
 
-    public String getNotifiedTime() {
-        return notifiedTime;
+    public String getStartTime() {
+        return startTime;
     }
 
     public double getKm(){ return this.km; }

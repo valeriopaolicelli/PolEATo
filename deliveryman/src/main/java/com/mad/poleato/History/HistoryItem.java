@@ -1,5 +1,7 @@
 package com.mad.poleato.History;
 
+import com.mad.poleato.Rides.RideStatus;
+
 import java.util.Comparator;
 
 public class HistoryItem {
@@ -11,11 +13,13 @@ public class HistoryItem {
     private String numberOfDishes;
     private String expectedTime;
     private String deliveredTime;
+    private HistoryItemOutcome outcome;
     public static Comparator<HistoryItem> timeInverseComparator;
+
 
     public HistoryItem(String orderID, String addressRestaurant, String nameRestaurant,
                        String totalPrice, String numberOfDishes,
-                       String expectedTime, String deliveredTime) {
+                       String expectedTime, String deliveredTime, HistoryItemOutcome outcome) {
         this.orderID = orderID;
         this.addressRestaurant = addressRestaurant;
         this.nameRestaurant = nameRestaurant;
@@ -23,8 +27,13 @@ public class HistoryItem {
         this.numberOfDishes = numberOfDishes;
         this.expectedTime = expectedTime;
         this.deliveredTime = deliveredTime;
+        this.outcome = outcome;
 
         timeInverseComparator = new HistoryComparator(); //reverse order
+    }
+
+    public HistoryItemOutcome getOutcome() {
+        return outcome;
     }
 
     public String getOrderID() {

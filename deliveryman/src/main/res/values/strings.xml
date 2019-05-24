@@ -69,9 +69,12 @@
     <string name="you_string">You</string>
     <string name="you_arrived">You arrived!</string>
     <string name="maps_button_to_restaurant">Go to customer</string>
-    <string name="maps_button_order_delivered">End run</string>
-    <string name="dialog_message_order_completed">Are you sure you want to end the run?</string>
+    <string name="maps_button_order_delivered">Deliver/Quit</string>
+    <string name="maps_button_order_failure">End run</string>
+    <string name="dialog_message_order_outcome">Have you delivered the dishes to the customer? If you have trouble with the deliver please click on "Quit"</string>
+    <string name="dialog_message_order_failure">Confirm to end the run</string>
     <string name="message_order_completed">Order completed!</string>
+    <string name="quit_run">Quit</string>
 
 
     <string name="active_status"><font size="18">Active</font></string>

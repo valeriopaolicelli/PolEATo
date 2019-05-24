@@ -194,10 +194,10 @@ public class StatisticsFragment extends Fragment {
                 for(DataSnapshot historyItem : dataSnapshot.getChildren()){
 
                     try{
-                        //a day is considered working days if the rider receives at least 1 reservation no matter if it is delivered after 00:00
-                        String workDay = historyItem.child("notifiedTime").getValue().toString().split(" ")[0];
-                        String startTime = historyItem.child("notifiedTime").getValue().toString();
-                        String endTime = historyItem.child("deliveredTime").getValue().toString();
+                        //a day is considered working days if the rider accepts at least 1 reservation no matter if it is delivered after 00:00
+                        String workDay = historyItem.child("startTime").getValue().toString().split(" ")[0];
+                        String startTime = historyItem.child("startTime").getValue().toString();
+                        String endTime = historyItem.child("endTime").getValue().toString();
 
                         Long workHour = timeDiff(startTime, endTime);
 

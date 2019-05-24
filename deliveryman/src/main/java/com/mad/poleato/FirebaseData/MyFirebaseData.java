@@ -14,6 +14,7 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.mad.poleato.History.HistoryItem;
+import com.mad.poleato.History.HistoryItemOutcome;
 
 import java.util.HashMap;
 
@@ -78,9 +79,10 @@ public class MyFirebaseData {
                         dataSnapshot.hasChild("totalPrice") &&
                         dataSnapshot.hasChild("numberOfDishes") &&
                         dataSnapshot.hasChild("expectedTime") &&
-                        dataSnapshot.hasChild("deliveredTime") &&
+                        dataSnapshot.hasChild("endTime") &&
                         dataSnapshot.hasChild("totKm") &&
-                        dataSnapshot.hasChild("notifiedTime")) {
+                        dataSnapshot.hasChild("startTime") &&
+                        dataSnapshot.hasChild("outcome")) {
 
                     //retrieve history infos from DB
                     String nameRestaurant = dataSnapshot.child("nameRestaurant").getValue().toString();
@@ -90,11 +92,13 @@ public class MyFirebaseData {
                             .toString().replace(",", ".");
                     String restaurantAddress = dataSnapshot.child("addressRestaurant").getValue().toString();
                     String expectedTime = dataSnapshot.child("expectedTime").getValue().toString();
-                    String deliveredTime = dataSnapshot.child("deliveredTime").getValue().toString();
+                    String outcome = dataSnapshot.child("outcome").getValue().toString();
+                    String deliveredTime = dataSnapshot.child("endTime").getValue().toString();
 
 
-                    HistoryItem historyObj = new HistoryItem(orderID, restaurantAddress,
-                            nameRestaurant, priceStr, numDishes, expectedTime, deliveredTime);
+                    HistoryItem historyObj = new HistoryItem(orderID, restaurantAddress, nameRestaurant,
+                                                                    priceStr, numDishes, expectedTime,
+                                                                    deliveredTime, HistoryItemOutcome.valueOf(outcome));
 
                     mapDataHistory.getValue().put(historyObj.getOrderID(), historyObj);
                     mapDataHistory.setValue(mapDataHistory.getValue());
@@ -110,9 +114,10 @@ public class MyFirebaseData {
                         dataSnapshot.hasChild("totalPrice") &&
                         dataSnapshot.hasChild("numberOfDishes") &&
                         dataSnapshot.hasChild("expectedTime") &&
-                        dataSnapshot.hasChild("deliveredTime") &&
+                        dataSnapshot.hasChild("endTime") &&
                         dataSnapshot.hasChild("totKm") &&
-                        dataSnapshot.hasChild("notifiedTime")) {
+                        dataSnapshot.hasChild("startTime") &&
+                        dataSnapshot.hasChild("outcome")) {
 
                     //retrieve history infos from DB
                     String nameRestaurant = dataSnapshot.child("nameRestaurant").getValue().toString();
@@ -122,11 +127,13 @@ public class MyFirebaseData {
                             .toString().replace(",", ".");
                     String restaurantAddress = dataSnapshot.child("addressRestaurant").getValue().toString();
                     String expectedTime = dataSnapshot.child("expectedTime").getValue().toString();
-                    String deliveredTime = dataSnapshot.child("deliveredTime").getValue().toString();
+                    String outcome = dataSnapshot.child("outcome").getValue().toString();
+                    String deliveredTime = dataSnapshot.child("endTime").getValue().toString();
 
 
-                    HistoryItem historyObj = new HistoryItem(orderID, restaurantAddress,
-                            nameRestaurant, priceStr, numDishes, expectedTime, deliveredTime);
+                    HistoryItem historyObj = new HistoryItem(orderID, restaurantAddress, nameRestaurant,
+                                                                    priceStr, numDishes, expectedTime,
+                                                                    deliveredTime, HistoryItemOutcome.valueOf(outcome));
 
                     mapDataHistory.getValue().put(historyObj.getOrderID(), historyObj);
                     mapDataHistory.setValue(mapDataHistory.getValue());

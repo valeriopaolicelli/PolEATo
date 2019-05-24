@@ -322,7 +322,7 @@ public class DeliveringActivity extends FragmentActivity implements OnMapReadyCa
             else{
                 //toward customer
                 title = getString(R.string.maps_button_order_delivered);
-                message = getString(R.string.dialog_message_order_completed);
+                message = getString(R.string.dialog_message_order_outcome);
             }
 
             new AlertDialog.Builder(v.getContext())
