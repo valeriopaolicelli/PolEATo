@@ -483,7 +483,7 @@ public class RidesFragment extends Fragment implements OnMapReadyCallback {
         isRunning = false;
 
         if(ride.getStatus() != RideStatus.BACKWARD)
-            sendNotificationToRestaurant("ordine" + ride.getOrderID() + "consegnato! :)");
+            sendNotificationToRestaurant("Order: " + ride.getOrderID() + " delivered! :)");
 
         FirebaseDatabase.getInstance().getReference("restaurants/" + ride.getRestaurantID()
                 + "/ride/" + ride.getOrderID()
@@ -625,7 +625,7 @@ public class RidesFragment extends Fragment implements OnMapReadyCallback {
         reference.child("status").setValue(ride.getStatus().name());
 
         //inform customer the rider is coming
-        sendNotificationToCustomer("Il fattorino ha lasciato il ristorante!");
+        sendNotificationToCustomer("The rider is coming!");
 
     }
 
@@ -668,8 +668,8 @@ public class RidesFragment extends Fragment implements OnMapReadyCallback {
         reference.child("status").setValue(ride.getStatus().name());
 
         //inform customer the rider is coming
-        sendNotificationToRestaurant("Ordine " +ride.getOrderID() + " non consegnato! :(");
-        sendNotificationToCustomer("Il fattorino non ti ha trovato in casa! Ti consigliamo di chiamare il ristorante");
+        sendNotificationToRestaurant("Order " +ride.getOrderID() + " not delivered!");
+        sendNotificationToCustomer("The rider has not found you at home! We suggest you to call the restaurant");
 
     }
 
@@ -706,7 +706,7 @@ public class RidesFragment extends Fragment implements OnMapReadyCallback {
                                 + "\"filters\": [{\"field\": \"tag\", \"key\": \"User_ID\", \"relation\": \"=\", \"value\": \"" + send_email + "\"}],"
 
                                 + "\"data\": {\"Order\": \"PolEATo\"},"
-                                + "\"contents\": {\"it\": \"" + msg + "\"}"
+                                + "\"contents\": {\"en\": \"" + msg + "\"}"
                                 + "}";
 
 
@@ -774,7 +774,7 @@ public class RidesFragment extends Fragment implements OnMapReadyCallback {
                                 + "\"filters\": [{\"field\": \"tag\", \"key\": \"User_ID\", \"relation\": \"=\", \"value\": \"" + send_email + "\"}],"
 
                                 + "\"data\": {\"Order\": \"PolEATo\"},"
-                                + "\"contents\": {\"it\":" + msg + "\"+\"}"
+                                + "\"contents\": {\"en\":" + msg + "\"+\"}"
                                 + "}";
 
 

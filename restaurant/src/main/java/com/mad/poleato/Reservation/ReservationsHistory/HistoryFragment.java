@@ -130,6 +130,20 @@ public class HistoryFragment extends Fragment {
         listHash = new HashMap<>();
         customerDetails= new ArrayList<>();
 
+        /*
+         * check if there are some orders delivered or also paid in the reservation tab
+         * in that case, update the reservation list, remove this orders and add them to history
+         */
+        DatabaseReference referenceReservation= FirebaseDatabase.getInstance()
+                .getReference("restaurants/"+currentUserID+"/reservations");
+
+
+
+        /*
+         * retrieve the history of restaurant:
+         * there are all orders delivered, paid and rejected
+         */
+
         DatabaseReference reference = FirebaseDatabase.getInstance().getReference("restaurants")
                 .child(currentUserID).child("History");
         dbReferenceList.add(new MyDatabaseReference(reference));
