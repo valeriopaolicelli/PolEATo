@@ -19,7 +19,7 @@ public class Statistic extends Fragment {
     public Statistic() {
         // Required empty public constructor
     }
-
+    
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
