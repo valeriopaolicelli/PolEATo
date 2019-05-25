@@ -143,24 +143,7 @@ public class RiderListAdapter extends ArrayAdapter<Rider>
                 }
             });
 
-            String status= ridersList.get(position).getStatus();
-            int numberOfOrder= ridersList.get(position).getNumberOfOrder();
-            if(status.equals("Busy") || status.equals("Free")) {
-                if(numberOfOrder == 1)
-                    holder.busy_tv.setText(String.format("%s with %d pending order before your", status, numberOfOrder));
-                else if (numberOfOrder > 1)
-                    holder.busy_tv.setText(String.format("%s with %d pending orders before your", status, numberOfOrder));
-                else
-                    holder.busy_tv.setText(String.format("%s with no further pending order before your", status));
-            }
-            else if(status.equals("Occupato") || status.equals("Libero")){
-                if(numberOfOrder == 1)
-                    holder.busy_tv.setText(String.format("%s con %d ordine prima del tuo", status, numberOfOrder));
-                else if (numberOfOrder > 1)
-                    holder.busy_tv.setText(String.format("%s con %d ordini prima del tuo", status, numberOfOrder));
-                else
-                    holder.busy_tv.setText(String.format("%s senza altri ordine prima del tuo", status));
-            }
+            holder.busy_tv.setText(ridersList.get(position).getStatus());
         }
 
         return convertView;

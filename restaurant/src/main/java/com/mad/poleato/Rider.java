@@ -15,12 +15,11 @@ public class Rider {
 
     private static final int EARTH_RADIUS = 6371; // Approx Earth radius in KM
 
-    public Rider(String id, double latitude, double longitude, double latitudeRest, double longitudeRest, String status, int numberOfOrder) {
+    public Rider(String id, double latitude, double longitude, double latitudeRest, double longitudeRest, String messageStatus) {
         this.id = id;
         this.latitude= latitude;
         this.longitude= longitude;
-        this.status= status;
-        this.numberOfOrder= numberOfOrder;
+        this.status= messageStatus;
         setDistance(latitudeRest, longitudeRest);
         marker= null;
     }

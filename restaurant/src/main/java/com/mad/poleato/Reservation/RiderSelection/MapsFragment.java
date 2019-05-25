@@ -129,6 +129,8 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback,
 
     private List<MyDatabaseReference> dbReferenceList;
 
+    private HashMap<String, String> queueOrderRider;
+
     public MapsFragment() {
         // Required empty public constructor
     }
@@ -170,7 +172,10 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback,
 
         OneSignal.setSubscription(true);
         OneSignal.sendTag("User_ID", currentUserID);
+
         dbReferenceList = new ArrayList<>();
+
+        queueOrderRider= new HashMap<>();
 
         /** Obtain the SupportMapFragment and get notified when the map is ready to be used.*/
         mapFragment = (SupportMapFragment) getChildFragmentManager()
@@ -350,26 +355,11 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback,
         final DatabaseReference referenceRestaurant = FirebaseDatabase.getInstance().getReference("restaurants").child(currentUserID);
         dbReferenceList.add(new MyDatabaseReference(referenceRestaurant));
         int indexReference = dbReferenceList.size() - 1;
-        ChildEventListener childEventListener;
+        ValueEventListener valueEventListener;
 
-        dbReferenceList.get(indexReference).getReference().child("Name").addChildEventListener(childEventListener = new ChildEventListener() {
+        dbReferenceList.get(indexReference).getReference().child("Name").addListenerForSingleValueEvent(valueEventListener = new ValueEventListener() {
             @Override
-            public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
-                restaurant_name = dataSnapshot.getValue().toString();
-            }
-
-            @Override
-            public void onChildChanged(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
-                restaurant_name = dataSnapshot.getValue().toString();
-            }
-
-            @Override
-            public void onChildRemoved(@NonNull DataSnapshot dataSnapshot) {
-                //the restaurant must have the name
-            }
-
-            @Override
-            public void onChildMoved(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 restaurant_name = dataSnapshot.getValue().toString();
             }
 
@@ -378,13 +368,13 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback,
 
             }
         });
-
-        dbReferenceList.get(indexReference).setChildListener(childEventListener);
+        dbReferenceList.get(indexReference).setValueListener(valueEventListener);
 
         /**
          * retrieve coordinates of restaurant to put the marker in the map
          */
 
+        ChildEventListener childEventListener;
         dbReferenceList.get(indexReference).getReference().child("Coordinates").addChildEventListener(childEventListener = new ChildEventListener() {
             @Override
             public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
@@ -520,6 +510,10 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback,
 
                                 final double latRider = location.latitude;
                                 final double longRider = location.longitude;
+
+                                /*
+                                 * retrieve the status of rider and how many orders has before your
+                                 */
                                 String status;
                                 int numberOfOrder= 0;
                                 if(dataSnapshot.child("Busy").getValue().toString().equals("true"))
@@ -527,19 +521,53 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback,
                                 else
                                     status = localeShort.equals("en") ? "Free" : "Libero";
 
+                                // time of current order to deliver
                                 String timeCurrentOrder= reservation.getTime();
 
+                                /*
+                                 * scan the orders of current rider and update the counter
+                                 */
                                 for(DataSnapshot dataSnapshotRequests : dataSnapshot.child("requests").getChildren()){
                                     if(dataSnapshotRequests.exists()) {
+
+                                        // time of rider pending order
                                         String timeRequest = dataSnapshotRequests
                                                 .child("deliveryTime").getValue().toString().split(" ")[1];
+
                                         if(timeRequest.compareTo(timeCurrentOrder) < 0)
                                             numberOfOrder++;
                                     }
                                 }
 
+                                /*
+                                 * prepare the message containing the status (Busy or Free) and the number of pending orders before your
+                                 * this message will be displayed in the list adapter and in the alert dialog,
+                                 * when the rider marker is selected by the map
+                                 */
+                                String messageStatus= "";
+
+                                if(status.equals("Busy") || status.equals("Free")) {
+                                    if(numberOfOrder == 1)
+                                        messageStatus = String.format("%s with %d pending order before yours", status, numberOfOrder);
+                                    else if (numberOfOrder > 1)
+                                        messageStatus = String.format("%s with %d pending orders before yours", status, numberOfOrder);
+                                    else
+                                        messageStatus = String.format("%s with no further pending order before your", status);
+                                }
+                                else if(status.equals("Occupato") || status.equals("Libero")){
+                                    if(numberOfOrder == 1)
+                                        messageStatus = String.format("%s con %d ordine prima del tuo", status, numberOfOrder);
+                                    else if (numberOfOrder > 1)
+                                        messageStatus = String.format("%s con %d ordini prima del tuo", status, numberOfOrder);
+                                    else
+                                        messageStatus = String.format("%s senza altri ordine prima del tuo", status);
+                                }
+
+                                 //this global map is necessary to give the message information also in the marker alert dialog
+                                queueOrderRider.put(riderID, messageStatus);
+
                                 if (!riders.containsKey(riderID)) {
-                                    Rider rider = new Rider(riderID, latRider, longRider, latitudeRest, longitudeRest, status, numberOfOrder);
+                                    Rider rider = new Rider(riderID, latRider, longRider, latitudeRest, longitudeRest, queueOrderRider.get(riderID));
                                     riders.put(riderID, rider);
                                     listAdapter.addRider(riders.get(riderID));
                                 } else {
@@ -630,6 +658,9 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback,
                                     getContext() != null) {
                                 final double latRider = location.latitude;
                                 final double longRider = location.longitude;
+                                /*
+                                 * retrieve the status of rider and how many orders has before your
+                                 */
                                 String status;
                                 int numberOfOrder= 0;
                                 if(dataSnapshot.child("Busy").getValue().toString().equals("true"))
@@ -637,22 +668,56 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback,
                                 else
                                     status = localeShort.equals("en") ? "Free" : "Libero";
 
+                                // time of current order to deliver
                                 String timeCurrentOrder= reservation.getTime();
 
+                                /*
+                                 * scan the orders of current rider and update the counter
+                                 */
                                 for(DataSnapshot dataSnapshotRequests : dataSnapshot.child("requests").getChildren()){
                                     if(dataSnapshotRequests.exists()) {
+
+                                        // time of rider pending order
                                         String timeRequest = dataSnapshotRequests
                                                 .child("deliveryTime").getValue().toString().split(" ")[1];
+
                                         if(timeRequest.compareTo(timeCurrentOrder) < 0)
                                             numberOfOrder++;
                                     }
                                 }
 
+                                /*
+                                 * prepare the message containing the status (Busy or Free) and the number of pending orders before your
+                                 * this message will be displayed in the list adapter and in the alert dialog,
+                                 * when the rider marker is selected by the map
+                                 */
+                                String messageStatus= "";
+
+                                if(status.equals("Busy") || status.equals("Free")) {
+                                    if(numberOfOrder == 1)
+                                        messageStatus = String.format("%s with %d pending order before yours", status, numberOfOrder);
+                                    else if (numberOfOrder > 1)
+                                        messageStatus = String.format("%s with %d pending orders before yours", status, numberOfOrder);
+                                    else
+                                        messageStatus = String.format("%s with no further pending order before your", status);
+                                }
+                                else if(status.equals("Occupato") || status.equals("Libero")){
+                                    if(numberOfOrder == 1)
+                                        messageStatus = String.format("%s con %d ordine prima del tuo", status, numberOfOrder);
+                                    else if (numberOfOrder > 1)
+                                        messageStatus = String.format("%s con %d ordini prima del tuo", status, numberOfOrder);
+                                    else
+                                        messageStatus = String.format("%s senza altri ordine prima del tuo", status);
+                                }
+
+                                //this global map is necessary to give the message information also in the marker alert dialog
+                                queueOrderRider.put(riderID, messageStatus);
+
                                 final double distance = computeDistance(latitudeRest, longitudeRest, latRider, longRider);
 
                                 if (distance <= 2) {
                                     if (!riders.containsKey(riderID)) {
-                                        Rider rider = new Rider(riderID, latRider, longRider, latitudeRest, longitudeRest, status, numberOfOrder);
+                                        Rider rider = new Rider(riderID, latRider, longRider, latitudeRest, longitudeRest, messageStatus);
                                         riders.put(riderID, rider);
                                         listAdapter.addRider(riders.get(riderID));
                                     } else {
@@ -740,6 +805,9 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback,
                                                     reservation.getStatus().equals(Status.COOKING) &&
                                                     getContext() != null) {
                                                 if (!riders.containsKey(riderID)) {
+                                                    /*
+                                                     * retrieve the status of rider and how many orders has before your
+                                                     */
                                                     String status;
                                                     int numberOfOrder= 0;
                                                     if(dataSnapshotRider.child("Busy").getValue().toString().equals("true"))
@@ -747,20 +815,53 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback,
                                                     else
                                                         status = localeShort.equals("en") ? "Free" : "Libero";
 
+                                                    // time of current order to deliver
                                                     String timeCurrentOrder= reservation.getTime();
 
-                                                    for(DataSnapshot dataSnapshotRequests : dataSnapshotRider.child("requests")
-                                                                                                                .getChildren()){
+                                                    /*
+                                                     * scan the orders of current rider and update the counter
+                                                     */
+                                                    for(DataSnapshot dataSnapshotRequests : dataSnapshotRider.child("requests").getChildren()){
                                                         if(dataSnapshotRequests.exists()) {
+
+                                                            // time of rider pending order
                                                             String timeRequest = dataSnapshotRequests
                                                                     .child("deliveryTime").getValue().toString().split(" ")[1];
+
                                                             if(timeRequest.compareTo(timeCurrentOrder) < 0)
                                                                 numberOfOrder++;
                                                         }
                                                     }
 
+                                                    /*
+                                                     * prepare the message containing the status (Busy or Free) and the number of pending orders before your
+                                                     * this message will be displayed in the list adapter and in the alert dialog,
+                                                     * when the rider marker is selected by the map
+                                                     */
+                                                    String messageStatus= "";
+
+                                                    if(status.equals("Busy") || status.equals("Free")) {
+                                                        if(numberOfOrder == 1)
+                                                            messageStatus = String.format("%s with %d pending order before yours", status, numberOfOrder);
+                                                        else if (numberOfOrder > 1)
+                                                            messageStatus = String.format("%s with %d pending orders before yours", status, numberOfOrder);
+                                                        else
+                                                            messageStatus = String.format("%s with no further pending order before your", status);
+                                                    }
+                                                    else if(status.equals("Occupato") || status.equals("Libero")){
+                                                        if(numberOfOrder == 1)
+                                                            messageStatus = String.format("%s con %d ordine prima del tuo", status, numberOfOrder);
+                                                        else if (numberOfOrder > 1)
+                                                            messageStatus = String.format("%s con %d ordini prima del tuo", status, numberOfOrder);
+                                                        else
+                                                            messageStatus = String.format("%s senza altri ordine prima del tuo", status);
+                                                    }
+
+                                                    //this global map is necessary to give the message information also in the marker alert dialog
+                                                    queueOrderRider.put(riderID, messageStatus);
+
                                                     Rider rider = new Rider(riderID, latRider, longRider, latitudeRest,
-                                                                                    longitudeRest, status, numberOfOrder);
+                                                                                                    longitudeRest, messageStatus);
                                                     riders.put(riderID, rider);
                                                     listAdapter.addRider(riders.get(riderID));
                                                 } else {
@@ -844,11 +945,15 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback,
     @Override
     public boolean onMarkerClick(Marker marker) {
         if (!marker.getTitle().equals(restaurant_name)) {
+            /* prepare the message to show
+             * it contains the status of rider, the number of pending orders before yours and the question to confirm the choice
+             */
+            String message= "Rider " + queueOrderRider.get(marker.getTitle()).toLowerCase() + "\n" + this.getString(R.string.msg_rider_selected);
             final String riderID = marker.getTitle();
             final AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
             builder.setTitle(this.getString(R.string.rider_selected) + ": " + riderID);
 
-            builder.setMessage(this.getString(R.string.msg_rider_selected));
+            builder.setMessage(message);
             builder.setPositiveButton(this.getString(R.string.choice_confirm), new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialogInterface, int i) {
@@ -1030,12 +1135,9 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback,
         return EARTH_RADIUS * c; // <-- d
     }
 
-    ;
-
     public static double haversin(double val) {
         return Math.pow(Math.sin(val / 2), 2);
     }
-
 
     @Override
     public void onDestroy() {
