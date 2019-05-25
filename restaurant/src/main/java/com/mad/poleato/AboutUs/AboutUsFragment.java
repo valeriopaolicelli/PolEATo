@@ -38,6 +38,7 @@ import java.text.DateFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 
 /**
@@ -57,18 +58,12 @@ public class AboutUsFragment extends Fragment {
     private String currentUserID;
     private FirebaseAuth mAuth;
 
-    private List<MyDatabaseReference> dbReferenceList;
-    List<Food> mostPopularFoods;
-    HashMap<String, Food> mapMostPopularFoods;
-    HashMap<TimeSlot, Integer> mapMostPopularTime;
+    private Map<String, MyDatabaseReference> dbReferenceList;
+    private List<Food> mostPopularFoods;
+    private HashMap<String, Food> mapMostPopularFoods;
+    private HashMap<TimeSlot, Integer> mapMostPopularTime;
 
     private ProgressDialog progressDialog;
-    Handler handler = new Handler() {
-        @Override
-        public void handleMessage(Message msg) {
-            progressDialog.dismiss();
-        }
-    };
 
     public AboutUsFragment() {
         // Required empty public constructor
@@ -96,7 +91,7 @@ public class AboutUsFragment extends Fragment {
                 .unsubscribeWhenNotificationsAreDisabled(true)
                 .init();
 
-        dbReferenceList= new ArrayList<>();
+        dbReferenceList= new HashMap<>();
         mostPopularFoods= new ArrayList<>();
         mapMostPopularFoods= new HashMap<>();
         mapMostPopularTime= new HashMap<>();
@@ -139,29 +134,27 @@ public class AboutUsFragment extends Fragment {
     }
 
     public void findMostPopularTiming(){
-        final DatabaseReference referenceMenu = FirebaseDatabase.getInstance()
-                                .getReference("restaurants/"+currentUserID+"/History");
-        dbReferenceList.add(new MyDatabaseReference(referenceMenu));
-        int indexReference= dbReferenceList.size() - 1;
-        ValueEventListener valueEventListener;
 
-        dbReferenceList.get(indexReference).getReference().addValueEventListener(valueEventListener= new ValueEventListener() {
+        //history reference
+        dbReferenceList.put("history", new MyDatabaseReference(FirebaseDatabase.getInstance()
+                                            .getReference("restaurants/"+currentUserID+"/History")));
+        /*dbReferenceList.get("history").setValueListener(new ValueEventListener() {
 
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                handler.sendEmptyMessage(0);
+                if(progressDialog.isShowing())
+                    progressDialog.dismiss();
             }
 
             @Override
             public void onCancelled(@NonNull DatabaseError databaseError) {
                 Log.d("matte", "ValueEventiListener : OnCancelled() invoked");
-                handler.sendEmptyMessage(0);
+                if(progressDialog.isShowing())
+                    progressDialog.dismiss();
             }
-        });
-        dbReferenceList.get(indexReference).setValueListener(valueEventListener);
+        });*/
 
-        dbReferenceList.get(indexReference).getReference()
-                .addValueEventListener(valueEventListener= new ValueEventListener() {
+        dbReferenceList.get("history").setValueListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 // fill the map with the slots and counter of time popularity to 0
@@ -181,14 +174,17 @@ public class AboutUsFragment extends Fragment {
                     }
                 }
                 popularTiming.setText(popularTimeSlot.getSlot());
+
+                if(progressDialog.isShowing())
+                    progressDialog.dismiss();
             }
 
             @Override
             public void onCancelled(@NonNull DatabaseError databaseError) {
-
+                if(progressDialog.isShowing())
+                    progressDialog.dismiss();
             }
         });
-        dbReferenceList.get(indexReference).setValueListener(valueEventListener);
     }
 
     public void findMostPopularFoods(){
@@ -198,17 +194,14 @@ public class AboutUsFragment extends Fragment {
          * (sum popularity counter of each food) / number of foods,
          * where the popularity counter is a counter updated every time one customer order that food.
          *
-         * Then, all foods with popularity counter greater or equal than average, are showed.
+         * Then, all foods with popularity counter greater or equal than average, are shown.
          */
 
         // here compute the average
 
-        DatabaseReference referenceMenu = FirebaseDatabase.getInstance().getReference("restaurants/"+currentUserID+"/Menu");
-        dbReferenceList.add(new MyDatabaseReference(referenceMenu));
-        int indexReference= dbReferenceList.size() - 1;
-        ValueEventListener valueEventListener;
-
-        dbReferenceList.get(indexReference).getReference().addValueEventListener(valueEventListener= new ValueEventListener() {
+        dbReferenceList.put("menu", new MyDatabaseReference(FirebaseDatabase.getInstance()
+                                            .getReference("restaurants/"+currentUserID+"/Menu")));
+        /*dbReferenceList.get("menu").setValueListener(new ValueEventListener() {
 
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
@@ -220,11 +213,9 @@ public class AboutUsFragment extends Fragment {
                 Log.d("matte", "ValueEventiListener : OnCancelled() invoked");
                 handler.sendEmptyMessage(0);
             }
-        });
-        dbReferenceList.get(indexReference).setValueListener(valueEventListener);
+        });*/
 
-        dbReferenceList.get(indexReference).getReference()
-                .addValueEventListener(valueEventListener = new ValueEventListener() {
+        dbReferenceList.get("menu").setValueListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 long sum = 0;
@@ -253,14 +244,17 @@ public class AboutUsFragment extends Fragment {
                         recyclerAdapter.notifyDataSetChanged();
                     }
                 }
+
+                if(progressDialog.isShowing())
+                    progressDialog.dismiss();
             }
 
             @Override
             public void onCancelled(@NonNull DatabaseError databaseError) {
-
+                if(progressDialog.isShowing())
+                    progressDialog.dismiss();
             }
         });
-        dbReferenceList.get(indexReference).setValueListener(valueEventListener);
     }
 
     public void fillMapSlots(){
@@ -278,8 +272,14 @@ public class AboutUsFragment extends Fragment {
     @Override
     public void onStop() {
         super.onStop();
+        for(MyDatabaseReference ref : dbReferenceList.values())
+            ref.removeAllListener();
+    }
 
-        for(int i=0; i < dbReferenceList.size(); i++)
-            dbReferenceList.get(i).removeAllListener();
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        for(MyDatabaseReference ref : dbReferenceList.values())
+            ref.removeAllListener();
     }
 }

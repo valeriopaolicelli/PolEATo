@@ -98,12 +98,6 @@ public class AddFoodFragment extends Fragment {
     private MyViewModel model;
 
     private ProgressDialog progressDialog;
-    private Handler handler = new Handler() {
-        @Override
-        public void handleMessage(Message msg) {
-            progressDialog.dismiss();
-        }
-    };
 
 
     @Override
@@ -312,7 +306,7 @@ public class AddFoodFragment extends Fragment {
         }
         else{
             if(progressDialog.isShowing())
-                handler.sendEmptyMessage(0);
+                progressDialog.dismiss();
         }
     }
 
@@ -376,7 +370,7 @@ public class AddFoodFragment extends Fragment {
                             reference.setValue(3);
 
                         if(progressDialog.isShowing())
-                            handler.sendEmptyMessage(0);
+                            progressDialog.dismiss();
 
                         /**
                          * GO TO DAILY_OFFER_FRAGMENT
@@ -419,7 +413,7 @@ public class AddFoodFragment extends Fragment {
 
 
                         if(progressDialog.isShowing())
-                            handler.sendEmptyMessage(0);
+                            progressDialog.dismiss();
                         /**
                          * GO TO ACCOUNT_FRAGMENT
                          */

@@ -49,7 +49,7 @@ public class SignUpActivity extends AppCompatActivity {
     private FirebaseAuth mAuth;
     private Toast myToast;
     private DatabaseReference dbReference;
-    ConnectionManager connectionManager;
+    private ConnectionManager connectionManager;
 
     private Map<String, ImageButton> imageButtons;
     private Map<String, EditText> editTextFields;

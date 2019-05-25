@@ -60,14 +60,6 @@ public class DailyOfferFragment extends Fragment {
     int width;
     private int lastExpandedPosition = -1;
 
-    private ProgressDialog progressDialog;
-    private Handler handler = new Handler() {
-        @Override
-        public void handleMessage(Message msg) {
-            progressDialog.dismiss();
-        }
-    };
-
     private MyViewModel model;
 
     // TODO: Rename and change types of parameters

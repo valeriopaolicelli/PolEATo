@@ -103,7 +103,6 @@ public class EditFoodFragment extends DialogFragment {
     private int firstRange = 7;
     private int secondRange = 15;
 
-    private DatabaseReference reference;
     private String localeShort;
     private String currentUserID;
     private FirebaseAuth mAuth;
@@ -111,19 +110,13 @@ public class EditFoodFragment extends DialogFragment {
     private MyViewModel model;
 
     private ProgressDialog progressDialog;
-    private Handler handler = new Handler() {
-        @Override
-        public void handleMessage(Message msg) {
-            progressDialog.dismiss();
-        }
-    };
 
     private String toModifyID, toModifyCategory;
 
     //to map each category name to the position inside the spinner
     private Map<String, Integer> spinnerCategoryPosition;
 
-    private List<MyDatabaseReference> dbReferenceList;
+    private MyDatabaseReference foodReference;
     int indexReference;
 
     /* ***********************************
@@ -158,8 +151,6 @@ public class EditFoodFragment extends DialogFragment {
 
         OneSignal.setSubscription(true);
         OneSignal.sendTag("User_ID", currentUserID);
-
-        dbReferenceList= new ArrayList<>();
     }
 
 
@@ -235,12 +226,10 @@ public class EditFoodFragment extends DialogFragment {
     private void fillFields(){
 
         //Download text infos
-        ValueEventListener valueEventListener;
-        reference = FirebaseDatabase.getInstance().getReference("restaurants/"+currentUserID+"/Menu/"+toModifyID);
-        dbReferenceList.add(new MyDatabaseReference(reference));
-        indexReference= dbReferenceList.size()-1;
+        foodReference = new MyDatabaseReference(FirebaseDatabase.getInstance()
+                                                .getReference("restaurants/"+currentUserID+"/Menu/"+toModifyID));
 
-        dbReferenceList.get(indexReference).getReference().addValueEventListener(valueEventListener= new ValueEventListener() {
+        foodReference.setValueListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
 
@@ -276,7 +265,7 @@ public class EditFoodFragment extends DialogFragment {
                                 Bitmap bmp = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
                                 imageFood.setImageBitmap(bmp);
                                 if(progressDialog.isShowing())
-                                    handler.sendEmptyMessage(0);
+                                    progressDialog.dismiss();
 
                             }
                         }).addOnFailureListener(new OnFailureListener() {
@@ -286,7 +275,7 @@ public class EditFoodFragment extends DialogFragment {
                                 //set default image if no image was set
                                 imageFood.setImageResource(R.drawable.plate_fork);
                                 if(progressDialog.isShowing())
-                                    handler.sendEmptyMessage(0);
+                                    progressDialog.dismiss();
                             }
                         });
 
@@ -303,9 +292,6 @@ public class EditFoodFragment extends DialogFragment {
                 myToast.show();
             }
         });
-
-        dbReferenceList.get(indexReference).setValueListener(valueEventListener);
-
     }
 
 
@@ -359,6 +345,8 @@ public class EditFoodFragment extends DialogFragment {
             Bitmap img = ((BitmapDrawable) imageFood.getDrawable()).getBitmap();
 
             //insert the data into the DB: the category cannot change
+            DatabaseReference reference = FirebaseDatabase.getInstance()
+                                        .getReference("restaurants/"+currentUserID+"/Menu/"+toModifyID);
             reference.child("Name").setValue(name);
             reference.child("Description").setValue(description);
             reference.child("Quantity").setValue(quantity);
@@ -432,7 +420,7 @@ public class EditFoodFragment extends DialogFragment {
                                 reference.setValue(3);
 
                             if (progressDialog.isShowing())
-                                handler.sendEmptyMessage(0);
+                                progressDialog.dismiss();
 
                             /**
                              * GO TO DAILY_OFFER_FRAGMENT
@@ -477,7 +465,7 @@ public class EditFoodFragment extends DialogFragment {
 
 
                         if(progressDialog.isShowing())
-                            handler.sendEmptyMessage(0);
+                            progressDialog.dismiss();
                         /**
                          * GO TO ACCOUNT_FRAGMENT
                          */
@@ -775,7 +763,12 @@ public class EditFoodFragment extends DialogFragment {
     @Override
     public void onDestroy() {
         super.onDestroy();
-        for(int i=0; i < dbReferenceList.size(); i++)
-            dbReferenceList.get(i).removeAllListener();
+        foodReference.removeAllListener();
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        foodReference.removeAllListener();
     }
 }
