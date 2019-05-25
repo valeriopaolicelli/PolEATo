@@ -1,4 +1,4 @@
-package com.mad.poleato.Rides;
+package com.mad.poleato.Ride;
 
 public enum RideStatus{
 

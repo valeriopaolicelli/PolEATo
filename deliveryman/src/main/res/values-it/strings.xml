@@ -65,7 +65,7 @@
     <string name="delivered_date">Data: </string>
 
 
-    <!-- Maps strings -->
+    <!-- RideFragment strings -->
     <string name="go_to_customer">Vai dal cliente</string>
     <string name="dialog_go_to_customer">Sei sicuro che vuoi dirigerti dal cliente?</string>
     <string name="restaurant_string">Ristorante</string>
@@ -79,6 +79,7 @@
     <string name="dialog_message_order_failure">Conferma per completare la corsa</string>
     <string name="message_order_completed">Ordine completato!</string>
     <string name="quit_run">Abbandona</string>
+    <string name="confirm">Conferma</string>
 
 
 
@@ -135,6 +136,13 @@
     <string name="revenuePerDay_label">Guadagno/giorno:</string>
     <string name="chart_title">I tuoi guadagni</string>
 
+
+    <!-- Pending -->
+    <string name="start">Inizia</string>
+    <string name="already_busy">Hai già una consegna attiva!</string>
+    <string name="ride_start_alert">Inizio consegna</string>
+    <string name="ride_start_confirm">Sei sicuro di voler iniziare questa consegna?</string>
+    <string name="already_delivering">Già in consegna ...</string>
 
 
 </resources>

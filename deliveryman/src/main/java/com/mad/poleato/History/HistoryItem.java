@@ -1,7 +1,5 @@
 package com.mad.poleato.History;
 
-import com.mad.poleato.Rides.RideStatus;
-
 import java.util.Comparator;
 
 public class HistoryItem {

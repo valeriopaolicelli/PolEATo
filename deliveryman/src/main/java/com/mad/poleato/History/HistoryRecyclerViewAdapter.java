@@ -10,6 +10,7 @@ import android.widget.TextView;
 
 import com.mad.poleato.R;
 
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -44,7 +45,7 @@ public class HistoryRecyclerViewAdapter extends RecyclerView.Adapter<HistoryRecy
 
     public void setAllHistories(List<HistoryItem> histories) {
         this.historyList = histories;
-        Collections.sort(this.historyList, HistoryItem.timeInverseComparator); //TODO inverse comparator
+        Collections.sort(this.historyList, HistoryItem.timeInverseComparator);
         notifyDataSetChanged();
     }
 
@@ -65,7 +66,14 @@ public class HistoryRecyclerViewAdapter extends RecyclerView.Adapter<HistoryRecy
         historyViewHolder.order_tv.setText(historyList.get(position).getOrderID());
         historyViewHolder.restaurant_tv.setText(historyList.get(position).getNameRestaurant());
         historyViewHolder.restaurantAddress_tv.setText(historyList.get(position).getAddressRestaurant());
-        historyViewHolder.price_tv.setText(historyList.get(position).getTotalPrice());
+
+        //correctly format the price string
+        DecimalFormat decimalFormat = new DecimalFormat("#0.00"); //two decimal
+        String s = historyList.get(position).getTotalPrice().replace(",", ".");
+        double d = Double.parseDouble(s);
+        String priceStr = decimalFormat.format(d) + " €";
+
+        historyViewHolder.price_tv.setText(priceStr);
         historyViewHolder.date_tv.setText(historyList.get(position).getDeliveredDate());
         historyViewHolder.expectedTime_tv.setText(historyList.get(position).getExpectedHour());
         String deliveredTime = historyList.get(position).getDeliveredHour();

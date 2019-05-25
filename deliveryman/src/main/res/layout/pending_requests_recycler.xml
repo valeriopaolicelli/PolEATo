@@ -5,11 +5,12 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".NavigatorActivity"
+    tools:context=".PendingRequests.RequestsFragment"
     android:layout_marginBottom="?attr/actionBarSize">
 
+
     <ImageView
-        android:id="@+id/history_empty_view"
+        android:id="@+id/requests_empty_view"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_gravity="center_horizontal|center_vertical"
@@ -18,17 +19,20 @@
         android:scaleType="fitCenter"
         android:visibility="gone"/>
 
+
     <android.support.v7.widget.RecyclerView
-        android:id="@+id/history_recyclerview"
+        android:id="@+id/requests_recyler"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:scrollbars="vertical"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        tools:listitem="@layout/history_layout">
+        tools:listitem="@layout/request_layout">
 
     </android.support.v7.widget.RecyclerView>
+
+
 
 
 </android.support.constraint.ConstraintLayout>

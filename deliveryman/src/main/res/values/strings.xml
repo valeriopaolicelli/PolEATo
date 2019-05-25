@@ -77,6 +77,7 @@
     <string name="dialog_message_order_failure">Confirm to end the run</string>
     <string name="message_order_completed">Order completed!</string>
     <string name="quit_run">Quit</string>
+    <string name="confirm">Confirm</string>
 
 
     <string name="active_status"><font size="18">Active</font></string>
@@ -130,6 +131,14 @@
     <string name="kmPerDay_label">Km per day:</string>
     <string name="revenuePerDay_label">Revenues per day:</string>
     <string name="chart_title">Your revenues</string>
+
+
+    <!-- Pending -->
+    <string name="start">Start</string>
+    <string name="already_busy">You already have an active ride!</string>
+    <string name="ride_start_alert">Ride start</string>
+    <string name="ride_start_confirm">Are you sure you want to start this ride?</string>
+    <string name="already_delivering">Already delivering ...</string>
 
 
 </resources>

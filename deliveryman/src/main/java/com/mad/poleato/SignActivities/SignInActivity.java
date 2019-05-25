@@ -37,7 +37,7 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.mad.poleato.ConnectionManager;
-import com.mad.poleato.FirebaseData.MyDatabaseReference;
+import com.mad.poleato.Firebase.MyDatabaseReference;
 import com.mad.poleato.NavigatorActivity;
 import com.mad.poleato.R;
 
