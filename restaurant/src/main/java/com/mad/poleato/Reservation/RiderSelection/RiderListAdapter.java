@@ -174,7 +174,7 @@ public class RiderListAdapter extends ArrayAdapter<Rider>
     private void notifyRider(final String riderID, final View convertView) {
 
         /* retrieve the restaurant information */
-        DatabaseReference referenceRestaurant = FirebaseDatabase.getInstance().getReference("restaurants").child(loggedID);
+        final DatabaseReference referenceRestaurant = FirebaseDatabase.getInstance().getReference("restaurants").child(loggedID);
         referenceRestaurant.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshotRestaurant) {
@@ -211,6 +211,7 @@ public class RiderListAdapter extends ArrayAdapter<Rider>
                     reservationRider.child("totalPrice").setValue(reservation.getTotalPrice());
                     reservationRider.child("phoneCustomer").setValue(reservation.getPhone());
                     reservationRider.child("phoneRestaurant").setValue(phoneRestaurant);
+                    reservationRider.child("delivering").setValue(false);
 
                     // compose the date in the format YYYY/MM/DD HH:mm
                     String[] date_components = reservation.getDate().split("/"); //format: dd/mm/yyyy

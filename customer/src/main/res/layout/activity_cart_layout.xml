@@ -26,6 +26,7 @@
             android:textSize="20sp">
         </TextView>
     </LinearLayout>
+
     <LinearLayout
         android:id="@+id/time_layout"
         android:layout_width="match_parent"
@@ -45,15 +46,16 @@
 
         <EditText
             android:id="@+id/input_time"
-            android:layout_weight="1"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:inputType="none"
+            android:layout_alignTop="@+id/time_layout"
+            android:layout_marginEnd="10dp"
+            android:layout_weight="1"
             android:focusable="false"
-            android:maxLength="6"
             android:hint="hh:mm"
-            android:textSize="20sp"
-            android:layout_marginEnd="10dp"/>
+            android:inputType="none"
+            android:maxLength="6"
+            android:textSize="20sp" />
     </LinearLayout>
 
     <TextView

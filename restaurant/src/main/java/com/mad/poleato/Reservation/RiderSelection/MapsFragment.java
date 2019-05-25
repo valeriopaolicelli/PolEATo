@@ -1021,6 +1021,7 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback,
                     reservationRider.child("totalPrice").setValue(reservation.getTotalPrice());
                     reservationRider.child("phoneCustomer").setValue(reservation.getPhone());
                     reservationRider.child("phoneRestaurant").setValue(phoneRestaurant);
+                    reservationRider.child("delivering").setValue(false);
 
                     /** compose the date in the format YYYY/MM/DD HH:mm */
                     String[] date_components = reservation.getDate().split("/"); //format: dd/mm/yyyy

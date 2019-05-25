@@ -146,9 +146,9 @@ public class Order implements Serializable {
                 @Override
                 public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                     int counter= Integer.parseInt(dataSnapshot.child("PopularityCounter").getValue().toString());
-                    counter += f.getQuantity();
+                    counter += f.getSelectedQuantity();
                     FirebaseDatabase.getInstance()
-                            .getReference("restaurants/" + restaurantID + "/Menu/"+f.getFoodID()+"PopularityCounter")
+                            .getReference("restaurants/" + restaurantID + "/Menu/"+f.getFoodID()+"/PopularityCounter")
                             .setValue(counter);
                 }
 
