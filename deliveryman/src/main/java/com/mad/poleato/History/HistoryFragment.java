@@ -15,6 +15,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseAuth;
@@ -48,6 +49,7 @@ public class HistoryFragment extends Fragment {
     private HistoryRecyclerViewAdapter historyAdapter;
     private RecyclerView.LayoutManager layoutManager;
     private RecyclerView rv;
+    private ImageView empty_view;
 
     private ProgressDialog progressDialog;
     private MyDatabaseReference historyReference;
@@ -119,6 +121,7 @@ public class HistoryFragment extends Fragment {
         // Inflate the layout for this fragment
         fragView = inflater.inflate(R.layout.history_recyclerview, container, false);
 
+        empty_view = (ImageView) fragView.findViewById(R.id.history_empty_view);
         rv = (RecyclerView) fragView.findViewById(R.id.history_recyclerview);
         rv.setHasFixedSize(true);
 
@@ -131,9 +134,23 @@ public class HistoryFragment extends Fragment {
         DividerItemDecoration itemDecor = new DividerItemDecoration(hostActivity, 1); // 1 means HORIZONTAL
         rv.addItemDecoration(itemDecor);
 
+        show_empty_view();
         attachFirebaseListeners();
 
         return fragView;
+    }
+
+
+    private void show_empty_view(){
+
+        rv.setVisibility(View.GONE);
+        empty_view.setVisibility(View.VISIBLE);
+    }
+
+    private void show_history_view(){
+
+        empty_view.setVisibility(View.GONE);
+        rv.setVisibility(View.VISIBLE);
     }
 
 
@@ -196,6 +213,7 @@ public class HistoryFragment extends Fragment {
                             deliveredTime, HistoryItemOutcome.valueOf(outcome));
 
                     historyItemList.add(historyObj);
+                    show_history_view();
                 }
             }
 
@@ -231,6 +249,7 @@ public class HistoryFragment extends Fragment {
                             deliveredTime, HistoryItemOutcome.valueOf(outcome));
 
                     historyItemList.add(historyObj);
+                    show_history_view();
                 }
             }
 

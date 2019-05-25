@@ -3,6 +3,7 @@ package com.mad.poleato.PendingRequests;
 
 import android.app.Activity;
 import android.content.Context;
+import android.media.Image;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -14,6 +15,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseAuth;
@@ -47,6 +49,7 @@ public class RequestsFragment extends Fragment {
     private RecyclerView.LayoutManager layoutManager;
     private RecyclerView rv;
     private RequestsRecyclerViewAdapter requestsAdapter;
+    private ImageView empty_view;
 
     private HashMap<String, MyDatabaseReference> referenceMap;
 
@@ -111,6 +114,7 @@ public class RequestsFragment extends Fragment {
         // Inflate the layout for this fragment
         fragView =  inflater.inflate(R.layout.pending_requests_recycler, container, false);
 
+        empty_view = (ImageView) fragView.findViewById(R.id.requests_empty_view);
         rv = (RecyclerView) fragView.findViewById(R.id.requests_recyler);
         rv.setHasFixedSize(true);
 
@@ -123,11 +127,23 @@ public class RequestsFragment extends Fragment {
         DividerItemDecoration itemDecor = new DividerItemDecoration(hostActivity, 1); // 1 means HORIZONTAL
         rv.addItemDecoration(itemDecor);
 
-
+        show_empty_view();
         attachFirebaseListeners();
 
 
         return fragView;
+    }
+
+    private void show_empty_view(){
+
+        rv.setVisibility(View.GONE);
+        empty_view.setVisibility(View.VISIBLE);
+    }
+
+    private void show_requests_view(){
+
+        empty_view.setVisibility(View.GONE);
+        rv.setVisibility(View.VISIBLE);
     }
 
 
@@ -180,6 +196,8 @@ public class RequestsFragment extends Fragment {
 
                     //create the requests and add it to the recyclerView
                     createRequest(dataSnapshot);
+                    if(requestsAdapter.getItemCount() == 1) //previously it was 0
+                        show_requests_view();
                 }
             }
 
@@ -202,6 +220,8 @@ public class RequestsFragment extends Fragment {
 
                     //create the requests and add it to the recyclerView
                     createRequest(dataSnapshot);
+                    if(requestsAdapter.getItemCount() == 1) //previously it was 0
+                        show_requests_view();
                 }
             }
 
@@ -231,6 +251,8 @@ public class RequestsFragment extends Fragment {
                         null, null, requestKey, delivering);
 
                 requestsAdapter.removeRequest(r);
+                if(requestsAdapter.getItemCount() == 0)
+                    show_empty_view();
             }
 
             @Override
