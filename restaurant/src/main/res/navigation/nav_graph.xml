@@ -82,9 +82,9 @@
 
     <fragment
         android:id="@+id/statistic_id"
-        android:name="com.mad.poleato.Statistic.Statistic"
+        android:name="com.mad.poleato.AboutUs.AboutUsFragment"
         android:label="@string/title_actionbar_deliveryStatistic"
-        tools:layout="@layout/fragment_statistic" >
+        tools:layout="@layout/fragment_about_us" >
         <action
             android:id="@+id/action_statistic_id_to_signInActivity"
             app:destination="@id/signInActivity"

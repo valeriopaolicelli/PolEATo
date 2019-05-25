@@ -110,8 +110,8 @@
     <string name="title_actionbar_add_food">Aggiungi pietanza</string>
     <string name="title_actionbar_edit_food">Modifica pietanza</string>
 
-    <string name="title_bottombar_deliveryStatistic">Statistiche</string>
-    <string name="title_actionbar_deliveryStatistic">Statistiche</string>
+    <string name="title_bottombar_deliveryStatistic">Su di noi</string>
+    <string name="title_actionbar_deliveryStatistic">Su di noi</string>
 
 
     <string name="title_bottombar_account">Account</string>

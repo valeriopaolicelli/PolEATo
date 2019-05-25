@@ -1,4 +1,4 @@
-package com.mad.poleato.Statistic;
+package com.mad.poleato.AboutUs;
 
 
 import android.os.Bundle;
@@ -13,10 +13,10 @@ import com.mad.poleato.R;
 /**
  * A simple {@link Fragment} subclass.
  */
-public class Statistic extends Fragment {
+public class AboutUsFragment extends Fragment {
 
 
-    public Statistic() {
+    public AboutUsFragment() {
         // Required empty public constructor
     }
 
@@ -25,7 +25,7 @@ public class Statistic extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_statistic, container, false);
+        return inflater.inflate(R.layout.fragment_about_us, container, false);
     }
 
 }

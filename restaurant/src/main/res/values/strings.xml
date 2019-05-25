@@ -112,8 +112,8 @@
     <string name="title_actionbar_add_food">Add food</string>
     <string name="title_actionbar_edit_food">Edit food</string>
 
-    <string name="title_bottombar_deliveryStatistic">Statistics</string>
-    <string name="title_actionbar_deliveryStatistic">Statistics</string>
+    <string name="title_bottombar_deliveryStatistic">About us</string>
+    <string name="title_actionbar_deliveryStatistic">About us</string>
 
     <string name="title_bottombar_account">Account</string>
     <string name="title_actionbar_account">Account</string>
