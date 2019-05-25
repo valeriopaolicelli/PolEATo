@@ -38,6 +38,8 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.navigation.Navigation;
+
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
@@ -465,6 +467,11 @@ public class RideFragment extends Fragment implements OnMapReadyCallback {
 
         ride = null;
         show_empty_view();
+
+        /**
+         * GO FROM CURRENT RIDE TO PENDING REQUESTS
+         */
+        Navigation.findNavController(fragView).navigate(R.id.action_ride_id_to_pendingReservations_id);
     }
 
 

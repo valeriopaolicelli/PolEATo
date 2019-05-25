@@ -18,6 +18,8 @@ import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.navigation.Navigation;
+
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.mad.poleato.R;
@@ -225,11 +227,10 @@ public class RequestsRecyclerViewAdapter extends RecyclerView.Adapter<RequestsRe
         //v.setVisibility(View.GONE);
         setButtonGrey(rideViewHolder.confirm_button);
 
-        //TODO go to rideFragment
-                    /*RequestsFragmentDirection.ActionRequestIdToMapsFragmentId action =
-                            ReservationFragmentDirections
-                                    .actionReservationIdToMapsFragmentId("loggedID", r);
-                    Navigation.findNavController(rideViewHolder.itemView).navigate(action);*/
+        /**
+         * GO FROM PENDING REQUESTS TO CURRENT RIDE
+         */
+        Navigation.findNavController(rideViewHolder.itemView).navigate(R.id.action_pendingReservations_id_to_ride_id);
     }
 
 

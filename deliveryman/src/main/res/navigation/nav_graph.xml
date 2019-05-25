@@ -17,14 +17,12 @@
             app:popUpTo="@+id/signInActivity"
             app:popUpToInclusive="true" />
         <action
-            android:id="@+id/action_pendingReservations_id_to_rideFragment"
+            android:id="@+id/action_pendingReservations_id_to_ride_id"
             app:destination="@id/rides_id"
             app:popUpTo="@+id/rides_id"
             app:popUpToInclusive="true">
         </action>
     </fragment>
-
-
 
     <fragment
         android:id="@+id/rides_id"
@@ -36,6 +34,12 @@
             app:destination="@id/signInActivity"
             app:popUpTo="@+id/signInActivity"
             app:popUpToInclusive="true" />
+        <action
+            android:id="@+id/action_ride_id_to_pendingReservations_id"
+            app:destination="@id/pendingReservations_id"
+            app:popUpTo="@+id/pendingReservations_id"
+            app:popUpToInclusive="true">
+        </action>
     </fragment>
 
 

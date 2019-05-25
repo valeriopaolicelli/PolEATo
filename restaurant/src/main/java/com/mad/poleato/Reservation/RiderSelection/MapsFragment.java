@@ -650,64 +650,64 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback,
                                     getContext() != null) {
                                 final double latRider = location.latitude;
                                 final double longRider = location.longitude;
-                                /*
-                                 * retrieve the status of rider and how many orders has before your
-                                 */
-                                String status;
-                                int numberOfOrder= 0;
-                                if(dataSnapshot.child("Busy").getValue().toString().equals("true"))
-                                    status = localeShort.equals("en") ? "Busy" : "Occupato";
-                                else
-                                    status = localeShort.equals("en") ? "Free" : "Libero";
-
-                                // time of current order to deliver
-                                String timeCurrentOrder= reservation.getTime();
-
-                                /*
-                                 * scan the orders of current rider and update the counter
-                                 */
-                                for(DataSnapshot dataSnapshotRequests : dataSnapshot.child("requests").getChildren()){
-                                    if(dataSnapshotRequests.exists()) {
-
-                                        // time of rider pending order
-                                        String timeRequest = dataSnapshotRequests
-                                                .child("deliveryTime").getValue().toString().split(" ")[1];
-
-                                        if(timeRequest.compareTo(timeCurrentOrder) < 0)
-                                            numberOfOrder++;
-                                    }
-                                }
-
-                                /*
-                                 * prepare the message containing the status (Busy or Free) and the number of pending orders before your
-                                 * this message will be displayed in the list adapter and in the alert dialog,
-                                 * when the rider marker is selected by the map
-                                 */
-                                String messageStatus= "";
-
-                                if(status.equals("Busy") || status.equals("Free")) {
-                                    if(numberOfOrder == 1)
-                                        messageStatus = String.format("%s with %d pending order before yours", status, numberOfOrder);
-                                    else if (numberOfOrder > 1)
-                                        messageStatus = String.format("%s with %d pending orders before yours", status, numberOfOrder);
-                                    else
-                                        messageStatus = String.format("%s with no further pending order before your", status);
-                                }
-                                else if(status.equals("Occupato") || status.equals("Libero")){
-                                    if(numberOfOrder == 1)
-                                        messageStatus = String.format("%s con %d ordine prima del tuo", status, numberOfOrder);
-                                    else if (numberOfOrder > 1)
-                                        messageStatus = String.format("%s con %d ordini prima del tuo", status, numberOfOrder);
-                                    else
-                                        messageStatus = String.format("%s senza altri ordine prima del tuo", status);
-                                }
-
-                                //this global map is necessary to give the message information also in the marker alert dialog
-                                queueOrderRider.put(riderID, messageStatus);
 
                                 final double distance = computeDistance(latitudeRest, longitudeRest, latRider, longRider);
-
                                 if (distance <= 2) {
+                                    /*
+                                     * retrieve the status of rider and how many orders has before your
+                                     */
+                                    String status;
+                                    int numberOfOrder= 0;
+                                    if(dataSnapshot.child("Busy").getValue().toString().equals("true"))
+                                        status = localeShort.equals("en") ? "Busy" : "Occupato";
+                                    else
+                                        status = localeShort.equals("en") ? "Free" : "Libero";
+
+                                    // time of current order to deliver
+                                    String timeCurrentOrder= reservation.getTime();
+
+                                    /*
+                                     * scan the orders of current rider and update the counter
+                                     */
+                                    for(DataSnapshot dataSnapshotRequests : dataSnapshot.child("requests").getChildren()){
+                                        if(dataSnapshotRequests.exists()) {
+
+                                            // time of rider pending order
+                                            String timeRequest = dataSnapshotRequests
+                                                    .child("deliveryTime").getValue().toString().split(" ")[1];
+
+                                            if(timeRequest.compareTo(timeCurrentOrder) < 0)
+                                                numberOfOrder++;
+                                        }
+                                    }
+
+                                    /*
+                                     * prepare the message containing the status (Busy or Free) and the number of pending orders before your
+                                     * this message will be displayed in the list adapter and in the alert dialog,
+                                     * when the rider marker is selected by the map
+                                     */
+                                    String messageStatus= "";
+
+                                    if(status.equals("Busy") || status.equals("Free")) {
+                                        if(numberOfOrder == 1)
+                                            messageStatus = String.format("%s with %d pending order before yours", status, numberOfOrder);
+                                        else if (numberOfOrder > 1)
+                                            messageStatus = String.format("%s with %d pending orders before yours", status, numberOfOrder);
+                                        else
+                                            messageStatus = String.format("%s with no further pending order before your", status);
+                                    }
+                                    else if(status.equals("Occupato") || status.equals("Libero")){
+                                        if(numberOfOrder == 1)
+                                            messageStatus = String.format("%s con %d ordine prima del tuo", status, numberOfOrder);
+                                        else if (numberOfOrder > 1)
+                                            messageStatus = String.format("%s con %d ordini prima del tuo", status, numberOfOrder);
+                                        else
+                                            messageStatus = String.format("%s senza altri ordine prima del tuo", status);
+                                    }
+
+                                    //this global map is necessary to give the message information also in the marker alert dialog
+                                    queueOrderRider.put(riderID, messageStatus);
+
                                     if (!riders.containsKey(riderID)) {
                                         Rider rider = new Rider(riderID, latRider, longRider, latitudeRest, longitudeRest, messageStatus);
                                         riders.put(riderID, rider);
