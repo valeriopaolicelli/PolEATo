@@ -102,9 +102,8 @@ public class ReservationExpandableListAdapter extends BaseExpandableListAdapter 
         }
         String price= c.getTotalPrice() + "€";
 
-
-        if(c.getStatus().equals("Delivered") || c.getStatus().equals("Consegnato")){
-            // The order has been delivered
+        if(c.getStatus().equals("Paid") || c.getStatus().equals("Pagato")){
+            //Order has been paid, let possibility to leave a review
             holder.tv_review.setVisibility(View.VISIBLE);
             holder.confirm_button.setVisibility(View.GONE);
             holder.tv_status.setText(c.getStatus());
@@ -139,46 +138,46 @@ public class ReservationExpandableListAdapter extends BaseExpandableListAdapter 
                 });
             }
         }
-        else {
-            //The order has still not been delivered, customer has to confirm the order arrival
-            holder.tv_status.setPaintFlags(holder.tv_review.getPaintFlags() & (~Paint.UNDERLINE_TEXT_FLAG));
-            if (c.getStatus().equals("Delivering") || c.getStatus().equals("In Consegna")) {
-                holder.tv_review.setVisibility(View.GONE);
-                holder.confirm_button.setVisibility(View.VISIBLE);
-                holder.tv_status.setText(c.getStatus());
-                holder.tv_status.setTextColor(context.getResources().getColor(R.color.colorTextAccepted));
-                holder.confirm_button.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-                        final View viewClicked = view;
-                        final AlertDialog.Builder builder = new AlertDialog.Builder(context)
-                                .setTitle(context.getResources().getString(R.string.title_confirm_dialog))
-                                .setMessage(context.getResources().getString(R.string.message_confirm_dialog))
-                                .setPositiveButton(context.getResources().getString(R.string.confirm_btn), new DialogInterface.OnClickListener() {
-                                    @Override
-                                    public void onClick(DialogInterface dialogInterface, int i) {
-                                        dialogInterface.dismiss();
-                                        //Upload status for restaurant
-                                        FirebaseDatabase.getInstance()
-                                                .getReference("restaurants/" + c.getRestaurantID() + "/reservations/" + c.getOrderID()
-                                                        + "/status/en").setValue("Delivered");
+        //Rider upload status "delivered"
+        else if(c.getStatus().equals("Delivered") || c.getStatus().equals("Consegnato")){
+            // The order has been delivered, customer has to confirm payment
+            holder.tv_review.setVisibility(View.GONE);
+            holder.confirm_button.setVisibility(View.VISIBLE);
+            holder.tv_status.setText(c.getStatus());
+            holder.tv_status.setTextColor(context.getResources().getColor(R.color.colorTextAccepted));
+            holder.confirm_button.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    final View viewClicked = view;
+                    final AlertDialog.Builder builder = new AlertDialog.Builder(context)
+                            .setTitle(context.getResources().getString(R.string.title_confirm_dialog))
+                            .setMessage(context.getResources().getString(R.string.message_confirm_dialog))
+                            .setPositiveButton(context.getResources().getString(R.string.confirm_btn), new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialogInterface, int i) {
+                                    dialogInterface.dismiss();
+                                    //Upload status for restaurant
+                                    FirebaseDatabase.getInstance()
+                                            .getReference("restaurants/" + c.getRestaurantID() + "/History/" + c.getOrderID()
+                                                    + "/status/en").setValue("Paid");
 
-                                        FirebaseDatabase.getInstance()
-                                                .getReference("restaurants/" + c.getRestaurantID() + "/reservations/" + c.getOrderID()
-                                                        + "/status/it").setValue("Consegnato");
-                                        c.setStatus("Delivered");
+                                    FirebaseDatabase.getInstance()
+                                            .getReference("restaurants/" + c.getRestaurantID() + "/History" +
+                                                    "" + c.getOrderID()
+                                                    + "/status/it").setValue("Pagato");
+                                    c.setStatus("Paid");
 
-                                        //Upload status for customer
-                                        FirebaseDatabase.getInstance()
-                                                .getReference("customers/" + loggedID + "/reservations/" + c.getOrderID()
-                                                        + "/status/en").setValue("Delivered");
-                                        FirebaseDatabase.getInstance()
-                                                .getReference("customers/" + loggedID + "/reservations/" + c.getOrderID()
-                                                        + "/status/it").setValue("Consegnato");
+                                    //Upload status for customer
+                                    FirebaseDatabase.getInstance()
+                                            .getReference("customers/" + loggedID + "/reservations/" + c.getOrderID()
+                                                    + "/status/en").setValue("Paid");
+                                    FirebaseDatabase.getInstance()
+                                            .getReference("customers/" + loggedID + "/reservations/" + c.getOrderID()
+                                                    + "/status/it").setValue("Pagato");
 
-                                        sendNotification(c.getRestaurantID(), c.getOrderID());
+                                    sendNotification(c.getRestaurantID(), c.getOrderID());
 
-                                        notifyDataSetChanged();
+                                    notifyDataSetChanged();
 
                                         AlertDialog.Builder builder1 = new AlertDialog.Builder(context)
                                                 .setTitle(context.getResources().getString(R.string.title_review_dialog))
@@ -192,40 +191,38 @@ public class ReservationExpandableListAdapter extends BaseExpandableListAdapter 
                                                         bundle.putString("orderID", c.getOrderID());
                                                         bundle.putString("date", c.getDate());
 
-                                                        Navigation.findNavController(viewClicked).navigate(R.id.action_holder_history_id_to_ratingFragment, bundle);
-                                                        dialogInterface.dismiss();
-                                                    }
-                                                }).setNeutralButton(context.getResources().getString(R.string.notnowBtn), new DialogInterface.OnClickListener() {
-                                                    @Override
-                                                    public void onClick(DialogInterface dialogInterface, int i) {
-                                                        dialogInterface.dismiss();
-                                                    }
-                                                });
-                                        AlertDialog dialog1 = builder1.create();
-                                        dialog1.show();
-                                    }
-                                })
-                                .setNeutralButton(context.getResources().getString(R.string.cancelBTn), new DialogInterface.OnClickListener() {
-                                    @Override
-                                    public void onClick(DialogInterface dialogInterface, int i) {
-                                        dialogInterface.dismiss();
-                                    }
-                                });
-                        AlertDialog dialog = builder.create();
-                        dialog.show();
-                    }
-                });
-            }else{
-                if (c.getStatus().equals("New Order") || c.getStatus().equals("Nuovo Ordine")) {
-                    holder.tv_status.setTextColor(context.getResources().getColor(R.color.colorTextSubField));
-                    holder.tv_status.setText(c.getStatus());
-                } else if (c.getStatus().equals("Cooking") || c.getStatus().equals("Preparazione")) {
-                    holder.tv_status.setTextColor(context.getResources().getColor(R.color.colorTextSubField));
-                    holder.tv_status.setText(c.getStatus());
+                                                    Navigation.findNavController(viewClicked).navigate(R.id.action_holder_history_id_to_ratingFragment, bundle);
+                                                    dialogInterface.dismiss();
+                                                }
+                                            }).setNeutralButton(context.getResources().getString(R.string.notnowBtn), new DialogInterface.OnClickListener() {
+                                                @Override
+                                                public void onClick(DialogInterface dialogInterface, int i) {
+                                                    dialogInterface.dismiss();
+                                                }
+                                            });
+                                    AlertDialog dialog1 = builder1.create();
+                                    dialog1.show();
+                                }
+                            })
+                            .setNeutralButton(context.getResources().getString(R.string.cancelBTn), new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialogInterface, int i) {
+                                    dialogInterface.dismiss();
+                                }
+                            });
+                    AlertDialog dialog = builder.create();
+                    dialog.show();
                 }
-                holder.confirm_button.setVisibility(View.GONE);
-                holder.tv_review.setVisibility(View.GONE);
-            }
+            });
+        }
+        else {
+            //Rider has the order in this moment
+            holder.tv_status.setText(c.getStatus());
+            holder.tv_status.setTextColor(context.getResources().getColor(R.color.colorTextSubField));
+            holder.tv_status.setPaintFlags(holder.tv_review.getPaintFlags() & (~Paint.UNDERLINE_TEXT_FLAG));
+            holder.confirm_button.setVisibility(View.GONE);
+            holder.tv_review.setVisibility(View.GONE);
+
         }
         holder.tv_date.setText(c.getDate());
         holder.tv_time.setText(c.getTime());

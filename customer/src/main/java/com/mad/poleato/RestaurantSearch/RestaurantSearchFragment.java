@@ -396,6 +396,7 @@ public class RestaurantSearchFragment extends Fragment {
 
 
         sv = (SearchView) fragView.findViewById(R.id.searchView);
+        sv.setFocusable(false);
         sv.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
 
             int previousLen, currLen;

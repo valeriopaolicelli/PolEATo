@@ -11,6 +11,7 @@ public class Rating {
     private String comment;
     private String restaurantID;
     private String orderID;
+    private String customerData;
     private String date;
 
     public Rating(String customerID, Integer rate, String comment, String restaurantID, String orderID, String date) {
@@ -29,6 +30,7 @@ public class Rating {
     public void setDate(String date) {
         this.date = date;
     }
+
 
     public String getCustomerID() {
         return customerID;
@@ -86,7 +88,15 @@ public class Rating {
                 return -1;
             }
 
-            return date1.compareTo(date2);
+            return date2.compareTo(date1);
         }
     };
+
+    public String getCustomerData() {
+        return customerData;
+    }
+
+    public void setCustomerData(String customerData) {
+        this.customerData = customerData;
+    }
 }
