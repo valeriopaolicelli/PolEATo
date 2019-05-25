@@ -88,14 +88,15 @@ public class Rating {
                 return -1;
             }
 
-            return date1.compareTo(date2);
+            return date2.compareTo(date1);
         }
     };
 
-    public void setCustomerData(String customerData){
-        this.customerData = customerData;
-    }
-    public String getCustomerdata(){
+    public String getCustomerData() {
         return customerData;
+    }
+
+    public void setCustomerData(String customerData) {
+        this.customerData = customerData;
     }
 }

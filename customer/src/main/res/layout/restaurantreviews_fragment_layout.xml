@@ -50,19 +50,19 @@
                 android:id="@+id/checkBoxComments"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginEnd="16dp"
+                android:layout_marginEnd="32dp"
                 app:layout_constraintBottom_toBottomOf="@+id/rating_bar_avg"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="@+id/rating_bar_avg"
-                app:layout_constraintVertical_bias="0.48" />
+                app:layout_constraintVertical_bias="0.52" />
 
             <TextView
                 android:id="@+id/onlycomments_tv"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="12dp"
-                android:text="only comments"
-                android:textSize="10sp"
+                android:text="@string/checkBoxComments"
+                android:textSize="12sp"
                 app:layout_constraintBottom_toTopOf="@+id/checkBoxComments"
                 app:layout_constraintEnd_toEndOf="@+id/checkBoxComments"
                 app:layout_constraintStart_toStartOf="@+id/checkBoxComments"
@@ -78,5 +78,14 @@
         android:layout_height="0dp"
         android:layout_width="match_parent">
     </android.support.v7.widget.RecyclerView>
+
+    <TextView
+        android:id="@+id/noRatingsTv"
+        android:layout_weight="75"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:gravity="center_vertical|center_horizontal"
+        android:text="No rating for this restaurant"
+        android:visibility="gone"/>
 
 </LinearLayout>

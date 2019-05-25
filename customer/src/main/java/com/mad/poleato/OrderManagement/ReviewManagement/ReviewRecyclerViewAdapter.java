@@ -48,9 +48,6 @@ public ReviewRecyclerViewAdapter(Context context, List<Rating>reviewList){
 
 }
 
-    public void setComments_flag(boolean comments_flag) {
-        this.comments_flag = comments_flag;
-    }
 
     @Override
     public ReviewViewHolder onCreateViewHolder(ViewGroup parent, int viewType){
@@ -62,21 +59,14 @@ public ReviewRecyclerViewAdapter(Context context, List<Rating>reviewList){
 
     @Override
     public void onBindViewHolder(@NonNull ReviewViewHolder reviewViewHolder, int position) {
-            if(comments_flag){ 
-                if(!reviewList.get(position).getComment().equals("")){
-                    String customerData = reviewList.get(position).getCustomerdata();
-                    reviewViewHolder.customerData.setText(customerData);
-                    reviewViewHolder.ratingBar.setRating(reviewList.get(position).getRate());
-                    reviewViewHolder.date.setText(reviewList.get(position).getDate());
-                    reviewViewHolder.comment.setText(reviewList.get(position).getComment());
-                }
-            }else{
-                String customerData = reviewList.get(position).getCustomerdata();
+
+
+                String customerData = reviewList.get(position).getCustomerData();
                 reviewViewHolder.customerData.setText(customerData);
                 reviewViewHolder.ratingBar.setRating(reviewList.get(position).getRate());
                 reviewViewHolder.date.setText(reviewList.get(position).getDate());
                 reviewViewHolder.comment.setText(reviewList.get(position).getComment());
-            }
+
     }
 
     @Override

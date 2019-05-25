@@ -32,7 +32,9 @@ import com.mad.poleato.Classes.Rating;
 import com.mad.poleato.R;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 
 /**
@@ -48,7 +50,7 @@ public class RestaurantReviewsFragment extends Fragment {
     private RecyclerView rv;
 
     private RatingBar ratingBar;
-    private TextView restaurantName;
+    private TextView restaurantName, noRating;
     private CheckBox onlyCommentCheckBox;
     private String restaurantID;
     private String resName;
@@ -61,6 +63,7 @@ public class RestaurantReviewsFragment extends Fragment {
 
     private HashMap<String, Rating>reviewsMap;
     private List<Rating>reviewsList;
+    private List<Rating>displayedList;
 
     private ProgressDialog progressDialog;
     Handler handler = new Handler(){
@@ -82,6 +85,8 @@ public class RestaurantReviewsFragment extends Fragment {
 
         reviewsMap = new HashMap<>();
         reviewsList = new ArrayList<>();
+        displayedList = new ArrayList<>();
+
         restaurantID = getArguments().getString("id");
         resName = getArguments().getString("name");
 
@@ -113,7 +118,8 @@ public class RestaurantReviewsFragment extends Fragment {
         ratingBar = (RatingBar) fragView.findViewById(R.id.rating_bar_avg);
         restaurantName = (TextView) fragView.findViewById(R.id.restaurantName_tv);
         onlyCommentCheckBox = (CheckBox) fragView.findViewById(R.id.checkBoxComments);
-        restaurantName.setText("Reviews for "+ resName);
+        noRating = (TextView) fragView.findViewById(R.id.noRatingsTv);
+        restaurantName.setText(resName);
 
 
 
@@ -123,13 +129,18 @@ public class RestaurantReviewsFragment extends Fragment {
         layoutManager = new LinearLayoutManager(this.hostActivity);
         rv.setLayoutManager(layoutManager);
 
-        this.recyclerViewAdapter = new ReviewRecyclerViewAdapter(this.hostActivity,reviewsList);
+        this.recyclerViewAdapter = new ReviewRecyclerViewAdapter(this.hostActivity,displayedList);
         rv.setAdapter(recyclerViewAdapter);
 
         onlyCommentCheckBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
-                recyclerViewAdapter.setComments_flag(b);
+                if(!b){
+                    restoreOriginalList();
+                }else
+                {
+                    filterList();
+                }
                 recyclerViewAdapter.notifyDataSetChanged();
             }
         });
@@ -177,8 +188,8 @@ public class RestaurantReviewsFragment extends Fragment {
 
                         final Rating rating = new Rating(customerID, rate, comment, restaurantID, ds.getKey(),date);
                         reviewsList.add(rating);
-                        reviewsMap.put(customerID, rating);
-                        recyclerViewAdapter.notifyDataSetChanged();
+                        displayedList.add(rating);
+                        reviewsMap.put(ds.getKey(), rating);
 //Get customer data
                         DatabaseReference customerReference = FirebaseDatabase.getInstance().getReference("customers/" + customerID);
                         customerReference.addListenerForSingleValueEvent(new ValueEventListener() {
@@ -194,19 +205,77 @@ public class RestaurantReviewsFragment extends Fragment {
                             public void onCancelled(@NonNull DatabaseError databaseError) {
                             }
                         });
+
+                        Collections.sort(displayedList,Rating.timeComparator);
+                        recyclerViewAdapter.notifyDataSetChanged();
+
                     }
+                }else{
+                    //no ratings
+                    ratingBar.setRating(0);
                 }
             }
 
 
             @Override
-            public void onChildChanged(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+            public void onChildChanged(@NonNull DataSnapshot ds, @Nullable String s) {
+                if (ds.exists()) {
+                    final String[] customerName = new String[1];
+                    final String[] customerSurname = new String[1];
 
+                    if (ds.hasChild("comment") &&
+                            ds.hasChild("customerID") &&
+                            ds.hasChild("orderID") &&
+                            ds.hasChild("rate") &&
+                            ds.hasChild("restaurantID")) {
+                        String customerID = ds.child("customerID").getValue().toString();
+                        int rate = Integer.parseInt(ds.child("rate").getValue().toString());
+                        final String date = ds.child("date").getValue().toString();
+                        String comment = ds.child("comment").getValue().toString();
+
+                        totalStars += rate;
+                        totalReviews++;
+                        avgReviews = (float) totalStars / totalReviews;
+                        ratingBar.setRating(avgReviews);
+
+                        final Rating rating = new Rating(customerID, rate, comment, restaurantID, ds.getKey(), date);
+                        if(!reviewsMap.containsKey(ds.getKey())){
+                            displayedList.add(rating);
+                        }else{
+                            for(Rating r : reviewsList){
+                                if(r.getOrderID().equals(rating.getOrderID())){
+                                    r = rating;
+                                }
+                            }
+                        }
+                        reviewsMap.put(ds.getKey(), rating);
+//Get customer data
+                        DatabaseReference customerReference = FirebaseDatabase.getInstance().getReference("customers/" + customerID);
+                        customerReference.addListenerForSingleValueEvent(new ValueEventListener() {
+                            @Override
+                            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                                customerName[0] = dataSnapshot.child("Name").getValue().toString();
+                                customerSurname[0] = dataSnapshot.child("Surname").getValue().toString();
+                                rating.setCustomerData(customerName[0] + " " + customerSurname[0]);
+                                recyclerViewAdapter.notifyDataSetChanged();
+                            }
+
+                            @Override
+                            public void onCancelled(@NonNull DatabaseError databaseError) {
+                            }
+                        });
+                        Collections.sort(displayedList,Rating.timeComparator);
+                        recyclerViewAdapter.notifyDataSetChanged();
+                    }
+                }
             }
 
             @Override
             public void onChildRemoved(@NonNull DataSnapshot dataSnapshot) {
-
+                    String id = dataSnapshot.getKey();
+                    Rating toRemove =  reviewsMap.get(id);
+                    reviewsMap.remove(id);
+                    removeFromDisplayable(toRemove);
             }
 
             @Override
@@ -220,5 +289,34 @@ public class RestaurantReviewsFragment extends Fragment {
             }
         });
 
+    }
+
+    private void restoreOriginalList(){
+        displayedList.clear();
+        displayedList.addAll(reviewsList);
+    }
+
+    private void removeFromDisplayable(Rating rating){
+        displayedList.remove(rating);
+        recyclerViewAdapter.notifyDataSetChanged();
+    }
+
+
+    private void filterList(){
+        if(displayedList.isEmpty())
+            return;
+
+        Iterator<Rating>iterator= displayedList.iterator();
+        while (iterator.hasNext()){
+            Rating r = iterator.next();
+            if(!isValidToDsplay(r)){
+                iterator.remove();
+            }
+        }
+    }
+
+
+    private boolean isValidToDsplay(Rating rating){
+        return !rating.getComment().equals("");
     }
 }
