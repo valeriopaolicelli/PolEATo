@@ -1,4 +1,4 @@
-package com.mad.poleato.OrderManagement.ReviewManagement;
+package com.mad.poleato.AboutUs.ReviewManagement;
 
 
 import android.app.Activity;
@@ -10,7 +10,6 @@ import android.os.Message;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -20,15 +19,15 @@ import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.RatingBar;
 import android.widget.TextView;
-import android.widget.Toast;
 
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
-import com.mad.poleato.Classes.Rating;
 import com.mad.poleato.R;
 import com.onesignal.OneSignal;
 
@@ -51,10 +50,12 @@ public class RestaurantReviewsFragment extends Fragment {
     private RecyclerView rv;
 
     private RatingBar ratingBar;
-    private TextView restaurantName, noRating;
+    private TextView noRating;
     private CheckBox onlyCommentCheckBox;
-    private String restaurantID;
     private String resName;
+
+    private String currentUserID;
+    private FirebaseAuth mAuth;
 
     private long totalReviews;
     private float avgReviews;
@@ -88,8 +89,10 @@ public class RestaurantReviewsFragment extends Fragment {
         reviewsList = new ArrayList<>();
         displayedList = new ArrayList<>();
 
-        restaurantID = getArguments().getString("id");
-        resName = getArguments().getString("name");
+
+        mAuth = FirebaseAuth.getInstance();
+        FirebaseUser currentUser = mAuth.getCurrentUser();
+        currentUserID = currentUser.getUid();
 
         OneSignal.startInit(getContext())
                 .inFocusDisplaying(OneSignal.OSInFocusDisplayOption.Notification)
@@ -98,7 +101,9 @@ public class RestaurantReviewsFragment extends Fragment {
 
         OneSignal.setSubscription(true);
 
-        reviewsReference = FirebaseDatabase.getInstance().getReference("restaurants/"+ restaurantID + "/Ratings");
+        OneSignal.sendTag("User_ID", currentUserID);
+
+        reviewsReference = FirebaseDatabase.getInstance().getReference("restaurants/"+ currentUserID + "/Ratings");
 
         if(getActivity() != null){
             progressDialog = ProgressDialog.show(getActivity(), "", getString(R.string.loading));
@@ -124,12 +129,8 @@ public class RestaurantReviewsFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         ratingBar = (RatingBar) fragView.findViewById(R.id.rating_bar_avg);
-        restaurantName = (TextView) fragView.findViewById(R.id.restaurantName_tv);
         onlyCommentCheckBox = (CheckBox) fragView.findViewById(R.id.checkBoxComments);
         noRating = (TextView) fragView.findViewById(R.id.noRatingsTv);
-        restaurantName.setText(resName);
-
-
 
         rv = (RecyclerView) fragView.findViewById(R.id.reviews_rv);
         rv.setHasFixedSize(true);
@@ -194,7 +195,7 @@ public class RestaurantReviewsFragment extends Fragment {
                         avgReviews = (float)totalStars/totalReviews;
                         ratingBar.setRating(avgReviews);
 
-                        final Rating rating = new Rating(customerID, rate, comment, restaurantID, ds.getKey(),date);
+                        final Rating rating = new Rating(customerID, rate, comment, currentUserID, ds.getKey(),date);
                         reviewsList.add(rating);
                         displayedList.add(rating);
                         reviewsMap.put(ds.getKey(), rating);
@@ -246,7 +247,7 @@ public class RestaurantReviewsFragment extends Fragment {
                         avgReviews = (float) totalStars / totalReviews;
                         ratingBar.setRating(avgReviews);
 
-                        final Rating rating = new Rating(customerID, rate, comment, restaurantID, ds.getKey(), date);
+                        final Rating rating = new Rating(customerID, rate, comment, currentUserID, ds.getKey(), date);
                         if(!reviewsMap.containsKey(ds.getKey())){
                             displayedList.add(rating);
                         }else{

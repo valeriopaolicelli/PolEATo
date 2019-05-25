@@ -15,10 +15,16 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import androidx.navigation.Navigation;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -82,6 +88,8 @@ public class AboutUsFragment extends Fragment {
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        setHasOptionsMenu(true);
+
         mAuth = FirebaseAuth.getInstance();
         FirebaseUser currentUser = mAuth.getCurrentUser();
         currentUserID = currentUser.getUid();
@@ -90,6 +98,10 @@ public class AboutUsFragment extends Fragment {
                 .inFocusDisplaying(OneSignal.OSInFocusDisplayOption.Notification)
                 .unsubscribeWhenNotificationsAreDisabled(true)
                 .init();
+
+        OneSignal.setSubscription(true);
+
+        OneSignal.sendTag("User_ID", currentUserID);
 
         dbReferenceList= new HashMap<>();
         mostPopularFoods= new ArrayList<>();
@@ -131,6 +143,28 @@ public class AboutUsFragment extends Fragment {
 
         findMostPopularTiming();
         findMostPopularFoods();
+    }
+
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        menu.clear();
+        /** Inflate the menu; this adds items to the action bar if it is present.*/
+        inflater.inflate(R.menu.aboutus_menu, menu);
+
+        /** Button to show map */
+        menu.findItem(R.id.aboutus_id).setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
+            @Override
+            public boolean onMenuItemClick(MenuItem item) {
+
+                /**
+                 * GO FROM STATISTICS TO REVIEWS
+                 */
+                Navigation.findNavController(fragView).navigate(R.id.action_aboutus_id_to_reviews_id);
+                return true;
+            }
+        });
+
+        super.onCreateOptionsMenu(menu, inflater);
     }
 
     public void findMostPopularTiming(){

@@ -46,4 +46,8 @@
         <item name="android:windowAnimationStyle">@style/Animation.AppCompat.DropDownUp</item>
     </style>
 
+    <style name="RatingBar" parent="Theme.AppCompat">
+        <item name="colorControlNormal">@color/colorAccent</item>
+        <item name="colorControlActivated">@color/colorStarsRatingBar</item>
+    </style>
 </resources>

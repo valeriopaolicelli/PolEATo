@@ -26,6 +26,8 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.mad.poleato.Classes.Rating;
 import com.mad.poleato.MyDatabaseReference;
 import com.mad.poleato.R;
+import com.onesignal.OneSignal;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -77,6 +79,15 @@ public class RatingFragment extends Fragment {
         mAuth = FirebaseAuth.getInstance();
         FirebaseUser currentUser = mAuth.getCurrentUser();
         currentUserID = currentUser.getUid();
+
+        OneSignal.startInit(getContext())
+                .inFocusDisplaying(OneSignal.OSInFocusDisplayOption.Notification)
+                .unsubscribeWhenNotificationsAreDisabled(true)
+                .init();
+
+        OneSignal.setSubscription(true);
+        OneSignal.sendTag("User_ID", currentUserID);
+
         dbReferenceList= new ArrayList<>();
     }
 

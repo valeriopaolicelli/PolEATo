@@ -6,19 +6,6 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     tools:context=".AboutUs.AboutUsFragment">
 
-    <Button
-        android:id="@+id/reviews_list"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:drawableStart="@drawable/ic_baseline_stars_24px"
-        android:text="Reviews received"
-        android:layout_marginTop="8dp"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintBottom_toTopOf="@id/popular_timing_label"
-        tools:ignore="HardcodedText" />
-
     <ImageView
         android:id="@+id/time_icon"
         android:layout_width="24dp"
@@ -28,7 +15,7 @@
         app:layout_constraintBottom_toTopOf="@id/popular_foods_label"
         app:layout_constraintEnd_toStartOf="@id/popular_timing_label"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/reviews_list"
+        app:layout_constraintTop_toTopOf="parent"
         tools:ignore="ContentDescription" />
 
     <TextView

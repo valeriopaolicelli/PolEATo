@@ -17,7 +17,7 @@
             android:title="@string/title_bottombar_dailyoffer" />
 
         <item
-            android:id="@+id/statistic_id"
+            android:id="@+id/aboutus_id"
             android:icon="@drawable/ic_baseline_bar_chart_24px"
             android:title="@string/title_bottombar_deliveryStatistic" />
 

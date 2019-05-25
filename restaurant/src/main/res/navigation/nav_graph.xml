@@ -54,6 +54,7 @@
             app:popUpTo="@+id/signInActivity"
             app:popUpToInclusive="true" />
     </fragment>
+
     <fragment
         android:id="@+id/addFoodFragment_id"
         android:name="com.mad.poleato.DailyOffer.AddFood.AddFoodFragment"
@@ -63,6 +64,7 @@
             android:id="@+id/action_addFoodFragment_to_daily_offer"
             app:destination="@id/daily_offer_id" />
     </fragment>
+
     <fragment
         android:id="@+id/editFoodFragment_id"
         android:name="com.mad.poleato.DailyOffer.EditFood.EditFoodFragment"
@@ -79,19 +81,38 @@
             app:argType="string" />
     </fragment>
 
-
     <fragment
-        android:id="@+id/statistic_id"
+        android:id="@+id/aboutus_id"
         android:name="com.mad.poleato.AboutUs.AboutUsFragment"
         android:label="@string/title_actionbar_deliveryStatistic"
         tools:layout="@layout/fragment_about_us" >
         <action
-            android:id="@+id/action_statistic_id_to_signInActivity"
+            android:id="@+id/action_aboutus_id_to_signInActivity"
             app:destination="@id/signInActivity"
             app:popUpTo="@+id/signInActivity"
             app:popUpToInclusive="true" />
+
+        <action
+            android:id="@+id/action_aboutus_id_to_reviews_id"
+            app:destination="@id/reviews_id"
+            app:enterAnim="@anim/fui_slide_in_right"
+            app:popExitAnim="@anim/nav_default_pop_exit_anim"
+            app:popUpTo="@+id/reviews_id"
+            app:popUpToInclusive="true" />
+
     </fragment>
 
+    <fragment
+        android:id="@+id/reviews_id"
+        android:name="com.mad.poleato.AboutUs.ReviewManagement.RestaurantReviewsFragment"
+        android:label="@string/title_actionbar_deliveryStatistic"
+        tools:layout="@layout/restaurantreviews_fragment_layout" >
+        <action
+            android:id="@+id/action_reviews_id_to_aboutus_id"
+            app:destination="@id/aboutus_id"
+            app:popUpTo="@+id/aboutus_id"
+            app:popUpToInclusive="true" />
+    </fragment>
 
     <fragment
         android:id="@+id/account_id"
@@ -102,13 +123,14 @@
             android:id="@+id/action_account_id_to_editProfile_id"
             app:destination="@id/editProfile_id"
             app:enterAnim="@anim/fui_slide_in_right"
-            app:popExitAnim="@anim/nav_default_pop_exit_anim" />
+            app:popExitAnim="@anim/nav_default_pop_exit_anim"/>
         <action
             android:id="@+id/action_account_id_to_signInActivity"
             app:destination="@id/signInActivity"
             app:popUpTo="@+id/signInActivity"
             app:popUpToInclusive="true" />
     </fragment>
+
     <fragment
         android:id="@+id/editProfile_id"
         android:name="com.mad.poleato.Account.EditProfileFragment"
@@ -120,12 +142,12 @@
             app:popUpTo="@+id/account_id"
             app:popUpToInclusive="true" />
     </fragment>
+
     <activity
         android:id="@+id/signInActivity"
         android:name="com.mad.poleato.SignInActivity"
         android:label="signin_layout"
         tools:layout="@layout/signin_layout" />
-
 
     <fragment
         android:id="@+id/mapsFragment_id"

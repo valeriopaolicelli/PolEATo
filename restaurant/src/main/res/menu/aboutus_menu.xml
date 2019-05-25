@@ -3,9 +3,9 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <item
-        android:id="@+id/map_id"
+        android:id="@+id/aboutus_id"
         android:title=""
-        android:icon="@drawable/ic_map_icon"
+        android:icon="@drawable/ic_star_icon"
         app:showAsAction="ifRoom" />
 
 </menu>

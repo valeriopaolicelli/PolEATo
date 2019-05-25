@@ -18,6 +18,7 @@ import com.google.android.gms.location.LocationListener;
 
 import android.os.AsyncTask;
 import android.os.StrictMode;
+import android.provider.ContactsContract;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
@@ -127,7 +128,7 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback,
 
     private SupportMapFragment mapFragment;
 
-    private List<MyDatabaseReference> dbReferenceList;
+    private HashMap<String, MyDatabaseReference> dbReferenceList;
 
     private HashMap<String, String> queueOrderRider;
 
@@ -173,7 +174,7 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback,
         OneSignal.setSubscription(true);
         OneSignal.sendTag("User_ID", currentUserID);
 
-        dbReferenceList = new ArrayList<>();
+        dbReferenceList = new HashMap<>();
 
         queueOrderRider= new HashMap<>();
 
@@ -215,10 +216,10 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback,
             public boolean onMenuItemClick(MenuItem item) {
                 if (mapFragment.getView().getVisibility() == View.VISIBLE) {
                     mapFragment.getView().setVisibility(View.GONE);
-                    item.setIcon(R.mipmap.map_icon_round);
+                    item.setIcon(R.drawable.ic_map_icon);
                 } else {
                     mapFragment.getView().setVisibility(View.VISIBLE);
-                    item.setIcon(R.mipmap.list_icon_round);
+                    item.setIcon(R.drawable.ic_list_icon);
                 }
 
                 return true;
@@ -353,11 +354,10 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback,
          * retrieve the name of current restaurant to put the title to the marker in its map
          */
         final DatabaseReference referenceRestaurant = FirebaseDatabase.getInstance().getReference("restaurants").child(currentUserID);
-        dbReferenceList.add(new MyDatabaseReference(referenceRestaurant));
-        int indexReference = dbReferenceList.size() - 1;
-        ValueEventListener valueEventListener;
+        DatabaseReference referenceRestaurantName= referenceRestaurant.child("Name");
+        dbReferenceList.put("restaurantName", new MyDatabaseReference(referenceRestaurantName));
 
-        dbReferenceList.get(indexReference).getReference().child("Name").addListenerForSingleValueEvent(valueEventListener = new ValueEventListener() {
+        dbReferenceList.get("restaurantName").setSingleValueListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 restaurant_name = dataSnapshot.getValue().toString();
@@ -368,14 +368,15 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback,
 
             }
         });
-        dbReferenceList.get(indexReference).setValueListener(valueEventListener);
 
         /**
          * retrieve coordinates of restaurant to put the marker in the map
          */
 
-        ChildEventListener childEventListener;
-        dbReferenceList.get(indexReference).getReference().child("Coordinates").addChildEventListener(childEventListener = new ChildEventListener() {
+        DatabaseReference referenceRestaurantCoordinates= referenceRestaurant.child("Coordinates");
+        dbReferenceList.put("restaurantCoordinates", new MyDatabaseReference(referenceRestaurantCoordinates));
+
+        dbReferenceList.get("restaurantCoordinates").setChildListener(new ChildEventListener() {
             @Override
             public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
                 if (reservation.getStatus().equals(Status.COOKING) && getContext() != null) {
@@ -479,13 +480,10 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback,
 
             }
         });
-        dbReferenceList.get(indexReference).setChildListener(childEventListener);
 
         /**
          * retrieve rider coordinates and update the list and the map
          */
-
-
         geoQuery = geoFire.queryAtLocation(new GeoLocation(latitudeRest, longitudeRest), 2);
 
         geoQuery.addGeoQueryEventListener(new GeoQueryEventListener() {
@@ -495,11 +493,9 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback,
 
                 if (!riderID.equals(currentUserID)) {
                     DatabaseReference referenceRider = FirebaseDatabase.getInstance().getReference("deliveryman/" + riderID);
-                    dbReferenceList.add(new MyDatabaseReference(referenceRider));
-                    int indexReference = dbReferenceList.size() - 1;
-                    ValueEventListener valueEventListener;
+                    dbReferenceList.put("rider", new MyDatabaseReference(referenceRider));
 
-                    dbReferenceList.get(indexReference).getReference().addValueEventListener(valueEventListener = new ValueEventListener() {
+                    dbReferenceList.get("rider").setValueListener(new ValueEventListener() {
                         @Override
                         public void onDataChange(@NonNull final DataSnapshot dataSnapshot) {
                             if (dataSnapshot.hasChild("Busy") &&
@@ -615,8 +611,6 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback,
                             Log.d("ValerioMap", "onCancelled referenceRider -> " + databaseError.getMessage());
                         }
                     });
-
-                    dbReferenceList.get(indexReference).setValueListener(valueEventListener);
                 }
                 Log.d("ValerioMap", String.format("Key %s entered the search area at [%f,%f]", key, location.latitude, location.longitude));
             }
@@ -644,11 +638,9 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback,
 
                 if (!riderID.equals(currentUserID)) {
                     DatabaseReference referenceRider = FirebaseDatabase.getInstance().getReference("deliveryman/" + riderID);
-                    dbReferenceList.add(new MyDatabaseReference(referenceRider));
-                    int indexReference = dbReferenceList.size() - 1;
-                    ValueEventListener valueEventListener;
+                    dbReferenceList.put("riderMoved", new MyDatabaseReference(referenceRider));
 
-                    dbReferenceList.get(indexReference).getReference().addValueEventListener(valueEventListener = new ValueEventListener() {
+                    dbReferenceList.get("riderMoved").setValueListener(new ValueEventListener() {
                         @Override
                         public void onDataChange(@NonNull final DataSnapshot dataSnapshot) {
                             if (dataSnapshot.hasChild("Busy") &&
@@ -766,7 +758,6 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback,
                             Log.d("ValerioMap", "onCancelled referenceRider -> " + databaseError.getMessage());
                         }
                     });
-                    dbReferenceList.get(indexReference).setValueListener(valueEventListener);
                 }
                 Log.d("ValerioMap", String.format("Key %s moved within the search area to [%f,%f]", key, location.latitude, location.longitude));
             }
@@ -774,11 +765,9 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback,
             @Override
             public void onGeoQueryReady() {
                 DatabaseReference referenceMap = FirebaseDatabase.getInstance().getReference("Map");
-                dbReferenceList.add(new MyDatabaseReference(referenceMap));
-                int indexReference = dbReferenceList.size() - 1;
-                ValueEventListener valueEventListener;
+                dbReferenceList.put("map", new MyDatabaseReference(referenceMap));
 
-                dbReferenceList.get(indexReference).getReference().addValueEventListener(valueEventListener = new ValueEventListener() {
+                dbReferenceList.get("map").setValueListener(new ValueEventListener() {
                     @Override
                     public void onDataChange(@NonNull final DataSnapshot dataSnapshot) {
                         for (DataSnapshot currentPosition : dataSnapshot.getChildren()) {
@@ -791,12 +780,10 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback,
                                 if (distance <= 2) {
                                     DatabaseReference referenceRider = FirebaseDatabase.getInstance()
                                             .getReference("deliveryman/" + riderID);
-                                    dbReferenceList.add(new MyDatabaseReference(referenceRider));
-                                    int indexReference = dbReferenceList.size() - 1;
-                                    ValueEventListener valueEventListener;
+                                    dbReferenceList.put("riderGeoReady", new MyDatabaseReference(referenceRider));
 
-                                    dbReferenceList.get(indexReference).getReference()
-                                            .addValueEventListener(valueEventListener = new ValueEventListener() {
+                                    dbReferenceList.get("riderGeoReady")
+                                            .setValueListener(new ValueEventListener() {
                                         @Override
                                         public void onDataChange(@NonNull final DataSnapshot dataSnapshotRider) {
                                             if (dataSnapshotRider.hasChild("Busy") &&
@@ -910,7 +897,6 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback,
 
                                         }
                                     });
-                                    dbReferenceList.get(indexReference).setValueListener(valueEventListener);
                                 }// end if check distance
                             } // end if check currentID
                         } // end for children
@@ -921,8 +907,6 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback,
 
                     }
                 });
-
-                dbReferenceList.get(indexReference).setValueListener(valueEventListener);
                 Log.d("ValerioMap", "onGeoQueryReady -> AllReady");
             }
 
@@ -1143,9 +1127,9 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback,
     @Override
     public void onDestroy() {
         super.onDestroy();
-        for (int i = 0; i < dbReferenceList.size(); i++) {
-            dbReferenceList.get(i).removeAllListener();
-        }
+        for(MyDatabaseReference ref : dbReferenceList.values())
+            ref.removeAllListener();
+
         if (geoQuery != null)
             geoQuery.removeAllListeners();
     }

@@ -161,6 +161,7 @@
     <string name="message_review">Thank you for your order. Please do not forget to leave a review, is really important for us and the restaurant.</string>
 
     <string name="checkBoxComments">Only Comments</string>
+
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>
