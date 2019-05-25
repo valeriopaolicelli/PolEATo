@@ -8,17 +8,37 @@ public class Rider {
     private String id;
     private Double distance;
     private Marker marker;
+    private String status;
+    private int numberOfOrder;
     private double latitude;
     private double longitude;
 
     private static final int EARTH_RADIUS = 6371; // Approx Earth radius in KM
 
-    public Rider(String id, double latitude, double longitude, double latitudeRest, double longitudeRest) {
+    public Rider(String id, double latitude, double longitude, double latitudeRest, double longitudeRest, String status, int numberOfOrder) {
         this.id = id;
         this.latitude= latitude;
         this.longitude= longitude;
+        this.status= status;
+        this.numberOfOrder= numberOfOrder;
         setDistance(latitudeRest, longitudeRest);
         marker= null;
+    }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
+    }
+
+    public int getNumberOfOrder() {
+        return numberOfOrder;
+    }
+
+    public void setNumberOfOrder(int numberOfOrder) {
+        this.numberOfOrder = numberOfOrder;
     }
 
     public String getId() {

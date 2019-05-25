@@ -156,10 +156,15 @@
     <string name="msg_rider_selected">Vuoi selezionare questo rider?</string>
     <string name="choose_rider">Scegli un rider</string>
     <string name="delivered">Consegnato</string>
+    <string name="status_rider">Status</string>
 
     <!--- Internet dialog -->
     <string name="internet_title">Abilita connession a Internet</string>
     <string name="internet_message">Per utilizzare l\'applicazione devi essere connesso ad Internet</string>
     <string name="interner_confirm">Impostazioni Internet</string>
+
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 
 </resources>

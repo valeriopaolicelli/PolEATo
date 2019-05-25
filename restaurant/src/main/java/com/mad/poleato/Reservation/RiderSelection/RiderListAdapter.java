@@ -80,6 +80,7 @@ public class RiderListAdapter extends ArrayAdapter<Rider>
             holder.riderID_tv= (TextView) convertView.findViewById(R.id.rider_tv);
             holder.distance_tv= (TextView) convertView.findViewById(R.id.distance_tv);
             holder.selectButton= (Button) convertView.findViewById(R.id.myButton);
+            holder.busy_tv= (TextView) convertView.findViewById(R.id.status_tv) ;
             convertView.setTag(holder);
         }
         else
@@ -142,6 +143,24 @@ public class RiderListAdapter extends ArrayAdapter<Rider>
                 }
             });
 
+            String status= ridersList.get(position).getStatus();
+            int numberOfOrder= ridersList.get(position).getNumberOfOrder();
+            if(status.equals("Busy") || status.equals("Free")) {
+                if(numberOfOrder == 1)
+                    holder.busy_tv.setText(String.format("%s with %d pending order before your", status, numberOfOrder));
+                else if (numberOfOrder > 1)
+                    holder.busy_tv.setText(String.format("%s with %d pending orders before your", status, numberOfOrder));
+                else
+                    holder.busy_tv.setText(String.format("%s with no further pending order before your", status));
+            }
+            else if(status.equals("Occupato") || status.equals("Libero")){
+                if(numberOfOrder == 1)
+                    holder.busy_tv.setText(String.format("%s con %d ordine prima del tuo", status, numberOfOrder));
+                else if (numberOfOrder > 1)
+                    holder.busy_tv.setText(String.format("%s con %d ordini prima del tuo", status, numberOfOrder));
+                else
+                    holder.busy_tv.setText(String.format("%s senza altri ordine prima del tuo", status));
+            }
         }
 
         return convertView;
@@ -317,5 +336,6 @@ public class RiderListAdapter extends ArrayAdapter<Rider>
         TextView riderID_tv;
         TextView distance_tv;
         Button selectButton;
+        TextView busy_tv;
     }
 }

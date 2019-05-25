@@ -520,8 +520,26 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback,
 
                                 final double latRider = location.latitude;
                                 final double longRider = location.longitude;
+                                String status;
+                                int numberOfOrder= 0;
+                                if(dataSnapshot.child("Busy").getValue().toString().equals("true"))
+                                    status = localeShort.equals("en") ? "Busy" : "Occupato";
+                                else
+                                    status = localeShort.equals("en") ? "Free" : "Libero";
+
+                                String timeCurrentOrder= reservation.getTime();
+
+                                for(DataSnapshot dataSnapshotRequests : dataSnapshot.child("requests").getChildren()){
+                                    if(dataSnapshotRequests.exists()) {
+                                        String timeRequest = dataSnapshotRequests
+                                                .child("deliveryTime").getValue().toString().split(" ")[1];
+                                        if(timeRequest.compareTo(timeCurrentOrder) < 0)
+                                            numberOfOrder++;
+                                    }
+                                }
+
                                 if (!riders.containsKey(riderID)) {
-                                    Rider rider = new Rider(riderID, latRider, longRider, latitudeRest, longitudeRest);
+                                    Rider rider = new Rider(riderID, latRider, longRider, latitudeRest, longitudeRest, status, numberOfOrder);
                                     riders.put(riderID, rider);
                                     listAdapter.addRider(riders.get(riderID));
                                 } else {
@@ -612,11 +630,29 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback,
                                     getContext() != null) {
                                 final double latRider = location.latitude;
                                 final double longRider = location.longitude;
+                                String status;
+                                int numberOfOrder= 0;
+                                if(dataSnapshot.child("Busy").getValue().toString().equals("true"))
+                                    status = localeShort.equals("en") ? "Busy" : "Occupato";
+                                else
+                                    status = localeShort.equals("en") ? "Free" : "Libero";
+
+                                String timeCurrentOrder= reservation.getTime();
+
+                                for(DataSnapshot dataSnapshotRequests : dataSnapshot.child("requests").getChildren()){
+                                    if(dataSnapshotRequests.exists()) {
+                                        String timeRequest = dataSnapshotRequests
+                                                .child("deliveryTime").getValue().toString().split(" ")[1];
+                                        if(timeRequest.compareTo(timeCurrentOrder) < 0)
+                                            numberOfOrder++;
+                                    }
+                                }
 
                                 final double distance = computeDistance(latitudeRest, longitudeRest, latRider, longRider);
+
                                 if (distance <= 2) {
                                     if (!riders.containsKey(riderID)) {
-                                        Rider rider = new Rider(riderID, latRider, longRider, latitudeRest, longitudeRest);
+                                        Rider rider = new Rider(riderID, latRider, longRider, latitudeRest, longitudeRest, status, numberOfOrder);
                                         riders.put(riderID, rider);
                                         listAdapter.addRider(riders.get(riderID));
                                     } else {
@@ -704,7 +740,27 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback,
                                                     reservation.getStatus().equals(Status.COOKING) &&
                                                     getContext() != null) {
                                                 if (!riders.containsKey(riderID)) {
-                                                    Rider rider = new Rider(riderID, latRider, longRider, latitudeRest, longitudeRest);
+                                                    String status;
+                                                    int numberOfOrder= 0;
+                                                    if(dataSnapshotRider.child("Busy").getValue().toString().equals("true"))
+                                                        status = localeShort.equals("en") ? "Busy" : "Occupato";
+                                                    else
+                                                        status = localeShort.equals("en") ? "Free" : "Libero";
+
+                                                    String timeCurrentOrder= reservation.getTime();
+
+                                                    for(DataSnapshot dataSnapshotRequests : dataSnapshotRider.child("requests")
+                                                                                                                .getChildren()){
+                                                        if(dataSnapshotRequests.exists()) {
+                                                            String timeRequest = dataSnapshotRequests
+                                                                    .child("deliveryTime").getValue().toString().split(" ")[1];
+                                                            if(timeRequest.compareTo(timeCurrentOrder) < 0)
+                                                                numberOfOrder++;
+                                                        }
+                                                    }
+
+                                                    Rider rider = new Rider(riderID, latRider, longRider, latitudeRest,
+                                                                                    longitudeRest, status, numberOfOrder);
                                                     riders.put(riderID, rider);
                                                     listAdapter.addRider(riders.get(riderID));
                                                 } else {
@@ -734,7 +790,8 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback,
                                                                     //Add marker
                                                                     if (riders.get(riderID).getMarker() != null)
                                                                         riders.get(riderID).getMarker().remove();
-                                                                    Drawable icon = ContextCompat.getDrawable(getContext(), R.drawable.ic_baseline_directions_bike_24px);
+                                                                    Drawable icon = ContextCompat.getDrawable(getContext(),
+                                                                                            R.drawable.ic_baseline_directions_bike_24px);
                                                                     BitmapDescriptor markerIcon = getMarkerIconFromDrawable(icon);
                                                                     riders.get(riderID).setMarker(mMap.addMarker(new MarkerOptions()
                                                                             .position(new LatLng(latRider, longRider))
