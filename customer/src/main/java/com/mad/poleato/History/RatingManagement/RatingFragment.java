@@ -37,6 +37,7 @@ public class RatingFragment extends Fragment {
     private String restaurantName;
     private String restaurantID;
     private String orderID;
+    private String dateOrder;
 
     private FirebaseAuth mAuth;
     private Activity hostActivity;
@@ -70,6 +71,7 @@ public class RatingFragment extends Fragment {
             restaurantID = arguments.getString("restaurantID");
             restaurantName = arguments.getString("restaurantName");
             orderID = arguments.getString("orderID");
+            dateOrder= arguments.getString("date");
         }
 
         mAuth = FirebaseAuth.getInstance();
@@ -134,11 +136,13 @@ public class RatingFragment extends Fragment {
                     myToast.show();
                 }
                 else {
-                    Rating rating = new Rating(currentUserID,(int)ratingBar.getRating(),review_et.getText().toString(),restaurantID,orderID);
+                    Rating rating = new Rating(currentUserID,(int)ratingBar.getRating(),
+                                                            review_et.getText().toString(),restaurantID,orderID, dateOrder);
                     DatabaseReference newRatingR = restaurantReference.child(orderID);
                     newRatingR.setValue(rating);
                     //Set flag of reservation=true => Customer has reviewed that order
-                    DatabaseReference dbReference = FirebaseDatabase.getInstance().getReference("customers/"+currentUserID+"/reservations/"+orderID+"/reviewFlag");
+                    DatabaseReference dbReference = FirebaseDatabase.getInstance()
+                            .getReference("customers/"+currentUserID+"/reservations/"+orderID+"/reviewFlag");
                     dbReference.setValue("true");
                     //Upload new rating for customer
                     DatabaseReference newRatingC = customerReference.child(orderID);

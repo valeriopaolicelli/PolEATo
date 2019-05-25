@@ -107,8 +107,7 @@ public class RidesFragment extends Fragment implements OnMapReadyCallback {
 
     //the key for that order at rider side
     private String rideKey;
-    //the ride status:if is delivering or if the order is still at the restaurant
-    //private Boolean delivering;
+
 
     //this flag is to avoid multiple order that will override the maps
     private boolean isRunning;
@@ -483,13 +482,20 @@ public class RidesFragment extends Fragment implements OnMapReadyCallback {
         isRunning = false;
 
         if(ride.getStatus() != RideStatus.BACKWARD)
-            sendNotificationToRestaurant("ordine" + ride.getOrderID() + "consegnato! :)");
+            sendNotificationToRestaurant("Order: " + ride.getOrderID() + " delivered! :)");
 
         FirebaseDatabase.getInstance().getReference("restaurants/" + ride.getRestaurantID()
-                + "/ride/" + ride.getOrderID()
+                + "/reservations/" + ride.getOrderID()
                 + "/status/it/").setValue("Consegnato");
         FirebaseDatabase.getInstance().getReference("restaurants/" + ride.getRestaurantID()
-                + "/ride/" + ride.getOrderID()
+                + "/reservations/" + ride.getOrderID()
+                + "/status/en/").setValue("Delivered");
+
+        FirebaseDatabase.getInstance().getReference("customers/" + ride.getCustomerID()
+                + "/reservations/" + ride.getOrderID()
+                + "/status/it/").setValue("Consegnato");
+        FirebaseDatabase.getInstance().getReference("customers/" + ride.getCustomerID()
+                + "/reservations/" + ride.getOrderID()
                 + "/status/en/").setValue("Delivered");
 
     }
@@ -625,7 +631,7 @@ public class RidesFragment extends Fragment implements OnMapReadyCallback {
         reference.child("status").setValue(ride.getStatus().name());
 
         //inform customer the rider is coming
-        sendNotificationToCustomer("Il fattorino ha lasciato il ristorante!");
+        sendNotificationToCustomer("The rider is coming!");
 
     }
 
@@ -668,8 +674,8 @@ public class RidesFragment extends Fragment implements OnMapReadyCallback {
         reference.child("status").setValue(ride.getStatus().name());
 
         //inform customer the rider is coming
-        sendNotificationToRestaurant("Ordine " +ride.getOrderID() + " non consegnato! :(");
-        sendNotificationToCustomer("Il fattorino non ti ha trovato in casa! Ti consigliamo di chiamare il ristorante");
+        sendNotificationToRestaurant("Order " +ride.getOrderID() + " not delivered!");
+        sendNotificationToCustomer("The rider has not found you at home! We suggest you to call the restaurant");
 
     }
 
@@ -706,7 +712,7 @@ public class RidesFragment extends Fragment implements OnMapReadyCallback {
                                 + "\"filters\": [{\"field\": \"tag\", \"key\": \"User_ID\", \"relation\": \"=\", \"value\": \"" + send_email + "\"}],"
 
                                 + "\"data\": {\"Order\": \"PolEATo\"},"
-                                + "\"contents\": {\"it\": \"" + msg + "\"}"
+                                + "\"contents\": {\"en\": \"" + msg + "\"}"
                                 + "}";
 
 
@@ -774,7 +780,7 @@ public class RidesFragment extends Fragment implements OnMapReadyCallback {
                                 + "\"filters\": [{\"field\": \"tag\", \"key\": \"User_ID\", \"relation\": \"=\", \"value\": \"" + send_email + "\"}],"
 
                                 + "\"data\": {\"Order\": \"PolEATo\"},"
-                                + "\"contents\": {\"it\":" + msg + "\"+\"}"
+                                + "\"contents\": {\"en\":" + msg + "\"+\"}"
                                 + "}";
 
 
@@ -1140,6 +1146,8 @@ public class RidesFragment extends Fragment implements OnMapReadyCallback {
         // Executes in UI thread, after the parsing process
         @Override
         protected void onPostExecute(List<List<HashMap<String, String>>> result) {
+            if(result == null)
+                return;
             ArrayList<LatLng> points;
             PolylineOptions lineOptions = null;
             // Traversing through all the routes

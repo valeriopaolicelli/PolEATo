@@ -110,6 +110,10 @@
     <string name="title_actionbar_add_food">Aggiungi pietanza</string>
     <string name="title_actionbar_edit_food">Modifica pietanza</string>
 
+    <string name="title_bottombar_deliveryStatistic">Su di noi</string>
+    <string name="title_actionbar_deliveryStatistic">Su di noi</string>
+
+
     <string name="title_bottombar_account">Account</string>
     <string name="title_actionbar_account">Account</string>
     <string name="title_actionbar_edit_account">Modifica Account</string>
@@ -152,10 +156,17 @@
     <string name="msg_rider_selected">Vuoi selezionare questo rider?</string>
     <string name="choose_rider">Scegli un rider</string>
     <string name="delivered">Consegnato</string>
+    <string name="status_rider">Status</string>
 
     <!--- Internet dialog -->
     <string name="internet_title">Abilita connession a Internet</string>
     <string name="internet_message">Per utilizzare l\'applicazione devi essere connesso ad Internet</string>
     <string name="interner_confirm">Impostazioni Internet</string>
+
+    <!-- The most popular meals and timing -->
+    <string name="popular_timing">The most popular timing</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 
 </resources>

@@ -129,6 +129,8 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback,
 
     private List<MyDatabaseReference> dbReferenceList;
 
+    private HashMap<String, String> queueOrderRider;
+
     public MapsFragment() {
         // Required empty public constructor
     }
@@ -170,7 +172,10 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback,
 
         OneSignal.setSubscription(true);
         OneSignal.sendTag("User_ID", currentUserID);
+
         dbReferenceList = new ArrayList<>();
+
+        queueOrderRider= new HashMap<>();
 
         /** Obtain the SupportMapFragment and get notified when the map is ready to be used.*/
         mapFragment = (SupportMapFragment) getChildFragmentManager()
@@ -350,26 +355,11 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback,
         final DatabaseReference referenceRestaurant = FirebaseDatabase.getInstance().getReference("restaurants").child(currentUserID);
         dbReferenceList.add(new MyDatabaseReference(referenceRestaurant));
         int indexReference = dbReferenceList.size() - 1;
-        ChildEventListener childEventListener;
+        ValueEventListener valueEventListener;
 
-        dbReferenceList.get(indexReference).getReference().child("Name").addChildEventListener(childEventListener = new ChildEventListener() {
+        dbReferenceList.get(indexReference).getReference().child("Name").addListenerForSingleValueEvent(valueEventListener = new ValueEventListener() {
             @Override
-            public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
-                restaurant_name = dataSnapshot.getValue().toString();
-            }
-
-            @Override
-            public void onChildChanged(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
-                restaurant_name = dataSnapshot.getValue().toString();
-            }
-
-            @Override
-            public void onChildRemoved(@NonNull DataSnapshot dataSnapshot) {
-                //the restaurant must have the name
-            }
-
-            @Override
-            public void onChildMoved(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 restaurant_name = dataSnapshot.getValue().toString();
             }
 
@@ -378,13 +368,13 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback,
 
             }
         });
-
-        dbReferenceList.get(indexReference).setChildListener(childEventListener);
+        dbReferenceList.get(indexReference).setValueListener(valueEventListener);
 
         /**
          * retrieve coordinates of restaurant to put the marker in the map
          */
 
+        ChildEventListener childEventListener;
         dbReferenceList.get(indexReference).getReference().child("Coordinates").addChildEventListener(childEventListener = new ChildEventListener() {
             @Override
             public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
@@ -513,15 +503,71 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback,
                         @Override
                         public void onDataChange(@NonNull final DataSnapshot dataSnapshot) {
                             if (dataSnapshot.hasChild("Busy") &&
-                                    dataSnapshot.child("Busy").getValue().toString().equals("false") &&
                                     dataSnapshot.hasChild("IsActive") &&
                                     dataSnapshot.child("IsActive").getValue().toString().equals("true") &&
                                     reservation.getStatus().equals(Status.COOKING) &&
                                     getContext() != null) {
+
                                 final double latRider = location.latitude;
                                 final double longRider = location.longitude;
+
+                                /*
+                                 * retrieve the status of rider and how many orders has before your
+                                 */
+                                String status;
+                                int numberOfOrder= 0;
+                                if(dataSnapshot.child("Busy").getValue().toString().equals("true"))
+                                    status = localeShort.equals("en") ? "Busy" : "Occupato";
+                                else
+                                    status = localeShort.equals("en") ? "Free" : "Libero";
+
+                                // time of current order to deliver
+                                String timeCurrentOrder= reservation.getTime();
+
+                                /*
+                                 * scan the orders of current rider and update the counter
+                                 */
+                                for(DataSnapshot dataSnapshotRequests : dataSnapshot.child("requests").getChildren()){
+                                    if(dataSnapshotRequests.exists()) {
+
+                                        // time of rider pending order
+                                        String timeRequest = dataSnapshotRequests
+                                                .child("deliveryTime").getValue().toString().split(" ")[1];
+
+                                        if(timeRequest.compareTo(timeCurrentOrder) < 0)
+                                            numberOfOrder++;
+                                    }
+                                }
+
+                                /*
+                                 * prepare the message containing the status (Busy or Free) and the number of pending orders before your
+                                 * this message will be displayed in the list adapter and in the alert dialog,
+                                 * when the rider marker is selected by the map
+                                 */
+                                String messageStatus= "";
+
+                                if(status.equals("Busy") || status.equals("Free")) {
+                                    if(numberOfOrder == 1)
+                                        messageStatus = String.format("%s with %d pending order before yours", status, numberOfOrder);
+                                    else if (numberOfOrder > 1)
+                                        messageStatus = String.format("%s with %d pending orders before yours", status, numberOfOrder);
+                                    else
+                                        messageStatus = String.format("%s with no further pending order before your", status);
+                                }
+                                else if(status.equals("Occupato") || status.equals("Libero")){
+                                    if(numberOfOrder == 1)
+                                        messageStatus = String.format("%s con %d ordine prima del tuo", status, numberOfOrder);
+                                    else if (numberOfOrder > 1)
+                                        messageStatus = String.format("%s con %d ordini prima del tuo", status, numberOfOrder);
+                                    else
+                                        messageStatus = String.format("%s senza altri ordine prima del tuo", status);
+                                }
+
+                                 //this global map is necessary to give the message information also in the marker alert dialog
+                                queueOrderRider.put(riderID, messageStatus);
+
                                 if (!riders.containsKey(riderID)) {
-                                    Rider rider = new Rider(riderID, latRider, longRider, latitudeRest, longitudeRest);
+                                    Rider rider = new Rider(riderID, latRider, longRider, latitudeRest, longitudeRest, queueOrderRider.get(riderID));
                                     riders.put(riderID, rider);
                                     listAdapter.addRider(riders.get(riderID));
                                 } else {
@@ -545,8 +591,7 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback,
                                         new GeoLocation(latRider, longRider), new GeoFire.CompletionListener() {
                                             @Override
                                             public void onComplete(String key, DatabaseError error) {
-                                                if (dataSnapshot.child("Busy").getValue().toString().equals("false") &&
-                                                        reservation.getStatus().equals(Status.COOKING) &&
+                                                if (reservation.getStatus().equals(Status.COOKING) &&
                                                         getContext() != null) {
 
                                                     //Add marker
@@ -562,19 +607,6 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback,
                                                 }
                                             }
                                         });
-                            } else if (dataSnapshot.hasChild("Busy") &&
-                                    dataSnapshot.child("Busy").getValue().toString().equals("true") &&
-                                    reservation.getStatus().equals(Status.COOKING) &&
-                                    getContext() != null) {
-                                /**
-                                 * remove busy rider if is in the adapter
-                                 */
-                                if (riders.containsKey(riderID)) {
-                                    riders.get(riderID).getMarker().remove();
-                                    riders.remove(riderID);
-                                    listAdapter.removeRider(riderID);
-                                    listAdapter.notifyDataSetChanged();
-                                }
                             }
                         }
 
@@ -620,18 +652,72 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback,
                         @Override
                         public void onDataChange(@NonNull final DataSnapshot dataSnapshot) {
                             if (dataSnapshot.hasChild("Busy") &&
-                                    dataSnapshot.child("Busy").getValue().toString().equals("false") &&
                                     dataSnapshot.hasChild("IsActive") &&
                                     dataSnapshot.child("IsActive").getValue().toString().equals("true") &&
                                     reservation.getStatus().equals(Status.COOKING) &&
                                     getContext() != null) {
                                 final double latRider = location.latitude;
                                 final double longRider = location.longitude;
+                                /*
+                                 * retrieve the status of rider and how many orders has before your
+                                 */
+                                String status;
+                                int numberOfOrder= 0;
+                                if(dataSnapshot.child("Busy").getValue().toString().equals("true"))
+                                    status = localeShort.equals("en") ? "Busy" : "Occupato";
+                                else
+                                    status = localeShort.equals("en") ? "Free" : "Libero";
+
+                                // time of current order to deliver
+                                String timeCurrentOrder= reservation.getTime();
+
+                                /*
+                                 * scan the orders of current rider and update the counter
+                                 */
+                                for(DataSnapshot dataSnapshotRequests : dataSnapshot.child("requests").getChildren()){
+                                    if(dataSnapshotRequests.exists()) {
+
+                                        // time of rider pending order
+                                        String timeRequest = dataSnapshotRequests
+                                                .child("deliveryTime").getValue().toString().split(" ")[1];
+
+                                        if(timeRequest.compareTo(timeCurrentOrder) < 0)
+                                            numberOfOrder++;
+                                    }
+                                }
+
+                                /*
+                                 * prepare the message containing the status (Busy or Free) and the number of pending orders before your
+                                 * this message will be displayed in the list adapter and in the alert dialog,
+                                 * when the rider marker is selected by the map
+                                 */
+                                String messageStatus= "";
+
+                                if(status.equals("Busy") || status.equals("Free")) {
+                                    if(numberOfOrder == 1)
+                                        messageStatus = String.format("%s with %d pending order before yours", status, numberOfOrder);
+                                    else if (numberOfOrder > 1)
+                                        messageStatus = String.format("%s with %d pending orders before yours", status, numberOfOrder);
+                                    else
+                                        messageStatus = String.format("%s with no further pending order before your", status);
+                                }
+                                else if(status.equals("Occupato") || status.equals("Libero")){
+                                    if(numberOfOrder == 1)
+                                        messageStatus = String.format("%s con %d ordine prima del tuo", status, numberOfOrder);
+                                    else if (numberOfOrder > 1)
+                                        messageStatus = String.format("%s con %d ordini prima del tuo", status, numberOfOrder);
+                                    else
+                                        messageStatus = String.format("%s senza altri ordine prima del tuo", status);
+                                }
+
+                                //this global map is necessary to give the message information also in the marker alert dialog
+                                queueOrderRider.put(riderID, messageStatus);
 
                                 final double distance = computeDistance(latitudeRest, longitudeRest, latRider, longRider);
+
                                 if (distance <= 2) {
                                     if (!riders.containsKey(riderID)) {
-                                        Rider rider = new Rider(riderID, latRider, longRider, latitudeRest, longitudeRest);
+                                        Rider rider = new Rider(riderID, latRider, longRider, latitudeRest, longitudeRest, messageStatus);
                                         riders.put(riderID, rider);
                                         listAdapter.addRider(riders.get(riderID));
                                     } else {
@@ -655,8 +741,7 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback,
                                             new GeoLocation(latRider, longRider), new GeoFire.CompletionListener() {
                                                 @Override
                                                 public void onComplete(String key, DatabaseError error) {
-                                                    if (dataSnapshot.child("Busy").getValue().toString().equals("false") &&
-                                                            reservation.getStatus().equals(Status.COOKING) &&
+                                                    if (reservation.getStatus().equals(Status.COOKING) &&
                                                             getContext() != null) {
 
                                                         //Add marker
@@ -672,19 +757,6 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback,
                                                     }
                                                 }
                                             });
-                                }
-                            } else if (dataSnapshot.hasChild("Busy") &&
-                                    dataSnapshot.child("Busy").getValue().toString().equals("true") &&
-                                    reservation.getStatus().equals(Status.COOKING) &&
-                                    getContext() != null) {
-                                /*
-                                 * remove busy rider if is in the adapter
-                                 */
-                                if (riders.containsKey(riderID)) {
-                                    riders.get(riderID).getMarker().remove();
-                                    riders.remove(riderID);
-                                    listAdapter.removeRider(riderID);
-                                    listAdapter.notifyDataSetChanged();
                                 }
                             }
                         }
@@ -717,22 +789,79 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback,
 
                                 final double distance = computeDistance(latitudeRest, longitudeRest, latRider, longRider);
                                 if (distance <= 2) {
-                                    DatabaseReference referenceRider = FirebaseDatabase.getInstance().getReference("deliveryman/" + riderID);
+                                    DatabaseReference referenceRider = FirebaseDatabase.getInstance()
+                                            .getReference("deliveryman/" + riderID);
                                     dbReferenceList.add(new MyDatabaseReference(referenceRider));
                                     int indexReference = dbReferenceList.size() - 1;
                                     ValueEventListener valueEventListener;
 
-                                    dbReferenceList.get(indexReference).getReference().addValueEventListener(valueEventListener = new ValueEventListener() {
+                                    dbReferenceList.get(indexReference).getReference()
+                                            .addValueEventListener(valueEventListener = new ValueEventListener() {
                                         @Override
                                         public void onDataChange(@NonNull final DataSnapshot dataSnapshotRider) {
                                             if (dataSnapshotRider.hasChild("Busy") &&
-                                                    dataSnapshotRider.child("Busy").getValue().toString().equals("false") &&
                                                     dataSnapshotRider.hasChild("IsActive") &&
                                                     dataSnapshotRider.child("IsActive").getValue().toString().equals("true") &&
                                                     reservation.getStatus().equals(Status.COOKING) &&
                                                     getContext() != null) {
                                                 if (!riders.containsKey(riderID)) {
-                                                    Rider rider = new Rider(riderID, latRider, longRider, latitudeRest, longitudeRest);
+                                                    /*
+                                                     * retrieve the status of rider and how many orders has before your
+                                                     */
+                                                    String status;
+                                                    int numberOfOrder= 0;
+                                                    if(dataSnapshotRider.child("Busy").getValue().toString().equals("true"))
+                                                        status = localeShort.equals("en") ? "Busy" : "Occupato";
+                                                    else
+                                                        status = localeShort.equals("en") ? "Free" : "Libero";
+
+                                                    // time of current order to deliver
+                                                    String timeCurrentOrder= reservation.getTime();
+
+                                                    /*
+                                                     * scan the orders of current rider and update the counter
+                                                     */
+                                                    for(DataSnapshot dataSnapshotRequests : dataSnapshotRider.child("requests").getChildren()){
+                                                        if(dataSnapshotRequests.exists()) {
+
+                                                            // time of rider pending order
+                                                            String timeRequest = dataSnapshotRequests
+                                                                    .child("deliveryTime").getValue().toString().split(" ")[1];
+
+                                                            if(timeRequest.compareTo(timeCurrentOrder) < 0)
+                                                                numberOfOrder++;
+                                                        }
+                                                    }
+
+                                                    /*
+                                                     * prepare the message containing the status (Busy or Free) and the number of pending orders before your
+                                                     * this message will be displayed in the list adapter and in the alert dialog,
+                                                     * when the rider marker is selected by the map
+                                                     */
+                                                    String messageStatus= "";
+
+                                                    if(status.equals("Busy") || status.equals("Free")) {
+                                                        if(numberOfOrder == 1)
+                                                            messageStatus = String.format("%s with %d pending order before yours", status, numberOfOrder);
+                                                        else if (numberOfOrder > 1)
+                                                            messageStatus = String.format("%s with %d pending orders before yours", status, numberOfOrder);
+                                                        else
+                                                            messageStatus = String.format("%s with no further pending order before your", status);
+                                                    }
+                                                    else if(status.equals("Occupato") || status.equals("Libero")){
+                                                        if(numberOfOrder == 1)
+                                                            messageStatus = String.format("%s con %d ordine prima del tuo", status, numberOfOrder);
+                                                        else if (numberOfOrder > 1)
+                                                            messageStatus = String.format("%s con %d ordini prima del tuo", status, numberOfOrder);
+                                                        else
+                                                            messageStatus = String.format("%s senza altri ordine prima del tuo", status);
+                                                    }
+
+                                                    //this global map is necessary to give the message information also in the marker alert dialog
+                                                    queueOrderRider.put(riderID, messageStatus);
+
+                                                    Rider rider = new Rider(riderID, latRider, longRider, latitudeRest,
+                                                                                                    longitudeRest, messageStatus);
                                                     riders.put(riderID, rider);
                                                     listAdapter.addRider(riders.get(riderID));
                                                 } else {
@@ -756,14 +885,14 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback,
                                                         new GeoLocation(latRider, longRider), new GeoFire.CompletionListener() {
                                                             @Override
                                                             public void onComplete(String key, DatabaseError error) {
-                                                                if (dataSnapshotRider.child("Busy").getValue().toString().equals("false") &&
-                                                                        reservation.getStatus().equals(Status.COOKING) &&
+                                                                if (reservation.getStatus().equals(Status.COOKING) &&
                                                                         getContext() != null) {
 
                                                                     //Add marker
                                                                     if (riders.get(riderID).getMarker() != null)
                                                                         riders.get(riderID).getMarker().remove();
-                                                                    Drawable icon = ContextCompat.getDrawable(getContext(), R.drawable.ic_baseline_directions_bike_24px);
+                                                                    Drawable icon = ContextCompat.getDrawable(getContext(),
+                                                                                            R.drawable.ic_baseline_directions_bike_24px);
                                                                     BitmapDescriptor markerIcon = getMarkerIconFromDrawable(icon);
                                                                     riders.get(riderID).setMarker(mMap.addMarker(new MarkerOptions()
                                                                             .position(new LatLng(latRider, longRider))
@@ -773,21 +902,7 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback,
                                                                 }
                                                             }
                                                         }); // end geofire set location
-                                            } // end if busy= false
-                                            else if (dataSnapshotRider.hasChild("Busy") &&
-                                                    dataSnapshotRider.child("Busy").getValue().toString().equals("true") &&
-                                                    reservation.getStatus().equals(Status.COOKING) &&
-                                                    getContext() != null) {
-                                                /*
-                                                 * remove busy rider if is in the adapter
-                                                 */
-                                                if (riders.containsKey(riderID)) {
-                                                    riders.get(riderID).getMarker().remove();
-                                                    riders.remove(riderID);
-                                                    listAdapter.removeRider(riderID);
-                                                    listAdapter.notifyDataSetChanged();
-                                                }
-                                            }// end else busy= true
+                                            }// end if check isActive, busy presence and status cooking
                                         }
 
                                         @Override
@@ -816,126 +931,6 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback,
                 Log.d("ValerioMap", "onGeoQueryError -> " + error.getMessage());
             }
         });
-
-
-//        final Map<String, DatabaseReference> refRider= new HashMap<>();
-//        final Map<String, GeoFire> geoFireRider= new HashMap<>();
-
-
-//
-//        DatabaseReference referenceRider= FirebaseDatabase.getInstance().getReference("deliveryman");
-//        referenceRider.addValueEventListener(new ValueEventListener() {
-//            @Override
-//            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-//                for(final DataSnapshot ds : dataSnapshot.getChildren()){
-//                    if(ds.hasChild("Busy") &&
-//                            ds.hasChild("IsActive") &&
-//                            ds.child("IsActive").getValue().toString().equals("true") &&
-//                            (reservation.getStat().equals("Cooking") || reservation.getStat().equals("Preparazione"))  &&
-//                            getContext() != null) {
-//
-//                        final String riderID = ds.getKey();
-//
-//                        if (ds.child("Busy").getValue().toString().equals("false")) {
-//
-//                            if( ds.hasChild("Busy") &&
-//                                    ds.child("Busy").getValue().toString().equals("false") &&
-//                                    reservation.getStatus().equals(Status.COOKING) &&
-//                                    getContext() != null) {
-//
-//                                if (!refRider.containsKey(riderID))
-//                                refRider.put(riderID, FirebaseDatabase.getInstance().getReference("deliveryman").child(riderID));
-//
-//                                if (!geoFireRider.containsKey(riderID))
-//                                geoFireRider.put(riderID, new GeoFire(refRider.get(riderID)));
-//
-//                                geoFireRider.get(riderID).getLocation("Map", new LocationCallback() {
-//                                    @Override
-//                                    public void onLocationResult(String key, GeoLocation location) {
-//                                        if (location != null) {
-//                                            /*
-//                                             * Add or update rider location to adapter and restaurant map
-//                                             */
-//                                            final double latRider = location.latitude;
-//                                            final double longRider = location.longitude;
-//
-//                                            if (!riders.containsKey(riderID)) {
-//                                                Rider rider = new Rider(riderID, latRider, longRider, latitudeRest, longitudeRest);
-//                                                riders.put(riderID, rider);
-//                                                listAdapter.addRider(riders.get(riderID));
-//                                            } else {
-//                                                riders.get(riderID).setLatitude(latRider);
-//                                                riders.get(riderID).setLongitude(longRider);
-//                                                riders.get(riderID).setDistance(latitudeRest, longitudeRest);
-//                                                for (int i = 0; i < listAdapter.getCount(); i++) {
-//                                                    if (listAdapter.getItem(i).getId().equals(riderID)) {
-//                                                        listAdapter.getItem(i).setLatitude(latRider);
-//                                                        listAdapter.getItem(i).setLongitude(longRider);
-//                                                        listAdapter.getItem(i).setDistance(latitudeRest, longitudeRest);
-//                                                    }
-//                                                }
-//                                            }
-//
-//                                            listAdapter.notifyDataSetChanged();
-//
-//
-//                                            //Update restaurant map
-//                                            geoFire.setLocation("Map/" + riderID,
-//                                                    new GeoLocation(latRider, longRider), new GeoFire.CompletionListener() {
-//                                                        @Override
-//                                                        public void onComplete(String key, DatabaseError error) {
-//                                                            if (ds.hasChild("Busy") &&
-//                                                                    ds.child("Busy").getValue().toString().equals("false") &&
-//                                                                    reservation.getStatus().equals(Status.COOKING) &&
-//                                                                    getContext() != null) {
-//
-//                                                                //Add marker
-//                                                                if (riders.get(riderID).getMarker() != null)
-//                                                                    riders.get(riderID).getMarker().remove();
-//                                                                Drawable icon = ContextCompat.getDrawable(getContext(), R.drawable.ic_baseline_directions_bike_24px);
-//                                                                BitmapDescriptor markerIcon = getMarkerIconFromDrawable(icon);
-//                                                                riders.get(riderID).setMarker(mMap.addMarker(new MarkerOptions()
-//                                                                        .position(new LatLng(latRider, longRider))
-//                                                                        .title(riderID)
-//                                                                        .icon(markerIcon)
-//                                                                ));
-//                                                            }
-//                                                        }
-//                                                    });
-//
-//                                        } else {
-//                                            Log.d("ValerioMap", riderID + String.format(" -> There is no location for key %s in GeoFire", key));
-//                                        }
-//                                    }
-//
-//                                    @Override
-//                                    public void onCancelled(DatabaseError databaseError) {
-//                                        Log.d("ValerioMap", "There was an error getting the GeoFire location: " + databaseError);
-//                                    }
-//                                });
-//                            }
-//                        }
-//                        else if (ds.child("Busy").getValue().toString().equals("true")){ // rider is busy
-//                            /*
-//                             * remove busy rider if is in the adapter
-//                             */
-//                            if(riders.containsKey(riderID)){
-//                                riders.get(riderID).getMarker().remove();
-//                                riders.remove(riderID);
-//                                ref.child("Map").child(riderID).setValue("");
-//                                listAdapter.removeRider(riderID);
-//                                listAdapter.notifyDataSetChanged();
-//                            }
-//                        }
-//                    }
-//                }
-//            }
-//
-//            @Override
-//            public void onCancelled(@NonNull DatabaseError databaseError) {
-//
-//            }
-//        });
     }
 
     private BitmapDescriptor getMarkerIconFromDrawable(Drawable drawable) {
@@ -950,35 +945,25 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback,
     @Override
     public boolean onMarkerClick(Marker marker) {
         if (!marker.getTitle().equals(restaurant_name)) {
+            /* prepare the message to show
+             * it contains the status of rider, the number of pending orders before yours and the question to confirm the choice
+             */
+            String message= "Rider " + queueOrderRider.get(marker.getTitle()).toLowerCase() + "\n" + this.getString(R.string.msg_rider_selected);
             final String riderID = marker.getTitle();
             final AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
             builder.setTitle(this.getString(R.string.rider_selected) + ": " + riderID);
 
-            builder.setMessage(this.getString(R.string.msg_rider_selected));
+            builder.setMessage(message);
             builder.setPositiveButton(this.getString(R.string.choice_confirm), new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialogInterface, int i) {
-                    DatabaseReference referenceRider = FirebaseDatabase.getInstance().getReference("deliveryman").child(riderID);
-                    referenceRider.runTransaction(new Transaction.Handler() {
-                                                      @NonNull
-                                                      @Override
-                                                      public Transaction.Result doTransaction(@NonNull MutableData mutableData) {
-                                                          mutableData.child("Busy").setValue(true);
-                                                          reservation.setStat(getContext().getString(R.string.delivery));
-                                                          reservation.setStatus(Status.DELIVERY);
-                                                          FirebaseDatabase.getInstance().getReference("customers/"+reservation.getCustomerID()+"/reservations/"+reservation.getOrder_id()).child("status").child("en").setValue("Delivering");
-                                                          FirebaseDatabase.getInstance().getReference("customers/"+reservation.getCustomerID()+"/reservations/"+reservation.getOrder_id()).child("status").child("it").setValue("In Consegna");
-                                                          notifyRider(riderID);
-                                                          return Transaction.success(mutableData);
-                                                      }
-
-                                                      @Override
-                                                      public void onComplete(@Nullable DatabaseError databaseError, boolean b, @Nullable DataSnapshot dataSnapshot) {
-                                                          // Transaction completed
-                                                          Log.d("Valerio", "postTransaction:onComplete:" + databaseError);
-                                                      }
-                                                  }
-                    );
+                    reservation.setStat(getContext().getString(R.string.delivery));
+                    reservation.setStatus(Status.DELIVERY);
+                    FirebaseDatabase.getInstance().getReference("customers/"+reservation.getCustomerID()
+                                                        +"/reservations/"+reservation.getOrder_id()+"/status/en").setValue("Delivering");
+                    FirebaseDatabase.getInstance().getReference("customers/"+reservation.getCustomerID()
+                                                        +"/reservations/"+reservation.getOrder_id()+"/status/it").setValue("In Consegna");
+                    notifyRider(riderID);
                 }
             });
             builder.setNegativeButton(this.getString(R.string.choice_cancel), new DialogInterface.OnClickListener() {
@@ -1019,15 +1004,15 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback,
                                 + "/status/en").getValue().toString().equals("Cooking")) {
 
                     DatabaseReference referenceRider = FirebaseDatabase.getInstance().getReference("deliveryman").child(riderID);
-                    DatabaseReference reservationRider = referenceRider.child("ride").push();
+                    DatabaseReference reservationRider = referenceRider.child("requests").push();
                     final String addressRestaurant = dataSnapshotRestaurant.child("Address").getValue().toString();
                     final String nameRestaurant = dataSnapshotRestaurant.child("Name").getValue().toString();
                     final String phoneRestaurant = dataSnapshotRestaurant.child("Phone").getValue().toString();
                     reservationRider.child("addressCustomer").setValue(reservation.getAddress());
                     reservationRider.child("addressRestaurant").setValue(addressRestaurant);
                     reservationRider.child("CustomerID").setValue(reservation.getCustomerID());
+
                     //update the delivery status
-                    reservationRider.child("delivering").setValue(false);
                     reservationRider.child("nameRestaurant").setValue(nameRestaurant);
                     reservationRider.child("numberOfDishes").setValue(reservation.getNumberOfDishes());
                     reservationRider.child("orderID").setValue(reservation.getOrder_id());
@@ -1043,16 +1028,10 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback,
                             reservation.getTime();
                     reservationRider.child("deliveryTime").setValue(timeStr);
 
-                    /** send actual time of notification */
-                    DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm");
-                    Date date = new Date(); //initialized with current time
-                    String currentTime = dateFormat.format(date);
-                    reservationRider.child("startTime").setValue(currentTime);
-                    reservationRider.child("status").setValue("TO_RESTAURANT");
-
-
-                    FirebaseDatabase.getInstance().getReference("restaurants").child(loggedID).child("reservations").child(reservation.getOrder_id()).child("status").child("en").setValue("Delivering");
-                    FirebaseDatabase.getInstance().getReference("restaurants").child(loggedID).child("reservations").child(reservation.getOrder_id()).child("status").child("it").setValue("In consegna");
+                    FirebaseDatabase.getInstance().getReference("restaurants/"+
+                            loggedID+"/reservations/"+reservation.getOrder_id()+"/status/en").setValue("Delivering");
+                    FirebaseDatabase.getInstance().getReference("restaurants/"+
+                            loggedID+"/reservations/"+reservation.getOrder_id()+"/status/it").setValue("In consegna");
                     sendNotification(riderID);
                 }
             }
@@ -1097,7 +1076,7 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback,
                                 + "\"filters\": [{\"field\": \"tag\", \"key\": \"User_ID\", \"relation\": \"=\", \"value\": \"" + send_email + "\"}],"
 
                                 + "\"data\": {\"Delivery\": \"New order\"},"
-                                + "\"contents\": {\"it\": \"New order to deliver\"}"
+                                + "\"contents\": {\"en\": \"New order to deliver\"}"
                                 + "}";
 
 
@@ -1156,12 +1135,9 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback,
         return EARTH_RADIUS * c; // <-- d
     }
 
-    ;
-
     public static double haversin(double val) {
         return Math.pow(Math.sin(val / 2), 2);
     }
-
 
     @Override
     public void onDestroy() {

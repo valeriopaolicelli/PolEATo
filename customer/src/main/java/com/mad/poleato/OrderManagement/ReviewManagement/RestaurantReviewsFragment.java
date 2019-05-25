@@ -16,6 +16,8 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.RatingBar;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -47,11 +49,14 @@ public class RestaurantReviewsFragment extends Fragment {
 
     private RatingBar ratingBar;
     private TextView restaurantName;
-
+    private CheckBox onlyCommentCheckBox;
     private String restaurantID;
     private String resName;
+
     private long totalReviews;
     private float avgReviews;
+    private int totalStars;
+
     DatabaseReference reviewsReference;
 
     private HashMap<String, Rating>reviewsMap;
@@ -107,6 +112,7 @@ public class RestaurantReviewsFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
         ratingBar = (RatingBar) fragView.findViewById(R.id.rating_bar_avg);
         restaurantName = (TextView) fragView.findViewById(R.id.restaurantName_tv);
+        onlyCommentCheckBox = (CheckBox) fragView.findViewById(R.id.checkBoxComments);
         restaurantName.setText("Reviews for "+ resName);
 
 
@@ -120,6 +126,13 @@ public class RestaurantReviewsFragment extends Fragment {
         this.recyclerViewAdapter = new ReviewRecyclerViewAdapter(this.hostActivity,reviewsList);
         rv.setAdapter(recyclerViewAdapter);
 
+        onlyCommentCheckBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
+                recyclerViewAdapter.setComments_flag(b);
+                recyclerViewAdapter.notifyDataSetChanged();
+            }
+        });
 
     }
 
@@ -147,10 +160,6 @@ public class RestaurantReviewsFragment extends Fragment {
                     final String[] customerName = new String[1];
                     final String[] customerSurname = new String[1];
 
-                    //Compute avg rating
-                    int totalStars = 0;
-                    avgReviews = (float) totalStars / totalReviews;
-                    ratingBar.setRating(avgReviews);
                     if (ds.hasChild("comment") &&
                             ds.hasChild("customerID") &&
                             ds.hasChild("orderID") &&
@@ -161,27 +170,30 @@ public class RestaurantReviewsFragment extends Fragment {
                         final String date = ds.child("date").getValue().toString();
                         String comment = ds.child("comment").getValue().toString();
 
+                        totalStars+=rate;
+                        totalReviews++;
+                        avgReviews = (float)totalStars/totalReviews;
+                        ratingBar.setRating(avgReviews);
 
-
-                        //Get customer data
-                        DatabaseReference customerReference = FirebaseDatabase.getInstance().getReference("Customers/" + customerID);
+                        final Rating rating = new Rating(customerID, rate, comment, restaurantID, ds.getKey(),date);
+                        reviewsList.add(rating);
+                        reviewsMap.put(customerID, rating);
+                        recyclerViewAdapter.notifyDataSetChanged();
+//Get customer data
+                        DatabaseReference customerReference = FirebaseDatabase.getInstance().getReference("customers/" + customerID);
                         customerReference.addListenerForSingleValueEvent(new ValueEventListener() {
                             @Override
                             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                                 customerName[0] = dataSnapshot.child("Name").getValue().toString();
                                 customerSurname[0] = dataSnapshot.child("Surname").getValue().toString();
+                                rating.setCustomerData(customerName[0] + " " + customerSurname[0]);
+                                recyclerViewAdapter.notifyDataSetChanged();
                             }
 
                             @Override
                             public void onCancelled(@NonNull DatabaseError databaseError) {
                             }
                         });
-                        Rating rating = new Rating(customerID, rate, comment, restaurantID, ds.getKey());
-                        rating.setCustomerData(customerName[0] + " " + customerSurname[0]);
-                        reviewsList.add(rating);
-                        reviewsMap.put(customerID, rating);
-                        recyclerViewAdapter.notifyDataSetChanged();
-
                     }
                 }
             }

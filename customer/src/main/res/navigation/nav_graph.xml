@@ -74,7 +74,7 @@
 
     <fragment
         android:id="@+id/myReviewsFragment_id"
-        android:name="com.mad.poleato.MyReviewsFragment"
+        android:name="com.mad.poleato.MyReviews.MyReviewsFragment"
         android:label="fragment_my_reviews"
         tools:layout="@layout/fragment_my_reviews" >
         <action

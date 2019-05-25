@@ -21,6 +21,7 @@ public class ReviewRecyclerViewAdapter extends RecyclerView.Adapter<ReviewRecycl
     private List<Rating> reviewList;
     private Context context;
     private FirebaseAuth mAuth;
+    private boolean comments_flag;
 
     private Toast myToast;
 
@@ -47,7 +48,11 @@ public ReviewRecyclerViewAdapter(Context context, List<Rating>reviewList){
 
 }
 
-@Override
+    public void setComments_flag(boolean comments_flag) {
+        this.comments_flag = comments_flag;
+    }
+
+    @Override
     public ReviewViewHolder onCreateViewHolder(ViewGroup parent, int viewType){
     LayoutInflater layoutInflater = LayoutInflater.from(parent.getContext());
     final View listItem = layoutInflater.inflate(R.layout.restaurantreviews_item,parent, false);
@@ -57,11 +62,21 @@ public ReviewRecyclerViewAdapter(Context context, List<Rating>reviewList){
 
     @Override
     public void onBindViewHolder(@NonNull ReviewViewHolder reviewViewHolder, int position) {
-            String customerData = reviewList.get(position).getCustomerdata();
-            reviewViewHolder.customerData.setText(customerData);
-            reviewViewHolder.ratingBar.setRating(reviewList.get(position).getRate());
-            reviewViewHolder.date.setText(reviewList.get(position).getRate());
-            reviewViewHolder.comment.setText(reviewList.get(position).getComment());
+            if(comments_flag){ 
+                if(!reviewList.get(position).getComment().equals("")){
+                    String customerData = reviewList.get(position).getCustomerdata();
+                    reviewViewHolder.customerData.setText(customerData);
+                    reviewViewHolder.ratingBar.setRating(reviewList.get(position).getRate());
+                    reviewViewHolder.date.setText(reviewList.get(position).getDate());
+                    reviewViewHolder.comment.setText(reviewList.get(position).getComment());
+                }
+            }else{
+                String customerData = reviewList.get(position).getCustomerdata();
+                reviewViewHolder.customerData.setText(customerData);
+                reviewViewHolder.ratingBar.setRating(reviewList.get(position).getRate());
+                reviewViewHolder.date.setText(reviewList.get(position).getDate());
+                reviewViewHolder.comment.setText(reviewList.get(position).getComment());
+            }
     }
 
     @Override

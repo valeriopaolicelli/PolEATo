@@ -130,6 +130,7 @@ public class ReservationExpandableListAdapter extends BaseExpandableListAdapter 
                         bundle.putString("restaurantID", c.getRestaurantID());
                         bundle.putString("restaurantName", c.getRestaurantName());
                         bundle.putString("orderID", c.getOrderID());
+                        bundle.putString("date", c.getDate());
 
                         Navigation.findNavController(view).navigate(R.id.action_holder_history_id_to_ratingFragment, bundle);
                         //Toast.makeText(context, "Review Text Clicked", Toast.LENGTH_SHORT).show();
@@ -178,16 +179,17 @@ public class ReservationExpandableListAdapter extends BaseExpandableListAdapter 
 
                                     notifyDataSetChanged();
 
-                                    AlertDialog.Builder builder1 = new AlertDialog.Builder(context)
-                                            .setTitle(context.getResources().getString(R.string.title_review_dialog))
-                                            .setMessage(context.getResources().getString(R.string.message_review))
-                                            .setPositiveButton(context.getResources().getString(R.string.review_history_request), new DialogInterface.OnClickListener() {
-                                                @Override
-                                                public void onClick(DialogInterface dialogInterface, int i) {
-                                                    Bundle bundle = new Bundle();
-                                                    bundle.putString("restaurantID", c.getRestaurantID());
-                                                    bundle.putString("restaurantName", c.getRestaurantName());
-                                                    bundle.putString("orderID", c.getOrderID());
+                                        AlertDialog.Builder builder1 = new AlertDialog.Builder(context)
+                                                .setTitle(context.getResources().getString(R.string.title_review_dialog))
+                                                .setMessage(context.getResources().getString(R.string.message_review))
+                                                .setPositiveButton(context.getResources().getString(R.string.review_history_request), new DialogInterface.OnClickListener() {
+                                                    @Override
+                                                    public void onClick(DialogInterface dialogInterface, int i) {
+                                                        Bundle bundle = new Bundle();
+                                                        bundle.putString("restaurantID", c.getRestaurantID());
+                                                        bundle.putString("restaurantName", c.getRestaurantName());
+                                                        bundle.putString("orderID", c.getOrderID());
+                                                        bundle.putString("date", c.getDate());
 
                                                     Navigation.findNavController(viewClicked).navigate(R.id.action_holder_history_id_to_ratingFragment, bundle);
                                                     dialogInterface.dismiss();
@@ -305,7 +307,7 @@ public class ReservationExpandableListAdapter extends BaseExpandableListAdapter 
                                 + "\"filters\": [{\"field\": \"tag\", \"key\": \"User_ID\", \"relation\": \"=\", \"value\": \"" + send_email + "\"}],"
 
                                 + "\"data\": {\"Order\": \"PolEATo\"},"
-                                + "\"contents\": {\"it\": \"Ordine " + orderID + " pagato\"}"
+                                + "\"contents\": {\"en\": \"Order " + orderID + " paid\"}"
                                 + "}";
 
 

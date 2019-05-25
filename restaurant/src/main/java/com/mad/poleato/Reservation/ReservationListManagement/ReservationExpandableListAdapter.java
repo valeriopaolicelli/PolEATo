@@ -153,18 +153,21 @@ public class ReservationExpandableListAdapter extends BaseExpandableListAdapter{
 
         }
 
-        /**
-//         * Uncomment this to upload delivered order to History node
-//         */
-        if(r.getStatus() == Status.DELIVERED){
+        if(r.getStatus() == Status.DELIVERED || r.getStatus() == Status.FAILED){
             //Adding reservation to History
             DatabaseReference dbReference = FirebaseDatabase.getInstance().getReference("restaurants").child(loggedID).child("History");
             dbReference.child(r.getOrder_id()).child("customerID").setValue(r.getCustomerID());
             dbReference.child(r.getOrder_id()).child("date").setValue(r.getDate());
             dbReference.child(r.getOrder_id()).child("time").setValue(r.getTime());
             dbReference.child(r.getOrder_id()).child("totalPrice").setValue(r.getTotalPrice());
-            dbReference.child(r.getOrder_id()).child("status/it").setValue("Consegnato");
-            dbReference.child(r.getOrder_id()).child("status/en").setValue("Delivered");
+            if(r.getStatus() == Status.DELIVERED) {
+                dbReference.child(r.getOrder_id()).child("status/it").setValue("Consegnato");
+                dbReference.child(r.getOrder_id()).child("status/en").setValue("Delivered");
+            }
+            else{
+                dbReference.child(r.getOrder_id()).child("status/it").setValue("Fallito");
+                dbReference.child(r.getOrder_id()).child("status/en").setValue("Failed");
+            }
             dbReference.child(r.getOrder_id()).child("dishes").setValue(r.getDishes());
 
             //Delete reservation from pending reservations
@@ -175,7 +178,7 @@ public class ReservationExpandableListAdapter extends BaseExpandableListAdapter{
             flag = true;
             holder.tv_status.setTextColor(context.getResources().getColor(R.color.colorTextRejected));
         }
-        else if (r.getStatus() == Status.DELIVERY || r.getStatus() == Status.DELIVERED) {
+        else if (r.getStatus() == Status.DELIVERY) {
             holder.button.setText(context.getResources().getString(R.string.order_info));
             holder.tv_status.setTextColor(context.getResources().getColor(R.color.colorTextAccepted));
             holder.button.setVisibility(View.VISIBLE);
@@ -251,6 +254,7 @@ public class ReservationExpandableListAdapter extends BaseExpandableListAdapter{
                                     ReservationFragmentDirections.ActionReservationIdToMapsFragmentId action =
                                             ReservationFragmentDirections
                                                     .actionReservationIdToMapsFragmentId("loggedID", r);
+
                                     action.setReservation(r);
                                     action.setLoggedId(loggedID);
                                     Navigation.findNavController(finalView1).navigate(action);
@@ -274,74 +278,74 @@ public class ReservationExpandableListAdapter extends BaseExpandableListAdapter{
                             builder.setPositiveButton(context.getString(R.string.choice_confirm), new DialogInterface.OnClickListener() {
                                 @Override
                                 public void onClick(DialogInterface dialogInterface, int i) {
-                                    // Change button text
-                                    DatabaseReference dbReference = FirebaseDatabase.getInstance().getReference()
-                                            .child("restaurants")
-                                            .child(loggedID)
-                                            .child("Menu");
+                                // Change button text
+                                DatabaseReference dbReference = FirebaseDatabase.getInstance().getReference()
+                                        .child("restaurants")
+                                        .child(loggedID)
+                                        .child("Menu");
 
-                                    //Transaction to avoid multiple updates of the quantity of the same dish
-                                    dbReference.runTransaction(new Transaction.Handler() {
-                                        @NonNull
-                                        @Override
-                                        public Transaction.Result doTransaction(@NonNull MutableData mutableData) {
-                                            if(mutableData.getChildrenCount() == 0)
-                                                return Transaction.success(mutableData);
-                                            int updated= 0;
-                                            for(MutableData m : mutableData.getChildren()){
-                                /*
-                                 * In m there are all plates of restaurant menu;
-                                 * in c.getDishes() there are all plates of reservation;
-                                 * so for each plate of menu (m) it searches if is contained in the reservation;
-                                 * whenever it is found, the quantity is checked and eventually updated in the menu.
-                                 * When al plates of reservation are found (counter: int updated),
-                                 * the reservation status and the button text are updated,
-                                 * then the scanning of menu foods is stopped (pruning).
-                                 */
-                                                Reservation reservation = reservations.get(group_pos);
-                                                String foodID= m.getKey();
-                                                Integer quantity= Integer.parseInt(mutableData.child(foodID).child("Quantity").getValue().toString());
-                                                for( Dish d : reservation.getDishes()){
-                                                    if(d.getID().equals(foodID)){
-                                                        if(quantity - d.getQuantity()< 0 ){
-                                                            Locale locale= Locale.getDefault();
-                                                            String localeShort = locale.toString().substring(0, 2);
-                                                            if(localeShort.equals("en"))
-                                                                showToast("Not enough " + d.getName().toLowerCase() +" to accept this order");
-                                                            else
-                                                                showToast("Non hai abbastanza " + d.getName().toLowerCase() +" per accettare quest'ordine");
-                                                            return Transaction.success(mutableData);
-                                                        }
-                                                        m.child("Quantity").setValue((quantity-d.getQuantity()));
-                                                        Transaction.success(mutableData);
-                                                        updated++;
-                                                        /*
-                                                         * pruning
-                                                         */
-                                                        if(updated==r.getNumberOfDishes()){
-                                                            r.setStatus(Status.COOKING);
-                                                            FirebaseDatabase.getInstance().getReference("restaurants").child(loggedID).child("reservations").child(r.getOrder_id()).child("status").child("en").setValue("Cooking");
-                                                            FirebaseDatabase.getInstance().getReference("restaurants").child(loggedID).child("reservations").child(r.getOrder_id()).child("status").child("it").setValue("Preparazione");
+                                //Transaction to avoid multiple updates of the quantity of the same dish
+                                dbReference.runTransaction(new Transaction.Handler() {
+                                    @NonNull
+                                    @Override
+                                    public Transaction.Result doTransaction(@NonNull MutableData mutableData) {
+                                        if(mutableData.getChildrenCount() == 0)
+                                            return Transaction.success(mutableData);
+                                        int updated= 0;
+                                        for(MutableData m : mutableData.getChildren()){
+                            /*
+                             * In m there are all plates of restaurant menu;
+                             * in c.getDishes() there are all plates of reservation;
+                             * so for each plate of menu (m) it searches if is contained in the reservation;
+                             * whenever it is found, the quantity is checked and eventually updated in the menu.
+                             * When al plates of reservation are found (counter: int updated),
+                             * the reservation status and the button text are updated,
+                             * then the scanning of menu foods is stopped (pruning).
+                             */
+                                            Reservation reservation = reservations.get(group_pos);
+                                            String foodID= m.getKey();
+                                            Integer quantity= Integer.parseInt(mutableData.child(foodID).child("Quantity").getValue().toString());
+                                            for( Dish d : reservation.getDishes()){
+                                                if(d.getID().equals(foodID)){
+                                                    if(quantity - d.getQuantity()< 0 ){
+                                                        Locale locale= Locale.getDefault();
+                                                        String localeShort = locale.toString().substring(0, 2);
+                                                        if(localeShort.equals("en"))
+                                                            showToast("Not enough " + d.getName().toLowerCase() +" to accept this order");
+                                                        else
+                                                            showToast("Non hai abbastanza " + d.getName().toLowerCase() +" per accettare quest'ordine");
+                                                        return Transaction.success(mutableData);
+                                                    }
+                                                    m.child("Quantity").setValue((quantity-d.getQuantity()));
+                                                    Transaction.success(mutableData);
+                                                    updated++;
+                                                    /*
+                                                     * pruning
+                                                     */
+                                                    if(updated==r.getNumberOfDishes()){
+                                                        r.setStatus(Status.COOKING);
+                                                        FirebaseDatabase.getInstance().getReference("restaurants").child(loggedID).child("reservations").child(r.getOrder_id()).child("status").child("en").setValue("Cooking");
+                                                        FirebaseDatabase.getInstance().getReference("restaurants").child(loggedID).child("reservations").child(r.getOrder_id()).child("status").child("it").setValue("Preparazione");
 
-                                                            FirebaseDatabase.getInstance().getReference("customers").child(r.getCustomerID()).child("reservations").child(r.getOrder_id()).child("status").child("en").setValue("Cooking");
-                                                            FirebaseDatabase.getInstance().getReference("customers").child(r.getCustomerID()).child("reservations").child(r.getOrder_id()).child("status").child("it").setValue("Preparazione");
+                                                        FirebaseDatabase.getInstance().getReference("customers").child(r.getCustomerID()).child("reservations").child(r.getOrder_id()).child("status").child("en").setValue("Cooking");
+                                                        FirebaseDatabase.getInstance().getReference("customers").child(r.getCustomerID()).child("reservations").child(r.getOrder_id()).child("status").child("it").setValue("Preparazione");
 
-                                                            r.setButtonText(context.getString(R.string.title_deliver));
-                                                            return Transaction.success(mutableData);
-                                                        }
+                                                        r.setButtonText(context.getString(R.string.title_deliver));
+                                                        return Transaction.success(mutableData);
                                                     }
                                                 }
-                                                //TODO update quantity in food of reservation (list of reservations -> dishes)
                                             }
-                                            return Transaction.success(mutableData);
+                                            //TODO update quantity in food of reservation (list of reservations -> dishes)
                                         }
+                                        return Transaction.success(mutableData);
+                                    }
 
-                                        @Override
-                                        public void onComplete(@Nullable DatabaseError databaseError, boolean b, @Nullable DataSnapshot dataSnapshot) {
-                                            Log.d("Fabio", "Transaction completed");
-                                        }
-                                    });
-                                    notifyDataSetChanged();
+                                    @Override
+                                    public void onComplete(@Nullable DatabaseError databaseError, boolean b, @Nullable DataSnapshot dataSnapshot) {
+                                        Log.d("Fabio", "Transaction completed");
+                                    }
+                                });
+                                notifyDataSetChanged();
                                 }
                             });
                             builder.setNegativeButton(context.getString(R.string.choice_reject), new DialogInterface.OnClickListener() {

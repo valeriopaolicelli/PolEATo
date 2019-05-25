@@ -112,6 +112,9 @@
     <string name="title_actionbar_add_food">Add food</string>
     <string name="title_actionbar_edit_food">Edit food</string>
 
+    <string name="title_bottombar_deliveryStatistic">About us</string>
+    <string name="title_actionbar_deliveryStatistic">About us</string>
+
     <string name="title_bottombar_account">Account</string>
     <string name="title_actionbar_account">Account</string>
     <string name="title_actionbar_edit_account">Edit Account</string>
@@ -153,9 +156,16 @@
     <string name="msg_rider_selected">Do you want select this rider?</string>
     <string name="choose_rider">Choose rider</string>
     <string name="delivered">Delivered</string>
+    <string name="status_rider">Status</string>
 
-    <!--- Internet dialog -->
+    <!-- Internet dialog -->
     <string name="internet_title">Enable Internet Connection</string>
     <string name="internet_message">To use this application you must be connected to the Internet</string>
     <string name="interner_confirm">Data settings</string>
+
+    <!-- The most popular meals and timing -->
+    <string name="popular_timing">The most popular timing</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>
