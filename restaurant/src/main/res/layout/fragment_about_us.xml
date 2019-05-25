@@ -16,7 +16,20 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintBottom_toTopOf="@id/popular_timing_label"/>
+        app:layout_constraintBottom_toTopOf="@id/popular_timing_label"
+        tools:ignore="HardcodedText" />
+
+    <ImageView
+        android:id="@+id/time_icon"
+        android:layout_width="24dp"
+        android:layout_height="24dp"
+        android:layout_marginStart="16dp"
+        android:src="@drawable/ic_time_icon"
+        app:layout_constraintBottom_toTopOf="@id/popular_foods_label"
+        app:layout_constraintEnd_toStartOf="@id/popular_timing_label"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/reviews_list"
+        tools:ignore="ContentDescription" />
 
     <TextView
         android:id="@+id/popular_timing_label"
@@ -30,24 +43,62 @@
         android:textColor="@color/colorTextField"
         android:textSize="20sp"
         app:layout_constraintHorizontal_bias="0"
-        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintStart_toEndOf="@id/time_icon"
+        app:layout_constraintEnd_toStartOf="@id/popular_timing_tv"
+        app:layout_constraintTop_toTopOf="@id/time_icon"
+        app:layout_constraintBottom_toBottomOf="@id/time_icon"/>
+
+    <TextView
+        android:id="@+id/popular_timing_tv"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:textSize="18sp"
+        android:textColor="#444444"
+        app:layout_constraintStart_toEndOf="@id/popular_timing_label"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/reviews_list"
-        app:layout_constraintBottom_toTopOf="@id/recyclerView"/>
+        app:layout_constraintTop_toTopOf="@id/popular_timing_label"
+        app:layout_constraintBottom_toBottomOf="@id/popular_timing_label"/>
+
+    <ImageView
+        android:id="@+id/top_icon"
+        android:layout_width="24dp"
+        android:layout_height="24dp"
+        android:layout_marginTop="24dp"
+        android:backgroundTint="#ffffffff"
+        android:src="@drawable/ic_top_icon"
+        app:layout_constraintBottom_toTopOf="@id/recyclerView"
+        app:layout_constraintEnd_toStartOf="@id/popular_foods_label"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="@id/time_icon"
+        app:layout_constraintTop_toBottomOf="@id/time_icon"
+        tools:ignore="ContentDescription" />
+
+    <TextView
+        android:id="@+id/popular_foods_label"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:text="@string/popular_foods"
+        android:textColor="@color/colorTextField"
+        android:textSize="20sp"
+        app:layout_constraintBottom_toBottomOf="@id/top_icon"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@id/top_icon"
+        app:layout_constraintTop_toTopOf="@id/top_icon" />
 
     <android.support.v7.widget.RecyclerView
         android:id="@+id/recyclerView"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_marginStart="8dp"
-        android:layout_marginEnd="8dp"
+        android:layout_marginStart="32dp"
         android:layout_marginTop="8dp"
-        android:scrollbars="vertical"
+        android:layout_marginEnd="32dp"
         android:layout_marginBottom="?attr/actionBarSize"
+        android:scrollbars="vertical"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/popular_timing_label"
-        tools:listitem="@layout/layout_dish_popular"/>
+        app:layout_constraintTop_toBottomOf="@id/popular_foods_label"
+        tools:listitem="@layout/layout_dish_popular" />
 
 </android.support.constraint.ConstraintLayout>

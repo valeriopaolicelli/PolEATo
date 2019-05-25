@@ -165,6 +165,7 @@
 
     <!-- The most popular meals and timing -->
     <string name="popular_timing">Orario di prenotazione più popolare:</string>
+    <string name="popular_foods">I cibi più prenotati</string>
 
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>

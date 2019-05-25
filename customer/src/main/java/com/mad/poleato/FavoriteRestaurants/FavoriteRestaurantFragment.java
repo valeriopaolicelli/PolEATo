@@ -131,7 +131,6 @@ public class FavoriteRestaurantFragment extends Fragment {
         fragView = inflater.inflate(R.layout.favorite_restaurant_recyclerview, container, false);
 
         return fragView;
-
     }
 
     private void fillFields() {

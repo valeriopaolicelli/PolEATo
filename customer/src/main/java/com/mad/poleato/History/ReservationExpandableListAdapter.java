@@ -162,8 +162,7 @@ public class ReservationExpandableListAdapter extends BaseExpandableListAdapter 
                                                     + "/status/en").setValue("Paid");
 
                                     FirebaseDatabase.getInstance()
-                                            .getReference("restaurants/" + c.getRestaurantID() + "/History" +
-                                                    "" + c.getOrderID()
+                                            .getReference("restaurants/" + c.getRestaurantID() + "/History/" + c.getOrderID()
                                                     + "/status/it").setValue("Pagato");
                                     c.setStatus("Paid");
 
