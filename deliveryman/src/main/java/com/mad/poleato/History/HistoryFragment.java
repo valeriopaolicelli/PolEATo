@@ -3,8 +3,6 @@ package com.mad.poleato.History;
 
 import android.app.Activity;
 import android.app.ProgressDialog;
-import android.arch.lifecycle.Observer;
-import android.arch.lifecycle.ViewModelProviders;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -21,12 +19,17 @@ import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.ChildEventListener;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
+import com.mad.poleato.Firebase.MyDatabaseReference;
 import com.mad.poleato.R;
-import com.mad.poleato.View.ViewModel.MyViewModel;
 import com.onesignal.OneSignal;
 
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.List;
 
 
 /**
@@ -38,11 +41,6 @@ public class HistoryFragment extends Fragment {
     private String currentUserID;
     private FirebaseAuth mAuth;
 
-
-    public HistoryFragment() {
-        // Required empty public constructor
-    }
-
     private Toast myToast;
 
     private Activity hostActivity;
@@ -51,10 +49,16 @@ public class HistoryFragment extends Fragment {
     private RecyclerView.LayoutManager layoutManager;
     private RecyclerView rv;
 
-    private MyViewModel model;
-
     private ProgressDialog progressDialog;
+    private MyDatabaseReference historyReference;
 
+    private List<HistoryItem> historyItemList;
+
+
+
+    public HistoryFragment() {
+        // Required empty public constructor
+    }
 
 
     @Override
@@ -66,6 +70,7 @@ public class HistoryFragment extends Fragment {
             myToast = Toast.makeText(hostActivity, "", Toast.LENGTH_SHORT);
         }
     }
+
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -92,6 +97,8 @@ public class HistoryFragment extends Fragment {
             progressDialog = ProgressDialog.show(getActivity(), "", hostActivity.getString(R.string.loading));
         }
 
+        historyItemList = new ArrayList<>();
+
     }
 
 
@@ -112,8 +119,6 @@ public class HistoryFragment extends Fragment {
         // Inflate the layout for this fragment
         fragView = inflater.inflate(R.layout.history_recyclerview, container, false);
 
-        /**myFirebaseData.fillFieldsHistory();*/
-
         rv = (RecyclerView) fragView.findViewById(R.id.history_recyclerview);
         rv.setHasFixedSize(true);
 
@@ -126,26 +131,140 @@ public class HistoryFragment extends Fragment {
         DividerItemDecoration itemDecor = new DividerItemDecoration(hostActivity, 1); // 1 means HORIZONTAL
         rv.addItemDecoration(itemDecor);
 
+        attachFirebaseListeners();
+
         return fragView;
     }
 
-    @Override
-    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
-        super.onViewCreated(view, savedInstanceState);
 
-        /**myFirebaseData.fillFieldsHistory();*/
 
-        /** Listeners to update UI Expandable list from VIEW_MODEL list child */
-        model = ViewModelProviders.of(getActivity()).get(MyViewModel.class);
-        model.getListH().observe(this, new Observer<HashMap<String, HistoryItem>>() {
+    private void attachFirebaseListeners(){
+
+        historyReference = new MyDatabaseReference(FirebaseDatabase.getInstance().getReference("deliveryman")
+                                                            .child(currentUserID).child("history"));
+        historyReference.setValueListener(new ValueEventListener() {
             @Override
-            public void onChanged(@Nullable HashMap<String, HistoryItem> stringHistoryHashMap) {
-                if(stringHistoryHashMap.values() != null)
-                    historyAdapter.setAllHistories( new ArrayList<HistoryItem>(stringHistoryHashMap.values()));
-                    if(progressDialog.isShowing()){
-                        progressDialog.dismiss();
-                    }
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                if(!dataSnapshot.exists()){
+                    Log.d("matte", "[ERROR] dataSnapshot does not exist");
+                }
+
+                //the ValueEventListener will be called after all the ChildEvenentListener
+                historyAdapter.setAllHistories(historyItemList);
+
+                if(progressDialog.isShowing())
+                    progressDialog.dismiss();
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
             }
         });
+
+
+        historyReference.setChildListener(new ChildEventListener() {
+            @Override
+            public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+
+                if(dataSnapshot.exists() &&
+                    dataSnapshot.hasChild("addressRestaurant") &&
+                    dataSnapshot.hasChild("endTime") &&
+                    dataSnapshot.hasChild("expectedTime") &&
+                    dataSnapshot.hasChild("nameRestaurant") &&
+                    dataSnapshot.hasChild("numberOfDishes") &&
+                    dataSnapshot.hasChild("orderID") &&
+                    dataSnapshot.hasChild("outcome") &&
+                    dataSnapshot.hasChild("startTime") &&
+                    dataSnapshot.hasChild("totKm") &&
+                    dataSnapshot.hasChild("totalPrice")){
+
+                    //retrieve history infos from DB
+                    String nameRestaurant = dataSnapshot.child("nameRestaurant").getValue().toString();
+                    String numDishes = dataSnapshot.child("numberOfDishes").getValue().toString();
+                    String orderID = dataSnapshot.child("orderID").getValue().toString();
+                    String priceStr = dataSnapshot.child("totalPrice").getValue()
+                            .toString().replace(",", ".");
+                    String restaurantAddress = dataSnapshot.child("addressRestaurant").getValue().toString();
+                    String expectedTime = dataSnapshot.child("expectedTime").getValue().toString();
+                    String outcome = dataSnapshot.child("outcome").getValue().toString();
+                    String deliveredTime = dataSnapshot.child("endTime").getValue().toString();
+
+
+                    HistoryItem historyObj = new HistoryItem(orderID, restaurantAddress, nameRestaurant,
+                            priceStr, numDishes, expectedTime,
+                            deliveredTime, HistoryItemOutcome.valueOf(outcome));
+
+                    historyItemList.add(historyObj);
+                }
+            }
+
+            @Override
+            public void onChildChanged(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+
+                if(dataSnapshot.exists() &&
+                        dataSnapshot.hasChild("addressRestaurant") &&
+                        dataSnapshot.hasChild("endTime") &&
+                        dataSnapshot.hasChild("expectedTime") &&
+                        dataSnapshot.hasChild("nameRestaurant") &&
+                        dataSnapshot.hasChild("numberOfDishes") &&
+                        dataSnapshot.hasChild("orderID") &&
+                        dataSnapshot.hasChild("outcome") &&
+                        dataSnapshot.hasChild("startTime") &&
+                        dataSnapshot.hasChild("totKm") &&
+                        dataSnapshot.hasChild("totalPrice")){
+
+                    //retrieve history infos from DB
+                    String nameRestaurant = dataSnapshot.child("nameRestaurant").getValue().toString();
+                    String numDishes = dataSnapshot.child("numberOfDishes").getValue().toString();
+                    String orderID = dataSnapshot.child("orderID").getValue().toString();
+                    String priceStr = dataSnapshot.child("totalPrice").getValue()
+                            .toString().replace(",", ".");
+                    String restaurantAddress = dataSnapshot.child("addressRestaurant").getValue().toString();
+                    String expectedTime = dataSnapshot.child("expectedTime").getValue().toString();
+                    String outcome = dataSnapshot.child("outcome").getValue().toString();
+                    String deliveredTime = dataSnapshot.child("endTime").getValue().toString();
+
+
+                    HistoryItem historyObj = new HistoryItem(orderID, restaurantAddress, nameRestaurant,
+                            priceStr, numDishes, expectedTime,
+                            deliveredTime, HistoryItemOutcome.valueOf(outcome));
+
+                    historyItemList.add(historyObj);
+                }
+            }
+
+            @Override
+            public void onChildRemoved(@NonNull DataSnapshot dataSnapshot) {
+                //history item cannot be removed
+            }
+
+            @Override
+            public void onChildMoved(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+
+
+    }
+
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        //OnDestroy it is not called every time
+       historyReference.removeAllListener();
+    }
+
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        historyReference.removeAllListener();
     }
 }

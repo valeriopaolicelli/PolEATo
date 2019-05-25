@@ -1,4 +1,4 @@
-package com.mad.poleato.FirebaseData;
+package com.mad.poleato.Firebase;
 
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DatabaseReference;
@@ -42,12 +42,12 @@ public class MyDatabaseReference {
     }
 
     public void removeAllListener(){
-        for(int i=0; i < valueListener.size(); i++){
-            reference.removeEventListener(valueListener.get(i));
+        for(ValueEventListener vl : valueListener){
+            reference.removeEventListener(vl);
         }
 
-        for(int i=0; i < childListener.size(); i++){
-            reference.removeEventListener(childListener.get(i));
+        for(ChildEventListener cl : childListener){
+            reference.removeEventListener(cl);
         }
     }
 }

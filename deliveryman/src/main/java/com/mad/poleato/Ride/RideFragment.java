@@ -1,4 +1,4 @@
-package com.mad.poleato.Rides;
+package com.mad.poleato.Ride;
 
 
 import android.Manifest;
@@ -49,12 +49,12 @@ import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.PolylineOptions;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.mad.poleato.FirebaseData.MyDatabaseReference;
+import com.google.firebase.database.ValueEventListener;
+import com.mad.poleato.Firebase.MyDatabaseReference;
 import com.mad.poleato.LocationService.LocationUtilities;
 import com.mad.poleato.R;
 import com.onesignal.OneSignal;
@@ -84,7 +84,7 @@ import java.util.Scanner;
 /**
  * A simple {@link Fragment} subclass.
  */
-public class RidesFragment extends Fragment implements OnMapReadyCallback {
+public class RideFragment extends Fragment implements OnMapReadyCallback {
 
     private static final int EARTH_RADIUS = 6371; // Approx Earth radius in KM
     //two constants for frequency update tuning
@@ -104,9 +104,6 @@ public class RidesFragment extends Fragment implements OnMapReadyCallback {
     private ImageView emptyView;
     private CardView rideCardView;
     private FrameLayout rideFrameLayout;
-
-    //the key for that order at rider side
-    private String rideKey;
 
 
     //this flag is to avoid multiple order that will override the maps
@@ -368,9 +365,10 @@ public class RidesFragment extends Fragment implements OnMapReadyCallback {
 
         deliveryReservationReference = new MyDatabaseReference(FirebaseDatabase.getInstance()
                                             .getReference("deliveryman/" + currentUserID + "/ride"));
-        deliveryReservationReference.setChildListener(new ChildEventListener() {
+        deliveryReservationReference.setValueListener(new ValueEventListener() {
             @Override
-            public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+
                 if (dataSnapshot.exists() &&
                         getContext() != null &&
                         !isRunning &&
@@ -387,67 +385,22 @@ public class RidesFragment extends Fragment implements OnMapReadyCallback {
                         dataSnapshot.hasChild("phoneCustomer") &&
                         dataSnapshot.hasChild("phoneRestaurant") &&
                         dataSnapshot.hasChild("deliveryTime") &&
-                        dataSnapshot.hasChild("startTime")) {
+                        dataSnapshot.hasChild("startTime") &&
+                        dataSnapshot.hasChild("requestKey")) {
 
 
-                        readOrder(dataSnapshot); // read order from FireBase and fill the layout
-                        updateMapButton(); // update the button based on the ride status
-                        readTargetAddresses(); //retrieve location for customer and restaurant
-                        // Acquire a reference to the system Location Manager
-                        hostActivity.registerReceiver(locationReceiver,new IntentFilter("Coordinates"));
+                    readOrder(dataSnapshot); // read order from FireBase and fill the layout (it also hide the empy view)
+                    updateMapButton(); // update the button based on the ride status
+                    readTargetAddresses(); //retrieve location for customer and restaurant
+                    // Acquire a reference to the system Location Manager
+                    hostActivity.registerReceiver(locationReceiver,new IntentFilter("Coordinates"));
                 }
-            }
-
-            @Override
-            public void onChildChanged(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
-                if (dataSnapshot.exists() &&
-                        getContext() != null &&
-                        dataSnapshot.hasChild("addressCustomer") &&
-                        dataSnapshot.hasChild("addressRestaurant") &&
-                        dataSnapshot.hasChild("CustomerID") &&
-                        dataSnapshot.hasChild("status") &&
-                        dataSnapshot.hasChild("nameRestaurant") &&
-                        dataSnapshot.hasChild("numberOfDishes") &&
-                        dataSnapshot.hasChild("orderID") &&
-                        dataSnapshot.hasChild("restaurantID") &&
-                        dataSnapshot.hasChild("nameCustomer") &&
-                        dataSnapshot.hasChild("totalPrice") &&
-                        dataSnapshot.hasChild("phoneCustomer") &&
-                        dataSnapshot.hasChild("phoneRestaurant") &&
-                        dataSnapshot.hasChild("deliveryTime") &&
-                        dataSnapshot.hasChild("startTime")) {
-
-                    //a new reservation can be created only if the rider is not busy
-                    if (!isRunning) {
-                        // read order from FireBase and fill the layout
-                        readOrder(dataSnapshot);
-                        readTargetAddresses(); //retrieve location for customer and restaurant
-                        // Acquire a reference to the system Location Manager
-                        hostActivity.registerReceiver(locationReceiver,new IntentFilter("Coordinates"));
-                    }
-                    // but the ride status it is the only can change
-                    updateMapButton();
-                }
-            }
-
-            @Override
-            public void onChildRemoved(@NonNull DataSnapshot dataSnapshot) {
-                //the order can be removed after its completion
-                ride = null;
-                isRunning = false;
-                show_empty_view();
-
-                hostActivity.unregisterReceiver(locationReceiver);
-            }
-
-            @Override
-            public void onChildMoved(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
-                //an order cannot be moved
             }
 
             @Override
             public void onCancelled(@NonNull DatabaseError databaseError) {
 
+                Log.d("matte", "[ERROR] Database error");
             }
         });
 
@@ -463,7 +416,7 @@ public class RidesFragment extends Fragment implements OnMapReadyCallback {
         historyReference.child("nameRestaurant").setValue(ride.getNameRestaurant());
         historyReference.child("totalPrice").setValue(ride.getTotalPrice());
         historyReference.child("numberOfDishes").setValue(ride.getNumberOfDishes());
-        historyReference.child("expectedTime").setValue(ride.getTime());
+        historyReference.child("expectedTime").setValue(ride.getDeliveryTime());
         historyReference.child("startTime").setValue(ride.getStartTime());
         historyReference.child("endTime").setValue(endTime);
         historyReference.child("totKm").setValue(ride.getKm());
@@ -474,30 +427,44 @@ public class RidesFragment extends Fragment implements OnMapReadyCallback {
 
         //remove the ride
         DatabaseReference reservationReference = FirebaseDatabase.getInstance().getReference("deliveryman/" + currentUserID);
-        reservationReference.child("ride/" + rideKey).removeValue();
+        reservationReference.child("ride").removeValue();
+
+        //remove the original request that has generated this ride
+        DatabaseReference requestReference = FirebaseDatabase.getInstance().getReference("deliveryman/" + currentUserID);
+        requestReference.child("requests/" + ride.getOriginalRequestKey()).removeValue();
 
         //set this ride to free
         DatabaseReference deliverymanReference = FirebaseDatabase.getInstance().getReference("deliveryman/" + currentUserID);
         deliverymanReference.child("Busy").setValue(false);
         isRunning = false;
 
-        if(ride.getStatus() != RideStatus.BACKWARD)
-            sendNotificationToRestaurant("Order: " + ride.getOrderID() + " delivered! :)");
 
-        FirebaseDatabase.getInstance().getReference("restaurants/" + ride.getRestaurantID()
-                + "/reservations/" + ride.getOrderID()
-                + "/status/it/").setValue("Consegnato");
-        FirebaseDatabase.getInstance().getReference("restaurants/" + ride.getRestaurantID()
-                + "/reservations/" + ride.getOrderID()
-                + "/status/en/").setValue("Delivered");
+        DatabaseReference restaurantRef = FirebaseDatabase.getInstance().getReference("restaurants/" + ride.getRestaurantID()
+                                            + "/reservations/" + ride.getOrderID());
+        DatabaseReference customerRef = FirebaseDatabase.getInstance().getReference("customers/" + ride.getCustomerID()
+                                            + "/reservations/" + ride.getOrderID());
 
-        FirebaseDatabase.getInstance().getReference("customers/" + ride.getCustomerID()
-                + "/reservations/" + ride.getOrderID()
-                + "/status/it/").setValue("Consegnato");
-        FirebaseDatabase.getInstance().getReference("customers/" + ride.getCustomerID()
-                + "/reservations/" + ride.getOrderID()
-                + "/status/en/").setValue("Delivered");
+        if(ride.getStatus() != RideStatus.BACKWARD){
 
+            //notify success to both customer and restaurant
+            restaurantRef.child("/status/en").setValue("Delivered");
+            restaurantRef.child("/status/it").setValue("Consegnato");
+
+            customerRef.child("/status/en").setValue("Delivered");
+            customerRef.child("/status/it").setValue("Consegnato");
+        }
+        else{
+
+            //notify failure to both customer and restaurant
+            restaurantRef.child("/status/en").setValue("Failed");
+            restaurantRef.child("/status/it").setValue("Fallito");
+
+            customerRef.child("/status/en").setValue("Failed");
+            customerRef.child("/status/it").setValue("Fallito");
+        }
+
+        ride = null;
+        show_empty_view();
     }
 
 
@@ -526,7 +493,7 @@ public class RidesFragment extends Fragment implements OnMapReadyCallback {
                     //toward customer
                     title = getString(R.string.maps_button_order_delivered);
                     message = getString(R.string.dialog_message_order_outcome);
-                    positive = getString(R.string.yes);
+                    positive = getString(R.string.confirm);
                     negative = getString(R.string.quit_run);
                     break;
 
@@ -626,8 +593,7 @@ public class RidesFragment extends Fragment implements OnMapReadyCallback {
         button_map.setText(getString(R.string.maps_button_order_delivered));
 
         //update the delivery status on FireBase
-        DatabaseReference reference = FirebaseDatabase.getInstance().getReference("deliveryman/"+currentUserID+"/ride/"
-                + rideKey);
+        DatabaseReference reference = FirebaseDatabase.getInstance().getReference("deliveryman/"+currentUserID+"/ride");
         reference.child("status").setValue(ride.getStatus().name());
 
         //inform customer the rider is coming
@@ -669,8 +635,7 @@ public class RidesFragment extends Fragment implements OnMapReadyCallback {
         button_map.setText(getString(R.string.maps_button_order_failure));
 
         //update the delivery status on FireBase
-        DatabaseReference reference = FirebaseDatabase.getInstance().getReference("deliveryman/"+currentUserID+"/ride/"
-                + rideKey);
+        DatabaseReference reference = FirebaseDatabase.getInstance().getReference("deliveryman/"+currentUserID+"/ride");
         reference.child("status").setValue(ride.getStatus().name());
 
         //inform customer the rider is coming
@@ -829,11 +794,16 @@ public class RidesFragment extends Fragment implements OnMapReadyCallback {
         }
     }
 
+    @Override
+    public void onStop() {
+        super.onStop();
+        //OnDestroy it is not called every time
+        deliveryReservationReference.removeAllListener();
+    }
 
     private void readOrder(DataSnapshot dataSnapshot){
 
         //retrieve order infos from DB
-        rideKey = dataSnapshot.getKey();
         String customerAddress = dataSnapshot.child("addressCustomer").getValue().toString();
         String nameRestaurant = dataSnapshot.child("nameRestaurant").getValue().toString();
         String numDishes = dataSnapshot.child("numberOfDishes").getValue().toString();
@@ -859,6 +829,7 @@ public class RidesFragment extends Fragment implements OnMapReadyCallback {
         //time at which reservation notification arrived to the rider
         String startTime = dataSnapshot.child("startTime").getValue().toString();
         String statusStr = dataSnapshot.child("status").getValue().toString();
+        String requestKey = dataSnapshot.child("requestKey").getValue().toString();
 
         //fill the fields
         tv_Fields.get("address").setText(customerAddress);
@@ -869,10 +840,12 @@ public class RidesFragment extends Fragment implements OnMapReadyCallback {
         tv_Fields.get("hour").setText(deliveryTime.split(" ")[1]);
         tv_Fields.get("price").setText(priceStr + "€");
 
+        //the delivering value is not used in this phase
         ride = new Ride(orderID, customerAddress, restaurantAddress,
                 nameCustomer, nameRestaurant, priceStr,
                 numDishes, customerPhone, restaurantPhone,
-                deliveryTime, customerID, restaurantID, startTime, RideStatus.valueOf(statusStr));
+                deliveryTime, customerID, restaurantID, startTime,
+                RideStatus.valueOf(statusStr), requestKey,  null);
 
         //lock the rider
         isRunning = true;
@@ -884,7 +857,6 @@ public class RidesFragment extends Fragment implements OnMapReadyCallback {
             if(hostActivity != null) //start until the first distance is uploaded
                 progressDialog = ProgressDialog.show(hostActivity, "", getString(R.string.loading));
         }
-
 
         //set the visibility
         show_order_view();
@@ -1272,7 +1244,7 @@ public class RidesFragment extends Fragment implements OnMapReadyCallback {
         ride.addKm(km);
 
         FirebaseDatabase.getInstance().getReference("deliveryman")
-                                        .child(currentUserID+"/ride/"+ rideKey +"/totKm")
+                                        .child(currentUserID+"/ride/totKm")
                                         .setValue(ride.getKm());
         isKmUploadNeeded = false;
         if(progressDialog.isShowing())
