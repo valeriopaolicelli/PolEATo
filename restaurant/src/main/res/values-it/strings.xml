@@ -163,6 +163,8 @@
     <string name="internet_message">Per utilizzare l\'applicazione devi essere connesso ad Internet</string>
     <string name="interner_confirm">Impostazioni Internet</string>
 
+    <!-- The most popular meals and timing -->
+    <string name="popular_timing">The most popular timing</string>
 
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>

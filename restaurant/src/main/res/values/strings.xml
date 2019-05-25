@@ -158,10 +158,13 @@
     <string name="delivered">Delivered</string>
     <string name="status_rider">Status</string>
 
-    <!--- Internet dialog -->
+    <!-- Internet dialog -->
     <string name="internet_title">Enable Internet Connection</string>
     <string name="internet_message">To use this application you must be connected to the Internet</string>
     <string name="interner_confirm">Data settings</string>
+
+    <!-- The most popular meals and timing -->
+    <string name="popular_timing">The most popular timing</string>
 
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>

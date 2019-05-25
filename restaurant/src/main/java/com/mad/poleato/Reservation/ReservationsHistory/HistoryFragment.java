@@ -156,8 +156,11 @@ public class HistoryFragment extends Fragment {
                                 dataSnapshotReservation.hasChild("time") &&
                                 dataSnapshotReservation.hasChild("totalPrice")){
 
-                            String status= dataSnapshotReservation.child("status/"+localeShort).getValue().toString();
-                            if(status.equals("Delivered") || status.equals("Consegnato")){
+                            String statusIT= dataSnapshotReservation.child("status/it").getValue().toString();
+                            String statusEN= dataSnapshotReservation.child("status/en").getValue().toString();
+
+                            if((statusEN.equals("Delivered") && statusIT.equals("Consegnato")) ||
+                                    (statusEN.equals("Failed") && statusIT.equals("Fallito")) ){
                                 String orderID= dataSnapshotReservation.getKey();
                                 String customerID= dataSnapshotReservation.child("customerID").getValue().toString();
                                 String time= dataSnapshotReservation.child("time").getValue().toString();
@@ -189,8 +192,8 @@ public class HistoryFragment extends Fragment {
                                 dbReference.child(orderID).child("date").setValue(date);
                                 dbReference.child(orderID).child("time").setValue(time);
                                 dbReference.child(orderID).child("totalPrice").setValue(totalPrice);
-                                dbReference.child(orderID).child("status/it").setValue("Consegnato");
-                                dbReference.child(orderID).child("status/en").setValue("Delivered");
+                                dbReference.child(orderID).child("status/it").setValue(statusIT);
+                                dbReference.child(orderID).child("status/en").setValue(statusEN);
                                 dbReference.child(orderID).child("dishes").setValue(dishes);
 
                                 //Delete reservation from pending reservations

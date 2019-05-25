@@ -153,18 +153,21 @@ public class ReservationExpandableListAdapter extends BaseExpandableListAdapter{
 
         }
 
-        /**
-//         * Uncomment this to upload delivered order to History node
-//         */
-        if(r.getStatus() == Status.DELIVERED){
+        if(r.getStatus() == Status.DELIVERED || r.getStatus() == Status.FAILED){
             //Adding reservation to History
             DatabaseReference dbReference = FirebaseDatabase.getInstance().getReference("restaurants").child(loggedID).child("History");
             dbReference.child(r.getOrder_id()).child("customerID").setValue(r.getCustomerID());
             dbReference.child(r.getOrder_id()).child("date").setValue(r.getDate());
             dbReference.child(r.getOrder_id()).child("time").setValue(r.getTime());
             dbReference.child(r.getOrder_id()).child("totalPrice").setValue(r.getTotalPrice());
-            dbReference.child(r.getOrder_id()).child("status/it").setValue("Consegnato");
-            dbReference.child(r.getOrder_id()).child("status/en").setValue("Delivered");
+            if(r.getStatus() == Status.DELIVERED) {
+                dbReference.child(r.getOrder_id()).child("status/it").setValue("Consegnato");
+                dbReference.child(r.getOrder_id()).child("status/en").setValue("Delivered");
+            }
+            else{
+                dbReference.child(r.getOrder_id()).child("status/it").setValue("Fallito");
+                dbReference.child(r.getOrder_id()).child("status/en").setValue("Failed");
+            }
             dbReference.child(r.getOrder_id()).child("dishes").setValue(r.getDishes());
 
             //Delete reservation from pending reservations
@@ -175,7 +178,7 @@ public class ReservationExpandableListAdapter extends BaseExpandableListAdapter{
             flag = true;
             holder.tv_status.setTextColor(context.getResources().getColor(R.color.colorTextRejected));
         }
-        else if (r.getStatus() == Status.DELIVERY || r.getStatus() == Status.DELIVERED) {
+        else if (r.getStatus() == Status.DELIVERY) {
             holder.button.setText(context.getResources().getString(R.string.order_info));
             holder.tv_status.setTextColor(context.getResources().getColor(R.color.colorTextAccepted));
             holder.button.setVisibility(View.VISIBLE);
@@ -251,6 +254,7 @@ public class ReservationExpandableListAdapter extends BaseExpandableListAdapter{
                                     ReservationFragmentDirections.ActionReservationIdToMapsFragmentId action =
                                             ReservationFragmentDirections
                                                     .actionReservationIdToMapsFragmentId("loggedID", r);
+
                                     action.setReservation(r);
                                     action.setLoggedId(loggedID);
                                     Navigation.findNavController(finalView1).navigate(action);

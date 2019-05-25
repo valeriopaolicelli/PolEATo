@@ -126,6 +126,12 @@ public class Reservation implements Serializable{
             else
                 this.stat= "Delivered";
         }
+        else if ( status == Status.FAILED){
+            if(locale.equals("it"))
+                this.stat= "Fallito";
+            else
+                this.stat= "Failed";
+        }
         this.status = status;
     }
 
@@ -145,6 +151,8 @@ public class Reservation implements Serializable{
             this.status= Status.REJECTED;
         if(stat.equals("Delivered") || stat.equals("Consegnato"))
             this.status= Status.DELIVERED;
+        if(stat.equals("Failed") || stat.equals("Fallito"))
+            this.status= Status.FAILED;
     }
 
     public String getOrder_id() {
