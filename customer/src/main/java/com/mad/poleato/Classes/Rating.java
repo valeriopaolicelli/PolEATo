@@ -6,6 +6,7 @@ public class Rating {
     private String comment;
     private String restaurantID;
     private String orderID;
+    private String customerData;
 
     public Rating(String customerID, Integer rate, String comment, String restaurantID, String orderID) {
         this.customerID = customerID;
@@ -14,6 +15,7 @@ public class Rating {
         this.restaurantID = restaurantID;
         this.orderID = orderID;
     }
+
 
     public String getCustomerID() {
         return customerID;
@@ -53,5 +55,12 @@ public class Rating {
 
     public void setOrderID(String orderID) {
         this.orderID = orderID;
+    }
+
+    public void setCustomerData(String customerData){
+        this.customerData = customerData;
+    }
+    public String getCustomerdata(){
+        return customerData;
     }
 }

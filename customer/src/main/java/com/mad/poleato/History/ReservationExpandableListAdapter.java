@@ -138,7 +138,7 @@ public class ReservationExpandableListAdapter extends BaseExpandableListAdapter 
             }
         }
         //Rider upload status "delivered"
-        if(c.getStatus().equals("Delivered") || c.getStatus().equals("Consegnato")){
+        else if(c.getStatus().equals("Delivered") || c.getStatus().equals("Consegnato")){
             // The order has been delivered, customer has to confirm payment
             holder.tv_review.setVisibility(View.GONE);
             holder.confirm_button.setVisibility(View.VISIBLE);

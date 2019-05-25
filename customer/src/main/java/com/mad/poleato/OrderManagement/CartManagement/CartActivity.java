@@ -10,6 +10,7 @@ import android.content.IntentFilter;
 import android.net.ConnectivityManager;
 import android.os.AsyncTask;
 import android.os.StrictMode;
+import android.support.annotation.NonNull;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
@@ -27,6 +28,12 @@ import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ServerValue;
+import com.google.firebase.database.ValueEventListener;
 import com.mad.poleato.ConnectionManager;
 import com.mad.poleato.Classes.Food;
 import com.mad.poleato.Interface;
@@ -39,7 +46,10 @@ import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.text.DecimalFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 
 import java.util.Scanner;
@@ -149,6 +159,8 @@ public class CartActivity extends AppCompatActivity implements Interface,TimePic
                     myToast.show();
                     time.setBackground(ContextCompat.getDrawable(getApplicationContext(), R.drawable.border_wrong_field));
                 }
+
+
 
                 if(!wrongField){
                     AlertDialog.Builder builder = new AlertDialog.Builder(CartActivity.this);
@@ -310,9 +322,19 @@ public class CartActivity extends AppCompatActivity implements Interface,TimePic
     }
 
     @Override
-    public void onTimeSet(TimePicker timePicker, int hourOfDay, int minute) {
-        String hourStr;
-        String minStr;
+    public void onTimeSet(TimePicker timePicker, final int hourOfDay, final int minute) {
+        final String hourStr;
+        final String minStr;
+
+        Date date = new Date();
+        SimpleDateFormat format = new SimpleDateFormat("HH::mm");
+        final Calendar calendar = Calendar.getInstance();
+        final boolean[] timeok = {true};
+
+        final int[] serverHour = new int[1];
+        final int[] serverMinute = new int[1];
+        final int[] closingHour = new int[1];
+        final int[] closingMinute = new int[1];
 
         //convert to format HH:mm
         if(hourOfDay < 10)
@@ -324,6 +346,61 @@ public class CartActivity extends AppCompatActivity implements Interface,TimePic
             minStr = "0" + minute;
         else
             minStr = "" + minute;
-        time.setText(hourStr +":"+minStr);
+
+        //Get closing hour of restaurant
+        DatabaseReference closureReference = FirebaseDatabase.getInstance().getReference("restaurants/" + order.getRestaurantID()+"/Close");
+        closureReference.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                String closure[] = dataSnapshot.getValue().toString().split(":");
+                closingHour[0] = Integer.parseInt(closure[0]);
+                closingMinute[0] = Integer.parseInt(closure[1]);
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+
+        FirebaseDatabase.getInstance().getReference("time").setValue(ServerValue.TIMESTAMP);
+        DatabaseReference timeReference = FirebaseDatabase.getInstance().getReference("time");
+        //check if hour selected by the user is between server time and closing time
+        timeReference.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                   Long hourInMillis = Long.parseLong(dataSnapshot.getValue().toString());
+                   calendar.setTimeInMillis(hourInMillis);
+                   serverHour[0] = calendar.get(Calendar.HOUR_OF_DAY);
+                   serverMinute[0] = calendar.get(Calendar.MINUTE);
+
+                   if(hourOfDay<serverHour[0]){
+                       Toast.makeText(getApplicationContext(), "You can't go back in time",Toast.LENGTH_SHORT).show();
+                       timeok[0] = false;
+                   }
+                   else if(hourOfDay == serverHour[0]){
+                       if(minute<serverMinute[0]) {
+                           Toast.makeText(getApplicationContext(), "You can't go back in time", Toast.LENGTH_SHORT).show();
+                            timeok[0] = false;
+                       }
+                   }
+                   else if(hourOfDay>closingHour[0]) {
+                       Toast.makeText(getApplicationContext(), "Restaurant will be closed at that time", Toast.LENGTH_SHORT).show();
+                       timeok[0] = false;
+                   }
+                    else if(hourOfDay == closingHour[0])
+                        if(minute > closingMinute[0]) {
+                            Toast.makeText(getApplicationContext(), "Restaurant will be closed at that time", Toast.LENGTH_SHORT).show();
+                            timeok[0] = false;
+                        }
+                    if(timeok[0])
+                        time.setText(hourStr +":"+minStr);
+
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+            }
+        });
     }
 }
