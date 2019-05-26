@@ -100,13 +100,10 @@
             app:popUpToInclusive="true" />
     </fragment>
 
-
-
     <activity
         android:id="@+id/signInActivity"
         android:name="com.mad.poleato.SignActivities.SignInActivity"
         android:label="signin_layout"
         tools:layout="@layout/signin_layout" />
-
 
 </navigation>

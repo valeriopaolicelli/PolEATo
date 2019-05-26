@@ -2,6 +2,7 @@ package com.mad.poleato.History;
 
 
 import android.app.ProgressDialog;
+import android.content.Intent;
 import android.graphics.Point;
 import android.os.Bundle;
 import android.os.Handler;
@@ -106,7 +107,6 @@ public class Holder_history extends Fragment {
         dbReferenceList = new ArrayList<>();
     }
 
-    
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -127,6 +127,7 @@ public class Holder_history extends Fragment {
 
         return view;
     }
+
 
     private void initData() {
         reservations = new ArrayList<>();
@@ -307,7 +308,6 @@ public class Holder_history extends Fragment {
         /** Convert the dps to pixels, based on density scale */
         return (int) (pixels * scale + 0.5f);
     }
-
 
     @Override
     public void onDestroy() {

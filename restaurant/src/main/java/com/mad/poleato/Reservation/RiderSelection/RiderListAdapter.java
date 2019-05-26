@@ -178,7 +178,7 @@ public class RiderListAdapter extends ArrayAdapter<Rider>
         referenceRestaurant.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshotRestaurant) {
-                if( getContext() != null &&
+                if( convertView != null &&
                         dataSnapshotRestaurant.exists() &&
                         dataSnapshotRestaurant.hasChild("Address") &&
                         dataSnapshotRestaurant.hasChild("Name") &&
