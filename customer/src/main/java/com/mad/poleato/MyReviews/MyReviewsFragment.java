@@ -47,7 +47,7 @@ public class MyReviewsFragment extends Fragment {
     private View fragView;
 
     private ProgressDialog progressDialog;
-    
+
     Handler handler = new Handler() {
         @Override
         public void handleMessage(Message msg) {
@@ -55,8 +55,7 @@ public class MyReviewsFragment extends Fragment {
         }
     };
 
-
-
+    
     public MyReviewsFragment() {
         // Required empty public constructor
     }
