@@ -7,7 +7,7 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.util.Log;
+import android.support.v4.content.ContextCompat;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -21,16 +21,12 @@ import androidx.navigation.Navigation;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.MutableData;
-import com.google.firebase.database.Transaction;
-import com.google.firebase.database.ValueEventListener;
 import com.mad.poleato.Classes.Rating;
 import com.mad.poleato.MyDatabaseReference;
 import com.mad.poleato.R;
+import com.onesignal.OneSignal;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -43,6 +39,7 @@ public class RatingFragment extends Fragment {
     private String restaurantName;
     private String restaurantID;
     private String orderID;
+    private String dateOrder;
 
     private FirebaseAuth mAuth;
     private Activity hostActivity;
@@ -76,11 +73,21 @@ public class RatingFragment extends Fragment {
             restaurantID = arguments.getString("restaurantID");
             restaurantName = arguments.getString("restaurantName");
             orderID = arguments.getString("orderID");
+            dateOrder= arguments.getString("date");
         }
 
         mAuth = FirebaseAuth.getInstance();
         FirebaseUser currentUser = mAuth.getCurrentUser();
         currentUserID = currentUser.getUid();
+
+        OneSignal.startInit(getContext())
+                .inFocusDisplaying(OneSignal.OSInFocusDisplayOption.Notification)
+                .unsubscribeWhenNotificationsAreDisabled(true)
+                .init();
+
+        OneSignal.setSubscription(true);
+        OneSignal.sendTag("User_ID", currentUserID);
+
         dbReferenceList= new ArrayList<>();
     }
 
@@ -135,14 +142,18 @@ public class RatingFragment extends Fragment {
             @Override
             public void onClick(View view) {
                 if((int)ratingBar.getRating() == 0){
-
+                    ratingBar.setBackground(ContextCompat.getDrawable(context, R.drawable.border_wrong_field));
+                    myToast.setText("Insert a rating to submit a review");
+                    myToast.show();
                 }
                 else {
-                    Rating rating = new Rating(currentUserID,(int)ratingBar.getRating(),review_et.getText().toString(),restaurantID,orderID);
+                    Rating rating = new Rating(currentUserID,(int)ratingBar.getRating(),
+                                                            review_et.getText().toString(),restaurantID,orderID, dateOrder);
                     DatabaseReference newRatingR = restaurantReference.child(orderID);
                     newRatingR.setValue(rating);
                     //Set flag of reservation=true => Customer has reviewed that order
-                    DatabaseReference dbReference = FirebaseDatabase.getInstance().getReference("customers/"+currentUserID+"/reservations/"+orderID+"/reviewFlag");
+                    DatabaseReference dbReference = FirebaseDatabase.getInstance()
+                            .getReference("customers/"+currentUserID+"/reservations/"+orderID+"/reviewFlag");
                     dbReference.setValue("true");
                     //Upload new rating for customer
                     DatabaseReference newRatingC = customerReference.child(orderID);

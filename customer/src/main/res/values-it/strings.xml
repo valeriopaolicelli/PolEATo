@@ -160,9 +160,10 @@
 
     <string name="notnowBtn">Non ora</string>
 
-
-
     <string name="message_review">Grazie per il tuo ordine. Ti ricordiamo di lasciare una recensione, è molto importante per noi e per il ristorante. Grazie!</string>
+    <string name="checkBoxComments">Solo commenti</string>
 
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Fragment vuoto</string>
 
 </resources>

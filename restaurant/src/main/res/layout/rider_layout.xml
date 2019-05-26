@@ -80,7 +80,7 @@
                 android:textAlignment="center"
                 android:textColor="@color/colorPrimaryDark"
                 android:textSize="15sp"
-                app:layout_constraintBottom_toTopOf="@id/myButton"
+                app:layout_constraintBottom_toTopOf="@id/status_label"
                 app:layout_constraintEnd_toStartOf="@id/distance_tv"
                 app:layout_constraintHorizontal_bias="0.0"
                 app:layout_constraintStart_toStartOf="@id/rider_label"
@@ -98,6 +98,34 @@
                 app:layout_constraintStart_toStartOf="@id/rider_tv"
                 app:layout_constraintTop_toTopOf="@id/distance_label" />
 
+            <TextView
+                android:id="@+id/status_label"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:layout_marginEnd="8dp"
+                android:text="@string/status_rider"
+                android:textAlignment="center"
+                android:textColor="@color/colorPrimaryDark"
+                android:textSize="15sp"
+                app:layout_constraintBottom_toTopOf="@id/myButton"
+                app:layout_constraintEnd_toStartOf="@id/status_tv"
+                app:layout_constraintHorizontal_bias="0.0"
+                app:layout_constraintStart_toStartOf="@id/distance_label"
+                app:layout_constraintTop_toBottomOf="@id/distance_label"/>
+
+            <TextView
+                android:id="@+id/status_tv"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="8dp"
+                android:textColor="@color/browser_actions_title_color"
+                android:textSize="15sp"
+                app:layout_constraintBottom_toBottomOf="@id/status_label"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="@id/distance_tv"
+                app:layout_constraintTop_toTopOf="@id/status_label" />
+
             <Button
                 android:id="@+id/myButton"
                 android:layout_width="wrap_content"
@@ -112,7 +140,7 @@
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/distance_label" />
+                app:layout_constraintTop_toBottomOf="@id/status_label" />
         </android.support.constraint.ConstraintLayout>
     </android.support.v7.widget.CardView>
 </LinearLayout>

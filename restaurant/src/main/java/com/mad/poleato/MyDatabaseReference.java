@@ -7,6 +7,10 @@ import com.google.firebase.database.ValueEventListener;
 import java.util.ArrayList;
 import java.util.List;
 
+
+/**
+ * This class is a wrapper for a Database reference to easily add and remove listeners
+ */
 public class MyDatabaseReference {
 
     /**
@@ -24,10 +28,17 @@ public class MyDatabaseReference {
     }
 
     public void setChildListener(ChildEventListener childListener) {
+        this.reference.addChildEventListener(childListener);
         this.childListener.add(childListener);
     }
 
     public void setValueListener(ValueEventListener valueListener) {
+        this.reference.addValueEventListener(valueListener);
+        this.valueListener.add(valueListener);
+    }
+
+    public void setSingleValueListener(ValueEventListener valueListener) {
+        this.reference.addListenerForSingleValueEvent(valueListener);
         this.valueListener.add(valueListener);
     }
 
@@ -36,12 +47,12 @@ public class MyDatabaseReference {
     }
 
     public void removeAllListener(){
-        for(int i=0; i < valueListener.size(); i++){
-            reference.removeEventListener(valueListener.get(i));
+        for(ValueEventListener vl : valueListener){
+            reference.removeEventListener(vl);
         }
 
-        for(int i=0; i < childListener.size(); i++){
-            reference.removeEventListener(childListener.get(i));
+        for(ChildEventListener cl : childListener){
+            reference.removeEventListener(cl);
         }
     }
 }

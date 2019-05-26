@@ -60,12 +60,6 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
     private DishCategoryTranslator translator;
 
     private ProgressDialog progressDialog;
-    private Handler handler = new Handler() {
-        @Override
-        public void handleMessage(Message msg) {
-            progressDialog.dismiss();
-        }
-    };
 
 
     private String currentUserID;
@@ -204,13 +198,15 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
                         storageReference.delete().addOnSuccessListener(new OnSuccessListener<Void>() {
                             @Override
                             public void onSuccess(Void aVoid) {
-                                handler.sendEmptyMessage(0);
+                               if(progressDialog.isShowing())
+                                   progressDialog.dismiss();
                             }
                         }).addOnFailureListener(new OnFailureListener() {
                             @Override
                             public void onFailure(@NonNull Exception e) {
                                 Log.d("matte", "Failure in image remove");
-                                handler.sendEmptyMessage(0);
+                                if(progressDialog.isShowing())
+                                    progressDialog.dismiss();
                             }
                         });
 

@@ -12,6 +12,7 @@ import com.mad.poleato.Classes.Dish;
 import com.mad.poleato.Classes.Food;
 import com.mad.poleato.Classes.Reservation;
 import com.mad.poleato.Classes.Restaurant;
+import com.mad.poleato.MyDatabaseReference;
 
 import java.io.Serializable;
 import java.text.DecimalFormat;
@@ -31,11 +32,14 @@ public class Order implements Serializable {
    private Restaurant r;
    private String time;
 
+   private List<MyDatabaseReference> dbReferenceList;
+
     public Order(String currentUserID) {
         this.totalPrice=0.0;
         selectedFoods=new HashMap<>();
         status = "New Order";
-        customerID = currentUserID; // TODO; Must be retrieved from database
+        customerID = currentUserID;
+        dbReferenceList= new ArrayList<>();
     }
 
     public Order(String status, String customerID, Double totalPrice, String date, String time){
@@ -44,6 +48,7 @@ public class Order implements Serializable {
         this.totalPrice=totalPrice;
         this.date=date;
         this.time=time;
+        dbReferenceList= new ArrayList<>();
     }
 
     public void setStatus(String status) {
@@ -121,7 +126,41 @@ public class Order implements Serializable {
         this.customerID = customerID;
     }
 
+    public List<MyDatabaseReference> getDbReferenceList() {
+        return dbReferenceList;
+    }
+
     public void uploadOrder() {
+        /*
+         * Update counter in restaurant menu -> for each dish (to compute the most popular foods)
+         */
+        for(final Food f : dishes) {
+            DatabaseReference referenceMenu = FirebaseDatabase.getInstance()
+                    .getReference("restaurants/" + restaurantID + "/Menu/"+f.getFoodID());
+            dbReferenceList.add(new MyDatabaseReference(referenceMenu));
+            int indexReference = dbReferenceList.size() - 1;
+            ValueEventListener valueEventListener;
+
+            dbReferenceList.get(indexReference).getReference()
+                    .addListenerForSingleValueEvent(valueEventListener= new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                    int counter= Integer.parseInt(dataSnapshot.child("PopularityCounter").getValue().toString());
+                    counter += f.getSelectedQuantity();
+                    FirebaseDatabase.getInstance()
+                            .getReference("restaurants/" + restaurantID + "/Menu/"+f.getFoodID()+"/PopularityCounter")
+                            .setValue(counter);
+                }
+
+                @Override
+                public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                }
+            });
+            dbReferenceList.get(indexReference).setValueListener(valueEventListener);
+        }
+
+
         /*
          * UPLOAD order into restaurant table
          */

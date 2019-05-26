@@ -5,7 +5,7 @@
     <item
         android:id="@+id/map_id"
         android:title=""
-        android:icon="@mipmap/map_icon_round"
+        android:icon="@drawable/ic_map_icon"
         app:showAsAction="ifRoom" />
 
 </menu>

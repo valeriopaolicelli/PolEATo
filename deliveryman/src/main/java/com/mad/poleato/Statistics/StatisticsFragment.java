@@ -31,8 +31,9 @@ import com.jjoe64.graphview.series.DataPoint;
 import com.jjoe64.graphview.series.DataPointInterface;
 import com.jjoe64.graphview.series.LineGraphSeries;
 import com.jjoe64.graphview.series.OnDataPointTapListener;
+import com.jjoe64.graphview.series.PointsGraphSeries;
 import com.jjoe64.graphview.series.Series;
-import com.mad.poleato.FirebaseData.MyDatabaseReference;
+import com.mad.poleato.Firebase.MyDatabaseReference;
 import com.mad.poleato.R;
 import com.onesignal.OneSignal;
 
@@ -152,10 +153,18 @@ public class StatisticsFragment extends Fragment {
 
 
     @Override
+    public void onStop() {
+        super.onStop();
+        historyFireBaseReference.removeAllListener();
+    }
+
+
+    @Override
     public void onDestroy() {
         super.onDestroy();
         historyFireBaseReference.removeAllListener();
     }
+
 
     private void collectFields(){
 
@@ -309,9 +318,10 @@ public class StatisticsFragment extends Fragment {
             curr_idx ++;
         }
 
-        LineGraphSeries<DataPoint> series = new LineGraphSeries<DataPoint>(dp);
+        LineGraphSeries<DataPoint> lines = new LineGraphSeries<>(dp);
+        PointsGraphSeries<DataPoint> points = new PointsGraphSeries<>(dp);
 
-        series.setOnDataPointTapListener(new OnDataPointTapListener() {
+        points.setOnDataPointTapListener(new OnDataPointTapListener() {
             @Override
             public void onTap(Series series, DataPointInterface dataPoint) {
 
@@ -323,13 +333,19 @@ public class StatisticsFragment extends Fragment {
                 // using Date() constructor
                 Date result = new Date(millis);
 
-                myToast.setText(simple.format(result));
+                //price
+                DecimalFormat decimalFormat = new DecimalFormat("#0.00"); //two decimal
+                double d = Double.parseDouble(((Double) dataPoint.getY()).toString());
+                String priceStr = decimalFormat.format(d);
+
+                myToast.setText(simple.format(result) + " -> " + priceStr + " €");
                 myToast.show();
             }
         });
 
+        graphView.addSeries(lines);
+        graphView.addSeries(points);
 
-        graphView.addSeries(series);
 
         // set date label formatter
         graphView.getGridLabelRenderer().setLabelFormatter(new DateAsXAxisLabelFormatter(getActivity()));
@@ -369,14 +385,22 @@ public class StatisticsFragment extends Fragment {
             public String formatLabel(double value, boolean isValueX){
 
                 if(isValueX){
-                    return "-";
+                    SimpleDateFormat format = new SimpleDateFormat("mm/dd");
+                    long millis = (long) value;
+                    String date = format.format(new Date(millis));
+                    return date;
                 }
-                Double v = value;
+
+                //y value
+                Double v = new Double(value);
+                DecimalFormat decimalFormat = new DecimalFormat("#0.00"); //two decimal
+                double d = Double.parseDouble(v.toString());
+                String priceStr = decimalFormat.format(d);
                 Integer i = v.intValue();
-                Boolean b1 = value % 1 == 0;
-                Boolean b2 = i % 10 == 0;
+                Boolean b1 = value % 1 == 0; //must not have decimal part
+                Boolean b2 = i % 10 == 0; //must be a multiple of 10
                 if(b1 && b2)
-                    return ""+value+"€";
+                    return priceStr+"€";
                 return null;
 
             }

@@ -61,20 +61,13 @@ public class AccountFragment extends Fragment {
     private ImageView profileImage;
 
     private ProgressDialog progressDialog;
-    private Handler handler = new Handler() {
-        @Override
-        public void handleMessage(Message msg) {
-            progressDialog.dismiss();
-        }
-    };
-
 
     private String localeShort;
     private View view;
     private String currentUserID;
     private FirebaseAuth mAuth;
 
-    private List<MyDatabaseReference> dbReferenceList;
+    private MyDatabaseReference profileReference;
 
 
     @Override
@@ -103,7 +96,6 @@ public class AccountFragment extends Fragment {
         OneSignal.setSubscription(true);
         OneSignal.sendTag("User_ID", currentUserID);
 
-        dbReferenceList= new ArrayList<>();
     }
 
     @Override
@@ -186,12 +178,9 @@ public class AccountFragment extends Fragment {
 
     public void fillFields() {
 
-        DatabaseReference reference = FirebaseDatabase.getInstance().getReference("restaurants/"+ currentUserID);
-        dbReferenceList.add(new MyDatabaseReference(reference));
-        int indexReference= dbReferenceList.size()-1;
-        ValueEventListener valueEventListener;
-
-        dbReferenceList.get(indexReference).getReference().addValueEventListener(valueEventListener= new ValueEventListener() {
+        profileReference = new MyDatabaseReference(FirebaseDatabase.getInstance()
+                                                    .getReference("restaurants/"+ currentUserID));
+        profileReference.setValueListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 // it is set to the first record (restaurant)
@@ -246,7 +235,6 @@ public class AccountFragment extends Fragment {
                 myToast.show();
             }
         });
-        dbReferenceList.get(indexReference).setValueListener(valueEventListener);
 
         //Download the profile pic
         StorageReference storageReference = FirebaseStorage.getInstance().getReference();
@@ -258,8 +246,9 @@ public class AccountFragment extends Fragment {
             public void onSuccess(byte[] bytes) {
                 Bitmap bmp = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
                 profileImage.setImageBitmap(bmp);
-                //send message to main thread
-                handler.sendEmptyMessage(0);
+
+                if(progressDialog.isShowing())
+                    progressDialog.dismiss();
             }
         }).addOnFailureListener(new OnFailureListener() {
             @Override
@@ -267,8 +256,9 @@ public class AccountFragment extends Fragment {
                 Log.d("matte", "No image found. Default img setting");
                 //set predefined image
                 profileImage.setImageResource(R.drawable.plate_fork);
-                //send message to main thread
-                handler.sendEmptyMessage(0);
+
+                if(progressDialog.isShowing())
+                    progressDialog.dismiss();
             }
         });
 
@@ -277,10 +267,13 @@ public class AccountFragment extends Fragment {
     @Override
     public void onDestroy() {
         super.onDestroy();
-        for(int i=0; i < dbReferenceList.size(); i++){
-            dbReferenceList.get(i).removeAllListener();
-        }
+        profileReference.removeAllListener();
     }
 
+    @Override
+    public void onStop() {
+        super.onStop();
+        profileReference.removeAllListener();
+    }
 }
 

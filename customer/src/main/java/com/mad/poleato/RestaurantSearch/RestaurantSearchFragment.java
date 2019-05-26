@@ -74,7 +74,6 @@ public class RestaurantSearchFragment extends Fragment {
     private ImageButton sortBtn;
     private ImageButton filterBtn;
     private DatabaseReference dbReference;
-    private Button favoriteListButton;
 
     private HashMap<String, Restaurant> restaurantMap;
     private List<Restaurant> restaurantList; //original list of all restaurants
@@ -112,6 +111,8 @@ public class RestaurantSearchFragment extends Fragment {
 //        setHasOptionsMenu(true);
         super.onCreate(savedInstanceState);
 
+        setHasOptionsMenu(true);
+
         restaurantMap = new HashMap<>();
         restaurantList = new ArrayList<>();
         typesToFilter = new HashSet<>();
@@ -126,7 +127,6 @@ public class RestaurantSearchFragment extends Fragment {
 
     }
 
-    //TODO Scegliere se inserire ristoranti preferiti nell'actionbar
 //    @Override
 //    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
 //        menu.clear();
@@ -167,228 +167,27 @@ public class RestaurantSearchFragment extends Fragment {
 
     }
 
-    private void fillFields() {
-        Locale locale = Locale.getDefault();
-        // get "en" or "it"
-        final String localeShort = locale.toString().substring(0, 2);
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        menu.clear();
+        /** Inflate the menu; this adds items to the action bar if it is present.*/
+        inflater.inflate(R.menu.favorite_menu, menu);
 
-        dbReference = FirebaseDatabase.getInstance().getReference("restaurants");
-
-        /**
-         *         This listener is guaranteed to be called only after "ChildEvent".
-         *         Thus it notifies the end of the children
-         */
-        dbReferenceList.add(new MyDatabaseReference(dbReference));
-        int indexReference= dbReferenceList.size()-1;
-        ValueEventListener valueEventListener;
-
-        dbReferenceList.get(indexReference).getReference().addValueEventListener(valueEventListener= new ValueEventListener() {
-
+        /** Button to show map */
+        menu.findItem(R.id.favorite_id).setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
             @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                handler.sendEmptyMessage(0);
-            }
+            public boolean onMenuItemClick(MenuItem item) {
 
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
-                Log.d("matte", "ValueEventiListener : OnCancelled() invoked");
-                handler.sendEmptyMessage(0);
+                /**
+                 * GO FROM SEARCH RESTAURANT TO YOUR FAVORITE
+                 */
+                Navigation.findNavController(fragView).navigate(R.id.action_restaurantSearchFragment_id_to_favoriteRestaurantFragment_id);
+                return true;
             }
         });
 
-        ChildEventListener childEventListener;
-        dbReference.addChildEventListener(childEventListener= new ChildEventListener() {
-            @Override
-            public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
-                Log.d("matte", "onChildAdded | PREVIOUS CHILD: " + s);
-
-
-                if(dataSnapshot.hasChild("Name") &&
-                        dataSnapshot.hasChild("Type") &&
-                        dataSnapshot.child("Type").hasChild("it") &&
-                        dataSnapshot.child("Type").hasChild("en") &&
-                        dataSnapshot.hasChild("IsActive") &&
-                        dataSnapshot.hasChild("PriceRange") &&
-                        dataSnapshot.hasChild("DeliveryCost") &&
-                        dataSnapshot.hasChild("photoUrl")
-                )
-                {
-
-                    final String id = dataSnapshot.getKey();
-                    String name = dataSnapshot.child("Name").getValue().toString();
-                    String type = dataSnapshot.child("Type").child(localeShort).getValue().toString();
-                    Boolean isOpen = (Boolean) dataSnapshot.child("IsActive").getValue();
-                    int priceRange = Integer.parseInt(dataSnapshot.child("PriceRange").getValue().toString());
-                    double deliveryCost = Double.parseDouble(dataSnapshot.child("DeliveryCost").getValue().toString().replace(",", "."));
-                    final String imageUrl = dataSnapshot.child("photoUrl").getValue().toString();
-                    //insert before the download because otherwise it can happen that the download finish before
-                    //  and the put raise exception
-                    Restaurant resObj = new Restaurant(id, "", name, type, isOpen, priceRange, deliveryCost);
-
-                    //Check if restaurant has reviews
-                    if(!dataSnapshot.hasChild("Ratings")){
-                        resObj.setTotalReviews((long)0);
-                        resObj.computeAvgStars(0);
-                    }else{
-                        //If yes, compute avg rating
-                        int totalStars = 0;
-                        resObj.setTotalReviews(dataSnapshot.child("Ratings").getChildrenCount());
-                        for (DataSnapshot ds : dataSnapshot.child("Ratings").getChildren()){
-                            totalStars += Integer.parseInt(ds.child("rate").getValue().toString());
-                        }
-                        resObj.computeAvgStars(totalStars);
-                    }
-
-                    //add to the original list
-                    restaurantMap.put(id, resObj);
-                    restaurantList.add(resObj);
-
-                    StorageReference photoReference = FirebaseStorage.getInstance().getReferenceFromUrl(imageUrl);
-                    final long ONE_MEGABYTE = 1024 * 1024;
-                    photoReference.getBytes(ONE_MEGABYTE).addOnSuccessListener(new OnSuccessListener<byte[]>() {
-                        @Override
-                        public void onSuccess(byte[] bytes) {
-                            String s = imageUrl;
-                            Log.d("matte", "onSuccess | restaurantID: "+id);
-                           // Bitmap bmp = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
-                            restaurantMap.get(id).setImage(s);
-                            recyclerAdapter.notifyDataSetChanged();
-                        }
-                    }).addOnFailureListener(new OnFailureListener() {
-                        @Override
-                        public void onFailure(@NonNull Exception exception) {
-                            String s = "";
-                            Log.d("matte", "onFailure() : excp -> "+exception.getMessage()
-                                    +"| restaurantID: "+id);
-                        }
-                    });
-
-
-
-                    //check the filter before display
-                    if (isValidToDisplay(resObj))
-                        addToDisplay(resObj);
-                }
-
-            }
-
-            @Override
-            public void onChildChanged(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
-                Log.d("matte", "onChildChanged | PREVIOUS CHILD: " + s);
-
-                if(dataSnapshot.hasChild("Name") &&
-                    dataSnapshot.hasChild("Type") &&
-                    dataSnapshot.child("Type").hasChild("it") &&
-                    dataSnapshot.child("Type").hasChild("en") &&
-                    dataSnapshot.hasChild("IsActive") &&
-                    dataSnapshot.hasChild("PriceRange") &&
-                    dataSnapshot.hasChild("DeliveryCost") &&
-                    dataSnapshot.hasChild("photoUrl")
-                )
-                {
-                    final String id = dataSnapshot.getKey();
-                    String name = dataSnapshot.child("Name").getValue().toString();
-                    String type = dataSnapshot.child("Type").child(localeShort).getValue().toString();
-                    Boolean isOpen = (Boolean) dataSnapshot.child("IsActive").getValue();
-                    int priceRange = Integer.parseInt(dataSnapshot.child("PriceRange").getValue().toString());
-                    double deliveryCost = Double.parseDouble(dataSnapshot.child("DeliveryCost").getValue().toString().replace(",", "."));
-                    final String imageUrl = dataSnapshot.child("photoUrl").getValue().toString();
-                    int totalStars = 0;
-                    long totalReviews;
-
-                    //Check if restaurant has reviews
-                    if(!dataSnapshot.hasChild("Ratings")){
-                        totalReviews=0;
-                        totalStars=0;
-                    }else{
-                        //If yes, compute avg rating
-                        totalReviews = dataSnapshot.child("Ratings").getChildrenCount();
-                        for (DataSnapshot ds : dataSnapshot.child("Ratings").getChildren()){
-                            totalStars += Integer.parseInt(ds.child("rate").getValue().toString());
-                        }
-                    }
-
-                    Restaurant resObj;
-                    if(restaurantMap.containsKey(id)) {
-                        resObj = restaurantMap.get(id);
-                        resObj.setName(name);
-                        resObj.setType(type);
-                        resObj.setIsOpen(isOpen);
-                        resObj.setPriceRange(priceRange);
-                        resObj.setDeliveryCost(deliveryCost);
-                        resObj.setTotalReviews(totalReviews);
-                        resObj.computeAvgStars(totalStars);
-                        //recyclerAdapter.updateLayout();
-                        //insert the element by keeping the actual order after checking the filter
-                        if (isValidToDisplay(resObj)) {
-                            if(!currDisplayedList.contains(resObj))
-                                addToDisplay(resObj);
-                            else
-                                recyclerAdapter.updateLayout();
-                        }
-                        else if(currDisplayedList.contains(resObj))
-                            removeFromDisplay(resObj);
-                    }
-                    else {
-                        resObj= new Restaurant(id, "", name, type, isOpen, priceRange, deliveryCost);
-                        resObj.setTotalReviews(totalReviews);
-                        resObj.computeAvgStars(totalStars);
-                        restaurantMap.put(id, resObj);
-                        restaurantList.add(resObj);
-                        if (isValidToDisplay(resObj))
-                            addToDisplay(resObj);
-                    }
-
-                    //check the new image
-                    StorageReference photoReference = FirebaseStorage.getInstance().getReferenceFromUrl(imageUrl);
-                    final long ONE_MEGABYTE = 1024 * 1024;
-                    photoReference.getBytes(ONE_MEGABYTE).addOnSuccessListener(new OnSuccessListener<byte[]>() {
-                        @Override
-                        public void onSuccess(byte[] bytes) {
-                            Log.d("matte", "onSuccess");
-                            Bitmap bmp = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
-                            restaurantMap.get(id).setImage(imageUrl);
-                            recyclerAdapter.notifyDataSetChanged();
-                        }
-                    }).addOnFailureListener(new OnFailureListener() {
-                        @Override
-                        public void onFailure(@NonNull Exception exception) {
-                            Log.d("matte", "onFailure() : excp -> "+exception.getMessage());
-                            restaurantMap.get(id).setImage("");
-                        }
-                    });
-
-                }
-
-            }
-
-            @Override
-            public void onChildRemoved(@NonNull DataSnapshot dataSnapshot) {
-                Log.d("matte", "onChildRemoved");
-
-                String id = dataSnapshot.getKey();
-                Restaurant toRemove = restaurantMap.get(id);
-                restaurantMap.remove(id);
-                restaurantList.remove(toRemove);
-                removeFromDisplay(toRemove);
-            }
-
-            @Override
-            public void onChildMoved(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
-                Log.d("matte", "onChildMoved | PREVIOUS CHILD: " + s);
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
-                Log.d("matte", "onCancelled | ERROR: " + databaseError.getDetails() +
-                        " | MESSAGE: " + databaseError.getMessage());
-            }
-        });
-
-        dbReferenceList.get(indexReference).setValueListener(valueEventListener);
-        dbReferenceList.get(indexReference).setChildListener(childEventListener);
+        super.onCreateOptionsMenu(menu, inflater);
     }
-
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
@@ -396,6 +195,7 @@ public class RestaurantSearchFragment extends Fragment {
 
 
         sv = (SearchView) fragView.findViewById(R.id.searchView);
+        sv.setFocusable(false);
         sv.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
 
             int previousLen, currLen;
@@ -533,15 +333,6 @@ public class RestaurantSearchFragment extends Fragment {
                 filterFrag.show(ft, "filter_fragment");
             }
         });
-
-        favoriteListButton = (Button) fragView.findViewById(R.id.favorite_list);
-        favoriteListButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Navigation.findNavController(v).navigate(R.id.action_restaurantSearchFragment_id_to_favoriteRestaurantFragment_id);
-            }
-        });
-
     }
 
     @Override
@@ -564,13 +355,233 @@ public class RestaurantSearchFragment extends Fragment {
 
     }
 
+    private void fillFields() {
+        Locale locale = Locale.getDefault();
+        // get "en" or "it"
+        final String localeShort = locale.toString().substring(0, 2);
+
+        dbReference = FirebaseDatabase.getInstance().getReference("restaurants");
+
+        /**
+         *         This listener is guaranteed to be called only after "ChildEvent".
+         *         Thus it notifies the end of the children
+         */
+        dbReferenceList.add(new MyDatabaseReference(dbReference));
+        int indexReference= dbReferenceList.size()-1;
+        ValueEventListener valueEventListener;
+
+        dbReferenceList.get(indexReference).getReference().addValueEventListener(valueEventListener= new ValueEventListener() {
+
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                handler.sendEmptyMessage(0);
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+                Log.d("matte", "ValueEventiListener : OnCancelled() invoked");
+                handler.sendEmptyMessage(0);
+            }
+        });
+
+        ChildEventListener childEventListener;
+        dbReference.addChildEventListener(childEventListener= new ChildEventListener() {
+            @Override
+            public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+                Log.d("matte", "onChildAdded | PREVIOUS CHILD: " + s);
+
+
+                if(dataSnapshot.hasChild("Name") &&
+                        dataSnapshot.hasChild("Type") &&
+                        dataSnapshot.child("Type").hasChild("it") &&
+                        dataSnapshot.child("Type").hasChild("en") &&
+                        dataSnapshot.hasChild("IsActive") &&
+                        dataSnapshot.hasChild("PriceRange") &&
+                        dataSnapshot.hasChild("DeliveryCost") &&
+                        dataSnapshot.hasChild("photoUrl")
+                )
+                {
+
+                    final String id = dataSnapshot.getKey();
+                    String name = dataSnapshot.child("Name").getValue().toString();
+                    String type = dataSnapshot.child("Type").child(localeShort).getValue().toString();
+                    Boolean isOpen = (Boolean) dataSnapshot.child("IsActive").getValue();
+                    int priceRange = Integer.parseInt(dataSnapshot.child("PriceRange").getValue().toString());
+                    double deliveryCost = Double.parseDouble(dataSnapshot.child("DeliveryCost").getValue().toString().replace(",", "."));
+                    final String imageUrl = dataSnapshot.child("photoUrl").getValue().toString();
+                    //insert before the download because otherwise it can happen that the download finish before
+                    //  and the put raise exception
+                    Restaurant resObj = new Restaurant(id, "", name, type, isOpen, priceRange, deliveryCost);
+
+                    //Check if restaurant has reviews
+                    if(!dataSnapshot.hasChild("Ratings")){
+                        resObj.setTotalReviews((long)0);
+                        resObj.computeAvgStars(0);
+                    }else{
+                        //If yes, compute avg rating
+                        int totalStars = 0;
+                        resObj.setTotalReviews(dataSnapshot.child("Ratings").getChildrenCount());
+                        for (DataSnapshot ds : dataSnapshot.child("Ratings").getChildren()){
+                            totalStars += Integer.parseInt(ds.child("rate").getValue().toString());
+                        }
+                        resObj.computeAvgStars(totalStars);
+                    }
+
+                    //add to the original list
+                    restaurantMap.put(id, resObj);
+                    restaurantList.add(resObj);
+
+                    StorageReference photoReference = FirebaseStorage.getInstance().getReferenceFromUrl(imageUrl);
+                    final long ONE_MEGABYTE = 1024 * 1024;
+                    photoReference.getBytes(ONE_MEGABYTE).addOnSuccessListener(new OnSuccessListener<byte[]>() {
+                        @Override
+                        public void onSuccess(byte[] bytes) {
+                            String s = imageUrl;
+                            Log.d("matte", "onSuccess | restaurantID: "+id);
+                            // Bitmap bmp = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
+                            restaurantMap.get(id).setImage(s);
+                            recyclerAdapter.notifyDataSetChanged();
+                        }
+                    }).addOnFailureListener(new OnFailureListener() {
+                        @Override
+                        public void onFailure(@NonNull Exception exception) {
+                            String s = "";
+                            Log.d("matte", "onFailure() : excp -> "+exception.getMessage()
+                                    +"| restaurantID: "+id);
+                        }
+                    });
+
+
+
+                    //check the filter before display
+                    if (isValidToDisplay(resObj))
+                        addToDisplay(resObj);
+                }
+
+            }
+
+            @Override
+            public void onChildChanged(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+                Log.d("matte", "onChildChanged | PREVIOUS CHILD: " + s);
+
+                if(dataSnapshot.hasChild("Name") &&
+                        dataSnapshot.hasChild("Type") &&
+                        dataSnapshot.child("Type").hasChild("it") &&
+                        dataSnapshot.child("Type").hasChild("en") &&
+                        dataSnapshot.hasChild("IsActive") &&
+                        dataSnapshot.hasChild("PriceRange") &&
+                        dataSnapshot.hasChild("DeliveryCost") &&
+                        dataSnapshot.hasChild("photoUrl")
+                )
+                {
+                    final String id = dataSnapshot.getKey();
+                    String name = dataSnapshot.child("Name").getValue().toString();
+                    String type = dataSnapshot.child("Type").child(localeShort).getValue().toString();
+                    Boolean isOpen = (Boolean) dataSnapshot.child("IsActive").getValue();
+                    int priceRange = Integer.parseInt(dataSnapshot.child("PriceRange").getValue().toString());
+                    double deliveryCost = Double.parseDouble(dataSnapshot.child("DeliveryCost").getValue().toString().replace(",", "."));
+                    final String imageUrl = dataSnapshot.child("photoUrl").getValue().toString();
+                    int totalStars = 0;
+                    long totalReviews;
+
+                    //Check if restaurant has reviews
+                    if(!dataSnapshot.hasChild("Ratings")){
+                        totalReviews=0;
+                        totalStars=0;
+                    }else{
+                        //If yes, compute avg rating
+                        totalReviews = dataSnapshot.child("Ratings").getChildrenCount();
+                        for (DataSnapshot ds : dataSnapshot.child("Ratings").getChildren()){
+                            totalStars += Integer.parseInt(ds.child("rate").getValue().toString());
+                        }
+                    }
+
+                    Restaurant resObj;
+                    if(restaurantMap.containsKey(id)) {
+                        resObj = restaurantMap.get(id);
+                        resObj.setName(name);
+                        resObj.setType(type);
+                        resObj.setIsOpen(isOpen);
+                        resObj.setPriceRange(priceRange);
+                        resObj.setDeliveryCost(deliveryCost);
+                        resObj.setTotalReviews(totalReviews);
+                        resObj.computeAvgStars(totalStars);
+                        //recyclerAdapter.updateLayout();
+                        //insert the element by keeping the actual order after checking the filter
+                        if (isValidToDisplay(resObj)) {
+                            if(!currDisplayedList.contains(resObj))
+                                addToDisplay(resObj);
+                            else
+                                recyclerAdapter.updateLayout();
+                        }
+                        else if(currDisplayedList.contains(resObj))
+                            removeFromDisplay(resObj);
+                    }
+                    else {
+                        resObj= new Restaurant(id, "", name, type, isOpen, priceRange, deliveryCost);
+                        resObj.setTotalReviews(totalReviews);
+                        resObj.computeAvgStars(totalStars);
+                        restaurantMap.put(id, resObj);
+                        restaurantList.add(resObj);
+                        if (isValidToDisplay(resObj))
+                            addToDisplay(resObj);
+                    }
+
+                    //check the new image
+                    StorageReference photoReference = FirebaseStorage.getInstance().getReferenceFromUrl(imageUrl);
+                    final long ONE_MEGABYTE = 1024 * 1024;
+                    photoReference.getBytes(ONE_MEGABYTE).addOnSuccessListener(new OnSuccessListener<byte[]>() {
+                        @Override
+                        public void onSuccess(byte[] bytes) {
+                            Log.d("matte", "onSuccess");
+                            Bitmap bmp = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
+                            restaurantMap.get(id).setImage(imageUrl);
+                            recyclerAdapter.notifyDataSetChanged();
+                        }
+                    }).addOnFailureListener(new OnFailureListener() {
+                        @Override
+                        public void onFailure(@NonNull Exception exception) {
+                            Log.d("matte", "onFailure() : excp -> "+exception.getMessage());
+                            restaurantMap.get(id).setImage("");
+                        }
+                    });
+
+                }
+
+            }
+
+            @Override
+            public void onChildRemoved(@NonNull DataSnapshot dataSnapshot) {
+                Log.d("matte", "onChildRemoved");
+
+                String id = dataSnapshot.getKey();
+                Restaurant toRemove = restaurantMap.get(id);
+                restaurantMap.remove(id);
+                restaurantList.remove(toRemove);
+                removeFromDisplay(toRemove);
+            }
+
+            @Override
+            public void onChildMoved(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+                Log.d("matte", "onChildMoved | PREVIOUS CHILD: " + s);
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+                Log.d("matte", "onCancelled | ERROR: " + databaseError.getDetails() +
+                        " | MESSAGE: " + databaseError.getMessage());
+            }
+        });
+
+        dbReferenceList.get(indexReference).setValueListener(valueEventListener);
+        dbReferenceList.get(indexReference).setChildListener(childEventListener);
+    }
 
     private void restoreOriginalList() {
         currDisplayedList.clear();
         for (Restaurant r : restaurantList)
             currDisplayedList.add(r);
     }
-
 
     private void addToDisplay(Restaurant r) {
         //add new item to the displayed list

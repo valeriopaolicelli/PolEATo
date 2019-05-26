@@ -8,21 +8,25 @@
 
     <fragment
         android:id="@+id/pendingReservations_id"
-        android:name="com.mad.poleato.PendingReservations.PendingReservations"
+        android:name="com.mad.poleato.PendingRequests.RequestsFragment"
         android:label="@string/title_actionbar_pendingReservations"
-        tools:layout="@layout/fragment_pending_reservations" >
+        tools:layout="@layout/pending_requests_recycler" >
         <action
             android:id="@+id/action_pendingReservations_id_to_signInActivity"
             app:destination="@id/signInActivity"
             app:popUpTo="@+id/signInActivity"
             app:popUpToInclusive="true" />
+        <action
+            android:id="@+id/action_pendingReservations_id_to_ride_id"
+            app:destination="@id/rides_id"
+            app:popUpTo="@+id/rides_id"
+            app:popUpToInclusive="true">
+        </action>
     </fragment>
-
-
 
     <fragment
         android:id="@+id/rides_id"
-        android:name="com.mad.poleato.Rides.RidesFragment"
+        android:name="com.mad.poleato.Ride.RideFragment"
         android:label="@string/title_actionbar_deliveryRide"
         tools:layout="@layout/ride_layout" >
         <action
@@ -30,6 +34,12 @@
             app:destination="@id/signInActivity"
             app:popUpTo="@+id/signInActivity"
             app:popUpToInclusive="true" />
+        <action
+            android:id="@+id/action_ride_id_to_pendingReservations_id"
+            app:destination="@id/pendingReservations_id"
+            app:popUpTo="@+id/pendingReservations_id"
+            app:popUpToInclusive="true">
+        </action>
     </fragment>
 
 

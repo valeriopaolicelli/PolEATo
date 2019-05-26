@@ -38,7 +38,9 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class SignInActivity extends AppCompatActivity {
 
@@ -58,7 +60,7 @@ public class SignInActivity extends AppCompatActivity {
     private ConstraintLayout login_constraint;
     private ProgressBar progress_bar;
 
-    private List<MyDatabaseReference> dbReferenceList;
+    private Map<String, MyDatabaseReference> dbReferenceList;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -105,7 +107,7 @@ public class SignInActivity extends AppCompatActivity {
         login_constraint = (ConstraintLayout) findViewById(R.id.login_constraint);
         progress_bar = (ProgressBar) findViewById(R.id.progressBar);
 
-        dbReferenceList= new ArrayList<>();
+        dbReferenceList = new HashMap<>();
         //default: show the progressBar only
         show_progress();
 
@@ -135,12 +137,9 @@ public class SignInActivity extends AppCompatActivity {
         // Check if user is signed in (non-null) and update UI accordingly.
         FirebaseUser currentUser = mAuth.getCurrentUser();
         if(currentUser != null) {
-            DatabaseReference reference = FirebaseDatabase.getInstance().getReference("users").child(currentUser.getUid());
-            dbReferenceList.add(new MyDatabaseReference(reference));
-            int indexReference= dbReferenceList.size()-1;
-            ValueEventListener valueEventListener;
-
-            dbReferenceList.get(indexReference).getReference().addValueEventListener(valueEventListener= new ValueEventListener() {
+            dbReferenceList.put("users", new MyDatabaseReference(FirebaseDatabase.getInstance().getReference("users")
+                                                                        .child(currentUser.getUid())));
+            dbReferenceList.get("users").setValueListener(new ValueEventListener() {
                 @Override
                 public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                     if (dataSnapshot.exists())
@@ -157,8 +156,6 @@ public class SignInActivity extends AppCompatActivity {
                     Log.d("Valerio", "SignIn restaurant -> onStart -> onCancelled: " + databaseError.getMessage());
                 }
             });
-
-            dbReferenceList.get(indexReference).setValueListener(valueEventListener);
         }
         else
             show_login_form();
@@ -186,12 +183,9 @@ public class SignInActivity extends AppCompatActivity {
                             Log.d("matte", "signInWithEmail:success");
                             FirebaseUser user = mAuth.getCurrentUser();
                             if(user != null) {
-                                DatabaseReference reference = FirebaseDatabase.getInstance().getReference("users").child(user.getUid());
-                                dbReferenceList.add(new MyDatabaseReference(reference));
-                                int indexReference= dbReferenceList.size()-1;
-                                ValueEventListener valueEventListener;
-
-                                dbReferenceList.get(indexReference).getReference().addValueEventListener(valueEventListener= new ValueEventListener() {
+                                dbReferenceList.put("users", new MyDatabaseReference(FirebaseDatabase.getInstance().getReference("users")
+                                                                                                .child(user.getUid())));
+                                dbReferenceList.get("users").setValueListener(new ValueEventListener() {
                                     @Override
                                     public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                                         if (dataSnapshot.exists())
@@ -211,8 +205,6 @@ public class SignInActivity extends AppCompatActivity {
                                         Log.d("Valerio", "SignIn restaurant -> onStart -> onCancelled: " + databaseError.getMessage());
                                     }
                                 });
-
-                                dbReferenceList.get(indexReference).setValueListener(valueEventListener);
                             }
                         } else {
                             // If sign in fails, display a message to the user.
@@ -426,8 +418,7 @@ public class SignInActivity extends AppCompatActivity {
     @Override
     public void onDestroy() {
         super.onDestroy();
-        for(int i=0; i < dbReferenceList.size(); i++){
-            dbReferenceList.get(i).removeAllListener();
-        }
+        for(MyDatabaseReference ref : dbReferenceList.values())
+            ref.removeAllListener();
     }
 }

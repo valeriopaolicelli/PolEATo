@@ -106,7 +106,6 @@ public class EditProfileFragment extends Fragment implements TimePickerDialog.On
     private Map<String, EditText> editTextFields;
     private Map<String, CheckBox> checkBoxes;
     private Set<String> checkedTypes;
-    private DatabaseReference reference;
 
     private View v; //this view
     private FloatingActionButton change_im;
@@ -114,12 +113,6 @@ public class EditProfileFragment extends Fragment implements TimePickerDialog.On
     private Switch statusSwitch;
 
     private ProgressDialog progressDialog;
-    private Handler handler = new Handler() {
-        @Override
-        public void handleMessage(Message msg) {
-            progressDialog.dismiss();
-        }
-    };
 
     private String localeShort;
     private boolean priceRangeUninitialized;
@@ -131,7 +124,7 @@ public class EditProfileFragment extends Fragment implements TimePickerDialog.On
     private int FLAG_CLOSE_HOUR = 1;
     private int FLAG_HOUR;
 
-    private List<MyDatabaseReference> dbReferenceList;
+    private MyDatabaseReference profileReference;
     int indexReference;
 
 
@@ -210,7 +203,6 @@ public class EditProfileFragment extends Fragment implements TimePickerDialog.On
 
         OneSignal.sendTag("User_ID", currentUserID);
 
-        dbReferenceList= new ArrayList<>();
     }
 
 
@@ -366,12 +358,9 @@ public class EditProfileFragment extends Fragment implements TimePickerDialog.On
     private void fillFields(){
 
         //Download text infos
-        reference = FirebaseDatabase.getInstance().getReference("restaurants/"+ currentUserID);
-        dbReferenceList.add(new MyDatabaseReference(reference));
-        indexReference= dbReferenceList.size()-1;
-        ValueEventListener valueEventListener;
-
-        dbReferenceList.get(indexReference).getReference().addValueEventListener(valueEventListener= new ValueEventListener() {
+        profileReference = new MyDatabaseReference(FirebaseDatabase.getInstance()
+                                                .getReference("restaurants/"+ currentUserID));
+        profileReference.setValueListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
 
@@ -423,7 +412,6 @@ public class EditProfileFragment extends Fragment implements TimePickerDialog.On
                 myToast.show();
             }
         });
-        dbReferenceList.get(indexReference).setValueListener(valueEventListener);
 
         //Download the profile pic
         StorageReference storageReference = FirebaseStorage.getInstance().getReference();
@@ -436,7 +424,7 @@ public class EditProfileFragment extends Fragment implements TimePickerDialog.On
                 Bitmap bmp = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
                 profileImage.setImageBitmap(bmp);
                 if(progressDialog.isShowing())
-                    handler.sendEmptyMessage(0);
+                    progressDialog.dismiss();
 
             }
         }).addOnFailureListener(new OnFailureListener() {
@@ -446,7 +434,7 @@ public class EditProfileFragment extends Fragment implements TimePickerDialog.On
                 //set default image if no image was set
                 profileImage.setImageResource(R.drawable.plate_fork);
                 if(progressDialog.isShowing())
-                    handler.sendEmptyMessage(0);
+                    progressDialog.dismiss();
             }
         });
 
@@ -781,6 +769,8 @@ public class EditProfileFragment extends Fragment implements TimePickerDialog.On
 
             }
             //insert both it and en
+            DatabaseReference reference = FirebaseDatabase.getInstance().getReference("restaurants")
+                                                .child(currentUserID);
             reference.child("Type").child(localeShort).setValue(types);
             reference.child("Type").child(otherLocale).setValue(translatedTypes);
 
@@ -819,7 +809,7 @@ public class EditProfileFragment extends Fragment implements TimePickerDialog.On
 
         }else{
             if(progressDialog.isShowing())
-                handler.sendEmptyMessage(0);
+                progressDialog.dismiss();
         }
     }
 
@@ -849,7 +839,7 @@ public class EditProfileFragment extends Fragment implements TimePickerDialog.On
                                         .child(currentUserID +"/photoUrl")
                                         .setValue(downloadUrl);
                                 if(progressDialog.isShowing())
-                                    handler.sendEmptyMessage(0);
+                                    progressDialog.dismiss();
                             }
                         });
                         // taskSnapshot.getMetadata() contains file metadata such as size, content-type, and download URL.
@@ -881,7 +871,7 @@ public class EditProfileFragment extends Fragment implements TimePickerDialog.On
                             myToast.show();
 
                             if(progressDialog.isShowing())
-                                handler.sendEmptyMessage(0);
+                                progressDialog.dismiss();
                         }
                         /**
                          * GO TO ACCOUNT_FRAGMENT
@@ -1098,8 +1088,12 @@ public class EditProfileFragment extends Fragment implements TimePickerDialog.On
     @Override
     public void onDestroy() {
         super.onDestroy();
-        for(int i=0; i < dbReferenceList.size(); i++){
-            dbReferenceList.get(i).removeAllListener();
-        }
+        profileReference.removeAllListener();
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        profileReference.removeAllListener();
     }
 }

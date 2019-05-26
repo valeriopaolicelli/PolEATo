@@ -37,6 +37,7 @@ import com.google.firebase.storage.StorageReference;
 import com.mad.poleato.Classes.Restaurant;
 import com.mad.poleato.MyDatabaseReference;
 import com.mad.poleato.R;
+import com.onesignal.OneSignal;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -108,6 +109,13 @@ public class FavoriteRestaurantFragment extends Fragment {
         FirebaseUser currentUser = mAuth.getCurrentUser();
         currentUserID = currentUser.getUid();
 
+        OneSignal.startInit(getContext())
+                .inFocusDisplaying(OneSignal.OSInFocusDisplayOption.Notification)
+                .unsubscribeWhenNotificationsAreDisabled(true)
+                .init();
+
+        OneSignal.setSubscription(true);
+
         if(getActivity() != null)
             progressDialog = ProgressDialog.show(getActivity(), "", getString(R.string.loading));
 
@@ -131,7 +139,6 @@ public class FavoriteRestaurantFragment extends Fragment {
         fragView = inflater.inflate(R.layout.favorite_restaurant_recyclerview, container, false);
 
         return fragView;
-
     }
 
     private void fillFields() {
