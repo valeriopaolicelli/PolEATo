@@ -289,6 +289,13 @@ public class ReservationFragment extends Fragment {
                         nameDish = dish.child("name").getValue().toString();
                         quantity = Integer.parseInt(dish.child("selectedQuantity").getValue().toString());
                         note= dish.child("customerNotes").getValue().toString();
+                        if(note.equals("")){
+                            if(localeShort.equals("it"))
+                                note= "Nessuna nota dal cliente";
+                            else
+                                note= "No customer notes";
+                        }
+
                         foodID= dish.child("foodID").getValue().toString();
                         d = new Dish(nameDish, quantity, note, foodID);
                         r.addDishtoReservation(d);
@@ -382,6 +389,13 @@ public class ReservationFragment extends Fragment {
                         quantity = Integer.parseInt(dish.child("selectedQuantity").getValue().toString());
                         foodID = dish.child("foodID").getValue().toString();
                         note = dish.child("customerNotes").getValue().toString();
+                        if(note.equals("")){
+                            if(localeShort.equals("it"))
+                                note= "Nessun commento dal cliente";
+                            else
+                                note= "No customer notes";
+                        }
+
                         d = new Dish(nameDish, quantity, note, foodID);
 
                         dishes.add(d);
