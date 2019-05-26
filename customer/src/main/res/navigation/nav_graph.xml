@@ -75,7 +75,7 @@
     <fragment
         android:id="@+id/myReviewsFragment_id"
         android:name="com.mad.poleato.MyReviews.MyReviewsFragment"
-        android:label="fragment_my_reviews"
+        android:label="@string/title_actionbar_myReviews"
         tools:layout="@layout/fragment_my_reviews" >
         <action
             android:id="@+id/action_myReviewsFragment_id_to_signInActivity"

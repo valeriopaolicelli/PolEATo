@@ -5,10 +5,12 @@
     android:layout_height="match_parent"
     tools:context=".MyReviews.MyReviewsFragment">
 
-    <!-- TODO: Update blank fragment layout -->
-    <TextView
+
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/recyclerView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:text="@string/hello_blank_fragment" />
-
+        android:layout_marginBottom="?attr/actionBarSize"
+        android:scrollbars="vertical"
+        tools:listitem="@layout/fragment_my_reviews_child" />
 </FrameLayout>
