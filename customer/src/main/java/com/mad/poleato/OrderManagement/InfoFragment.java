@@ -247,4 +247,11 @@ public class InfoFragment extends Fragment {
         for (MyDatabaseReference my_ref : dbReferenceList.values())
             my_ref.removeAllListener();
     }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        for(MyDatabaseReference ref : dbReferenceList.values())
+            ref.removeAllListener();
+    }
 }

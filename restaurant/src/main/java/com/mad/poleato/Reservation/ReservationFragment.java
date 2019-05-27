@@ -530,4 +530,11 @@ public class ReservationFragment extends Fragment {
         for(MyDatabaseReference my_ref : dbReferenceList.values())
             my_ref.removeAllListener();
     }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        for(MyDatabaseReference my_ref : dbReferenceList.values())
+            my_ref.removeAllListener();
+    }
 }

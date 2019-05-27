@@ -37,6 +37,7 @@ import com.google.firebase.database.ValueEventListener;
 import com.mad.poleato.ConnectionManager;
 import com.mad.poleato.Classes.Food;
 import com.mad.poleato.Interface;
+import com.mad.poleato.MyDatabaseReference;
 import com.mad.poleato.OrderManagement.Order;
 import com.mad.poleato.R;
 import com.mad.poleato.TimePickerFragment;
@@ -50,6 +51,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 
 import java.util.Scanner;
@@ -80,14 +82,21 @@ public class CartActivity extends AppCompatActivity implements Interface,TimePic
         }
     };
 
+    private HashMap<String, MyDatabaseReference> dbReferenceList;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         setContentView(R.layout.activity_cart_layout);
+
         connectionManager = new ConnectionManager();
+
         mAuth = FirebaseAuth.getInstance();
         FirebaseUser currentUser = mAuth.getCurrentUser();
         currentUserID = currentUser.getUid();
+
+        dbReferenceList= new HashMap<>();
 
         myToast = Toast.makeText(this, "", Toast.LENGTH_SHORT);
 
@@ -210,13 +219,6 @@ public class CartActivity extends AppCompatActivity implements Interface,TimePic
         registerReceiver(networkReceiver,filter);
     }
 
-    @Override
-    protected void onStop() {
-        super.onStop();
-        unregisterReceiver(networkReceiver);
-
-    }
-
     private void sendNotification() {
         AsyncTask.execute(new Runnable() {
             @Override
@@ -284,12 +286,6 @@ public class CartActivity extends AppCompatActivity implements Interface,TimePic
         });
     }
 
-
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-    }
-
     @Override
     public void onBackPressed() {
         if(!flag){
@@ -354,7 +350,9 @@ public class CartActivity extends AppCompatActivity implements Interface,TimePic
 
         //Get closing hour of restaurant
         DatabaseReference closureReference = FirebaseDatabase.getInstance().getReference("restaurants/" + order.getRestaurantID()+"/Close");
-        closureReference.addListenerForSingleValueEvent(new ValueEventListener() {
+        dbReferenceList.put("close", new MyDatabaseReference(closureReference));
+
+        dbReferenceList.get("close").setSingleValueListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 String closure[] = dataSnapshot.getValue().toString().split(":");
@@ -370,8 +368,10 @@ public class CartActivity extends AppCompatActivity implements Interface,TimePic
 
         FirebaseDatabase.getInstance().getReference("time").setValue(ServerValue.TIMESTAMP);
         DatabaseReference timeReference = FirebaseDatabase.getInstance().getReference("time");
+        dbReferenceList.put("time", new MyDatabaseReference(timeReference));
+
         //check if hour selected by the user is between server time and closing time
-        timeReference.addListenerForSingleValueEvent(new ValueEventListener() {
+        dbReferenceList.get("time").setSingleValueListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                    Long hourInMillis = Long.parseLong(dataSnapshot.getValue().toString());
@@ -400,12 +400,26 @@ public class CartActivity extends AppCompatActivity implements Interface,TimePic
                         }
                     if(timeok[0])
                         time.setText(hourStr +":"+minStr);
-
             }
 
             @Override
             public void onCancelled(@NonNull DatabaseError databaseError) {
             }
         });
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        unregisterReceiver(networkReceiver);
+        for(MyDatabaseReference my_ref : dbReferenceList.values())
+            my_ref.removeAllListener();
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        for(MyDatabaseReference my_ref : dbReferenceList.values())
+            my_ref.removeAllListener();
     }
 }

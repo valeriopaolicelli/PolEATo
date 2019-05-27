@@ -58,12 +58,11 @@ public class HistoryFragment extends Fragment {
     private int width;
     private String localeShort;
     private ProgressDialog progressDialog;
-    private DatabaseReference customer; //to retrieve the customer details -> global to handle async behaviour of FB
     private List<String> customerDetails;
     private List<Reservation> reservations;
     private HashMap<String, List<Dish>> listHash = new HashMap<>();
 
-    private List<MyDatabaseReference> dbReferenceList;
+    private HashMap<String, MyDatabaseReference> dbReferenceList;
     private int indexCustomerAdded;
     private int indexCustomerChanged;
 
@@ -93,7 +92,7 @@ public class HistoryFragment extends Fragment {
         FirebaseUser currentUser = mAuth.getCurrentUser();
         currentUserID = currentUser.getUid();
 
-        dbReferenceList = new ArrayList<>();
+        dbReferenceList = new HashMap<>();
     }
 
 
@@ -136,12 +135,9 @@ public class HistoryFragment extends Fragment {
          */
         DatabaseReference referenceReservation= FirebaseDatabase.getInstance()
                 .getReference("restaurants/"+currentUserID+"/reservations");
-        dbReferenceList.add(new MyDatabaseReference(referenceReservation));
-        int indexOfReferenceInList= dbReferenceList.size()-1;
-        ValueEventListener valueEventListener;
+        dbReferenceList.put("reservations", new MyDatabaseReference(referenceReservation));
 
-        dbReferenceList.get(indexOfReferenceInList).getReference()
-                .addValueEventListener(valueEventListener= new ValueEventListener() {
+        dbReferenceList.get("reservations").setValueListener(new ValueEventListener() {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                         if(dataSnapshot.exists()){
@@ -211,7 +207,6 @@ public class HistoryFragment extends Fragment {
 
                     }
                 });
-        dbReferenceList.get(indexOfReferenceInList).setValueListener(valueEventListener);
 
         /*
          * retrieve the history of restaurant:
@@ -220,11 +215,9 @@ public class HistoryFragment extends Fragment {
 
         DatabaseReference reference = FirebaseDatabase.getInstance().getReference("restaurants")
                 .child(currentUserID).child("History");
-        dbReferenceList.add(new MyDatabaseReference(reference));
-        indexOfReferenceInList= dbReferenceList.size()-1;
+        dbReferenceList.put("history", new MyDatabaseReference(reference));
 
-        ValueEventListener valueEventListener1;
-        dbReferenceList.get(indexOfReferenceInList).getReference().addValueEventListener(valueEventListener1= new ValueEventListener() {
+        dbReferenceList.get("history").setValueListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 handler.sendEmptyMessage(0);
@@ -235,10 +228,8 @@ public class HistoryFragment extends Fragment {
                 handler.sendEmptyMessage(0);
             }
         });
-        dbReferenceList.get(indexOfReferenceInList).setValueListener(valueEventListener1);
 
-        ChildEventListener childEventListener;
-        dbReferenceList.get(indexOfReferenceInList).getReference().addChildEventListener(childEventListener= new ChildEventListener() {
+        dbReferenceList.get("history").setChildListener(new ChildEventListener() {
             @Override
             public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
                 Reservation r= null;
@@ -264,9 +255,8 @@ public class HistoryFragment extends Fragment {
 
 
                     //Retrieve through customerID the details of the customer
-                    customer= FirebaseDatabase.getInstance().getReference("customers").child(customer_id);
-                    dbReferenceList.add(new MyDatabaseReference(customer));
-                    indexCustomerAdded= dbReferenceList.size()-1;
+                    DatabaseReference customerReference= FirebaseDatabase.getInstance().getReference("customers").child(customer_id);
+                    dbReferenceList.put("customerAdded", new MyDatabaseReference(customerReference));
 
                     readData(new FirebaseCallBack() {
                         @Override
@@ -281,10 +271,9 @@ public class HistoryFragment extends Fragment {
                                     r.setPhone(customerDetails.get(3));
                                 }
                             }
-
                             listAdapter.notifyDataSetChanged();
                         }
-                    }, indexCustomerAdded);
+                    }, "customerAdded");
                     // fields setted to null only because they will be setted later in the call back of FB
                     r = new Reservation(order_id, customer_id,null, null, null, date, time,
                             status, null, totalPrice, localeShort);
@@ -352,9 +341,8 @@ public class HistoryFragment extends Fragment {
                     ArrayList<Dish> dishes= new ArrayList<>();
 
                     //Retrieve through customerID the details of the customer
-                    customer= FirebaseDatabase.getInstance().getReference("customers").child(customer_id);
-                    dbReferenceList.add(new MyDatabaseReference(customer));
-                    indexCustomerChanged= dbReferenceList.size()-1;
+                    DatabaseReference customerChanged= FirebaseDatabase.getInstance().getReference("customers").child(customer_id);
+                    dbReferenceList.put("customerChanged", new MyDatabaseReference(customerChanged));
 
                     readData(new FirebaseCallBack() {
                         @Override
@@ -371,7 +359,7 @@ public class HistoryFragment extends Fragment {
                             }
                             listAdapter.notifyDataSetChanged();
                         }
-                    }, indexCustomerChanged);
+                    }, "customerChanged");
 
                     //and for each customer (reservation) retrieve the list of dishes
                     DataSnapshot dishesOfReservation = dataSnapshot.child("dishes");
@@ -446,10 +434,9 @@ public class HistoryFragment extends Fragment {
                 myToast.show();
             }
         });
-        dbReferenceList.get(indexOfReferenceInList).setChildListener(childEventListener);
     }
 
-    private void readData(final FirebaseCallBack firebaseCallBack, int index){
+    private void readData(final FirebaseCallBack firebaseCallBack, String key){
         ValueEventListener valueEventListener = new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot ds) {
@@ -475,12 +462,19 @@ public class HistoryFragment extends Fragment {
                 myToast.show();
             }
         };
-        dbReferenceList.get(index).getReference().addListenerForSingleValueEvent(valueEventListener);
-        dbReferenceList.get(index).setValueListener(valueEventListener);
+        dbReferenceList.get(key).setSingleValueListener(valueEventListener);
     }
 
     private interface FirebaseCallBack {
         void onCallBack(List<String> customerDetails);
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        for(int i=0; i < dbReferenceList.size(); i++){
+            dbReferenceList.get(i).removeAllListener();
+        }
     }
 
     @Override

@@ -225,16 +225,6 @@ public class OrderActivity extends AppCompatActivity implements Interface {
     }
 
     @Override
-    protected void onStop() {
-        super.onStop();
-        unregisterReceiver(networkReceiver);
-        for (MyDatabaseReference my_ref : dbReferenceList.values())
-            my_ref.removeAllListener();
-        for (MyDatabaseReference my_ref : order.getDbReferenceList().values())
-            my_ref.removeAllListener();
-    }
-
-    @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case android.R.id.home:
@@ -336,5 +326,24 @@ public class OrderActivity extends AppCompatActivity implements Interface {
     @Override
     public void setQuantity(int quantity) {
         setUpBadge(quantity);
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        unregisterReceiver(networkReceiver);
+        for (MyDatabaseReference my_ref : dbReferenceList.values())
+            my_ref.removeAllListener();
+        for (MyDatabaseReference my_ref : order.getDbReferenceList().values())
+            my_ref.removeAllListener();
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        for (MyDatabaseReference my_ref : dbReferenceList.values())
+            my_ref.removeAllListener();
+        for (MyDatabaseReference my_ref : order.getDbReferenceList().values())
+            my_ref.removeAllListener();
     }
 }

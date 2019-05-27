@@ -1133,4 +1133,14 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback,
         if (geoQuery != null)
             geoQuery.removeAllListeners();
     }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        for(MyDatabaseReference ref : dbReferenceList.values())
+            ref.removeAllListener();
+
+        if (geoQuery != null)
+            geoQuery.removeAllListeners();
+    }
 }
