@@ -230,7 +230,6 @@ public class EditProfileFragment extends Fragment implements TimePickerDialog.On
         editTextFields.put("ReNewPassword", (EditText) v.findViewById(R.id.reNewPass));
 
 
-
         imageButtons.put("Name", (ImageButton) v.findViewById(R.id.cancel_name));
         imageButtons.put("Info", (ImageButton) v.findViewById(R.id.cancel_info));
         imageButtons.put("Open", (ImageButton) v.findViewById(R.id.cancel_open));
@@ -361,7 +360,6 @@ public class EditProfileFragment extends Fragment implements TimePickerDialog.On
         });
         super.onCreateOptionsMenu(menu,inflater);
     }
-
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
