@@ -111,7 +111,6 @@ public class RestaurantSearchFragment extends Fragment {
 //        setHasOptionsMenu(true);
         super.onCreate(savedInstanceState);
 
-        setHasOptionsMenu(true);
 
         restaurantMap = new HashMap<>();
         restaurantList = new ArrayList<>();
@@ -127,31 +126,6 @@ public class RestaurantSearchFragment extends Fragment {
 
     }
 
-//    @Override
-//    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-//        menu.clear();
-//        // Inflate the menu; this adds items to the action bar if it is present.
-//        inflater.inflate(R.menu.popup_account_settings, menu);
-//        menu.findItem(R.id.logout).setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
-//            @Override
-//            public boolean onMenuItemClick(MenuItem item) {
-//                //logout
-//                Log.d("matte", "Logout");
-//                FirebaseAuth.getInstance().signOut();
-//                //                OneSignal.sendTag("User_ID", "");
-//                OneSignal.setSubscription(false);
-//
-//                /**
-//                 *  GO TO LOGIN ****
-//                 */
-//                Navigation.findNavController(fragView).navigate(R.id.action_restaurantSearchFragment_id_to_signInActivity);
-//                getActivity().finish();
-//                return true;
-//            }
-//        });
-//        super.onCreateOptionsMenu(menu,inflater);
-//    }
-
     @Override
     public void onResume() {
         super.onResume();
@@ -165,28 +139,6 @@ public class RestaurantSearchFragment extends Fragment {
 
         return fragView;
 
-    }
-
-    @Override
-    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-        menu.clear();
-        /** Inflate the menu; this adds items to the action bar if it is present.*/
-        inflater.inflate(R.menu.favorite_menu, menu);
-
-        /** Button to show map */
-        menu.findItem(R.id.favorite_id).setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
-            @Override
-            public boolean onMenuItemClick(MenuItem item) {
-
-                /**
-                 * GO FROM SEARCH RESTAURANT TO YOUR FAVORITE
-                 */
-                Navigation.findNavController(fragView).navigate(R.id.action_restaurantSearchFragment_id_to_favoriteRestaurantFragment_id);
-                return true;
-            }
-        });
-
-        super.onCreateOptionsMenu(menu, inflater);
     }
 
     @Override
