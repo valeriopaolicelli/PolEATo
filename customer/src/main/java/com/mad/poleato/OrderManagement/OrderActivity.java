@@ -40,6 +40,7 @@ import com.mad.poleato.Classes.Restaurant;
 import com.onesignal.OneSignal;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 
@@ -49,13 +50,11 @@ public class OrderActivity extends AppCompatActivity implements Interface {
     private ViewPager onViewPager;
     private PageAdapter adapter;
     private Order order;
-    private DatabaseReference dbReferece;
     private ConnectionManager connectionManager;
     TextView cartItemCount;
     private int mCartItemCount = 0;
 
-    private List<MyDatabaseReference> dbReferenceList;
-    int indexReference;
+    private HashMap<String, MyDatabaseReference> dbReferenceList;
 
     private String currentUserID;
     private FirebaseAuth mAuth;
@@ -154,7 +153,7 @@ public class OrderActivity extends AppCompatActivity implements Interface {
 
         OneSignal.sendTag("User_ID", currentUserID);
 
-        dbReferenceList= new ArrayList<>();
+        dbReferenceList= new HashMap<>();
 
         order = new Order(currentUserID);
 
@@ -166,12 +165,11 @@ public class OrderActivity extends AppCompatActivity implements Interface {
 
 
         order.setRestaurantID(bundle.getString("id"));
-        dbReferece = FirebaseDatabase.getInstance().getReference("restaurants").child(order.getRestaurantID());
-        dbReferenceList.add(new MyDatabaseReference(dbReferece));
-        int indexReference= dbReferenceList.size()-1;
-        ValueEventListener valueEventListener;
 
-        dbReferenceList.get(indexReference).getReference().addValueEventListener(valueEventListener= new ValueEventListener() {
+        DatabaseReference dbReferece = FirebaseDatabase.getInstance().getReference("restaurants").child(order.getRestaurantID());
+        dbReferenceList.put("restaurant", new MyDatabaseReference(dbReferece));
+
+        dbReferenceList.get("restaurant").setValueListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 String id = dataSnapshot.getKey();
@@ -200,7 +198,6 @@ public class OrderActivity extends AppCompatActivity implements Interface {
 
             }
         });
-        dbReferenceList.get(indexReference).setValueListener(valueEventListener);
 
         android.support.v7.widget.Toolbar toolbar = findViewById(R.id.toolbar_order);
         TabLayout tabLayout = findViewById(R.id.tabs);
@@ -229,8 +226,12 @@ public class OrderActivity extends AppCompatActivity implements Interface {
 
     @Override
     protected void onStop() {
-        unregisterReceiver(networkReceiver);
         super.onStop();
+        unregisterReceiver(networkReceiver);
+        for (MyDatabaseReference my_ref : dbReferenceList.values())
+            my_ref.removeAllListener();
+        for (MyDatabaseReference my_ref : order.getDbReferenceList().values())
+            my_ref.removeAllListener();
     }
 
     @Override
@@ -335,23 +336,5 @@ public class OrderActivity extends AppCompatActivity implements Interface {
     @Override
     public void setQuantity(int quantity) {
         setUpBadge(quantity);
-    }
-
-    @Override
-    public void onDestroy() {
-        super.onDestroy();
-
-        /*
-         * remove all listeners of this activity
-         */
-        for (int i=0; i < dbReferenceList.size(); i++)
-            dbReferenceList.get(i).removeAllListener();
-
-        /*
-         * remove all inner listeners of order class
-         */
-        for (int i=0; i < order.getDbReferenceList().size(); i++)
-            order.getDbReferenceList().get(i).removeAllListener();
-
     }
 }

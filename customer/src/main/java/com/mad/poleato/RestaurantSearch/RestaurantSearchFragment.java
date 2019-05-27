@@ -93,7 +93,7 @@ public class RestaurantSearchFragment extends Fragment {
     public static final int FILTER_FRAGMENT = 26;
 
     // list to collect the firebase reference and its listener (to remove listener at the end of this fragment)
-    private List<MyDatabaseReference> dbReferenceList;
+    private HashMap<String, MyDatabaseReference> dbReferenceList;
 
     @Override
     public void onAttach(Context context) {
@@ -118,7 +118,7 @@ public class RestaurantSearchFragment extends Fragment {
         typesToFilter = new HashSet<>();
         currDisplayedList = new ArrayList<>();
 
-        dbReferenceList= new ArrayList<>();
+        dbReferenceList= new HashMap<>();
 
         if(getActivity() != null)
             progressDialog = ProgressDialog.show(getActivity(), "", getString(R.string.loading));
@@ -366,11 +366,9 @@ public class RestaurantSearchFragment extends Fragment {
          *         This listener is guaranteed to be called only after "ChildEvent".
          *         Thus it notifies the end of the children
          */
-        dbReferenceList.add(new MyDatabaseReference(dbReference));
-        int indexReference= dbReferenceList.size()-1;
-        ValueEventListener valueEventListener;
+        dbReferenceList.put("restaurants", new MyDatabaseReference(dbReference));
 
-        dbReferenceList.get(indexReference).getReference().addValueEventListener(valueEventListener= new ValueEventListener() {
+        dbReferenceList.get("restaurants").setValueListener(new ValueEventListener() {
 
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
@@ -384,8 +382,7 @@ public class RestaurantSearchFragment extends Fragment {
             }
         });
 
-        ChildEventListener childEventListener;
-        dbReference.addChildEventListener(childEventListener= new ChildEventListener() {
+        dbReferenceList.get("restaurants").setChildListener(new ChildEventListener() {
             @Override
             public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
                 Log.d("matte", "onChildAdded | PREVIOUS CHILD: " + s);
@@ -572,9 +569,6 @@ public class RestaurantSearchFragment extends Fragment {
                         " | MESSAGE: " + databaseError.getMessage());
             }
         });
-
-        dbReferenceList.get(indexReference).setValueListener(valueEventListener);
-        dbReferenceList.get(indexReference).setChildListener(childEventListener);
     }
 
     private void restoreOriginalList() {
@@ -627,11 +621,9 @@ public class RestaurantSearchFragment extends Fragment {
     }
 
     @Override
-    public void onDestroy() {
-        super.onDestroy();
-        for (int i=0; i < dbReferenceList.size(); i++)
-            dbReferenceList.get(i).removeAllListener();
+    public void onStop() {
+        super.onStop();
+        for (MyDatabaseReference my_ref : dbReferenceList.values())
+            my_ref.removeAllListener();
     }
-
-
 }

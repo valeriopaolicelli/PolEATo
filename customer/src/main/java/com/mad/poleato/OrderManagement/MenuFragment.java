@@ -73,7 +73,7 @@ public class MenuFragment extends Fragment {
         }
     };
 
-    private List<MyDatabaseReference> dbReferenceList;
+    private HashMap<String, MyDatabaseReference> dbReferenceList;
 
     double popularityAverage; // average of popularity counter of all foods in menu
 
@@ -125,7 +125,7 @@ public class MenuFragment extends Fragment {
 
         OneSignal.sendTag("User_ID", currentUserID);
 
-        dbReferenceList= new ArrayList<>();
+        dbReferenceList= new HashMap<>();
     }
 
     @Nullable
@@ -219,17 +219,16 @@ public class MenuFragment extends Fragment {
     }
 
     public void setList(){
+        listDataGroup = new ArrayList<>();
+        listDataChild = new HashMap<>();
+
         DatabaseReference reference = FirebaseDatabase.getInstance().getReference("restaurants")
                                         .child(restaurantID)
                                         .child("Menu");
-        listDataGroup = new ArrayList<>();
-        listDataChild = new HashMap<>();
-        dbReferenceList.add(new MyDatabaseReference(reference));
-        int indexReference= dbReferenceList.size()-1;
-        ValueEventListener valueEventListener;
+        dbReferenceList.put("menu", new MyDatabaseReference(reference));
 
         // compute the popularity average for all dishes
-        dbReferenceList.get(indexReference).getReference().addListenerForSingleValueEvent(valueEventListener= new ValueEventListener() {
+        dbReferenceList.get("menu").setSingleValueListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 long sum = 0;
@@ -247,13 +246,11 @@ public class MenuFragment extends Fragment {
 
             }
         });
-        dbReferenceList.get(indexReference).setValueListener(valueEventListener);
 
 
         // fill the menu grouped by category (Firsts, seconds, Desserts, Drinks, Popular)
-        ChildEventListener childEventListener;
 
-        dbReferenceList.get(indexReference).getReference().addChildEventListener(childEventListener= new ChildEventListener() {
+        dbReferenceList.get("menu").setChildListener(new ChildEventListener() {
                      @Override
             public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
 
@@ -437,11 +434,6 @@ public class MenuFragment extends Fragment {
 
             }
         });
-
-        dbReferenceList.get(indexReference).setChildListener(childEventListener);
-
-
-
     }
 
 
@@ -474,9 +466,9 @@ public class MenuFragment extends Fragment {
     }
 
     @Override
-    public void onDestroy() {
-        super.onDestroy();
-        for (int i=0; i < dbReferenceList.size(); i++)
-            dbReferenceList.get(i).removeAllListener();
+    public void onStop() {
+        super.onStop();
+        for (MyDatabaseReference my_ref : dbReferenceList.values())
+            my_ref.removeAllListener();
     }
 }

@@ -32,6 +32,7 @@ import com.squareup.picasso.Picasso;
 
 import java.text.DecimalFormat;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 public class FavoriteRestaurantRecyclerViewAdapter extends RecyclerView.Adapter<FavoriteRestaurantRecyclerViewAdapter.FavoriteRestaurantViewHolder> {
@@ -43,8 +44,6 @@ public class FavoriteRestaurantRecyclerViewAdapter extends RecyclerView.Adapter<
 
     private String currentUserID;
     private FirebaseAuth mAuth;
-
-    List<MyDatabaseReference> dbReferenceList;
 
     // Provide a reference to the views for each data item
     // Complex data items may need more than one view per item, and
@@ -91,8 +90,6 @@ public class FavoriteRestaurantRecyclerViewAdapter extends RecyclerView.Adapter<
 
         if(context != null)
             myToast = Toast.makeText(context, "", Toast.LENGTH_SHORT);
-
-        this.dbReferenceList= new ArrayList<>();
     }
 
     // Create new views (invoked by the layout manager)
@@ -195,12 +192,5 @@ public class FavoriteRestaurantRecyclerViewAdapter extends RecyclerView.Adapter<
     @Override
     public int getItemCount() {
         return list.size();
-    }
-
-    @Override
-    public void onDetachedFromRecyclerView(@NonNull RecyclerView recyclerView) {
-        super.onDetachedFromRecyclerView(recyclerView);
-        for(int i=0; i < dbReferenceList.size(); i++)
-            dbReferenceList.get(i).removeAllListener();
     }
 }

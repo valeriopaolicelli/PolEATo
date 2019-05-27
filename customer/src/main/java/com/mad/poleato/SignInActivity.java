@@ -38,6 +38,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 public class SignInActivity extends AppCompatActivity {
@@ -58,7 +59,7 @@ public class SignInActivity extends AppCompatActivity {
     private ConstraintLayout login_constraint;
     private ProgressBar progress_bar;
 
-    private List<MyDatabaseReference> dbReferenceList;
+    private HashMap<String, MyDatabaseReference> dbReferenceList;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -106,7 +107,7 @@ public class SignInActivity extends AppCompatActivity {
         //default: show the progressBar only
         show_progress();
 
-        dbReferenceList= new ArrayList<>();
+        dbReferenceList= new HashMap<>();
     }
 
     private void show_progress(){
@@ -135,11 +136,9 @@ public class SignInActivity extends AppCompatActivity {
         FirebaseUser currentUser = mAuth.getCurrentUser();
         if(currentUser != null) {
             final DatabaseReference reference = FirebaseDatabase.getInstance().getReference("users").child(currentUser.getUid());
-            dbReferenceList.add(new MyDatabaseReference(reference));
-            int indexReference= dbReferenceList.size()-1;
-            ValueEventListener valueEventListener;
+            dbReferenceList.put("user", new MyDatabaseReference(reference));
 
-            dbReferenceList.get(indexReference).getReference().addValueEventListener(valueEventListener= new ValueEventListener() {
+            dbReferenceList.get("user").setSingleValueListener(new ValueEventListener() {
                 @Override
                 public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                     if (dataSnapshot.exists())
@@ -156,8 +155,6 @@ public class SignInActivity extends AppCompatActivity {
                     Log.d("Valerio", "SignIn customer -> onStart -> onCancelled: " + databaseError.getMessage());
                 }
             });
-            dbReferenceList.get(indexReference).setValueListener(valueEventListener);
-
         }
         else
             show_login_form();
@@ -185,7 +182,9 @@ public class SignInActivity extends AppCompatActivity {
                             Log.d("matte", "signInWithEmail:success");
                             FirebaseUser user = mAuth.getCurrentUser();
                             DatabaseReference reference = FirebaseDatabase.getInstance().getReference("users").child(user.getUid());
-                            reference.addValueEventListener(new ValueEventListener() {
+
+                            dbReferenceList.put("userSignIn", new MyDatabaseReference(reference));
+                            dbReferenceList.get("userSignIn").setSingleValueListener(new ValueEventListener() {
                                 @Override
                                 public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                                     if (dataSnapshot.exists())
@@ -215,9 +214,7 @@ public class SignInActivity extends AppCompatActivity {
                         // ...
                     }
                 });
-
     }
-
 
     private boolean implemented = false;
     //request code for the Google sign in activity
@@ -419,9 +416,9 @@ public class SignInActivity extends AppCompatActivity {
     }
 
     @Override
-    public void onDestroy() {
-        super.onDestroy();
-        for (int i=0; i < dbReferenceList.size(); i++)
-            dbReferenceList.get(i).removeAllListener();
+    public void onStop() {
+        super.onStop();
+        for (MyDatabaseReference my_ref : dbReferenceList.values())
+            my_ref.removeAllListener();
     }
 }

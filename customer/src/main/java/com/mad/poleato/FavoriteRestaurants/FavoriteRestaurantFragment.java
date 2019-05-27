@@ -76,7 +76,7 @@ public class FavoriteRestaurantFragment extends Fragment {
     public static final int FILTER_FRAGMENT = 26;
 
     // list to collect the firebase reference and its listener (to remove listener at the end of this fragment)
-    private List<MyDatabaseReference> dbReferenceList;
+    private HashMap<String, MyDatabaseReference> dbReferenceList;
 
     // attributes for retrieve the current user logged
     private String currentUserID;
@@ -103,7 +103,7 @@ public class FavoriteRestaurantFragment extends Fragment {
         typesToFilter = new HashSet<>();
         currDisplayedList = new ArrayList<>();
 
-        dbReferenceList= new ArrayList<>();
+        dbReferenceList= new HashMap<>();
 
         mAuth = FirebaseAuth.getInstance();
         FirebaseUser currentUser = mAuth.getCurrentUser();
@@ -152,11 +152,10 @@ public class FavoriteRestaurantFragment extends Fragment {
          *         This listener is guaranteed to be called only after "ChildEvent".
          *         Thus it notifies the end of the children
          */
-        dbReferenceList.add(new MyDatabaseReference(dbReference));
+        dbReferenceList.put("favorite", new MyDatabaseReference(dbReference));
         final int indexReference= dbReferenceList.size()-1;
-        ValueEventListener valueEventListener;
 
-        dbReferenceList.get(indexReference).getReference().addValueEventListener(valueEventListener= new ValueEventListener() {
+        dbReferenceList.get("favorite").setValueListener(new ValueEventListener() {
 
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
@@ -169,23 +168,17 @@ public class FavoriteRestaurantFragment extends Fragment {
                 handler.sendEmptyMessage(0);
             }
         });
-        dbReferenceList.get(indexReference).setValueListener(valueEventListener);
 
-        ChildEventListener childEventListener;
-        dbReferenceList.get(indexReference).getReference().addChildEventListener(childEventListener= new ChildEventListener() {
+        dbReferenceList.get("favorite").setChildListener(new ChildEventListener() {
             @Override
             public void onChildAdded(@NonNull final DataSnapshot dataSnapshotRestaurant, @Nullable String s) {
                 final String restaurantID = dataSnapshotRestaurant.getKey();
                 Log.d("ValerioListener", restaurantID);
 
                 DatabaseReference referenceRestaurant = FirebaseDatabase.getInstance().getReference("restaurants");
-                dbReferenceList.add(new MyDatabaseReference(referenceRestaurant));
-                int indexReferenceRestaurant = dbReferenceList.size() - 1;
-                ChildEventListener childEventListener1;
-                ValueEventListener valueEventListener;
+                dbReferenceList.put("restaurant", new MyDatabaseReference(referenceRestaurant));
 
-                dbReferenceList.get(indexReferenceRestaurant).getReference()
-                        .addValueEventListener(valueEventListener= new ValueEventListener() {
+                dbReferenceList.get("restaurant").setValueListener(new ValueEventListener() {
 
                     @Override
                     public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
@@ -198,10 +191,8 @@ public class FavoriteRestaurantFragment extends Fragment {
                         handler.sendEmptyMessage(0);
                     }
                 });
-                dbReferenceList.get(indexReferenceRestaurant).setValueListener(valueEventListener);
 
-                dbReferenceList.get(indexReferenceRestaurant).getReference()
-                        .addChildEventListener(childEventListener1= new ChildEventListener() {
+                dbReferenceList.get("restaurant").setChildListener(new ChildEventListener() {
                     @Override
                     public void onChildAdded(@NonNull DataSnapshot dataSnapshotRestaurant, @Nullable String s) {
                         Log.d("matte", "onChildAdded | PREVIOUS CHILD: " + s);
@@ -372,7 +363,6 @@ public class FavoriteRestaurantFragment extends Fragment {
                                 " | MESSAGE: " + databaseError.getMessage());
                     }
                 });
-                dbReferenceList.get(indexReferenceRestaurant).setChildListener(childEventListener1);
             }
 
             @Override
@@ -400,7 +390,6 @@ public class FavoriteRestaurantFragment extends Fragment {
 
             }
         });
-        dbReferenceList.get(indexReference).setChildListener(childEventListener);
     }
 
 
@@ -450,9 +439,9 @@ public class FavoriteRestaurantFragment extends Fragment {
     }
 
     @Override
-    public void onDestroy() {
-        super.onDestroy();
-        for (int i=0; i < dbReferenceList.size(); i++)
-            dbReferenceList.get(i).removeAllListener();
+    public void onStop() {
+        super.onStop();
+        for (MyDatabaseReference my_ref : dbReferenceList.values())
+            my_ref.removeAllListener();
     }
 }

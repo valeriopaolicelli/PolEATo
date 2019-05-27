@@ -110,7 +110,7 @@ public class EditProfile extends Fragment {
     private double latitude;
     private double longitude;
 
-    private List<MyDatabaseReference> dbReferenceList;
+    private HashMap<String, MyDatabaseReference> dbReferenceList;
 
     public EditProfile() {
         // Required empty public constructor
@@ -142,7 +142,7 @@ public class EditProfile extends Fragment {
         imageButtons = new HashMap<>();
         imageButtons = new HashMap<>();
 
-        dbReferenceList= new ArrayList<>();
+        dbReferenceList= new HashMap<>();
     }
 
     @Override
@@ -232,11 +232,9 @@ public class EditProfile extends Fragment {
 
         //Download text infos
         reference = FirebaseDatabase.getInstance().getReference("customers/"+ currentUserID);
-        dbReferenceList.add(new MyDatabaseReference(reference));
-        int indexReference= dbReferenceList.size()-1;
-        ValueEventListener valueEventListener;
+        dbReferenceList.put("customer", new MyDatabaseReference(reference));
 
-        dbReferenceList.get(indexReference).getReference().addValueEventListener(valueEventListener= new ValueEventListener() {
+        dbReferenceList.get("customer").setValueListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
 
@@ -267,8 +265,6 @@ public class EditProfile extends Fragment {
                 myToast.show();
             }
         });
-        dbReferenceList.get(indexReference).setValueListener(valueEventListener);
-
 
         //Download the profile pic
         StorageReference storageReference = FirebaseStorage.getInstance().getReference();
@@ -857,11 +853,10 @@ public class EditProfile extends Fragment {
         }
     }
 
-
     @Override
-    public void onDestroy() {
-        super.onDestroy();
-        for (int i=0; i < dbReferenceList.size(); i++)
-            dbReferenceList.get(i).removeAllListener();
+    public void onStop() {
+        super.onStop();
+        for (MyDatabaseReference my_ref : dbReferenceList.values())
+            my_ref.removeAllListener();
     }
 }

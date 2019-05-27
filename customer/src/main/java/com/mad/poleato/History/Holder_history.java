@@ -72,7 +72,7 @@ public class Holder_history extends Fragment {
     private String currentUserID;
     private FirebaseAuth mAuth;
 
-    private List<MyDatabaseReference> dbReferenceList;
+    private HashMap<String, MyDatabaseReference> dbReferenceList;
 
     public Holder_history() {
         // Required empty public constructor
@@ -104,7 +104,7 @@ public class Holder_history extends Fragment {
         display.getSize(size);
         width = size.x;
 
-        dbReferenceList = new ArrayList<>();
+        dbReferenceList = new HashMap<>();
     }
 
     @Override
@@ -135,8 +135,9 @@ public class Holder_history extends Fragment {
 
         DatabaseReference reference = FirebaseDatabase.getInstance().getReference("customers")
                 .child(currentUserID).child("reservations");
+        dbReferenceList.put("reservation", new MyDatabaseReference(reference));
 
-        reference.addValueEventListener(new ValueEventListener() {
+        dbReferenceList.get("reservation").setValueListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 handler.sendEmptyMessage(0);
@@ -148,7 +149,7 @@ public class Holder_history extends Fragment {
             }
         });
 
-        reference.addChildEventListener(new ChildEventListener() {
+        dbReferenceList.get("reservation").setChildListener(new ChildEventListener() {
             @Override
             public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
                 if (dataSnapshot.hasChild("orderID") &&
@@ -317,9 +318,9 @@ public class Holder_history extends Fragment {
     }
 
     @Override
-    public void onDestroy() {
-        super.onDestroy();
-        for (int i = 0; i < dbReferenceList.size(); i++)
-            dbReferenceList.get(i).removeAllListener();
+    public void onStop() {
+        super.onStop();
+        for (MyDatabaseReference my_ref : dbReferenceList.values())
+            my_ref.removeAllListener();
     }
 }

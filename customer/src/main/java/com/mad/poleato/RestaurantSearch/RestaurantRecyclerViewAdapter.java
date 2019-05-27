@@ -40,6 +40,7 @@ import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.List;
 
 public class RestaurantRecyclerViewAdapter extends RecyclerView.Adapter<RestaurantRecyclerViewAdapter.RestaurantViewHolder> {
@@ -52,7 +53,7 @@ public class RestaurantRecyclerViewAdapter extends RecyclerView.Adapter<Restaura
     private String currentUserID;
     private FirebaseAuth mAuth;
 
-    List<MyDatabaseReference> dbReferenceList;
+    private HashMap<String, MyDatabaseReference> dbReferenceList;
 
     /**
      * current order state of the list
@@ -131,7 +132,7 @@ public class RestaurantRecyclerViewAdapter extends RecyclerView.Adapter<Restaura
         this.deliveryComparator = new SortByDelivery();
         this.starComparator = new SortByStar();
 
-        this.dbReferenceList= new ArrayList<>();
+        this.dbReferenceList= new HashMap<>();
     }
 
     // Create new views (invoked by the layout manager)
@@ -215,11 +216,9 @@ public class RestaurantRecyclerViewAdapter extends RecyclerView.Adapter<Restaura
 
         // animate button favorite
         DatabaseReference reference= FirebaseDatabase.getInstance().getReference("customers/"+currentUserID+"/Favorite");
-        dbReferenceList.add(new MyDatabaseReference(reference));
-        int indexReference= dbReferenceList.size()-1;
-        final ValueEventListener valueEventListener;
+        dbReferenceList.put("favorite", new MyDatabaseReference(reference));
 
-        dbReferenceList.get(indexReference).getReference().addListenerForSingleValueEvent(valueEventListener= new ValueEventListener() {
+        dbReferenceList.get("favorite").setSingleValueListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 if(dataSnapshot.exists()) {
@@ -236,8 +235,6 @@ public class RestaurantRecyclerViewAdapter extends RecyclerView.Adapter<Restaura
 
             }
         });
-        dbReferenceList.get(indexReference).setValueListener(valueEventListener);
-
 
         holder.buttonFavorite.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener(){
             @Override
@@ -252,11 +249,9 @@ public class RestaurantRecyclerViewAdapter extends RecyclerView.Adapter<Restaura
                     DatabaseReference refFavoriteRestaurant= FirebaseDatabase.getInstance()
                                                                     .getReference("customers/" + currentUserID
                                                                                        +"/Favorite/");
-                    dbReferenceList.add(new MyDatabaseReference(refFavoriteRestaurant));
-                    int indexReference= dbReferenceList.size()-1;
-                    ValueEventListener valueEventListener1;
+                    dbReferenceList.put("favoriteRest", new MyDatabaseReference(refFavoriteRestaurant));
 
-                    dbReferenceList.get(indexReference).getReference().addListenerForSingleValueEvent(valueEventListener1= new ValueEventListener() {
+                    dbReferenceList.get("favoriteRest").setSingleValueListener(new ValueEventListener() {
                         @Override
                         public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                             if(!dataSnapshot.hasChild(restaurantID)){
@@ -269,7 +264,6 @@ public class RestaurantRecyclerViewAdapter extends RecyclerView.Adapter<Restaura
 
                         }
                     });
-                    dbReferenceList.get(indexReference).setValueListener(valueEventListener1);
                 }
                 else{
                     // remove restaurant from favorite list
@@ -393,7 +387,7 @@ public class RestaurantRecyclerViewAdapter extends RecyclerView.Adapter<Restaura
     @Override
     public void onDetachedFromRecyclerView(@NonNull RecyclerView recyclerView) {
         super.onDetachedFromRecyclerView(recyclerView);
-        for(int i=0; i < dbReferenceList.size(); i++)
-            dbReferenceList.get(i).removeAllListener();
+        for (MyDatabaseReference my_ref : dbReferenceList.values())
+            my_ref.removeAllListener();
     }
 }
