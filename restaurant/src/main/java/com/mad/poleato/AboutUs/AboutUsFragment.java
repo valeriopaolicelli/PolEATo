@@ -172,22 +172,6 @@ public class AboutUsFragment extends Fragment {
         //history reference
         dbReferenceList.put("history", new MyDatabaseReference(FirebaseDatabase.getInstance()
                                             .getReference("restaurants/"+currentUserID+"/History")));
-        /*dbReferenceList.get("history").setValueListener(new ValueEventListener() {
-
-            @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                if(progressDialog.isShowing())
-                    progressDialog.dismiss();
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
-                Log.d("matte", "ValueEventiListener : OnCancelled() invoked");
-                if(progressDialog.isShowing())
-                    progressDialog.dismiss();
-            }
-        });*/
-
         dbReferenceList.get("history").setValueListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
@@ -235,20 +219,6 @@ public class AboutUsFragment extends Fragment {
 
         dbReferenceList.put("menu", new MyDatabaseReference(FirebaseDatabase.getInstance()
                                             .getReference("restaurants/"+currentUserID+"/Menu")));
-        /*dbReferenceList.get("menu").setValueListener(new ValueEventListener() {
-
-            @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                handler.sendEmptyMessage(0);
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
-                Log.d("matte", "ValueEventiListener : OnCancelled() invoked");
-                handler.sendEmptyMessage(0);
-            }
-        });*/
-
         dbReferenceList.get("menu").setValueListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {

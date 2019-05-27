@@ -125,6 +125,7 @@ public class OrderActivity extends AppCompatActivity implements Interface {
             adapter.addFragment(favoriteMenuFragment, "Favorite");
         else
             adapter.addFragment(favoriteMenuFragment, "Preferiti");
+
         adapter.addFragment(infoFragment, "Info");
 
         adapter.addFragment(restaurantReviewsFragment,"Reviews");

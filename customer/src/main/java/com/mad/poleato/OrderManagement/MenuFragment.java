@@ -28,6 +28,7 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.mad.poleato.Classes.Food;
@@ -73,6 +74,8 @@ public class MenuFragment extends Fragment {
     };
 
     private List<MyDatabaseReference> dbReferenceList;
+
+    double popularityAverage; // average of popularity counter of all foods in menu
 
     private enum groupType{
         STARTERS,
@@ -223,6 +226,31 @@ public class MenuFragment extends Fragment {
         listDataChild = new HashMap<>();
         dbReferenceList.add(new MyDatabaseReference(reference));
         int indexReference= dbReferenceList.size()-1;
+        ValueEventListener valueEventListener;
+
+        // compute the popularity average for all dishes
+        dbReferenceList.get(indexReference).getReference().addListenerForSingleValueEvent(valueEventListener= new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                long sum = 0;
+                long numberOfFood= dataSnapshot.getChildrenCount();
+
+                for(DataSnapshot foodReference : dataSnapshot.getChildren()){
+                    sum += Integer.parseInt(foodReference.child("PopularityCounter").getValue().toString());
+                }
+
+                popularityAverage= sum/numberOfFood;
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+        dbReferenceList.get(indexReference).setValueListener(valueEventListener);
+
+
+        // fill the menu grouped by category (Firsts, seconds, Desserts, Drinks, Popular)
         ChildEventListener childEventListener;
 
         dbReferenceList.get(indexReference).getReference().addChildEventListener(childEventListener= new ChildEventListener() {
@@ -234,13 +262,16 @@ public class MenuFragment extends Fragment {
                         dataSnapshot.hasChild("Description") &&
                         dataSnapshot.hasChild("Price") &&
                         dataSnapshot.hasChild("Category") &&
-                        dataSnapshot.hasChild("photoUrl"))
+                        dataSnapshot.hasChild("photoUrl") &&
+                        dataSnapshot.hasChild("PopularityCounter"))
                 {
                     //set default image initially, then change if download is successful
                     final String id = dataSnapshot.getKey();
                     String name = dataSnapshot.child("Name").getValue().toString();
                     int quantity = Integer.parseInt(dataSnapshot.child("Quantity").getValue().toString());
                     String description = dataSnapshot.child("Description").getValue().toString();
+                    int popularityCounter= Integer.parseInt(dataSnapshot.child("PopularityCounter").getValue().toString());
+
                     double price = Double.parseDouble(dataSnapshot.child("Price")
                             .getValue()
                             .toString()
@@ -252,10 +283,25 @@ public class MenuFragment extends Fragment {
 
                     if(!listDataGroup.contains(category))
                         listDataGroup.add(category);
+
+                    if(!listDataGroup.contains("Popular"))
+                        listDataGroup.add("Popular");
+
                     if(!listDataChild.containsKey(category)){
-                        listDataChild.put(category,new ArrayList<Food>());
+                        listDataChild.put(category, new ArrayList<Food>());
                     }
+
+                    if(!listDataChild.containsKey("Popular"))
+                        listDataChild.put("Popular", new ArrayList<Food>());
+
                     listDataChild.get(category).add(f);
+
+                    /*
+                     * if it's  popular food (popularity counter >= popularity average),
+                     * add it to popular list
+                     */
+                    if(popularityCounter >= popularityAverage)
+                        listDataChild.get("Popular").add(f);
 
                     /*
                      * download food image
@@ -410,15 +456,17 @@ public class MenuFragment extends Fragment {
                 return -1;
             else if(t1.equals("Starters"))
                 return 1;
-            else if(s.equals("Drinks"))
+            else if(s.equals("Popular"))
                 return 1;
-            else if(t1.equals("Drinks"))
+            else if(t1.equals("Popular"))
                 return -1;
-            else if(s.equals("Firsts") && (t1.equals("Seconds") || t1.equals("Desserts")))
+            else if(s.equals("Firsts") && (t1.equals("Seconds") || t1.equals("Desserts") || t1.equals("Drinks")))
                 return -1;
-            else if(s.equals("Seconds") && (t1.equals("Desserts")))
+            else if(s.equals("Seconds") && (t1.equals("Desserts") || t1.equals("Drinks")))
                 return -1;
-            else if(s.equals("Desserts"))
+            else if(s.equals("Desserts") && t1.equals("Drinks"))
+                return -1;
+            else if(s.equals("Drinks"))
                 return 1;
             else
                 return 0;
