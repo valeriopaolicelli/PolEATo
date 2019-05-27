@@ -20,6 +20,8 @@
             android:id="@+id/action_pendingReservations_id_to_ride_id"
             app:destination="@id/rides_id"
             app:popUpTo="@+id/rides_id"
+            app:enterAnim="@anim/fui_slide_in_right"
+            app:popExitAnim="@anim/nav_default_pop_exit_anim"
             app:popUpToInclusive="true">
         </action>
     </fragment>
