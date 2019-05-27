@@ -97,6 +97,7 @@ public class CartRecyclerViewAdapter extends RecyclerView.Adapter<CartRecyclerVi
                 int selectedQuantity = foodList.get(i).getSelectedQuantity();
                 if(selectedQuantity>0){
                     foodList.get(i).decreaseSelectedQuantity();
+                    order.decreaseToTotalQuantity();
                     if(foodList.get(i).getSelectedQuantity()==0)
                         order.removeFoodFromOrder(foodList.get(i));
                     order.updateTotalPrice();
@@ -113,6 +114,7 @@ public class CartRecyclerViewAdapter extends RecyclerView.Adapter<CartRecyclerVi
                 int selectedQuantity = foodList.get(i).getSelectedQuantity();
                 if(selectedQuantity<quantity){
                     foodList.get(i).increaseSelectedQuantity();
+                    order.increaseToTotalQuantity();
                     order.updateTotalPrice();
                     notifyDataSetChanged();
                 }
@@ -125,6 +127,7 @@ public class CartRecyclerViewAdapter extends RecyclerView.Adapter<CartRecyclerVi
             @Override
             public void onClick(View view) {
                 foodList.get(i).setSelectedQuantity(0);
+                order.setTotalQuantity(0);
                 order.removeFoodFromOrder(foodList.get(i));
                 order.updateTotalPrice();
                 notifyDataSetChanged();

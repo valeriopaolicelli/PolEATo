@@ -28,12 +28,12 @@ public class MyDatabaseReference {
     }
 
     public void setChildListener(ChildEventListener childListener) {
-        this.reference.addChildEventListener(childListener);
+        //this.reference.addChildEventListener(childListener);
         this.childListener.add(childListener);
     }
 
     public void setValueListener(ValueEventListener valueListener) {
-        this.reference.addValueEventListener(valueListener);
+        //this.reference.addValueEventListener(valueListener);
         this.valueListener.add(valueListener);
     }
 

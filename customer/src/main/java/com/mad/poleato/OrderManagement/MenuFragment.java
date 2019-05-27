@@ -168,7 +168,7 @@ public class MenuFragment extends Fragment {
 
         setList();
         // list Adapter of ExpandableList
-        listAdapter = new MenuExpandableListAdapter(hostActivity, listDataGroup, listDataChild, order);
+        listAdapter = new MenuExpandableListAdapter(hostActivity, listDataGroup, listDataChild, order, listener);
 
         // setting list adapter
         expListView.setAdapter(listAdapter);

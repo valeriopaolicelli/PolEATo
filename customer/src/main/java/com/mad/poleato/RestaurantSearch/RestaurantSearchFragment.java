@@ -632,4 +632,6 @@ public class RestaurantSearchFragment extends Fragment {
         for (int i=0; i < dbReferenceList.size(); i++)
             dbReferenceList.get(i).removeAllListener();
     }
+
+
 }

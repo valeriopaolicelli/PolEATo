@@ -174,8 +174,8 @@ public class FavoriteRestaurantFragment extends Fragment {
         ChildEventListener childEventListener;
         dbReferenceList.get(indexReference).getReference().addChildEventListener(childEventListener= new ChildEventListener() {
             @Override
-            public void onChildAdded(@NonNull final DataSnapshot dataSnapshot, @Nullable String s) {
-                final String restaurantID = dataSnapshot.getKey();
+            public void onChildAdded(@NonNull final DataSnapshot dataSnapshotRestaurant, @Nullable String s) {
+                final String restaurantID = dataSnapshotRestaurant.getKey();
                 Log.d("ValerioListener", restaurantID);
 
                 DatabaseReference referenceRestaurant = FirebaseDatabase.getInstance().getReference("restaurants");
@@ -225,7 +225,19 @@ public class FavoriteRestaurantFragment extends Fragment {
                                 //insert before the download because otherwise it can happen that the download finish before
                                 //  and the put raise exception
                                 Restaurant resObj = new Restaurant(id, "", name, type, isOpen, priceRange, deliveryCost);
-
+                                //Check if restaurant has reviews
+                                if(!dataSnapshotRestaurant.hasChild("Ratings")){
+                                    resObj.setTotalReviews((long)0);
+                                    resObj.computeAvgStars(0);
+                                }else{
+                                    //If yes, compute avg rating
+                                    int totalStars = 0;
+                                    resObj.setTotalReviews(dataSnapshotRestaurant.child("Ratings").getChildrenCount());
+                                    for (DataSnapshot ds : dataSnapshotRestaurant.child("Ratings").getChildren()){
+                                        totalStars += Integer.parseInt(ds.child("rate").getValue().toString());
+                                    }
+                                    resObj.computeAvgStars(totalStars);
+                                }
                                 restaurantMap.put(id, resObj);
                                 restaurantList.add(resObj);
 
@@ -286,7 +298,19 @@ public class FavoriteRestaurantFragment extends Fragment {
                                     resObj.setIsOpen(isOpen);
                                     resObj.setPriceRange(priceRange);
                                     resObj.setDeliveryCost(deliveryCost);
-
+                                    //Check if restaurant has reviews
+                                    if(!dataSnapshotRestaurant.hasChild("Ratings")){
+                                        resObj.setTotalReviews((long)0);
+                                        resObj.computeAvgStars(0);
+                                    }else{
+                                        //If yes, compute avg rating
+                                        int totalStars = 0;
+                                        resObj.setTotalReviews(dataSnapshotRestaurant.child("Ratings").getChildrenCount());
+                                        for (DataSnapshot ds : dataSnapshotRestaurant.child("Ratings").getChildren()){
+                                            totalStars += Integer.parseInt(ds.child("rate").getValue().toString());
+                                        }
+                                        resObj.computeAvgStars(totalStars);
+                                    }
                                     //insert the element by keeping the actual order after checking the filter
                                     if (isValidToDisplay(resObj)) {
                                         if (!currDisplayedList.contains(resObj))

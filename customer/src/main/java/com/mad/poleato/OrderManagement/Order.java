@@ -31,6 +31,7 @@ public class Order implements Serializable {
    private String restaurantID;
    private Restaurant r;
    private String time;
+   private int totalQuantity;
 
    private List<MyDatabaseReference> dbReferenceList;
 
@@ -40,6 +41,7 @@ public class Order implements Serializable {
         status = "New Order";
         customerID = currentUserID;
         dbReferenceList= new ArrayList<>();
+        this.totalQuantity = 0;
     }
 
     public Order(String status, String customerID, Double totalPrice, String date, String time){
@@ -49,6 +51,7 @@ public class Order implements Serializable {
         this.date=date;
         this.time=time;
         dbReferenceList= new ArrayList<>();
+        this.totalQuantity = 0;
     }
 
     public void setStatus(String status) {
@@ -177,6 +180,7 @@ public class Order implements Serializable {
         o.setTotalPrice(this.totalPrice);
         o.setCustomerID(this.customerID);
         o.setRestaurantID(this.restaurantID);
+        o.setTotalQuantity(this.totalQuantity);
 
         reservationRestaurant.setValue(o);
         reservationRestaurant.child("date").setValue(ServerValue.TIMESTAMP);
@@ -231,6 +235,20 @@ public class Order implements Serializable {
         });
     }
 
+    public void increaseToTotalQuantity(){
+        totalQuantity +=1;
+    }
+    public void decreaseToTotalQuantity(){
+        totalQuantity -=1;
+    }
+
+    public int computeTotalQuantity(){
+        int totalQuantity = 0;
+        for(Food f: selectedFoods.values()){
+            totalQuantity += f.getSelectedQuantity();
+        }
+        return totalQuantity;
+    }
 
     @Exclude
     public List<Food> getDishes() {
@@ -240,5 +258,13 @@ public class Order implements Serializable {
     @Exclude
     public void setDishes() {
         dishes = new ArrayList<>(this.selectedFoods.values());
+    }
+
+    public int getTotalQuantity() {
+        return totalQuantity;
+    }
+
+    public void setTotalQuantity(int totalQuantity) {
+        this.totalQuantity = totalQuantity;
     }
 }

@@ -306,6 +306,11 @@ public class CartActivity extends AppCompatActivity implements Interface,TimePic
         return order;
     }
 
+    @Override
+    public void setQuantity(int quantity) {
+
+    }
+
     public static void computeTotal(Double price){
         DecimalFormat decimalFormat = new DecimalFormat("#0.00");
         String priceStr = decimalFormat.format(price).toString()+"€";

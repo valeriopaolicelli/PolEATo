@@ -10,6 +10,7 @@ import android.support.annotation.NonNull;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
+import android.support.v4.view.MenuItemCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -17,6 +18,8 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.TextView;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -48,6 +51,8 @@ public class OrderActivity extends AppCompatActivity implements Interface {
     private Order order;
     private DatabaseReference dbReferece;
     private ConnectionManager connectionManager;
+    TextView cartItemCount;
+    private int mCartItemCount = 0;
 
     private List<MyDatabaseReference> dbReferenceList;
     int indexReference;
@@ -202,7 +207,7 @@ public class OrderActivity extends AppCompatActivity implements Interface {
         setSupportActionBar(toolbar);
         if (getSupportActionBar() != null) {
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-            getSupportActionBar().setTitle("");
+            getSupportActionBar().setTitle(bundle.getString("name"));
         } else {
             Log.d("Error", "getSupportActionBar is null");
             finish();
@@ -242,10 +247,43 @@ public class OrderActivity extends AppCompatActivity implements Interface {
     }
 
     public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu items for use in the action bar
+        // Inflate the menu items for use in the action
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.cart_menu, menu);
+
+        final MenuItem cart = menu.findItem(R.id.cart_button);
+
+        View actionView = cart.getActionView();
+        cartItemCount = (TextView) actionView.findViewById(R.id.cart_badge);
+        setUpBadge(0);
+
+        actionView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                goToCart(cart);
+            }
+        });
+
         return super.onCreateOptionsMenu(menu);
+    }
+
+    public void setUpBadge(int quantity){
+
+        mCartItemCount = quantity;
+
+        if(cartItemCount != null){
+            if(mCartItemCount == 0){
+                if(cartItemCount.getVisibility() != View.GONE){
+                    cartItemCount.setVisibility(View.GONE);
+                }
+            }else{
+                Log.d("fabio","Setting quantity in badge: " + quantity);
+                cartItemCount.setText(Integer.toString(mCartItemCount));
+                cartItemCount.setTextColor(getApplicationContext().getColor(R.color.colorTextSubField));
+                if(cartItemCount.getVisibility() != View.VISIBLE)
+                    cartItemCount.setVisibility(View.VISIBLE);
+            }
+        }
     }
 
     public void goToCart(MenuItem item) {
@@ -267,6 +305,23 @@ public class OrderActivity extends AppCompatActivity implements Interface {
         }
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        setUpBadge(order.getTotalQuantity());
+    }
+
+    @Override
+    public void onBackPressed() {
+        int count = getSupportFragmentManager().getBackStackEntryCount();
+        if(count == 0){
+            super.onBackPressed();
+            finish();
+        }
+        else
+            getSupportFragmentManager().popBackStack();
+    }
+
     public void setOrder(Order order) {
         this.order = order;
     }
@@ -274,6 +329,11 @@ public class OrderActivity extends AppCompatActivity implements Interface {
     @Override
     public Order getOrder() {
         return order;
+    }
+
+    @Override
+    public void setQuantity(int quantity) {
+        setUpBadge(quantity);
     }
 
     @Override

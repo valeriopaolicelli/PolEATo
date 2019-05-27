@@ -26,6 +26,7 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.mad.poleato.Classes.Food;
+import com.mad.poleato.Interface;
 import com.mad.poleato.MyDatabaseReference;
 import com.mad.poleato.R;
 import com.squareup.picasso.Picasso;
@@ -43,12 +44,12 @@ public class MenuExpandableListAdapter extends BaseExpandableListAdapter {
     private List<String> _listDataGroup; // header titles
     private HashMap<String, List<Food>> _listDataChild; // child data in format of header title, child title
     private Order order;
-
+    private Interface listener;
     private String currentUserID;
     private FirebaseAuth mAuth;
 
     public MenuExpandableListAdapter(Activity host, List<String> listDataHeader,
-                                     HashMap<String, List<Food>> listChildData, Order order) {
+                                     HashMap<String, List<Food>> listChildData, Order order, Interface listener) {
 
         myToast = Toast.makeText(host, "", Toast.LENGTH_SHORT);
 
@@ -57,6 +58,7 @@ public class MenuExpandableListAdapter extends BaseExpandableListAdapter {
         this._listDataGroup = listDataHeader;
         this._listDataChild = listChildData;
         this.order = order;
+        this.listener = listener;
 
         mAuth = FirebaseAuth.getInstance();
         FirebaseUser currentUser = mAuth.getCurrentUser();
@@ -156,13 +158,17 @@ public class MenuExpandableListAdapter extends BaseExpandableListAdapter {
                 //check if restaurant has enough quantity requested
                 if(selectedQuantity<quantity) {
                     food.increaseSelectedQuantity();
+
                     if(!order.getSelectedFoods().containsKey(food.getFoodID())) {
                         order.addFoodToOrder(food);
                     }
+                    Log.d("fabio", "Setting quantity in badge from listAdapter: " + order.computeTotalQuantity());
+                    listener.setQuantity(order.computeTotalQuantity());
                     order.getSelectedFoods().get(food.getFoodID()).setSelectedQuantity(food.getSelectedQuantity());
                     order.updateTotalPrice();
+                    order.increaseToTotalQuantity();
                     //((OrderActivity)host).setOrder(order); //works but it's bad programming => better use interfaces
-                    Log.d("fabio", "new total price: "+ order.getTotalPrice());
+                    Log.d("fabio", "new total price: "+ order.getTotalQuantity());
                     myToast.setText(host.getString(R.string.added_to_cart));
                     myToast.show();
                     notifyDataSetChanged();
@@ -186,6 +192,9 @@ public class MenuExpandableListAdapter extends BaseExpandableListAdapter {
                     else
                         order.getSelectedFoods().get(food.getFoodID()).setSelectedQuantity(food.getSelectedQuantity());
 
+                    order.decreaseToTotalQuantity();
+                    Log.d("fabio", "Setting quantity in badge from listAdapter: " + order.getTotalQuantity());
+                    listener.setQuantity(order.computeTotalQuantity());
                     order.updateTotalPrice();
                     Log.d("fabio", "new total price: "+ order.getTotalPrice());
 
