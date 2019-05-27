@@ -74,6 +74,7 @@ public class FavoriteMenuFragment extends Fragment {
 
     private List<MyDatabaseReference> dbReferenceList;
 
+
     private enum groupType{
         STARTERS,
         FITSTS,
@@ -168,7 +169,7 @@ public class FavoriteMenuFragment extends Fragment {
         });
         setList();
         // list Adapter of ExpandableList
-        listAdapter = new FavoriteMenuExpandableListAdapter(hostActivity, listDataGroup, listDataChild, order);
+        listAdapter = new FavoriteMenuExpandableListAdapter(hostActivity, listDataGroup, listDataChild, order, listener);
 
         // setting list adapter
         expListView.setAdapter(listAdapter);
@@ -272,6 +273,7 @@ public class FavoriteMenuFragment extends Fragment {
                                                     listDataChild.put(category, new ArrayList<Food>());
                                                 }
                                                 listDataChild.get(category).add(f);
+
 
                                                 /*
                                                  * download food image
@@ -482,6 +484,15 @@ public class FavoriteMenuFragment extends Fragment {
         dbReferenceList.get(indexReferenceFavorite).setChildListener(childEventListener);
     }
 
+    //Refresh listAdapter when fragment become visible
+    //Needed for quantity changes between MenuFragment and FavoriteMenuFragment
+    @Override
+    public void setUserVisibleHint(boolean isVisibleToUser) {
+        super.setUserVisibleHint(isVisibleToUser);
+        if(isVisibleToUser)
+            if(listAdapter!=null)
+                listAdapter.notifyDataSetChanged();
+    }
 
     public void setImg(String category, int idx, String img){
         listDataChild.get(category).get(idx).setImg(img);

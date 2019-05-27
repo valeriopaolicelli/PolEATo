@@ -130,6 +130,12 @@ public class MenuExpandableListAdapter extends BaseExpandableListAdapter {
 
         final Food  food = getChild(groupPosition,childPosition);
 
+        //If food is in the selectedFood of the order, set the quantity selected
+        if(order.getSelectedFoods().containsKey(food.getFoodID())){
+            food.setSelectedQuantity(order.getSelectedFoods().get(food.getFoodID()).getSelectedQuantity());
+        }else{
+            food.setSelectedQuantity(0);
+        }
        // holder.img.setImageBitmap(food.getImg().getBitmap());
         if(food.getImg().equals("")){
             Picasso.with(host.getApplicationContext()).load(R.drawable.plate_fork).into(holder.img);
@@ -162,11 +168,10 @@ public class MenuExpandableListAdapter extends BaseExpandableListAdapter {
                     if(!order.getSelectedFoods().containsKey(food.getFoodID())) {
                         order.addFoodToOrder(food);
                     }
-                    Log.d("fabio", "Setting quantity in badge from listAdapter: " + order.computeTotalQuantity());
-                    listener.setQuantity(order.computeTotalQuantity());
                     order.getSelectedFoods().get(food.getFoodID()).setSelectedQuantity(food.getSelectedQuantity());
                     order.updateTotalPrice();
                     order.increaseToTotalQuantity();
+                    listener.setQuantity(order.getTotalQuantity());
                     //((OrderActivity)host).setOrder(order); //works but it's bad programming => better use interfaces
                     Log.d("fabio", "new total price: "+ order.getTotalQuantity());
                     myToast.setText(host.getString(R.string.added_to_cart));
@@ -194,7 +199,7 @@ public class MenuExpandableListAdapter extends BaseExpandableListAdapter {
 
                     order.decreaseToTotalQuantity();
                     Log.d("fabio", "Setting quantity in badge from listAdapter: " + order.getTotalQuantity());
-                    listener.setQuantity(order.computeTotalQuantity());
+                    listener.setQuantity(order.getTotalQuantity());
                     order.updateTotalPrice();
                     Log.d("fabio", "new total price: "+ order.getTotalPrice());
 

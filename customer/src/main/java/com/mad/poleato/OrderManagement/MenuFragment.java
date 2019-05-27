@@ -10,13 +10,13 @@ import android.os.Message;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentTransaction;
+
 import android.util.Log;
 import android.view.Display;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
+
 import android.widget.ExpandableListView;
 
 import com.google.android.gms.tasks.OnFailureListener;
@@ -31,7 +31,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.mad.poleato.Classes.Food;
-import com.mad.poleato.FavoritePlates.FavoriteMenuFragment;
+
 import com.mad.poleato.Interface;
 import com.mad.poleato.MyDatabaseReference;
 import com.mad.poleato.R;
@@ -46,21 +46,15 @@ import java.util.List;
 public class MenuFragment extends Fragment {
 
     private Activity hostActivity;
-    private View fragView;
     private ExpandableListView expListView;
     private MenuExpandableListAdapter listAdapter;
     private List<String> listDataGroup;
     private HashMap<String, List<Food>>listDataChild;
-    private Display display;
-    private Point size;
     int width;
     private int lastExpandedPosition = -1;
     private String restaurantID;
     private Order order;
     private Interface listener;
-
-    private String currentUserID;
-    private FirebaseAuth mAuth;
 
     private SortMenu sortMenu;
 
@@ -99,17 +93,17 @@ public class MenuFragment extends Fragment {
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        display = getActivity().getWindowManager().getDefaultDisplay();
-        size = new Point();
+        Display display = getActivity().getWindowManager().getDefaultDisplay();
+        Point size = new Point();
         display.getSize(size);
         width = size.x;
 
         //to sort the categories
         sortMenu = new SortMenu();
 
-        mAuth = FirebaseAuth.getInstance();
+        FirebaseAuth mAuth = FirebaseAuth.getInstance();
         FirebaseUser currentUser = mAuth.getCurrentUser();
-        currentUserID = currentUser.getUid();
+        String currentUserID = currentUser.getUid();
 
 // OneSignal is used to send notifications between applications
 
@@ -129,7 +123,7 @@ public class MenuFragment extends Fragment {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
 
-        fragView = inflater.inflate(R.layout.menu_fragment_layout,container,false );
+        View fragView = inflater.inflate(R.layout.menu_fragment_layout, container, false);
 
         //get the listview
         expListView = (ExpandableListView) fragView.findViewById(R.id.menuList);
@@ -199,6 +193,16 @@ public class MenuFragment extends Fragment {
 
             }
         }
+    }
+
+    //Refresh listAdapter when fragment become visible
+    //Needed for quantity changes between MenuFragment and FavoriteMenuFragment
+    @Override
+    public void setUserVisibleHint(boolean isVisibleToUser) {
+        super.setUserVisibleHint(isVisibleToUser);
+        if(isVisibleToUser)
+            if(listAdapter!=null)
+                listAdapter.notifyDataSetChanged();
     }
 
     @Override

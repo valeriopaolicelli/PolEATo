@@ -17,7 +17,7 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.onesignal.OneSignal;
 
-public class NavigatorActivity extends AppCompatActivity {
+public class NavigatorActivity extends AppCompatActivity{
     BottomNavigationView navigation;
     private NavController navController;
     private FirebaseAuth mAuth;

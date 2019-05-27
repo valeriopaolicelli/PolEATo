@@ -25,6 +25,7 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.mad.poleato.Classes.Food;
+import com.mad.poleato.Interface;
 import com.mad.poleato.OrderManagement.Order;
 import com.mad.poleato.R;
 import com.squareup.picasso.Picasso;
@@ -42,12 +43,12 @@ public class FavoriteMenuExpandableListAdapter extends BaseExpandableListAdapter
     private List<String> _listDataGroup; // header titles
     private HashMap<String, List<Food>> _listDataChild; // child data in format of header title, child title
     private Order order;
-
     private String currentUserID;
     private FirebaseAuth mAuth;
+    private Interface listener;
 
     public FavoriteMenuExpandableListAdapter(Activity host, List<String> listDataHeader,
-                                             HashMap<String, List<Food>> listChildData, Order order) {
+                                             HashMap<String, List<Food>> listChildData, Order order, Interface listener) {
 
         myToast = Toast.makeText(host, "", Toast.LENGTH_SHORT);
 
@@ -57,6 +58,7 @@ public class FavoriteMenuExpandableListAdapter extends BaseExpandableListAdapter
         this._listDataChild = listChildData;
         this.order = order;
 
+        this.listener = listener;
         mAuth = FirebaseAuth.getInstance();
         FirebaseUser currentUser = mAuth.getCurrentUser();
         currentUserID = currentUser.getUid();
@@ -64,7 +66,6 @@ public class FavoriteMenuExpandableListAdapter extends BaseExpandableListAdapter
         Log.d("matte", "[Init]headers:"+_listDataGroup.toString());
         Log.d("matte", "[Init]childs:"+_listDataChild.toString());
     }
-
 
 
     public void insertChild(String groupTag, Food food){
@@ -126,6 +127,12 @@ public class FavoriteMenuExpandableListAdapter extends BaseExpandableListAdapter
         }
 
         final Food  food = getChild(groupPosition,childPosition);
+        //If favorite food is in the selectedFood of the order, set the quantity selected
+        if(order.getSelectedFoods().containsKey(food.getFoodID())){
+            food.setSelectedQuantity(order.getSelectedFoods().get(food.getFoodID()).getSelectedQuantity());
+        }else{
+            food.setSelectedQuantity(0);
+        }
 
        // holder.img.setImageBitmap(food.getImg().getBitmap());
         if(food.getImg().equals("")){
@@ -160,6 +167,10 @@ public class FavoriteMenuExpandableListAdapter extends BaseExpandableListAdapter
                     }
                     order.getSelectedFoods().get(food.getFoodID()).setSelectedQuantity(food.getSelectedQuantity());
                     order.updateTotalPrice();
+                    order.increaseToTotalQuantity();
+                    listener.setQuantity(order.getTotalQuantity());
+                    //((OrderActivity)host).setOrder(order); //works but it's bad programming => better use interfaces
+                    Log.d("fabio", "new total price: "+ order.getTotalQuantity());
                     //((OrderActivity)host).setOrder(order); //works but it's bad programming => better use interfaces
                     Log.d("fabio", "new total price: "+ order.getTotalPrice());
                     myToast.setText(host.getString(R.string.added_to_cart));
@@ -184,7 +195,9 @@ public class FavoriteMenuExpandableListAdapter extends BaseExpandableListAdapter
                     }
                     else
                         order.getSelectedFoods().get(food.getFoodID()).setSelectedQuantity(food.getSelectedQuantity());
-
+                    order.decreaseToTotalQuantity();
+                    Log.d("fabio", "Setting quantity in badge from listAdapter: " + order.getTotalQuantity());
+                    listener.setQuantity(order.getTotalQuantity());
                     order.updateTotalPrice();
                     Log.d("fabio", "new total price: "+ order.getTotalPrice());
 
