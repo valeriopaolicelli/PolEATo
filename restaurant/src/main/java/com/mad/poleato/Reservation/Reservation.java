@@ -177,7 +177,12 @@ public class Reservation implements Serializable{
         return dishes;
     }
 
-    public int getNumberOfDishes(){ return dishes.size(); }
+    public int getNumberOfDishes(){
+        int numberOfDishes= 0;
+        for(Dish d : dishes)
+            numberOfDishes += d.getQuantity();
+        return numberOfDishes;
+    }
 
     public void addDishtoReservation(Dish d){
         this.dishes.add(d);

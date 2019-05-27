@@ -322,7 +322,7 @@ public class ReservationExpandableListAdapter extends BaseExpandableListAdapter{
                                                     /*
                                                      * pruning
                                                      */
-                                                    if(updated==r.getNumberOfDishes()){
+                                                    if(updated==r.getDishes().size()){
                                                         r.setStatus(Status.COOKING);
                                                         FirebaseDatabase.getInstance().getReference("restaurants").child(loggedID).child("reservations").child(r.getOrder_id()).child("status").child("en").setValue("Cooking");
                                                         FirebaseDatabase.getInstance().getReference("restaurants").child(loggedID).child("reservations").child(r.getOrder_id()).child("status").child("it").setValue("Preparazione");
