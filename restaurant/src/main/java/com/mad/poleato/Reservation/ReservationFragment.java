@@ -225,8 +225,18 @@ public class ReservationFragment extends Fragment {
                         dataSnapshot.hasChild("status") &&
                         dataSnapshot.child("status").hasChild("it") &&
                         dataSnapshot.child("status").hasChild("en") &&
-                        dataSnapshot.hasChild("date") &&
-                        dataSnapshot.hasChild("dishes")
+                        ((
+                                (dataSnapshot.child("status/it").getValue().toString().equals("Nuovo ordine") &&
+                                        dataSnapshot.child("status/en").getValue().toString().equals("New order")) ||
+                                        (dataSnapshot.child("status/it").getValue().toString().equals("Preparazione") &&
+                                                dataSnapshot.child("status/en").getValue().toString().equals("Cooking")) ||
+                                        (dataSnapshot.child("status/it").getValue().toString().equals("In consegna") &&
+                                                dataSnapshot.child("status/en").getValue().toString().equals("Delivering")) ||
+                                        (dataSnapshot.child("status/it").getValue().toString().equals("Consegnato") &&
+                                                dataSnapshot.child("status/en").getValue().toString().equals("Delivered"))
+                        ) && dataSnapshot.hasChild("date") &&
+                                dataSnapshot.hasChild("dishes")
+                        )
                 )
                 {
                     //retrieve the customer (reservation) details
@@ -279,6 +289,13 @@ public class ReservationFragment extends Fragment {
                         nameDish = dish.child("name").getValue().toString();
                         quantity = Integer.parseInt(dish.child("selectedQuantity").getValue().toString());
                         note= dish.child("customerNotes").getValue().toString();
+                        if(note.equals("")){
+                            if(localeShort.equals("it"))
+                                note= "Nessuna nota dal cliente";
+                            else
+                                note= "No customer notes";
+                        }
+
                         foodID= dish.child("foodID").getValue().toString();
                         d = new Dish(nameDish, quantity, note, foodID);
                         r.addDishtoReservation(d);
@@ -310,8 +327,18 @@ public class ReservationFragment extends Fragment {
                         dataSnapshot.hasChild("status") &&
                         dataSnapshot.child("status").hasChild("it") &&
                         dataSnapshot.child("status").hasChild("en") &&
-                        dataSnapshot.hasChild("date") &&
-                        dataSnapshot.hasChild("dishes")
+                        ((
+                                (dataSnapshot.child("status/it").getValue().toString().equals("Nuovo ordine") &&
+                                        dataSnapshot.child("status/en").getValue().toString().equals("New order")) ||
+                                        (dataSnapshot.child("status/it").getValue().toString().equals("Preparazione") &&
+                                                dataSnapshot.child("status/en").getValue().toString().equals("Cooking")) ||
+                                        (dataSnapshot.child("status/it").getValue().toString().equals("In consegna") &&
+                                                dataSnapshot.child("status/en").getValue().toString().equals("Delivering")) ||
+                                        (dataSnapshot.child("status/it").getValue().toString().equals("Consegnato") &&
+                                                dataSnapshot.child("status/en").getValue().toString().equals("Delivered"))
+                          ) && dataSnapshot.hasChild("date") &&
+                                dataSnapshot.hasChild("dishes")
+                        )
                 )
                 {
                     final String order_id= dataSnapshot.getKey();
@@ -362,6 +389,13 @@ public class ReservationFragment extends Fragment {
                         quantity = Integer.parseInt(dish.child("selectedQuantity").getValue().toString());
                         foodID = dish.child("foodID").getValue().toString();
                         note = dish.child("customerNotes").getValue().toString();
+                        if(note.equals("")){
+                            if(localeShort.equals("it"))
+                                note= "Nessun commento dal cliente";
+                            else
+                                note= "No customer notes";
+                        }
+
                         d = new Dish(nameDish, quantity, note, foodID);
 
                         dishes.add(d);

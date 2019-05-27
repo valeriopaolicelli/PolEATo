@@ -159,7 +159,7 @@ public class RatingFragment extends Fragment {
                     DatabaseReference newRatingC = customerReference.child(orderID);
                     newRatingC.setValue(rating);
 
-                    Navigation.findNavController(fragview).navigate(R.id.action_ratingFragment_to_holderHistory);
+                    Navigation.findNavController(fragview).navigate(R.id.action_rating_fragment_id_to_restaurantSearchFragment_id);
                 }
             }
         });

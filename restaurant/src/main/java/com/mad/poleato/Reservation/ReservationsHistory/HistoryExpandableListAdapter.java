@@ -94,10 +94,10 @@ public class HistoryExpandableListAdapter extends BaseExpandableListAdapter {
         holder.tv_time.setText(r.getTime());
         holder.tv_status.setText(r.getStat());
 
-        if (r.getStatus() == Status.REJECTED) {
+        if (r.getStatus() == Status.REJECTED || r.getStatus() == Status.FAILED) {
             holder.tv_status.setTextColor(context.getResources().getColor(R.color.colorTextRejected));
         }
-        else if (r.getStatus() == Status.DELIVERED) {
+        else if (r.getStatus() == Status.DELIVERED || r.getStatus() == Status.PAID) {
             holder.tv_status.setTextColor(context.getResources().getColor(R.color.colorTextAccepted));
         }
         return view;

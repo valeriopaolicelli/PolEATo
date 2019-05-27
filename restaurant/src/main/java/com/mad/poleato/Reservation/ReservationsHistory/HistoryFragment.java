@@ -160,7 +160,8 @@ public class HistoryFragment extends Fragment {
                                     String statusEN= dataSnapshotReservation.child("status/en").getValue().toString();
 
                                     if((statusEN.equals("Delivered") && statusIT.equals("Consegnato")) ||
-                                            (statusEN.equals("Failed") && statusIT.equals("Fallito")) ){
+                                            (statusEN.equals("Failed") && statusIT.equals("Fallito")) ||
+                                            (statusEN.equals("Rejected") && statusIT.equals("Rifiutato"))){
                                         String orderID= dataSnapshotReservation.getKey();
                                         String customerID= dataSnapshotReservation.child("customerID").getValue().toString();
                                         String time= dataSnapshotReservation.child("time").getValue().toString();
@@ -287,7 +288,6 @@ public class HistoryFragment extends Fragment {
                     // fields setted to null only because they will be setted later in the call back of FB
                     r = new Reservation(order_id, customer_id,null, null, null, date, time,
                             status, null, totalPrice, localeShort);
-                    reservations.add(r);
 
                     //and for each customer (reservation) retrieve the list of dishes
                     DataSnapshot dishesOfReservation = dataSnapshot.child("dishes");
@@ -300,11 +300,18 @@ public class HistoryFragment extends Fragment {
                         nameDish = dish.child("name").getValue().toString();
                         quantity = Integer.parseInt(dish.child("quantity").getValue().toString());
                         note= dish.child("notes").getValue().toString();
+                        if(note.equals("")){
+                            if(localeShort.equals("it"))
+                                note= "Nessuna nota dal cliente";
+                            else
+                                note= "No customer notes";
+                        }
+
                         foodID= dish.child("id").getValue().toString();
                         d = new Dish(nameDish, quantity, note, foodID);
                         r.addDishtoReservation(d);
                     }
-                    listHash.put(r.getOrder_id(), r.getDishes());
+
                     if(!listHash.containsKey(order_id)){
                         reservations.add(r);
                     }
@@ -313,6 +320,8 @@ public class HistoryFragment extends Fragment {
                             if(res.getOrder_id().equals(order_id))
                                 res.setStat(status);
                     }
+                    listHash.put(r.getOrder_id(), r.getDishes());
+
                     Collections.sort(reservations, Reservation.timeComparatorReverse);
                     listAdapter.notifyDataSetChanged();
                     listAdapter.updateReservationList(reservations,listHash);
@@ -376,6 +385,13 @@ public class HistoryFragment extends Fragment {
                         quantity = Integer.parseInt(dish.child("quantity").getValue().toString());
                         foodID = dish.child("id").getValue().toString();
                         note = dish.child("notes").getValue().toString();
+                        if(note.equals("")){
+                            if(localeShort.equals("it"))
+                                note= "Nessuna nota dal cliente";
+                            else
+                                note= "No customer notes";
+                        }
+
                         d = new Dish(nameDish, quantity, note, foodID);
 
                         dishes.add(d);
