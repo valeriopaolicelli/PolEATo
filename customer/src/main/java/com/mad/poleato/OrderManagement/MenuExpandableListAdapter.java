@@ -271,6 +271,7 @@ public class MenuExpandableListAdapter extends BaseExpandableListAdapter {
                                 FirebaseDatabase.getInstance().getReference("customers/" +
                                                                                     currentUserID +
                                                                                     "/Favorite/" + restaurantID).setValue("none");
+                                notifyDataSetChanged();
                             }
                         }
 

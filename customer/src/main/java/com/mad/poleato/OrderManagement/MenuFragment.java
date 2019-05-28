@@ -285,15 +285,9 @@ public class MenuFragment extends Fragment {
                     if(!listDataGroup.contains(category))
                         listDataGroup.add(category);
 
-                    if(!listDataGroup.contains("Popular"))
-                        listDataGroup.add("Popular");
-
                     if(!listDataChild.containsKey(category)){
                         listDataChild.put(category, new ArrayList<Food>());
                     }
-
-                    if(!listDataChild.containsKey("Popular"))
-                        listDataChild.put("Popular", new ArrayList<Food>());
 
                     listDataChild.get(category).add(f);
 
@@ -301,8 +295,15 @@ public class MenuFragment extends Fragment {
                      * if it's  popular food (popularity counter >= popularity average),
                      * add it to popular list
                      */
-                    if(popularityCounter > popularityAverage)
+                    if(popularityCounter > popularityAverage) {
+                        if(!listDataChild.containsKey("Popular"))
+                            listDataChild.put("Popular", new ArrayList<Food>());
+
+                        if(!listDataGroup.contains("Popular"))
+                            listDataGroup.add("Popular");
+
                         listDataChild.get("Popular").add(f);
+                    }
 
                     /*
                      * download food image
@@ -359,23 +360,23 @@ public class MenuFragment extends Fragment {
                     if(!listDataGroup.contains(category))
                         listDataGroup.add(category);
 
-                    if(!listDataGroup.contains("Popular"))
-                        listDataGroup.add("Popular");
-
                     if(!listDataChild.containsKey(category)){
                         listDataChild.put(category,new ArrayList<Food>());
                     }
-
-                    if(!listDataChild.containsKey("Popular"))
-                        listDataChild.put("Popular", new ArrayList<Food>());
 
                     /*
                      * if it's  popular food (popularity counter >= popularity average),
                      * add it to popular list
                      */
-                    if(popularityCounter > popularityAverage)
-                        listDataChild.get("Popular").add(f);
+                    if(popularityCounter > popularityAverage) {
+                        if(!listDataChild.containsKey("Popular"))
+                            listDataChild.put("Popular", new ArrayList<Food>());
 
+                        if(!listDataGroup.contains("Popular"))
+                            listDataGroup.add("Popular");
+
+                        listDataChild.get("Popular").add(f);
+                    }
 
                     int lenght= listDataChild.get(category).size();
                     boolean found= false;

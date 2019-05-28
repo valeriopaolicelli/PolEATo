@@ -171,15 +171,15 @@ public class AboutUsFragment extends Fragment {
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         menu.clear();
-        /** Inflate the menu; this adds items to the action bar if it is present.*/
+        /* Inflate the menu; this adds items to the action bar if it is present.*/
         inflater.inflate(R.menu.aboutus_menu, menu);
 
-        /** Button to show map */
+        /* Button to show reviews */
         menu.findItem(R.id.aboutus_id).setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
             @Override
             public boolean onMenuItemClick(MenuItem item) {
 
-                /**
+                /*
                  * GO FROM STATISTICS TO REVIEWS
                  */
                 Navigation.findNavController(fragView).navigate(R.id.action_aboutus_id_to_reviews_id);
