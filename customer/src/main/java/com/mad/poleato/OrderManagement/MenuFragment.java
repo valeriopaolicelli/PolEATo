@@ -301,7 +301,7 @@ public class MenuFragment extends Fragment {
                      * if it's  popular food (popularity counter >= popularity average),
                      * add it to popular list
                      */
-                    if(popularityCounter >= popularityAverage)
+                    if(popularityCounter > popularityAverage)
                         listDataChild.get("Popular").add(f);
 
                     /*
@@ -346,6 +346,7 @@ public class MenuFragment extends Fragment {
                     String name = dataSnapshot.child("Name").getValue().toString();
                     int quantity = Integer.parseInt(dataSnapshot.child("Quantity").getValue().toString());
                     String description = dataSnapshot.child("Description").getValue().toString();
+                    int popularityCounter= Integer.parseInt(dataSnapshot.child("PopularityCounter").getValue().toString());
                     double price = Double.parseDouble(dataSnapshot.child("Price")
                             .getValue()
                             .toString()
@@ -357,9 +358,24 @@ public class MenuFragment extends Fragment {
 
                     if(!listDataGroup.contains(category))
                         listDataGroup.add(category);
+
+                    if(!listDataGroup.contains("Popular"))
+                        listDataGroup.add("Popular");
+
                     if(!listDataChild.containsKey(category)){
                         listDataChild.put(category,new ArrayList<Food>());
                     }
+
+                    if(!listDataChild.containsKey("Popular"))
+                        listDataChild.put("Popular", new ArrayList<Food>());
+
+                    /*
+                     * if it's  popular food (popularity counter >= popularity average),
+                     * add it to popular list
+                     */
+                    if(popularityCounter > popularityAverage)
+                        listDataChild.get("Popular").add(f);
+
 
                     int lenght= listDataChild.get(category).size();
                     boolean found= false;

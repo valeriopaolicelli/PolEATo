@@ -472,16 +472,16 @@ public class HistoryFragment extends Fragment {
     @Override
     public void onStop() {
         super.onStop();
-        for(int i=0; i < dbReferenceList.size(); i++){
-            dbReferenceList.get(i).removeAllListener();
+        for(MyDatabaseReference my_ref : dbReferenceList.values()){
+            my_ref.removeAllListener();
         }
     }
 
     @Override
     public void onDestroy() {
         super.onDestroy();
-        for(int i=0; i < dbReferenceList.size(); i++){
-            dbReferenceList.get(i).removeAllListener();
+        for(MyDatabaseReference my_ref : dbReferenceList.values()){
+            my_ref.removeAllListener();
         }
     }
 }
