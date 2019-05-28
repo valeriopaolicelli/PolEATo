@@ -218,7 +218,7 @@ public class RestaurantRecyclerViewAdapter extends RecyclerView.Adapter<Restaura
         DatabaseReference reference= FirebaseDatabase.getInstance().getReference("customers/"+currentUserID+"/Favorite");
         dbReferenceList.put("favorite", new MyDatabaseReference(reference));
 
-        dbReferenceList.get("favorite").setSingleValueListener(new ValueEventListener() {
+        dbReferenceList.get("favorite").setValueListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 if(dataSnapshot.exists()) {
