@@ -91,11 +91,16 @@
     <string name="order_deliver">Consegna</string>
     <string name="title_deliver">Consegna ordine</string>
     <string name="msg_deliver">E\' tutto pronto? Lo stato della prenotazione passerà su \'In consegna\'</string>
+    <string name="msg_deliver_false">Non tutti i piatti sono pronti, vuoi far partire la consegna ugualmente? Lo stato passerà su \'In Consegna\'</string>
+
     <string name="choice_confirm">Conferma</string>
     <string name="choice_reject">Rifiuta</string>
     <string name="choice_cancel">Cancella</string>
     <string name="title_confirm">Conferma ordine</string>
     <string name="msg_confirm">Vuoi confermare o rifiutare l\'ordine? Se confermi, lo stato della prenotazione passerà su \'Preparazione\'</string>
+
+    <string name="dish_cooking">In Preparazione</string>
+    <string name="dish_ready">Pronto</string>
 
     <string name="title_activity_main">MainActivity</string>
 
