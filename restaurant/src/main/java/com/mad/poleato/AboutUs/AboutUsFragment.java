@@ -179,19 +179,24 @@ public class AboutUsFragment extends Fragment {
                 fillMapSlots();
                 TimeSlot popularTimeSlot= null;
                 int max= 0;
-                for(DataSnapshot reservationReference : dataSnapshot.getChildren()) {
-                    String time = reservationReference.child("time").getValue().toString();
-                    for(TimeSlot t : mapMostPopularTime.keySet()){
-                        if(t.inSlot(time)) {
-                            mapMostPopularTime.put(t, mapMostPopularTime.get(t) + 1);
-                            if(mapMostPopularTime.get(t) > max){
-                                max = mapMostPopularTime.get(t);
-                                popularTimeSlot= t;
+                if(dataSnapshot.getChildrenCount() > 0) {
+                    for (DataSnapshot reservationReference : dataSnapshot.getChildren()) {
+                        String time = reservationReference.child("time").getValue().toString();
+                        for (TimeSlot t : mapMostPopularTime.keySet()) {
+                            if (t.inSlot(time)) {
+                                mapMostPopularTime.put(t, mapMostPopularTime.get(t) + 1);
+                                if (mapMostPopularTime.get(t) > max) {
+                                    max = mapMostPopularTime.get(t);
+                                    popularTimeSlot = t;
+                                }
                             }
                         }
                     }
+                    popularTiming.setText(popularTimeSlot.getSlot());
                 }
-                popularTiming.setText(popularTimeSlot.getSlot());
+                else{
+                    //TODO matteo empty view
+                }
 
                 if(progressDialog.isShowing())
                     progressDialog.dismiss();
