@@ -432,6 +432,7 @@ public class CartActivity extends AppCompatActivity implements Interface,TimePic
 //        });
 
         time.setText(hourStr +":"+minStr);
+        order.setTime(time.getText().toString());
     }
     @Override
     protected void onStop() {
