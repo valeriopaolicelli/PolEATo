@@ -107,14 +107,6 @@ public class RequestsFragment extends Fragment {
         getActivity().finish();
     }
 
-    @Override
-    public void onStop() {
-        super.onStop();
-        //OnDestroy it is not called every time
-        for(MyDatabaseReference ref : referenceMap.values())
-            ref.removeAllListener();
-    }
-
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -314,4 +306,13 @@ public class RequestsFragment extends Fragment {
         for(MyDatabaseReference ref : referenceMap.values())
             ref.removeAllListener();
     }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        //OnDestroy it is not called every time
+        for(MyDatabaseReference ref : referenceMap.values())
+            ref.removeAllListener();
+    }
+
 }

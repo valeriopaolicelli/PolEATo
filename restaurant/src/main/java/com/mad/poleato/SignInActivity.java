@@ -421,4 +421,11 @@ public class SignInActivity extends AppCompatActivity {
         for(MyDatabaseReference ref : dbReferenceList.values())
             ref.removeAllListener();
     }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        for(MyDatabaseReference my_ref : dbReferenceList.values())
+            my_ref.removeAllListener();
+    }
 }

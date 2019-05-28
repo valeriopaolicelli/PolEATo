@@ -28,6 +28,7 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.mad.poleato.MyDatabaseReference;
 import com.mad.poleato.R;
 import com.onesignal.OneSignal;
 
@@ -61,7 +62,7 @@ public class RestaurantReviewsFragment extends Fragment {
     private float avgReviews;
     private int totalStars;
 
-    DatabaseReference reviewsReference;
+    HashMap<String, MyDatabaseReference> dbReferenceList;
 
     private HashMap<String, Rating>reviewsMap;
     private List<Rating>reviewsList;
@@ -89,6 +90,7 @@ public class RestaurantReviewsFragment extends Fragment {
         reviewsList = new ArrayList<>();
         displayedList = new ArrayList<>();
 
+        dbReferenceList= new HashMap<>();
 
         mAuth = FirebaseAuth.getInstance();
         FirebaseUser currentUser = mAuth.getCurrentUser();
@@ -103,7 +105,8 @@ public class RestaurantReviewsFragment extends Fragment {
 
         OneSignal.sendTag("User_ID", currentUserID);
 
-        reviewsReference = FirebaseDatabase.getInstance().getReference("restaurants/"+ currentUserID + "/Ratings");
+        DatabaseReference reviewsReference = FirebaseDatabase.getInstance().getReference("restaurants/"+ currentUserID + "/Ratings");
+        dbReferenceList.put("ratings", new MyDatabaseReference(reviewsReference));
 
         if(getActivity() != null){
             progressDialog = ProgressDialog.show(getActivity(), "", getString(R.string.loading));
@@ -158,7 +161,7 @@ public class RestaurantReviewsFragment extends Fragment {
 
     public void fillFields(){
 
-        reviewsReference.addValueEventListener(new ValueEventListener() {
+        dbReferenceList.get("ratings").setValueListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 handler.sendEmptyMessage(0);
@@ -173,7 +176,7 @@ public class RestaurantReviewsFragment extends Fragment {
         });
 
 
-        reviewsReference.addChildEventListener(new ChildEventListener() {
+        dbReferenceList.get("ratings").setChildListener(new ChildEventListener() {
             @Override
             public void onChildAdded(@NonNull DataSnapshot ds, @Nullable String s) {
                 if (ds.exists()) {
@@ -201,7 +204,9 @@ public class RestaurantReviewsFragment extends Fragment {
                         reviewsMap.put(ds.getKey(), rating);
 //Get customer data
                         DatabaseReference customerReference = FirebaseDatabase.getInstance().getReference("customers/" + customerID);
-                        customerReference.addListenerForSingleValueEvent(new ValueEventListener() {
+                        dbReferenceList.put("customerAdded", new MyDatabaseReference(customerReference));
+
+                        dbReferenceList.get("customerAdded").setValueListener(new ValueEventListener() {
                             @Override
                             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                                 customerName[0] = dataSnapshot.child("Name").getValue().toString();
@@ -260,7 +265,9 @@ public class RestaurantReviewsFragment extends Fragment {
                         reviewsMap.put(ds.getKey(), rating);
 //Get customer data
                         DatabaseReference customerReference = FirebaseDatabase.getInstance().getReference("customers/" + customerID);
-                        customerReference.addListenerForSingleValueEvent(new ValueEventListener() {
+                        dbReferenceList.put("customerChanged", new MyDatabaseReference(customerReference));
+
+                        dbReferenceList.get("customerChanged").setValueListener(new ValueEventListener() {
                             @Override
                             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                                 customerName[0] = dataSnapshot.child("Name").getValue().toString();
@@ -324,8 +331,21 @@ public class RestaurantReviewsFragment extends Fragment {
         }
     }
 
-
     private boolean isValidToDsplay(Rating rating){
         return !rating.getComment().equals("");
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        for(MyDatabaseReference my_ref : dbReferenceList.values())
+            my_ref.removeAllListener();
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        for(MyDatabaseReference my_ref : dbReferenceList.values())
+            my_ref.removeAllListener();
     }
 }

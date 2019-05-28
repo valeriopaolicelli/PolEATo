@@ -10,6 +10,7 @@ import android.support.annotation.NonNull;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
+import android.support.v4.view.MenuItemCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -17,6 +18,8 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.TextView;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -37,6 +40,7 @@ import com.mad.poleato.Classes.Restaurant;
 import com.onesignal.OneSignal;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 
@@ -46,11 +50,11 @@ public class OrderActivity extends AppCompatActivity implements Interface {
     private ViewPager onViewPager;
     private PageAdapter adapter;
     private Order order;
-    private DatabaseReference dbReferece;
     private ConnectionManager connectionManager;
+    TextView cartItemCount;
+    private int mCartItemCount = 0;
 
-    private List<MyDatabaseReference> dbReferenceList;
-    int indexReference;
+    private HashMap<String, MyDatabaseReference> dbReferenceList;
 
     private String currentUserID;
     private FirebaseAuth mAuth;
@@ -120,6 +124,7 @@ public class OrderActivity extends AppCompatActivity implements Interface {
             adapter.addFragment(favoriteMenuFragment, "Favorite");
         else
             adapter.addFragment(favoriteMenuFragment, "Preferiti");
+
         adapter.addFragment(infoFragment, "Info");
 
         adapter.addFragment(restaurantReviewsFragment,"Reviews");
@@ -148,7 +153,7 @@ public class OrderActivity extends AppCompatActivity implements Interface {
 
         OneSignal.sendTag("User_ID", currentUserID);
 
-        dbReferenceList= new ArrayList<>();
+        dbReferenceList= new HashMap<>();
 
         order = new Order(currentUserID);
 
@@ -160,12 +165,11 @@ public class OrderActivity extends AppCompatActivity implements Interface {
 
 
         order.setRestaurantID(bundle.getString("id"));
-        dbReferece = FirebaseDatabase.getInstance().getReference("restaurants").child(order.getRestaurantID());
-        dbReferenceList.add(new MyDatabaseReference(dbReferece));
-        int indexReference= dbReferenceList.size()-1;
-        ValueEventListener valueEventListener;
 
-        dbReferenceList.get(indexReference).getReference().addValueEventListener(valueEventListener= new ValueEventListener() {
+        DatabaseReference dbReferece = FirebaseDatabase.getInstance().getReference("restaurants").child(order.getRestaurantID());
+        dbReferenceList.put("restaurant", new MyDatabaseReference(dbReferece));
+
+        dbReferenceList.get("restaurant").setValueListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 String id = dataSnapshot.getKey();
@@ -194,7 +198,6 @@ public class OrderActivity extends AppCompatActivity implements Interface {
 
             }
         });
-        dbReferenceList.get(indexReference).setValueListener(valueEventListener);
 
         android.support.v7.widget.Toolbar toolbar = findViewById(R.id.toolbar_order);
         TabLayout tabLayout = findViewById(R.id.tabs);
@@ -202,7 +205,7 @@ public class OrderActivity extends AppCompatActivity implements Interface {
         setSupportActionBar(toolbar);
         if (getSupportActionBar() != null) {
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-            getSupportActionBar().setTitle("");
+            getSupportActionBar().setTitle(bundle.getString("name"));
         } else {
             Log.d("Error", "getSupportActionBar is null");
             finish();
@@ -222,12 +225,6 @@ public class OrderActivity extends AppCompatActivity implements Interface {
     }
 
     @Override
-    protected void onStop() {
-        unregisterReceiver(networkReceiver);
-        super.onStop();
-    }
-
-    @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case android.R.id.home:
@@ -242,10 +239,43 @@ public class OrderActivity extends AppCompatActivity implements Interface {
     }
 
     public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu items for use in the action bar
+        // Inflate the menu items for use in the action
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.cart_menu, menu);
+
+        final MenuItem cart = menu.findItem(R.id.cart_button);
+
+        View actionView = cart.getActionView();
+        cartItemCount = (TextView) actionView.findViewById(R.id.cart_badge);
+        setUpBadge(0);
+
+        actionView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                goToCart(cart);
+            }
+        });
+
         return super.onCreateOptionsMenu(menu);
+    }
+
+    public void setUpBadge(int quantity){
+
+        mCartItemCount = quantity;
+
+        if(cartItemCount != null){
+            if(mCartItemCount == 0){
+                if(cartItemCount.getVisibility() != View.GONE){
+                    cartItemCount.setVisibility(View.GONE);
+                }
+            }else{
+                Log.d("fabio","Setting quantity in badge: " + quantity);
+                cartItemCount.setText(Integer.toString(mCartItemCount));
+                cartItemCount.setTextColor(getApplicationContext().getColor(R.color.colorTextSubField));
+                if(cartItemCount.getVisibility() != View.VISIBLE)
+                    cartItemCount.setVisibility(View.VISIBLE);
+            }
+        }
     }
 
     public void goToCart(MenuItem item) {
@@ -267,6 +297,23 @@ public class OrderActivity extends AppCompatActivity implements Interface {
         }
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        setUpBadge(order.getTotalQuantity());
+    }
+
+    @Override
+    public void onBackPressed() {
+        int count = getSupportFragmentManager().getBackStackEntryCount();
+        if(count == 0){
+            super.onBackPressed();
+            finish();
+        }
+        else
+            getSupportFragmentManager().popBackStack();
+    }
+
     public void setOrder(Order order) {
         this.order = order;
     }
@@ -277,20 +324,26 @@ public class OrderActivity extends AppCompatActivity implements Interface {
     }
 
     @Override
+    public void setQuantity(int quantity) {
+        setUpBadge(quantity);
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        unregisterReceiver(networkReceiver);
+        for (MyDatabaseReference my_ref : dbReferenceList.values())
+            my_ref.removeAllListener();
+        for (MyDatabaseReference my_ref : order.getDbReferenceList().values())
+            my_ref.removeAllListener();
+    }
+
+    @Override
     public void onDestroy() {
         super.onDestroy();
-
-        /*
-         * remove all listeners of this activity
-         */
-        for (int i=0; i < dbReferenceList.size(); i++)
-            dbReferenceList.get(i).removeAllListener();
-
-        /*
-         * remove all inner listeners of order class
-         */
-        for (int i=0; i < order.getDbReferenceList().size(); i++)
-            order.getDbReferenceList().get(i).removeAllListener();
-
+        for (MyDatabaseReference my_ref : dbReferenceList.values())
+            my_ref.removeAllListener();
+        for (MyDatabaseReference my_ref : order.getDbReferenceList().values())
+            my_ref.removeAllListener();
     }
 }

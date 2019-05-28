@@ -51,8 +51,12 @@ import android.widget.Toast;
 
 import androidx.navigation.Navigation;
 
+import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.AuthCredential;
+import com.google.firebase.auth.EmailAuthProvider;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -111,6 +115,9 @@ public class EditProfileFragment extends Fragment implements TimePickerDialog.On
     private FloatingActionButton change_im;
     private ImageView profileImage;
     private Switch statusSwitch;
+    private Switch switchPass; //for password
+
+    private boolean rightPass;
 
     private ProgressDialog progressDialog;
 
@@ -160,8 +167,6 @@ public class EditProfileFragment extends Fragment implements TimePickerDialog.On
         return fragment;
     }
 
-
-
     @Override
     public void onCreate(Bundle savedInstanceState) {
         setHasOptionsMenu(true);
@@ -187,6 +192,8 @@ public class EditProfileFragment extends Fragment implements TimePickerDialog.On
         checkBoxes = new HashMap<>();
         checkedTypes = new HashSet<>();
 
+        rightPass= true;
+
         mAuth = FirebaseAuth.getInstance();
         FirebaseUser currentUser = mAuth.getCurrentUser();
         currentUserID = currentUser.getUid();
@@ -205,8 +212,6 @@ public class EditProfileFragment extends Fragment implements TimePickerDialog.On
 
     }
 
-
-
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -220,7 +225,9 @@ public class EditProfileFragment extends Fragment implements TimePickerDialog.On
         editTextFields.put("Email",(EditText) v.findViewById(R.id.editTextEmail));
         editTextFields.put("Phone",(EditText) v.findViewById(R.id.editTextPhone));
         editTextFields.put("DeliveryCost",(EditText) v.findViewById(R.id.editTextDelivery));
-
+        editTextFields.put("OldPassword", (EditText) v.findViewById(R.id.oldPass));
+        editTextFields.put("NewPassword", (EditText) v.findViewById(R.id.newPass));
+        editTextFields.put("ReNewPassword", (EditText) v.findViewById(R.id.reNewPass));
 
 
         imageButtons.put("Name", (ImageButton) v.findViewById(R.id.cancel_name));
@@ -231,6 +238,9 @@ public class EditProfileFragment extends Fragment implements TimePickerDialog.On
         imageButtons.put("Email", (ImageButton) v.findViewById(R.id.cancel_email));
         imageButtons.put("Phone", (ImageButton) v.findViewById(R.id.cancel_phone));
         imageButtons.put("DeliveryCost",(ImageButton) v.findViewById(R.id.cancel_delivery));
+        imageButtons.put("OldPassword", (ImageButton) v.findViewById(R.id.cancel_oldpass));
+        imageButtons.put("NewPassword", (ImageButton) v.findViewById(R.id.cancel_newpass));
+        imageButtons.put("ReNewPassword", (ImageButton) v.findViewById(R.id.cancel_renewpass));
 
 
         checkBoxes.put(getString(R.string.italian_cooking).toLowerCase(), (CheckBox)v.findViewById(R.id.italianCheckBox));
@@ -246,6 +256,12 @@ public class EditProfileFragment extends Fragment implements TimePickerDialog.On
         checkBoxes.put(getString(R.string.mexican_cooking).toLowerCase(), (CheckBox)v.findViewById(R.id.mexicanCheckBox));
 
         statusSwitch = (Switch) v.findViewById(R.id.switchStatus);
+
+        switchPass = (Switch) v.findViewById(R.id.switchPass);
+        switchPass.setChecked(false);
+        editTextFields.get("OldPassword").setEnabled(false);
+        editTextFields.get("NewPassword").setEnabled(false);
+        editTextFields.get("ReNewPassword").setEnabled(false);
 
         //set the listener for all the checkbox
         CheckListener checkListener = new CheckListener();
@@ -345,15 +361,13 @@ public class EditProfileFragment extends Fragment implements TimePickerDialog.On
         super.onCreateOptionsMenu(menu,inflater);
     }
 
-
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         handleButton();
         buttonListener();
-
+        handleSwitch();
     }
-
 
     private void fillFields(){
 
@@ -440,7 +454,6 @@ public class EditProfileFragment extends Fragment implements TimePickerDialog.On
 
     }
 
-
     @Override
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
@@ -451,7 +464,6 @@ public class EditProfileFragment extends Fragment implements TimePickerDialog.On
                 new int[]{ mScrollView.getScrollX(), mScrollView.getScrollY()});
 
     }
-
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -554,11 +566,9 @@ public class EditProfileFragment extends Fragment implements TimePickerDialog.On
         return image;
     }
 
-
     public void removeProfileImage(){
         profileImage.setImageResource(R.drawable.plate_fork);
     }
-
 
     private void setPic(String currentPhotoPath) {
         // Get the dimensions of the View
@@ -618,7 +628,6 @@ public class EditProfileFragment extends Fragment implements TimePickerDialog.On
         return rotatedImg;
     }
 
-
     public void saveChanges() throws ParseException {
 
         if(getActivity() != null)
@@ -634,19 +643,23 @@ public class EditProfileFragment extends Fragment implements TimePickerDialog.On
         // fields cannot be empty
 
         for(String fieldName : editTextFields.keySet()){
-            EditText ed = editTextFields.get(fieldName);
-            if(ed != null){
-                if(ed.getText().toString().equals("")){
-                    myToast.setText("All fields must be filled");
-                    myToast.show();
-                    ed.setBackground(ContextCompat.getDrawable(getContext(), R.drawable.border_wrong_field));
-                    wrongField = true;
+            if(!fieldName.equals("OldPassword") &&
+                    !fieldName.equals("NewPassword") &&
+                    !fieldName.equals("ReNewPassword")){
+                EditText ed = editTextFields.get(fieldName);
+                if(ed != null){
+                    if(ed.getText().toString().equals("") ){
+                        myToast.setText("All fields must be filled");
+                        myToast.show();
+                        ed.setBackground(ContextCompat.getDrawable(getContext(), R.drawable.border_wrong_field));
+                        wrongField = true;
+                    }
+                    else
+                        ed.setBackground(ContextCompat.getDrawable(getContext(), R.drawable.border_right_field));
                 }
-                else
-                    ed.setBackground(ContextCompat.getDrawable(getContext(), R.drawable.border_right_field));
-            }
-            else {
-                return;
+                else {
+                    return;
+                }
             }
         }
 
@@ -667,6 +680,8 @@ public class EditProfileFragment extends Fragment implements TimePickerDialog.On
 
         String priceRegex = new String("\\.?[0-9]+([\\.,][0-9][0.9])?");
 
+        String passRegex = new String("^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9]).{8,}$");
+
 
         if (!editTextFields.get("Name").getText().toString().matches(nameRegex)) {
             wrongField = true;
@@ -674,6 +689,7 @@ public class EditProfileFragment extends Fragment implements TimePickerDialog.On
             myToast.show();
             editTextFields.get("Name").setBackground(ContextCompat.getDrawable(getContext(), R.drawable.border_wrong_field));
         }
+
         if (!editTextFields.get("Info").getText().toString().matches(textRegex)) {
             wrongField = true;
             myToast.setText("The description must start with letters and must end with letters. Space are allowed. Numbers are not allowed");
@@ -707,11 +723,54 @@ public class EditProfileFragment extends Fragment implements TimePickerDialog.On
             myToast.show();
             editTextFields.get("Email").setBackground(ContextCompat.getDrawable(getContext(), R.drawable.border_wrong_field));
         }
+
         if (!editTextFields.get("DeliveryCost").getText().toString().matches(priceRegex)) {
             wrongField = true;
             myToast.setText("Invalid Price");
             myToast.show();
             editTextFields.get("DeliveryCost").setBackground(ContextCompat.getDrawable(getContext(), R.drawable.border_wrong_field));
+        }
+
+        if (switchPass.isChecked()) {
+            String newPass = editTextFields.get("NewPassword").getText().toString();
+            String reNewPass = editTextFields.get("ReNewPassword").getText().toString();
+            String oldPass = editTextFields.get("OldPassword").getText().toString();
+
+            if(!newPass.matches(passRegex)){
+                wrongField = true;
+                myToast.setText("Password must contain at least 1 lowercase 1 uppercase and 1 digit");
+                myToast.show();
+                editTextFields.get("NewPassword").setBackground(ContextCompat.getDrawable(getActivity(), R.drawable.border_wrong_field));
+            }
+
+            if (!newPass.equals(reNewPass)) {
+                wrongField = true;
+                myToast.setText("New password are different");
+                myToast.show();
+                editTextFields.get("NewPassword").setBackground(ContextCompat.getDrawable(getActivity(), R.drawable.border_wrong_field));
+                editTextFields.get("ReNewPassword").setBackground(ContextCompat.getDrawable(getActivity(), R.drawable.border_wrong_field));
+            }
+
+            if (oldPass.equals("")) {
+                wrongField = true;
+                myToast.setText("Old password must be filled");
+                myToast.show();
+                editTextFields.get("OldPassword").setBackground(ContextCompat.getDrawable(getActivity(), R.drawable.border_wrong_field));
+            }
+
+            if (newPass.equals("")) {
+                wrongField = true;
+                myToast.setText("New password must be filled");
+                myToast.show();
+                editTextFields.get("NewPassword").setBackground(ContextCompat.getDrawable(getActivity(), R.drawable.border_wrong_field));
+            }
+
+            if (reNewPass.equals("")) {
+                wrongField = true;
+                myToast.setText("Re-insert new password");
+                myToast.show();
+                editTextFields.get("ReNewPassword").setBackground(ContextCompat.getDrawable(getActivity(), R.drawable.border_wrong_field));
+            }
         }
 
         Geocoder geocoder = new Geocoder(getActivity());
@@ -740,79 +799,138 @@ public class EditProfileFragment extends Fragment implements TimePickerDialog.On
             e.printStackTrace();
         }
 
-
+        if(!wrongField && switchPass.isChecked()) {
+            /*
+             * if all the other fields are correct and user want to change the password,
+             * try to do this, if failed also the other changes will be abort
+             */
+            String newPass = editTextFields.get("NewPassword").getText().toString();
+            String oldPass = editTextFields.get("OldPassword").getText().toString();
+            wrongField = !updatePassword(oldPass, newPass);
+        }
 
         /* --------------- SAVING TO FIREBASE --------------- */
         if(!wrongField){
-
-            String otherLocale = "";
-
-            if(localeShort.equals("it"))
-                otherLocale = "en";
-            else
-                otherLocale = "it";
-
-
-            TypeTranslator translator = new TypeTranslator();
-            String types = "",
-            translatedTypes = "";
-
-            if(!checkedTypes.isEmpty()){
-                //create the type string
-                for(String t : checkedTypes){
-                    types += t+", ";
-                    translatedTypes += translator.translate(t)+", ";
-                }
-                //remove the last comma
-                types = types.substring(0, types.length()-2);
-                translatedTypes = translatedTypes.substring(0, translatedTypes.length()-2);
-
-            }
-            //insert both it and en
-            DatabaseReference reference = FirebaseDatabase.getInstance().getReference("restaurants")
-                                                .child(currentUserID);
-            reference.child("Type").child(localeShort).setValue(types);
-            reference.child("Type").child(otherLocale).setValue(translatedTypes);
-
-            /*
-             * save latitude and longitude of inserted address
-             */
-
-            reference.child("Coordinates").child("Geo").child("Latitude").setValue(latitude);
-            reference.child("Coordinates").child("Geo").child("Longitude").setValue(longitude);
-
-            reference.child("IsActive").setValue(statusSwitch.isChecked());
-            EditText ed;
-            for(String fieldName : editTextFields.keySet()){
-                ed = editTextFields.get(fieldName);
-                if(fieldName.equals("DeliveryCost")){
-                    DecimalFormat decimalFormat = new DecimalFormat("#0.00"); //two decimal
-                    String s = ed.getText().toString().replace(",", ".");
-                    double d = Double.parseDouble(s);
-                    String priceStr = decimalFormat.format(d);
-                    reference.child(fieldName).setValue(priceStr);
-                }
-                else
-                    reference.child(fieldName).setValue(ed.getText().toString());
-            }
-
-            //if already set do not touch it during upload phase. Otherwise set it to 0
-            if(priceRangeUninitialized)
-                reference.child("PriceRange").setValue("0");
-
-            // Save profile pic to the DB
-            Bitmap img = ((BitmapDrawable) profileImage.getDrawable()).getBitmap();
-            /*Navigation controller is moved inside this method. The image must be loaded totally to FireBase
-                before come back to the AccountFragment. This is due to the fact that the image download is async */
-            uploadFile(img);
-
-
+            updateFields();
         }else{
             if(progressDialog.isShowing())
                 progressDialog.dismiss();
         }
     }
 
+    private boolean updatePassword(String oldPass, final String newPass) {
+        final FirebaseUser user = mAuth.getCurrentUser();
+        if(user == null){
+            myToast.setText("User not logged");
+            myToast.show();
+            rightPass= false;
+        }
+
+        String email= mAuth.getCurrentUser().getEmail();
+// Get auth credentials from the user for re-authentication. The example below shows
+// email and password credentials but there are multiple possible providers,
+// such as GoogleAuthProvider or FacebookAuthProvider.
+        AuthCredential credential= null;
+        if (email != null)
+            credential = EmailAuthProvider.getCredential(email, oldPass);
+
+        if (user != null && credential != null) {
+// Prompt the user to re-provide their sign-in credentials
+            user.reauthenticate(credential).addOnCompleteListener(new OnCompleteListener<Void>() {
+                @Override
+                public void onComplete(@NonNull Task<Void> task) {
+                    if (task.isSuccessful()) {
+                        user.updatePassword(newPass).addOnCompleteListener(new OnCompleteListener<Void>() {
+                            @Override
+                            public void onComplete(@NonNull Task<Void> task) {
+                                if (task.isSuccessful()) {
+                                    Log.d("valerioPassword", "Password updated");
+                                    updateFields();
+                                } else {
+                                    myToast.setText("Error password not updated");
+                                    myToast.show();
+                                    Log.d("valerioPassword", "Error password not updated");
+                                    rightPass= false;
+                                }
+                            }
+                        });
+                    } else {
+                        myToast.setText("Old password wrong");
+                        myToast.show();
+                        Log.d("valerioPassword", "Error old password inserted");
+                        rightPass= false;
+                    }
+                }
+            });
+        }
+        return false;
+    }
+
+    public void updateFields(){
+        String otherLocale = "";
+
+        if(localeShort.equals("it"))
+            otherLocale = "en";
+        else
+            otherLocale = "it";
+
+
+        TypeTranslator translator = new TypeTranslator();
+        String types = "",
+                translatedTypes = "";
+
+        if(!checkedTypes.isEmpty()){
+            //create the type string
+            for(String t : checkedTypes){
+                types += t+", ";
+                translatedTypes += translator.translate(t)+", ";
+            }
+            //remove the last comma
+            types = types.substring(0, types.length()-2);
+            translatedTypes = translatedTypes.substring(0, translatedTypes.length()-2);
+
+        }
+        //insert both it and en
+        DatabaseReference reference = FirebaseDatabase.getInstance().getReference("restaurants")
+                .child(currentUserID);
+        reference.child("Type").child(localeShort).setValue(types);
+        reference.child("Type").child(otherLocale).setValue(translatedTypes);
+
+        /*
+         * save latitude and longitude of inserted address
+         */
+
+        reference.child("Coordinates").child("Geo").child("Latitude").setValue(latitude);
+        reference.child("Coordinates").child("Geo").child("Longitude").setValue(longitude);
+
+        reference.child("IsActive").setValue(statusSwitch.isChecked());
+        EditText ed;
+        for(String fieldName : editTextFields.keySet()){
+            if (!fieldName.equals("OldPassword")
+                    && !fieldName.equals("NewPassword")
+                    && !fieldName.equals("ReNewPassword")) {
+                ed = editTextFields.get(fieldName);
+                if (fieldName.equals("DeliveryCost")) {
+                    DecimalFormat decimalFormat = new DecimalFormat("#0.00"); //two decimal
+                    String s = ed.getText().toString().replace(",", ".");
+                    double d = Double.parseDouble(s);
+                    String priceStr = decimalFormat.format(d);
+                    reference.child(fieldName).setValue(priceStr);
+                } else
+                    reference.child(fieldName).setValue(ed.getText().toString());
+            }
+        }
+
+        //if already set do not touch it during upload phase. Otherwise set it to 0
+        if(priceRangeUninitialized)
+            reference.child("PriceRange").setValue("0");
+
+        // Save profile pic to the DB
+        Bitmap img = ((BitmapDrawable) profileImage.getDrawable()).getBitmap();
+            /*Navigation controller is moved inside this method. The image must be loaded totally to FireBase
+                before come back to the AccountFragment. This is due to the fact that the image download is async */
+        uploadFile(img);
+    }
 
     private void uploadFile(Bitmap bitmap) {
         final StorageReference storageReference = FirebaseStorage
@@ -885,7 +1003,6 @@ public class EditProfileFragment extends Fragment implements TimePickerDialog.On
 
     }
 
-
     public void clearText(View view) {
         if (view.getId() == R.id.cancel_name)
             editTextFields.get("Name").setText("");
@@ -903,8 +1020,13 @@ public class EditProfileFragment extends Fragment implements TimePickerDialog.On
             editTextFields.get("Phone").setText("");
         else if(view.getId() == R.id.cancel_delivery)
             editTextFields.get("DeliveryCost").setText("");
+        else if(view.getId() == R.id.cancel_oldpass)
+            editTextFields.get("OldPassword").setText("");
+        else if(view.getId() == R.id.cancel_newpass)
+            editTextFields.get("NewPassword").setText("");
+        else if(view.getId() == R.id.cancel_renewpass)
+            editTextFields.get("ReNewPassword").setText("");
     }
-
 
     public void handleButton(){
         for(ImageButton b : imageButtons.values())
@@ -976,6 +1098,40 @@ public class EditProfileFragment extends Fragment implements TimePickerDialog.On
         button.setVisibility(View.INVISIBLE);
     }
 
+    public void handleSwitch(){
+        if(switchPass.isChecked()){
+            editTextFields.get("OldPassword").setEnabled(true);
+            editTextFields.get("NewPassword").setEnabled(true);
+            editTextFields.get("ReNewPassword").setEnabled(true);
+        }
+        else{
+            editTextFields.get("OldPassword").clearFocus();
+            editTextFields.get("NewPassword").clearFocus();
+            editTextFields.get("ReNewPassword").clearFocus();
+            editTextFields.get("OldPassword").setEnabled(false);
+            editTextFields.get("NewPassword").setEnabled(false);
+            editTextFields.get("ReNewPassword").setEnabled(false);
+        }
+
+        switchPass.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton compoundButton, boolean bChecked) {
+                if (bChecked) {
+                    editTextFields.get("OldPassword").setEnabled(true);
+                    editTextFields.get("NewPassword").setEnabled(true);
+                    editTextFields.get("ReNewPassword").setEnabled(true);
+                } else {
+                    editTextFields.get("OldPassword").clearFocus();
+                    editTextFields.get("NewPassword").clearFocus();
+                    editTextFields.get("ReNewPassword").clearFocus();
+                    editTextFields.get("OldPassword").setEnabled(false);
+                    editTextFields.get("NewPassword").setEnabled(false);
+                    editTextFields.get("ReNewPassword").setEnabled(false);
+                }
+            }
+        });
+    }
+
     @Override
     public void onTimeSet(TimePicker timePicker, int hourOfDay, int minute) {
         String hourStr;
@@ -1001,8 +1157,6 @@ public class EditProfileFragment extends Fragment implements TimePickerDialog.On
             editText.setText(hourStr + ":" + minStr);
         }
     }
-
-
 
     //listener for all the checkbox
     private class CheckListener implements CompoundButton.OnCheckedChangeListener {

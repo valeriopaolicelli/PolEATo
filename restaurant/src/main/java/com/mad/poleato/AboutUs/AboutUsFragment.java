@@ -4,11 +4,13 @@ package com.mad.poleato.AboutUs;
 import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.media.Image;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.constraint.ConstraintLayout;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
@@ -21,6 +23,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -70,6 +73,9 @@ public class AboutUsFragment extends Fragment {
     private HashMap<TimeSlot, Integer> mapMostPopularTime;
 
     private ProgressDialog progressDialog;
+    private MenuItem starButton;
+    private ConstraintLayout main_view;
+    private ImageView empty_view;
 
     public AboutUsFragment() {
         // Required empty public constructor
@@ -81,7 +87,24 @@ public class AboutUsFragment extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         fragView = inflater.inflate(R.layout.fragment_about_us, container, false);
+        main_view = (ConstraintLayout) fragView.findViewById(R.id.main_view);
+        empty_view = (ImageView) fragView.findViewById(R.id.aboutus_empty_view);
+
         return fragView;
+    }
+
+    private void show_empty_view(){
+
+        main_view.setVisibility(View.GONE);
+        starButton.setVisible(false);
+        empty_view.setVisibility(View.VISIBLE);
+    }
+
+    private void show_aboutus_view() {
+
+        empty_view.setVisibility(View.GONE);
+        starButton.setVisible(true);
+        main_view.setVisibility(View.VISIBLE);
     }
 
     @Override
@@ -148,21 +171,25 @@ public class AboutUsFragment extends Fragment {
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         menu.clear();
-        /** Inflate the menu; this adds items to the action bar if it is present.*/
+        /* Inflate the menu; this adds items to the action bar if it is present.*/
         inflater.inflate(R.menu.aboutus_menu, menu);
 
-        /** Button to show map */
+        /* Button to show reviews */
         menu.findItem(R.id.aboutus_id).setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
             @Override
             public boolean onMenuItemClick(MenuItem item) {
 
-                /**
+                /*
                  * GO FROM STATISTICS TO REVIEWS
                  */
                 Navigation.findNavController(fragView).navigate(R.id.action_aboutus_id_to_reviews_id);
                 return true;
             }
         });
+
+        starButton = (MenuItem) menu.findItem(R.id.aboutus_id);
+
+        show_empty_view();
 
         super.onCreateOptionsMenu(menu, inflater);
     }
@@ -172,22 +199,6 @@ public class AboutUsFragment extends Fragment {
         //history reference
         dbReferenceList.put("history", new MyDatabaseReference(FirebaseDatabase.getInstance()
                                             .getReference("restaurants/"+currentUserID+"/History")));
-        /*dbReferenceList.get("history").setValueListener(new ValueEventListener() {
-
-            @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                if(progressDialog.isShowing())
-                    progressDialog.dismiss();
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
-                Log.d("matte", "ValueEventiListener : OnCancelled() invoked");
-                if(progressDialog.isShowing())
-                    progressDialog.dismiss();
-            }
-        });*/
-
         dbReferenceList.get("history").setValueListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
@@ -195,19 +206,25 @@ public class AboutUsFragment extends Fragment {
                 fillMapSlots();
                 TimeSlot popularTimeSlot= null;
                 int max= 0;
-                for(DataSnapshot reservationReference : dataSnapshot.getChildren()) {
-                    String time = reservationReference.child("time").getValue().toString();
-                    for(TimeSlot t : mapMostPopularTime.keySet()){
-                        if(t.inSlot(time)) {
-                            mapMostPopularTime.put(t, mapMostPopularTime.get(t) + 1);
-                            if(mapMostPopularTime.get(t) > max){
-                                max = mapMostPopularTime.get(t);
-                                popularTimeSlot= t;
+                if(dataSnapshot.getChildrenCount() > 0) {
+                    for (DataSnapshot reservationReference : dataSnapshot.getChildren()) {
+                        String time = reservationReference.child("time").getValue().toString();
+                        for (TimeSlot t : mapMostPopularTime.keySet()) {
+                            if (t.inSlot(time)) {
+                                mapMostPopularTime.put(t, mapMostPopularTime.get(t) + 1);
+                                if (mapMostPopularTime.get(t) > max) {
+                                    max = mapMostPopularTime.get(t);
+                                    popularTimeSlot = t;
+                                }
                             }
                         }
+                        show_aboutus_view();
                     }
+                    popularTiming.setText(popularTimeSlot.getSlot());
                 }
-                popularTiming.setText(popularTimeSlot.getSlot());
+                else{
+                    show_empty_view();
+                }
 
                 if(progressDialog.isShowing())
                     progressDialog.dismiss();
@@ -235,20 +252,6 @@ public class AboutUsFragment extends Fragment {
 
         dbReferenceList.put("menu", new MyDatabaseReference(FirebaseDatabase.getInstance()
                                             .getReference("restaurants/"+currentUserID+"/Menu")));
-        /*dbReferenceList.get("menu").setValueListener(new ValueEventListener() {
-
-            @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                handler.sendEmptyMessage(0);
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
-                Log.d("matte", "ValueEventiListener : OnCancelled() invoked");
-                handler.sendEmptyMessage(0);
-            }
-        });*/
-
         dbReferenceList.get("menu").setValueListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
@@ -265,7 +268,7 @@ public class AboutUsFragment extends Fragment {
                 // here take the foods that exceed the average threshold and populate the recycleViewAdapter
                 for(DataSnapshot foodReference : dataSnapshot.getChildren()){
                     long popularityCounter= Integer.parseInt(foodReference.child("PopularityCounter").getValue().toString());
-                    if(popularityCounter >= popularityAverage){
+                    if(popularityCounter > popularityAverage){
                         String name =  foodReference.child("Name").getValue().toString();
                         String description = foodReference.child("Description").getValue().toString();
                         String price = foodReference.child("Price").getValue().toString();

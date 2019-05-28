@@ -1,6 +1,7 @@
 package com.mad.poleato.Account;
 
 
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.Context;
@@ -35,6 +36,8 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowManager;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.ImageButton;
@@ -45,8 +48,12 @@ import android.widget.Toast;
 
 import androidx.navigation.Navigation;
 
+import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.AuthCredential;
+import com.google.firebase.auth.EmailAuthProvider;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -91,10 +98,13 @@ public class EditProfile extends Fragment {
 
     private String currentPhotoPath;
     private Bitmap image;
+
     private View v;
     private static CircleImageView profileImage;
     private FloatingActionButton change_im;
     private Switch switchPass; //for password
+
+    private boolean rightPass;
 
     private ProgressDialog progressDialog;
     private Handler handler = new Handler() {
@@ -110,7 +120,7 @@ public class EditProfile extends Fragment {
     private double latitude;
     private double longitude;
 
-    private List<MyDatabaseReference> dbReferenceList;
+    private HashMap<String, MyDatabaseReference> dbReferenceList;
 
     public EditProfile() {
         // Required empty public constructor
@@ -142,7 +152,9 @@ public class EditProfile extends Fragment {
         imageButtons = new HashMap<>();
         imageButtons = new HashMap<>();
 
-        dbReferenceList= new ArrayList<>();
+        dbReferenceList= new HashMap<>();
+
+        rightPass= true;
     }
 
     @Override
@@ -209,7 +221,6 @@ public class EditProfile extends Fragment {
         handleButton();
         buttonListener();
         handleSwitch();
-
     }
 
     @Override
@@ -227,16 +238,19 @@ public class EditProfile extends Fragment {
         super.onCreateOptionsMenu(menu,inflater);
     }
 
+//    @Override
+//    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+//        super.onActivityCreated(savedInstanceState);
+//        getActivity().getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE);
+//    }
 
     private void fillFields(){
 
         //Download text infos
         reference = FirebaseDatabase.getInstance().getReference("customers/"+ currentUserID);
-        dbReferenceList.add(new MyDatabaseReference(reference));
-        int indexReference= dbReferenceList.size()-1;
-        ValueEventListener valueEventListener;
+        dbReferenceList.put("customer", new MyDatabaseReference(reference));
 
-        dbReferenceList.get(indexReference).getReference().addValueEventListener(valueEventListener= new ValueEventListener() {
+        dbReferenceList.get("customer").setValueListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
 
@@ -267,8 +281,6 @@ public class EditProfile extends Fragment {
                 myToast.show();
             }
         });
-        dbReferenceList.get(indexReference).setValueListener(valueEventListener);
-
 
         //Download the profile pic
         StorageReference storageReference = FirebaseStorage.getInstance().getReference();
@@ -296,7 +308,6 @@ public class EditProfile extends Fragment {
 
     }
 
-
     @Override
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
@@ -307,8 +318,6 @@ public class EditProfile extends Fragment {
                 new int[]{ mScrollView.getScrollX(), mScrollView.getScrollY()});
 
     }
-
-
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -337,8 +346,6 @@ public class EditProfile extends Fragment {
             }
         }
     }
-
-
 
     public void changeImage() {
         android.support.v7.widget.PopupMenu popup = new android.support.v7.widget.PopupMenu(getContext(), change_im);
@@ -370,7 +377,6 @@ public class EditProfile extends Fragment {
         popup.show();
     }
 
-
     // create Intent with photoFile
     private void dispatchTakePictureIntent() {
         Uri photoURI;
@@ -396,7 +402,6 @@ public class EditProfile extends Fragment {
         }
     }
 
-
     // Function to create image file with ExternalFilesDir
     private File createImageFile() throws IOException {
         // Create an image file name
@@ -415,11 +420,9 @@ public class EditProfile extends Fragment {
         return image;
     }
 
-
     public void removeProfileImage(){
         profileImage.setImageResource(R.drawable.image_empty);
     }
-
 
     private void setPic(String currentPhotoPath) {
         // Get the dimensions of the View
@@ -454,7 +457,6 @@ public class EditProfile extends Fragment {
         }
     }
 
-
     private static Bitmap rotateImageIfRequired(Bitmap img, String currentPhotoPath) throws IOException {
 
         ExifInterface ei = new ExifInterface(currentPhotoPath);
@@ -479,7 +481,6 @@ public class EditProfile extends Fragment {
         img.recycle();
         return rotatedImg;
     }
-
 
     public void saveChanges() {
 
@@ -515,7 +516,6 @@ public class EditProfile extends Fragment {
                 }
             }
         }
-
 
         // REGEX FOR FIELDS VALIDATION BEFORE COMMIT
         String accentedCharacters = new String("àèìòùÀÈÌÒÙáéíóúýÁÉÍÓÚÝâêîôûÂÊÎÔÛãñõÃÑÕäëïöüÿÄËÏÖÜŸçÇßØøÅåÆæœ");
@@ -615,39 +615,97 @@ public class EditProfile extends Fragment {
             e.printStackTrace();
         }
 
-
+        if(!wrongField && switchPass.isChecked()) {
+            /*
+             * if all the other fields are correct and user want to change the password,
+             * try to do this, if failed also the other changes will be abort
+             */
+            String newPass = editTextFields.get("NewPassword").getText().toString();
+            String oldPass = editTextFields.get("OldPassword").getText().toString();
+            wrongField = !updatePassword(oldPass, newPass);
+        }
 
         /* --------------- SAVING TO FIREBASE --------------- */
-        if(!wrongField){
-
-            EditText ed;
-            for(String fieldName : editTextFields.keySet()){
-                if(!fieldName.equals("OldPassword")
-                        && !fieldName.equals("NewPassword")
-                        && !fieldName.equals("ReNewPassword")){
-                    ed = editTextFields.get(fieldName);
-                    reference.child(fieldName).setValue(ed.getText().toString());
-                }
-            }
-
-            /*
-             * save latitude and longitude of inserted address
-             */
-            reference.child("Latitude").setValue(latitude);
-            reference.child("Longitude").setValue(longitude);
-
-            // Save profile pic to the DB
-            Bitmap img = ((BitmapDrawable) profileImage.getDrawable()).getBitmap();
-            /*Navigation controller is moved inside this method. The image must be loaded totally to FireBase
-                before come back to the AccountFragment. This is due to the fact that the image download is async */
-            uploadFile(img);
-
-        }else{
+        if(!wrongField) {
+            updateFields();
+        }
+        else{
             if(progressDialog.isShowing())
                 handler.sendEmptyMessage(0);
         }
     }
 
+    private boolean updatePassword(String oldPass, final String newPass) {
+        final FirebaseUser user = mAuth.getCurrentUser();
+        if(user == null){
+            myToast.setText("User not logged");
+            myToast.show();
+            rightPass= false;
+        }
+
+        String email= mAuth.getCurrentUser().getEmail();
+// Get auth credentials from the user for re-authentication. The example below shows
+// email and password credentials but there are multiple possible providers,
+// such as GoogleAuthProvider or FacebookAuthProvider.
+        AuthCredential credential= null;
+        if (email != null)
+            credential = EmailAuthProvider.getCredential(email, oldPass);
+
+        if (user != null && credential != null) {
+// Prompt the user to re-provide their sign-in credentials
+            user.reauthenticate(credential).addOnCompleteListener(new OnCompleteListener<Void>() {
+                @Override
+                public void onComplete(@NonNull Task<Void> task) {
+                    if (task.isSuccessful()) {
+                        user.updatePassword(newPass).addOnCompleteListener(new OnCompleteListener<Void>() {
+                            @Override
+                            public void onComplete(@NonNull Task<Void> task) {
+                                if (task.isSuccessful()) {
+                                    Log.d("valerioPassword", "Password updated");
+                                    updateFields();
+                                } else {
+                                    myToast.setText("Error password not updated");
+                                    myToast.show();
+                                    Log.d("valerioPassword", "Error password not updated");
+                                    rightPass= false;
+                                }
+                            }
+                        });
+                    } else {
+                        myToast.setText("Old password wrong");
+                        myToast.show();
+                        Log.d("valerioPassword", "Error old password inserted");
+                        rightPass= false;
+                    }
+                }
+            });
+        }
+        return false;
+    }
+
+    public void updateFields(){
+        EditText ed;
+        for (String fieldName : editTextFields.keySet()) {
+            if (!fieldName.equals("OldPassword")
+                    && !fieldName.equals("NewPassword")
+                    && !fieldName.equals("ReNewPassword")) {
+                ed = editTextFields.get(fieldName);
+                reference.child(fieldName).setValue(ed.getText().toString());
+            }
+        }
+
+        /*
+         * save latitude and longitude of inserted address
+         */
+        reference.child("Latitude").setValue(latitude);
+        reference.child("Longitude").setValue(longitude);
+
+        // Save profile pic to the DB
+        Bitmap img = ((BitmapDrawable) profileImage.getDrawable()).getBitmap();
+            /*Navigation controller is moved inside this method. The image must be loaded totally to FireBase
+                before come back to the AccountFragment. This is due to the fact that the image download is async */
+        uploadFile(img);
+    }
 
     private void uploadFile(Bitmap bitmap) {
         final StorageReference storageReference = FirebaseStorage
@@ -721,7 +779,6 @@ public class EditProfile extends Fragment {
 
     }
 
-
     public void clearText(View view) {
         if (view.getId() == R.id.cancel_name)
             editTextFields.get("Name").setText("");
@@ -740,7 +797,6 @@ public class EditProfile extends Fragment {
         else if(view.getId() == R.id.cancel_renewpass)
             editTextFields.get("ReNewPassword").setText("");
     }
-
 
     public void handleButton(){
         for(ImageButton b : imageButtons.values())
@@ -801,7 +857,6 @@ public class EditProfile extends Fragment {
         }
     }
 
-
     public void showButton(EditText field, ImageButton button){
         if(field.getText().toString().length()>0)
             button.setVisibility(View.VISIBLE);
@@ -812,8 +867,6 @@ public class EditProfile extends Fragment {
     public void hideButton(ImageButton button){
         button.setVisibility(View.INVISIBLE);
     }
-
-
 
     public void handleSwitch(){
         if(switchPass.isChecked()){
@@ -857,11 +910,17 @@ public class EditProfile extends Fragment {
         }
     }
 
-
     @Override
     public void onDestroy() {
         super.onDestroy();
-        for (int i=0; i < dbReferenceList.size(); i++)
-            dbReferenceList.get(i).removeAllListener();
+        for(MyDatabaseReference ref : dbReferenceList.values())
+            ref.removeAllListener();
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        for (MyDatabaseReference my_ref : dbReferenceList.values())
+            my_ref.removeAllListener();
     }
 }

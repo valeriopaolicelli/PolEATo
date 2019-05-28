@@ -20,6 +20,8 @@
             android:id="@+id/action_pendingReservations_id_to_ride_id"
             app:destination="@id/rides_id"
             app:popUpTo="@+id/rides_id"
+            app:enterAnim="@anim/fui_slide_in_right"
+            app:popExitAnim="@anim/nav_default_pop_exit_anim"
             app:popUpToInclusive="true">
         </action>
     </fragment>
@@ -100,13 +102,10 @@
             app:popUpToInclusive="true" />
     </fragment>
 
-
-
     <activity
         android:id="@+id/signInActivity"
         android:name="com.mad.poleato.SignActivities.SignInActivity"
         android:label="signin_layout"
         tools:layout="@layout/signin_layout" />
-
 
 </navigation>

@@ -1,28 +1,20 @@
 package com.mad.poleato.Reservation.RiderSelection;
 
-import android.Manifest;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
-import android.content.Intent;
-import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.drawable.Drawable;
-import android.location.Location;
 
 import com.firebase.geofire.GeoFire;
 import com.firebase.geofire.GeoLocation;
 import com.firebase.geofire.GeoQuery;
 import com.firebase.geofire.GeoQueryEventListener;
-import com.google.android.gms.location.LocationListener;
 
 import android.os.AsyncTask;
 import android.os.StrictMode;
-import android.provider.ContactsContract;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.design.widget.FloatingActionButton;
-import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.os.Bundle;
 import android.support.v4.content.ContextCompat;
@@ -34,15 +26,9 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ListView;
-import android.widget.Toast;
 
 import androidx.navigation.Navigation;
 
-import com.google.android.gms.common.ConnectionResult;
-import com.google.android.gms.common.GoogleApiAvailability;
-import com.google.android.gms.common.api.GoogleApiClient;
-import com.google.android.gms.location.LocationRequest;
-import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
@@ -59,8 +45,6 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.MutableData;
-import com.google.firebase.database.Transaction;
 import com.google.firebase.database.ValueEventListener;
 import com.mad.poleato.MyDatabaseReference;
 import com.mad.poleato.R;
@@ -72,40 +56,22 @@ import com.onesignal.OneSignal;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Locale;
 import java.util.Scanner;
 
 /**
  * A simple {@link Fragment} subclass.
  */
-public class MapsFragment extends Fragment implements OnMapReadyCallback,
-        GoogleApiClient.ConnectionCallbacks,
-        GoogleApiClient.OnConnectionFailedListener,
-        LocationListener,
-        GoogleMap.OnMarkerClickListener {
+
+public class MapsFragment extends Fragment implements
+        OnMapReadyCallback,
+        GoogleMap.OnMarkerClickListener{
 
     private GoogleMap mMap;
     private GeoQuery geoQuery;
 
-    //Play Service Location
-    private static final int MY_PERMISSION_REQUEST_CODE = 0001;
-    private static final int PLAY_SERVICES_RESOLUTION_REQUEST = 000001;
-
     private static final int EARTH_RADIUS = 6371; // Approx Earth radius in KM
-
-    private LocationRequest mLocationRequest;
-    private GoogleApiClient mGoogleApiClient;
-    private Location mLastLocation;
-
-    private static int UPDATE_INTERVAL = 5000; // 5 seconds
-    private static int FASTEST_INTERVAL = 3000; // 3 seconds
-    private static int DISPLACEMENT = 10;
 
     DatabaseReference referenceDB;
     GeoFire geoFire;
@@ -186,8 +152,7 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback,
 
 
         referenceDB = FirebaseDatabase.getInstance().getReference("Map");
-        //ref = FirebaseDatabase.getInstance().getReference("restaurants").child(currentUserID);
-        //referenceRiders = FirebaseDatabase.getInstance().getReference("deliveryman");
+
         geoFire = new GeoFire(referenceDB);
 
         /**
@@ -199,7 +164,7 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback,
 
         listView.setAdapter(listAdapter);
 
-        setUpLocation();
+        displayLocation();
 
         return fragView;
     }
@@ -229,113 +194,16 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback,
         super.onCreateOptionsMenu(menu, inflater);
     }
 
-
-    /**
-     * Functions related to location and google play services
-     */
-
-    private void setUpLocation() {
-        if (ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED &&
-                ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            // Request routine permission
-            ActivityCompat.requestPermissions(getActivity(), new String[]{
-                    Manifest.permission.ACCESS_COARSE_LOCATION,
-                    Manifest.permission.ACCESS_FINE_LOCATION
-            }, MY_PERMISSION_REQUEST_CODE);
-        } else {
-            if (checkPlayServices()) {
-                buildGoogleApiClient();
-                createLocationRequest();
-                displayLocation();
-            }
-        }
-    }
-
-    private void createLocationRequest() {
-        mLocationRequest = new LocationRequest();
-        mLocationRequest.setInterval(UPDATE_INTERVAL);
-        mLocationRequest.setFastestInterval(FASTEST_INTERVAL);
-        mLocationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
-        mLocationRequest.setSmallestDisplacement(DISPLACEMENT);
-
-    }
-
-    private void buildGoogleApiClient() {
-        mGoogleApiClient = new GoogleApiClient.Builder(getContext())
-                .addConnectionCallbacks(this)
-                .addOnConnectionFailedListener(this)
-                .addApi(LocationServices.API)
-                .build();
-        mGoogleApiClient.connect();
-    }
-
-    private boolean checkPlayServices() {
-        int resultCode = GoogleApiAvailability.getInstance().isGooglePlayServicesAvailable(getContext());
-        if (resultCode != ConnectionResult.SUCCESS) {
-            if (GoogleApiAvailability.getInstance().isUserResolvableError(resultCode))
-                GoogleApiAvailability.getInstance().getErrorDialog(getActivity(), resultCode, PLAY_SERVICES_RESOLUTION_REQUEST).show();
-            else {
-                Toast.makeText(getContext(), "This device is not suppoted", Toast.LENGTH_SHORT).show();
-
-                /**
-                 * GO FROM MAPSFRAGMENT to RESERVATION
-                 */
-                Navigation.findNavController(fragView).navigate(R.id.action_mapsFragment_id_to_reservation_id);
-            }
-            return false;
-        }
-        return true;
-    }
-
-    @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        switch (requestCode) {
-            case MY_PERMISSION_REQUEST_CODE:
-                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    if (checkPlayServices()) {
-                        buildGoogleApiClient();
-                        createLocationRequest();
-                        displayLocation();
-                    }
-                }
-                break;
-        }
-    }
-
     /**
      * Manipulates the map once available.
      * This callback is triggered when the map is ready to be used.
-     * This is where we can add markers or lines, add listeners or move the camera. In this case,
-     * we just add a marker near Sydney, Australia.
-     * If Google Play services is not installed on the device, the user will be prompted to install
-     * it inside the SupportMapFragment. This method will only be triggered once the user has
+     * This method will only be triggered once the user has
      * installed Google Play services and returned to the app.
      */
     @Override
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
         mMap.setOnMarkerClickListener(this);
-    }
-
-    @Override
-    public void onLocationChanged(Location location) {
-        mLastLocation = location;
-        displayLocation();
-    }
-
-    @Override
-    public void onConnected(@Nullable Bundle bundle) {
-        displayLocation();
-    }
-
-    @Override
-    public void onConnectionSuspended(int i) {
-        mGoogleApiClient.connect();
-    }
-
-    @Override
-    public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
-
     }
 
     /**
@@ -345,11 +213,6 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback,
      */
 
     private void displayLocation() {
-        if (ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED &&
-                ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            return;
-        }
-
         /*
          * retrieve the name of current restaurant to put the title to the marker in its map
          */
@@ -1127,6 +990,16 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback,
     @Override
     public void onDestroy() {
         super.onDestroy();
+        for(MyDatabaseReference ref : dbReferenceList.values())
+            ref.removeAllListener();
+
+        if (geoQuery != null)
+            geoQuery.removeAllListeners();
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
         for(MyDatabaseReference ref : dbReferenceList.values())
             ref.removeAllListener();
 

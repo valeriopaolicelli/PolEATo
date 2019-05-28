@@ -51,7 +51,7 @@
     <string name="price_range"><font size="18">Prezzo</font></string>
     <string name="free_delivery">Gratis</string>
     <string name="empty_cart">Il carrello è vuoto</string>
-    <string name="total">Totale: </string>
+    <string name="total">Totale</string>
     <string name="confirm_order">Conferma Ordine</string>
     <string name="X">X</string>
     <string name="notes">Inserisci qui le note(max 30 caratteri)</string>
@@ -87,6 +87,9 @@
     <string name="title_activity_main">Activity Principale</string>
     <string name="title_bottombar_restaurantSearch">Ricerca</string>
     <string name="title_actionbar_restaurantSearch">Ricerca</string>
+
+    <string name="title_bottombar_favoriteRestaurant">Preferiti</string>
+    <string name="title_actionbar_favoriteRestaurant">Preferiti</string>
 
     <string name="title_bottombar_historyOrder">Ordini</string>
     <string name="title_actionbar_historyOrder">Ordini</string>
@@ -168,5 +171,6 @@
 
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Fragment vuoto</string>
+    <string name="time_default">hh:mm</string>
 
 </resources>

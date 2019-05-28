@@ -22,6 +22,7 @@ import android.graphics.Point;
 import android.view.Display;
 import android.widget.Button;
 import android.widget.ExpandableListView;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -62,6 +63,7 @@ import java.util.Locale;
 public class ReservationFragment extends Fragment {
 
     Toast myToast;
+    private ImageView empty_view;
     private ExpandableListView lv;
     private ReservationExpandableListAdapter listAdapter;
     private List<Reservation> reservations;
@@ -77,12 +79,6 @@ public class ReservationFragment extends Fragment {
     private String localeShort;
 
     private ProgressDialog progressDialog;
-    private Handler handler = new Handler() {
-        @Override
-        public void handleMessage(Message msg) {
-            progressDialog.dismiss();
-        }
-    };
 
     private HashMap<String, MyDatabaseReference> dbReferenceList;
 
@@ -151,6 +147,7 @@ public class ReservationFragment extends Fragment {
         dbReferenceList= new HashMap<>();
     }
 
+
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -177,8 +174,26 @@ public class ReservationFragment extends Fragment {
                 return false;
             }
         });
+
+        empty_view = (ImageView) view.findViewById(R.id.reservation_empty_view);
+        show_empty_view();
         return view;
     }
+
+
+    private void show_empty_view(){
+
+        lv.setVisibility(View.GONE);
+        empty_view.setVisibility(View.VISIBLE);
+    }
+
+
+    private void show_resevation_view(){
+
+        empty_view.setVisibility(View.GONE);
+        lv.setVisibility(View.VISIBLE);
+    }
+
 
     public int GetDipsFromPixel(float pixels) {
         /** Get the screen's density scale*/
@@ -199,14 +214,14 @@ public class ReservationFragment extends Fragment {
         dbReferenceList.get("reservations").setValueListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-//                listAdapter.addCheckState(false);
-
-                handler.sendEmptyMessage(0);
+                if(progressDialog.isShowing())
+                    progressDialog.dismiss();
             }
 
             @Override
             public void onCancelled(@NonNull DatabaseError databaseError) {
-                handler.sendEmptyMessage(0);
+                if(progressDialog.isShowing())
+                    progressDialog.dismiss();
             }
         });
 
@@ -225,8 +240,18 @@ public class ReservationFragment extends Fragment {
                         dataSnapshot.hasChild("status") &&
                         dataSnapshot.child("status").hasChild("it") &&
                         dataSnapshot.child("status").hasChild("en") &&
-                        dataSnapshot.hasChild("date") &&
-                        dataSnapshot.hasChild("dishes")
+                        ((
+                                (dataSnapshot.child("status/it").getValue().toString().equals("Nuovo ordine") &&
+                                        dataSnapshot.child("status/en").getValue().toString().equals("New order")) ||
+                                        (dataSnapshot.child("status/it").getValue().toString().equals("Preparazione") &&
+                                                dataSnapshot.child("status/en").getValue().toString().equals("Cooking")) ||
+                                        (dataSnapshot.child("status/it").getValue().toString().equals("In consegna") &&
+                                                dataSnapshot.child("status/en").getValue().toString().equals("Delivering")) ||
+                                        (dataSnapshot.child("status/it").getValue().toString().equals("Consegnato") &&
+                                                dataSnapshot.child("status/en").getValue().toString().equals("Delivered"))
+                        ) && dataSnapshot.hasChild("date") &&
+                                dataSnapshot.hasChild("dishes")
+                        )
                 )
                 {
                     //retrieve the customer (reservation) details
@@ -279,6 +304,13 @@ public class ReservationFragment extends Fragment {
                         nameDish = dish.child("name").getValue().toString();
                         quantity = Integer.parseInt(dish.child("selectedQuantity").getValue().toString());
                         note= dish.child("customerNotes").getValue().toString();
+                        if(note.equals("")){
+                            if(localeShort.equals("it"))
+                                note= "Nessuna nota dal cliente";
+                            else
+                                note= "No customer notes";
+                        }
+
                         foodID= dish.child("foodID").getValue().toString();
                         d = new Dish(nameDish, quantity, note, foodID);
                         r.addDishtoReservation(d);
@@ -296,6 +328,7 @@ public class ReservationFragment extends Fragment {
                     listAdapter.addCheckState(false);
                     listAdapter.notifyDataSetChanged();
                     listAdapter.updateReservationList(reservations,listHash);
+                    show_resevation_view();
                 }
             }
 
@@ -310,8 +343,18 @@ public class ReservationFragment extends Fragment {
                         dataSnapshot.hasChild("status") &&
                         dataSnapshot.child("status").hasChild("it") &&
                         dataSnapshot.child("status").hasChild("en") &&
-                        dataSnapshot.hasChild("date") &&
-                        dataSnapshot.hasChild("dishes")
+                        ((
+                                (dataSnapshot.child("status/it").getValue().toString().equals("Nuovo ordine") &&
+                                        dataSnapshot.child("status/en").getValue().toString().equals("New order")) ||
+                                        (dataSnapshot.child("status/it").getValue().toString().equals("Preparazione") &&
+                                                dataSnapshot.child("status/en").getValue().toString().equals("Cooking")) ||
+                                        (dataSnapshot.child("status/it").getValue().toString().equals("In consegna") &&
+                                                dataSnapshot.child("status/en").getValue().toString().equals("Delivering")) ||
+                                        (dataSnapshot.child("status/it").getValue().toString().equals("Consegnato") &&
+                                                dataSnapshot.child("status/en").getValue().toString().equals("Delivered"))
+                          ) && dataSnapshot.hasChild("date") &&
+                                dataSnapshot.hasChild("dishes")
+                        )
                 )
                 {
                     final String order_id= dataSnapshot.getKey();
@@ -362,6 +405,13 @@ public class ReservationFragment extends Fragment {
                         quantity = Integer.parseInt(dish.child("selectedQuantity").getValue().toString());
                         foodID = dish.child("foodID").getValue().toString();
                         note = dish.child("customerNotes").getValue().toString();
+                        if(note.equals("")){
+                            if(localeShort.equals("it"))
+                                note= "Nessun commento dal cliente";
+                            else
+                                note= "No customer notes";
+                        }
+
                         d = new Dish(nameDish, quantity, note, foodID);
 
                         dishes.add(d);
@@ -386,6 +436,7 @@ public class ReservationFragment extends Fragment {
                     Collections.sort(reservations, Reservation.timeComparator);
                     listAdapter.updateReservationList(reservations, listHash);
                     listAdapter.addCheckState(false);
+                    show_resevation_view();
                 }
 
             }
@@ -401,6 +452,8 @@ public class ReservationFragment extends Fragment {
                     }
                 listHash.remove(order_id);
                 listAdapter.notifyDataSetChanged();
+                if(listHash.isEmpty())
+                    show_empty_view();
             }
 
             @Override
@@ -493,6 +546,13 @@ public class ReservationFragment extends Fragment {
     @Override
     public void onDestroy() {
         super.onDestroy();
+        for(MyDatabaseReference my_ref : dbReferenceList.values())
+            my_ref.removeAllListener();
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
         for(MyDatabaseReference my_ref : dbReferenceList.values())
             my_ref.removeAllListener();
     }

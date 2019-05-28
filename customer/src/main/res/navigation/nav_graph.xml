@@ -28,9 +28,9 @@
         android:label="@string/favorite_list_button"
         tools:layout="@layout/favorite_restaurant_recyclerview" >
         <action
-            android:id="@+id/action_restaurantSearchFragment_id_to_restaurantSearchFragment_id"
-            app:destination="@id/restaurantSearchFragment_id"
-            app:popUpTo="@+id/restaurantSearchFragment_id"
+            android:id="@+id/action_restaurantSearchFragment_id_to_signInActivity"
+            app:destination="@id/signInActivity"
+            app:popUpTo="@+id/signInActivity"
             app:popUpToInclusive="true" />
     </fragment>
 
@@ -67,8 +67,9 @@
         android:label="Rating"
         tools:layout="@layout/rating_fragment_layout">
         <action
-            android:id="@+id/action_ratingFragment_to_holderHistory"
-            app:destination="@id/holder_history_id"
+            android:id="@+id/action_rating_fragment_id_to_restaurantSearchFragment_id"
+            app:destination="@id/restaurantSearchFragment_id"
+            app:popUpTo="@+id/restaurantSearchFragment_id"
             app:popUpToInclusive="true" />
     </fragment>
 
@@ -81,6 +82,11 @@
             android:id="@+id/action_myReviewsFragment_id_to_signInActivity"
             app:destination="@id/signInActivity"
             app:popUpTo="@+id/signInActivity"
+            app:popUpToInclusive="true" />
+        <action
+            android:id="@+id/action_myReviewsFragment_id_to_restaurantSearchFragment_id"
+            app:destination="@id/restaurantSearchFragment_id"
+            app:popUpTo="@+id/restaurantSearchFragment_id"
             app:popUpToInclusive="true" />
     </fragment>
     <!--<fragment-->

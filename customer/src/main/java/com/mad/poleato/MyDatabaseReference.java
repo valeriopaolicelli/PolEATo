@@ -37,6 +37,11 @@ public class MyDatabaseReference {
         this.valueListener.add(valueListener);
     }
 
+    public void setSingleValueListener(ValueEventListener valueListener) {
+        this.reference.addListenerForSingleValueEvent(valueListener);
+        this.valueListener.add(valueListener);
+    }
+
     public DatabaseReference getReference(){
         return reference;
     }

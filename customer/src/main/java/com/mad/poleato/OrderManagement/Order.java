@@ -31,15 +31,17 @@ public class Order implements Serializable {
    private String restaurantID;
    private Restaurant r;
    private String time;
+   private int totalQuantity;
 
-   private List<MyDatabaseReference> dbReferenceList;
+   private HashMap<String, MyDatabaseReference> dbReferenceList;
 
     public Order(String currentUserID) {
         this.totalPrice=0.0;
         selectedFoods=new HashMap<>();
         status = "New Order";
         customerID = currentUserID;
-        dbReferenceList= new ArrayList<>();
+        dbReferenceList= new HashMap<>();
+        this.totalQuantity = 0;
     }
 
     public Order(String status, String customerID, Double totalPrice, String date, String time){
@@ -48,7 +50,8 @@ public class Order implements Serializable {
         this.totalPrice=totalPrice;
         this.date=date;
         this.time=time;
-        dbReferenceList= new ArrayList<>();
+        dbReferenceList= new HashMap<>();
+        this.totalQuantity = 0;
     }
 
     public void setStatus(String status) {
@@ -126,7 +129,7 @@ public class Order implements Serializable {
         this.customerID = customerID;
     }
 
-    public List<MyDatabaseReference> getDbReferenceList() {
+    public HashMap<String, MyDatabaseReference> getDbReferenceList() {
         return dbReferenceList;
     }
 
@@ -137,12 +140,9 @@ public class Order implements Serializable {
         for(final Food f : dishes) {
             DatabaseReference referenceMenu = FirebaseDatabase.getInstance()
                     .getReference("restaurants/" + restaurantID + "/Menu/"+f.getFoodID());
-            dbReferenceList.add(new MyDatabaseReference(referenceMenu));
-            int indexReference = dbReferenceList.size() - 1;
-            ValueEventListener valueEventListener;
+            dbReferenceList.put("food", new MyDatabaseReference(referenceMenu));
 
-            dbReferenceList.get(indexReference).getReference()
-                    .addListenerForSingleValueEvent(valueEventListener= new ValueEventListener() {
+            dbReferenceList.get("food").setSingleValueListener(new ValueEventListener() {
                 @Override
                 public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                     int counter= Integer.parseInt(dataSnapshot.child("PopularityCounter").getValue().toString());
@@ -157,14 +157,11 @@ public class Order implements Serializable {
 
                 }
             });
-            dbReferenceList.get(indexReference).setValueListener(valueEventListener);
         }
-
 
         /*
          * UPLOAD order into restaurant table
          */
-
         DatabaseReference dbReferenceRestaurant = FirebaseDatabase.getInstance().getReference("restaurants");
         DatabaseReference reservationRestaurant =  dbReferenceRestaurant.child(this.getRestaurantID())
                                                         .child("reservations")
@@ -177,6 +174,7 @@ public class Order implements Serializable {
         o.setTotalPrice(this.totalPrice);
         o.setCustomerID(this.customerID);
         o.setRestaurantID(this.restaurantID);
+        o.setTotalQuantity(this.totalQuantity);
 
         reservationRestaurant.setValue(o);
         reservationRestaurant.child("date").setValue(ServerValue.TIMESTAMP);
@@ -195,7 +193,9 @@ public class Order implements Serializable {
         final String customerID= this.customerID;
 
         DatabaseReference referenceRestaurantOfReservation = dbReferenceRestaurant.child(this.getRestaurantID());
-        referenceRestaurantOfReservation.addListenerForSingleValueEvent(new ValueEventListener() {
+        dbReferenceList.put("restaurant", new MyDatabaseReference(referenceRestaurantOfReservation));
+
+        dbReferenceList.get("restaurant").setSingleValueListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
 
@@ -231,6 +231,20 @@ public class Order implements Serializable {
         });
     }
 
+    public void increaseToTotalQuantity(){
+        totalQuantity +=1;
+    }
+    public void decreaseToTotalQuantity(){
+        totalQuantity -=1;
+    }
+
+    public int computeTotalQuantity(){
+        int totalQuantity = 0;
+        for(Food f: selectedFoods.values()){
+            totalQuantity += f.getSelectedQuantity();
+        }
+        return totalQuantity;
+    }
 
     @Exclude
     public List<Food> getDishes() {
@@ -240,5 +254,13 @@ public class Order implements Serializable {
     @Exclude
     public void setDishes() {
         dishes = new ArrayList<>(this.selectedFoods.values());
+    }
+
+    public int getTotalQuantity() {
+        return totalQuantity;
+    }
+
+    public void setTotalQuantity(int totalQuantity) {
+        this.totalQuantity = totalQuantity;
     }
 }

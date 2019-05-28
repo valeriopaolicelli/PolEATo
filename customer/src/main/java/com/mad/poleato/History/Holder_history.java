@@ -2,6 +2,7 @@ package com.mad.poleato.History;
 
 
 import android.app.ProgressDialog;
+import android.content.Intent;
 import android.graphics.Point;
 import android.os.Bundle;
 import android.os.Handler;
@@ -71,7 +72,7 @@ public class Holder_history extends Fragment {
     private String currentUserID;
     private FirebaseAuth mAuth;
 
-    private List<MyDatabaseReference> dbReferenceList;
+    private HashMap<String, MyDatabaseReference> dbReferenceList;
 
     public Holder_history() {
         // Required empty public constructor
@@ -103,10 +104,9 @@ public class Holder_history extends Fragment {
         display.getSize(size);
         width = size.x;
 
-        dbReferenceList = new ArrayList<>();
+        dbReferenceList = new HashMap<>();
     }
 
-    
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -128,14 +128,16 @@ public class Holder_history extends Fragment {
         return view;
     }
 
+
     private void initData() {
         reservations = new ArrayList<>();
         listHash = new HashMap<>();
 
         DatabaseReference reference = FirebaseDatabase.getInstance().getReference("customers")
                 .child(currentUserID).child("reservations");
+        dbReferenceList.put("reservation", new MyDatabaseReference(reference));
 
-        reference.addValueEventListener(new ValueEventListener() {
+        dbReferenceList.get("reservation").setValueListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 handler.sendEmptyMessage(0);
@@ -147,7 +149,7 @@ public class Holder_history extends Fragment {
             }
         });
 
-        reference.addChildEventListener(new ChildEventListener() {
+        dbReferenceList.get("reservation").setChildListener(new ChildEventListener() {
             @Override
             public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
                 if (dataSnapshot.hasChild("orderID") &&
@@ -191,6 +193,12 @@ public class Holder_history extends Fragment {
                         nameDish = dish.child("name").getValue().toString();
                         quantity = Integer.parseInt(dish.child("quantity").getValue().toString());
                         note = dish.child("notes").getValue().toString();
+                        if(note.equals("")){
+                            if(localeShort.equals("it"))
+                                note= "Non hai lasciato commenti";
+                            else
+                                note= "Without comments";
+                        }
                         dishes.add(new Dish(nameDish, quantity, note));
                     }
                     r = new Reservation(orderID, restaurantName, date, time, totalPrice);
@@ -246,7 +254,12 @@ public class Holder_history extends Fragment {
                         nameDish = dish.child("name").getValue().toString();
                         quantity = Integer.parseInt(dish.child("quantity").getValue().toString());
                         note = dish.child("notes").getValue().toString();
-
+                        if(note.equals("")){
+                            if(localeShort.equals("it"))
+                                note= "Non hai lasciato commenti";
+                            else
+                                note= "Without comments";
+                        }
                         dishes.add(new Dish(nameDish, quantity, note));
                     }
                     r = new Reservation(orderID, restaurantName, date, time, totalPrice);
@@ -308,11 +321,17 @@ public class Holder_history extends Fragment {
         return (int) (pixels * scale + 0.5f);
     }
 
+    @Override
+    public void onStop() {
+        super.onStop();
+        for (MyDatabaseReference my_ref : dbReferenceList.values())
+            my_ref.removeAllListener();
+    }
 
     @Override
     public void onDestroy() {
         super.onDestroy();
-        for (int i = 0; i < dbReferenceList.size(); i++)
-            dbReferenceList.get(i).removeAllListener();
+        for(MyDatabaseReference ref : dbReferenceList.values())
+            ref.removeAllListener();
     }
 }

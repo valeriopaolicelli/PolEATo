@@ -10,13 +10,13 @@ import android.os.Message;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentTransaction;
+
 import android.util.Log;
 import android.view.Display;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
+
 import android.widget.ExpandableListView;
 
 import com.google.android.gms.tasks.OnFailureListener;
@@ -28,10 +28,11 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.mad.poleato.Classes.Food;
-import com.mad.poleato.FavoritePlates.FavoriteMenuFragment;
+
 import com.mad.poleato.Interface;
 import com.mad.poleato.MyDatabaseReference;
 import com.mad.poleato.R;
@@ -46,21 +47,15 @@ import java.util.List;
 public class MenuFragment extends Fragment {
 
     private Activity hostActivity;
-    private View fragView;
     private ExpandableListView expListView;
     private MenuExpandableListAdapter listAdapter;
     private List<String> listDataGroup;
     private HashMap<String, List<Food>>listDataChild;
-    private Display display;
-    private Point size;
     int width;
     private int lastExpandedPosition = -1;
     private String restaurantID;
     private Order order;
     private Interface listener;
-
-    private String currentUserID;
-    private FirebaseAuth mAuth;
 
     private SortMenu sortMenu;
 
@@ -72,7 +67,9 @@ public class MenuFragment extends Fragment {
         }
     };
 
-    private List<MyDatabaseReference> dbReferenceList;
+    private HashMap<String, MyDatabaseReference> dbReferenceList;
+
+    double popularityAverage; // average of popularity counter of all foods in menu
 
     private enum groupType{
         STARTERS,
@@ -99,17 +96,17 @@ public class MenuFragment extends Fragment {
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        display = getActivity().getWindowManager().getDefaultDisplay();
-        size = new Point();
+        Display display = getActivity().getWindowManager().getDefaultDisplay();
+        Point size = new Point();
         display.getSize(size);
         width = size.x;
 
         //to sort the categories
         sortMenu = new SortMenu();
 
-        mAuth = FirebaseAuth.getInstance();
+        FirebaseAuth mAuth = FirebaseAuth.getInstance();
         FirebaseUser currentUser = mAuth.getCurrentUser();
-        currentUserID = currentUser.getUid();
+        String currentUserID = currentUser.getUid();
 
 // OneSignal is used to send notifications between applications
 
@@ -122,14 +119,14 @@ public class MenuFragment extends Fragment {
 
         OneSignal.sendTag("User_ID", currentUserID);
 
-        dbReferenceList= new ArrayList<>();
+        dbReferenceList= new HashMap<>();
     }
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
 
-        fragView = inflater.inflate(R.layout.menu_fragment_layout,container,false );
+        View fragView = inflater.inflate(R.layout.menu_fragment_layout, container, false);
 
         //get the listview
         expListView = (ExpandableListView) fragView.findViewById(R.id.menuList);
@@ -168,7 +165,7 @@ public class MenuFragment extends Fragment {
 
         setList();
         // list Adapter of ExpandableList
-        listAdapter = new MenuExpandableListAdapter(hostActivity, listDataGroup, listDataChild, order);
+        listAdapter = new MenuExpandableListAdapter(hostActivity, listDataGroup, listDataChild, order, listener);
 
         // setting list adapter
         expListView.setAdapter(listAdapter);
@@ -201,6 +198,16 @@ public class MenuFragment extends Fragment {
         }
     }
 
+    //Refresh listAdapter when fragment become visible
+    //Needed for quantity changes between MenuFragment and FavoriteMenuFragment
+    @Override
+    public void setUserVisibleHint(boolean isVisibleToUser) {
+        super.setUserVisibleHint(isVisibleToUser);
+        if(isVisibleToUser)
+            if(listAdapter!=null)
+                listAdapter.notifyDataSetChanged();
+    }
+
     @Override
     public void onResume() {
         super.onResume();
@@ -216,16 +223,38 @@ public class MenuFragment extends Fragment {
     }
 
     public void setList(){
+        listDataGroup = new ArrayList<>();
+        listDataChild = new HashMap<>();
+
         DatabaseReference reference = FirebaseDatabase.getInstance().getReference("restaurants")
                                         .child(restaurantID)
                                         .child("Menu");
-        listDataGroup = new ArrayList<>();
-        listDataChild = new HashMap<>();
-        dbReferenceList.add(new MyDatabaseReference(reference));
-        int indexReference= dbReferenceList.size()-1;
-        ChildEventListener childEventListener;
+        dbReferenceList.put("menu", new MyDatabaseReference(reference));
 
-        dbReferenceList.get(indexReference).getReference().addChildEventListener(childEventListener= new ChildEventListener() {
+        // compute the popularity average for all dishes
+        dbReferenceList.get("menu").setSingleValueListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                long sum = 0;
+                long numberOfFood= dataSnapshot.getChildrenCount();
+
+                for(DataSnapshot foodReference : dataSnapshot.getChildren()){
+                    sum += Integer.parseInt(foodReference.child("PopularityCounter").getValue().toString());
+                }
+
+                popularityAverage= sum/numberOfFood;
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+
+
+        // fill the menu grouped by category (Firsts, seconds, Desserts, Drinks, Popular)
+
+        dbReferenceList.get("menu").setChildListener(new ChildEventListener() {
                      @Override
             public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
 
@@ -234,13 +263,16 @@ public class MenuFragment extends Fragment {
                         dataSnapshot.hasChild("Description") &&
                         dataSnapshot.hasChild("Price") &&
                         dataSnapshot.hasChild("Category") &&
-                        dataSnapshot.hasChild("photoUrl"))
+                        dataSnapshot.hasChild("photoUrl") &&
+                        dataSnapshot.hasChild("PopularityCounter"))
                 {
                     //set default image initially, then change if download is successful
                     final String id = dataSnapshot.getKey();
                     String name = dataSnapshot.child("Name").getValue().toString();
                     int quantity = Integer.parseInt(dataSnapshot.child("Quantity").getValue().toString());
                     String description = dataSnapshot.child("Description").getValue().toString();
+                    int popularityCounter= Integer.parseInt(dataSnapshot.child("PopularityCounter").getValue().toString());
+
                     double price = Double.parseDouble(dataSnapshot.child("Price")
                             .getValue()
                             .toString()
@@ -252,10 +284,26 @@ public class MenuFragment extends Fragment {
 
                     if(!listDataGroup.contains(category))
                         listDataGroup.add(category);
+
                     if(!listDataChild.containsKey(category)){
-                        listDataChild.put(category,new ArrayList<Food>());
+                        listDataChild.put(category, new ArrayList<Food>());
                     }
+
                     listDataChild.get(category).add(f);
+
+                    /*
+                     * if it's  popular food (popularity counter >= popularity average),
+                     * add it to popular list
+                     */
+                    if(popularityCounter > popularityAverage) {
+                        if(!listDataChild.containsKey("Popular"))
+                            listDataChild.put("Popular", new ArrayList<Food>());
+
+                        if(!listDataGroup.contains("Popular"))
+                            listDataGroup.add("Popular");
+
+                        listDataChild.get("Popular").add(f);
+                    }
 
                     /*
                      * download food image
@@ -299,6 +347,7 @@ public class MenuFragment extends Fragment {
                     String name = dataSnapshot.child("Name").getValue().toString();
                     int quantity = Integer.parseInt(dataSnapshot.child("Quantity").getValue().toString());
                     String description = dataSnapshot.child("Description").getValue().toString();
+                    int popularityCounter= Integer.parseInt(dataSnapshot.child("PopularityCounter").getValue().toString());
                     double price = Double.parseDouble(dataSnapshot.child("Price")
                             .getValue()
                             .toString()
@@ -310,8 +359,23 @@ public class MenuFragment extends Fragment {
 
                     if(!listDataGroup.contains(category))
                         listDataGroup.add(category);
+
                     if(!listDataChild.containsKey(category)){
                         listDataChild.put(category,new ArrayList<Food>());
+                    }
+
+                    /*
+                     * if it's  popular food (popularity counter >= popularity average),
+                     * add it to popular list
+                     */
+                    if(popularityCounter > popularityAverage) {
+                        if(!listDataChild.containsKey("Popular"))
+                            listDataChild.put("Popular", new ArrayList<Food>());
+
+                        if(!listDataGroup.contains("Popular"))
+                            listDataGroup.add("Popular");
+
+                        listDataChild.get("Popular").add(f);
                     }
 
                     int lenght= listDataChild.get(category).size();
@@ -391,11 +455,6 @@ public class MenuFragment extends Fragment {
 
             }
         });
-
-        dbReferenceList.get(indexReference).setChildListener(childEventListener);
-
-
-
     }
 
 
@@ -410,15 +469,17 @@ public class MenuFragment extends Fragment {
                 return -1;
             else if(t1.equals("Starters"))
                 return 1;
-            else if(s.equals("Drinks"))
+            else if(s.equals("Popular"))
                 return 1;
-            else if(t1.equals("Drinks"))
+            else if(t1.equals("Popular"))
                 return -1;
-            else if(s.equals("Firsts") && (t1.equals("Seconds") || t1.equals("Desserts")))
+            else if(s.equals("Firsts") && (t1.equals("Seconds") || t1.equals("Desserts") || t1.equals("Drinks")))
                 return -1;
-            else if(s.equals("Seconds") && (t1.equals("Desserts")))
+            else if(s.equals("Seconds") && (t1.equals("Desserts") || t1.equals("Drinks")))
                 return -1;
-            else if(s.equals("Desserts"))
+            else if(s.equals("Desserts") && t1.equals("Drinks"))
+                return -1;
+            else if(s.equals("Drinks"))
                 return 1;
             else
                 return 0;
@@ -426,9 +487,16 @@ public class MenuFragment extends Fragment {
     }
 
     @Override
+    public void onStop() {
+        super.onStop();
+        for (MyDatabaseReference my_ref : dbReferenceList.values())
+            my_ref.removeAllListener();
+    }
+
+    @Override
     public void onDestroy() {
         super.onDestroy();
-        for (int i=0; i < dbReferenceList.size(); i++)
-            dbReferenceList.get(i).removeAllListener();
+        for(MyDatabaseReference ref : dbReferenceList.values())
+            ref.removeAllListener();
     }
 }

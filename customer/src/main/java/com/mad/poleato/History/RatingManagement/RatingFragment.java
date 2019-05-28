@@ -29,6 +29,7 @@ import com.mad.poleato.R;
 import com.onesignal.OneSignal;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 
@@ -43,7 +44,6 @@ public class RatingFragment extends Fragment {
 
     private FirebaseAuth mAuth;
     private Activity hostActivity;
-    private List<MyDatabaseReference> dbReferenceList;
 
     private TextView ratingLabel;
     private RatingBar ratingBar;
@@ -87,8 +87,6 @@ public class RatingFragment extends Fragment {
 
         OneSignal.setSubscription(true);
         OneSignal.sendTag("User_ID", currentUserID);
-
-        dbReferenceList= new ArrayList<>();
     }
 
     @Override
@@ -159,7 +157,7 @@ public class RatingFragment extends Fragment {
                     DatabaseReference newRatingC = customerReference.child(orderID);
                     newRatingC.setValue(rating);
 
-                    Navigation.findNavController(fragview).navigate(R.id.action_ratingFragment_to_holderHistory);
+                    Navigation.findNavController(fragview).navigate(R.id.action_rating_fragment_id_to_restaurantSearchFragment_id);
                 }
             }
         });

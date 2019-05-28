@@ -49,9 +49,7 @@ public class ReservationExpandableListAdapter extends BaseExpandableListAdapter{
     private List<Reservation> reservations;
     private HashMap<String, List<Dish>>listHashMap; //Map Containg for each order the list of dishes
 
-    private HashMap<String,Boolean>groupChecked = new HashMap<>();  //This map keeps track of checkbox's state foreach group
     private HashMap<String, ArrayList<Boolean>>childsChecked = new HashMap<>(); //This map keep track of checkbox's states of every child for a group
-    private HashMap<String, CheckBox> groupCheckBoxes = new HashMap<>(); //Map of groups checkboxes, used to to handle group check box from getChildView
 
     private String loggedID;
 
@@ -62,12 +60,11 @@ public class ReservationExpandableListAdapter extends BaseExpandableListAdapter{
         this.loggedID= currentUserID;
     }
 
-    //This method add add a new value to the collections that handle the check states
+    //This method  add a new value to the collections that handle the check states
     //Only if there is a new reservation
     public void addCheckState(boolean defaultState){
         for (Reservation r : reservations){
-            if(!groupChecked.containsKey(r.getOrder_id())){
-                groupChecked.put(r.getOrder_id(),defaultState);
+            if(!childsChecked.containsKey(r.getOrder_id())){
                 ArrayList<Boolean> childStates = new ArrayList<>();
                 for(int j = 0; j < listHashMap.get(r.getOrder_id()).size(); j++){
                     childStates.add(defaultState);
@@ -134,8 +131,6 @@ public class ReservationExpandableListAdapter extends BaseExpandableListAdapter{
             holder.tv_time = (TextView) view.findViewById(R.id.tvTimeField);
             holder.tv_status = (TextView) view.findViewById(R.id.tvStatusField);
             holder.button = (Button) view.findViewById(R.id.myButton);
-            holder.selectAllCheckBox = (CheckBox) view.findViewById(R.id.selectAllCheckBox);
-            groupCheckBoxes.put(r.getOrder_id(), holder.selectAllCheckBox);
 
             view.setTag(holder);
         }else{
@@ -145,13 +140,6 @@ public class ReservationExpandableListAdapter extends BaseExpandableListAdapter{
         holder.tv_time.setText(r.getTime());
         holder.tv_status.setText(r.getStat());
 
-        if(groupChecked.size()<=i){
-            groupChecked.put(r.getOrder_id(),false);
-        }else{
-            holder.selectAllCheckBox.setChecked(groupChecked.get(r.getOrder_id()));
-            groupCheckBoxes.put(r.getOrder_id(), holder.selectAllCheckBox);
-
-        }
 
         if(r.getStatus() == Status.DELIVERED || r.getStatus() == Status.FAILED){
             //Adding reservation to History
@@ -192,30 +180,13 @@ public class ReservationExpandableListAdapter extends BaseExpandableListAdapter{
         if(r.getStatus() == Status.COOKING) {
             holder.button.setText(context.getResources().getString(R.string.order_deliver));
             holder.tv_status.setTextColor(context.getResources().getColor(R.color.colorTextSubField));
-            holder.selectAllCheckBox.setVisibility(View.VISIBLE);
             holder.button.setVisibility(View.VISIBLE);
         }
-        else
-            holder.selectAllCheckBox.setVisibility(View.GONE);
 
 
         final int group_pos = i;
 
-        holder.selectAllCheckBox.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                boolean state = groupChecked.get(r.getOrder_id());
-                groupChecked.put(r.getOrder_id(), state ? false : true);
-                groupCheckBoxes.get(r.getOrder_id()).setChecked(state ? false : true);
-                ArrayList<Boolean>childs = childsChecked.get(r.getOrder_id());
-                for ( int i=0 ; i<listHashMap.get(r.getOrder_id()).size(); i++){
-                    childs.set(i, state ? false : true);
-                }
-                childsChecked.put(r.getOrder_id(),childs);
-                Log.d("GroupCheckbox", "Clicked Group checkbox: "+ group_pos);
-                notifyDataSetChanged();
-            }
-        });
+
 
         if (!flag) {
             final View finalView1 = view;
@@ -243,7 +214,18 @@ public class ReservationExpandableListAdapter extends BaseExpandableListAdapter{
                         if (r.getStatus() == Status.COOKING) {
                             builder.setTitle(context.getString(R.string.title_deliver));
 
-                            builder.setMessage(context.getString(R.string.msg_deliver));
+                            boolean all_checked = true;
+                            ArrayList<Boolean> childs = childsChecked.get(r.getOrder_id());
+                            for(Boolean b : childs){
+                                if(b.equals(false)) {
+                                    all_checked = false;
+                                    break;
+                                }
+                            }
+                            if(all_checked)
+                                builder.setMessage(context.getString(R.string.msg_deliver));
+                            else
+                                builder.setMessage(context.getString(R.string.msg_deliver_false));
                             builder.setPositiveButton(context.getString(R.string.choice_confirm), new DialogInterface.OnClickListener() {
                                 @Override
                                 public void onClick(DialogInterface dialogInterface, int i) {
@@ -322,7 +304,7 @@ public class ReservationExpandableListAdapter extends BaseExpandableListAdapter{
                                                     /*
                                                      * pruning
                                                      */
-                                                    if(updated==r.getNumberOfDishes()){
+                                                    if(updated==r.getDishes().size()){
                                                         r.setStatus(Status.COOKING);
                                                         FirebaseDatabase.getInstance().getReference("restaurants").child(loggedID).child("reservations").child(r.getOrder_id()).child("status").child("en").setValue("Cooking");
                                                         FirebaseDatabase.getInstance().getReference("restaurants").child(loggedID).child("reservations").child(r.getOrder_id()).child("status").child("it").setValue("Preparazione");
@@ -354,13 +336,18 @@ public class ReservationExpandableListAdapter extends BaseExpandableListAdapter{
                                     r.setStatus(Status.REJECTED);
                                     //Adding reservation to History
                                     DatabaseReference dbReference = FirebaseDatabase.getInstance().getReference("restaurants").child(loggedID).child("History");
-                                    dbReference.child(r.getOrder_id()).setValue(r);
+                                    dbReference.child(r.getOrder_id()).child("customerID").setValue(r.getCustomerID());
+                                    dbReference.child(r.getOrder_id()).child("date").setValue(r.getDate());
+                                    dbReference.child(r.getOrder_id()).child("time").setValue(r.getTime());
+                                    dbReference.child(r.getOrder_id()).child("totalPrice").setValue(r.getTotalPrice());
+                                    dbReference.child(r.getOrder_id()).child("status/it").setValue("Rifiutato");
+                                    dbReference.child(r.getOrder_id()).child("status/en").setValue("Rejected");
+                                    dbReference.child(r.getOrder_id()).child("dishes").setValue(r.getDishes());
+
                                     //Delete reservation from pending reservations
-                                    FirebaseDatabase.getInstance().getReference("restaurants").child(loggedID).child("reservations").child(r.getOrder_id()).removeValue();
-
-
-//                                    FirebaseDatabase.getInstance().getReference("restaurants").child(loggedID).child("reservations").child(r.getOrder_id()).child("status").child("en").setValue("Rejected");
-//                                    FirebaseDatabase.getInstance().getReference("restaurants").child(loggedID).child("reservations").child(r.getOrder_id()).child("status").child("it").setValue("Rifiutato");
+                                    FirebaseDatabase.getInstance().getReference("restaurants/" + loggedID + "/reservations/" + r.getOrder_id()).removeValue();
+                                    FirebaseDatabase.getInstance().getReference("customers").child(r.getCustomerID()).child("reservations").child(r.getOrder_id()).child("status").child("en").setValue("Rejected");
+                                    FirebaseDatabase.getInstance().getReference("customers").child(r.getCustomerID()).child("reservations").child(r.getOrder_id()).child("status").child("it").setValue("Rifiutato");
                                     notifyDataSetChanged();
                                 }
                             });
@@ -401,15 +388,11 @@ public class ReservationExpandableListAdapter extends BaseExpandableListAdapter{
             holder.tv_dish_quantity = (TextView) view.findViewById(R.id.tv_dish_quantity);
             holder.tv_dish_notes= (TextView) view.findViewById(R.id.tv_dish_note);
             holder.dish_chechbox= (CheckBox) view.findViewById(R.id.dish_checkbox);
-
+            holder.tv_status = (TextView) view.findViewById(R.id.status_tv);
             view.setTag(holder);
         }
         else {
             holder = ((ChildHolder)view.getTag());
-//            holder.tv_dish_name= (TextView) view.findViewById(R.id.tv_dish_name);
-//            holder.tv_dish_quantity = (TextView) view.findViewById(R.id.tv_dish_quantity);
-//            holder.tv_dish_notes= (TextView) view.findViewById(R.id.tv_dish_note);
-//            holder.dish_chechbox= (CheckBox) view.findViewById(R.id.dish_checkbox);
         }
 
         holder.dish_chechbox.setOnClickListener(new View.OnClickListener() {
@@ -420,14 +403,16 @@ public class ReservationExpandableListAdapter extends BaseExpandableListAdapter{
                 Log.d("Parent", "parent position: " + group_pos);
                 Log.d("Child",  "child position: " + child_pos);
                 if(state) { // se true, lo stato sta passando a false
-                    if(groupCheckBoxes.get(c.getOrder_id()).isChecked()) {
-                        groupCheckBoxes.get(c.getOrder_id()).setChecked(false);
-                        groupChecked.put(c.getOrder_id(), false);
-                    }
+                    holder.tv_status.setText(context.getResources().getString(R.string.dish_cooking));
+                    holder.tv_status.setTextColor(context.getColor(R.color.colorStarsRatingBar));
+                }else{
+                    holder.tv_status.setText(context.getResources().getString(R.string.dish_ready));
+                    holder.tv_status.setTextColor(context.getColor(R.color.colorTextAccepted));
                 }
             }
         });
 
+        //check state inside collection for setting view
         if(childsChecked.size() <= i){
             ArrayList<Boolean>childStates = new ArrayList<>();
             for(int j=0 ; j < listHashMap.get(c.getOrder_id()).size(); j++){
@@ -449,17 +434,25 @@ public class ReservationExpandableListAdapter extends BaseExpandableListAdapter{
         holder.tv_dish_name.setText(dish.getName());
         holder.tv_dish_quantity.setText(dish.getQuantity().toString());
         holder.tv_dish_notes.setText(dish.getNotes());
+        if(childsChecked.get(c.getOrder_id()).get(i1).equals(true)){
+            holder.tv_status.setText(context.getResources().getString(R.string.dish_ready));
+            holder.tv_status.setTextColor(context.getColor(R.color.colorTextAccepted));
+        }else {
+            holder.tv_status.setText(context.getResources().getString(R.string.dish_cooking));
+            holder.tv_status.setTextColor(context.getColor(R.color.colorStarsRatingBar));
 
+        }
 
 
         if (c.getStatus() == Status.COOKING) {
-            //Se lo stato della prenotazione è COOKING, rendo la checkbox visibile
+            //If status is cooking, status and checkbox are visible
+            holder.tv_status.setVisibility(View.VISIBLE);
             holder.dish_chechbox.setVisibility(View.VISIBLE);
         }
-        else
+        else {
             holder.dish_chechbox.setVisibility(View.GONE);
-
-
+            holder.tv_status.setVisibility(View.GONE);
+        }
         return view;
     }
 
@@ -489,7 +482,6 @@ public class ReservationExpandableListAdapter extends BaseExpandableListAdapter{
 
     private class ViewHolder {
         Button button;
-        CheckBox selectAllCheckBox;
         TextView tv_date;
         TextView tv_time;
         TextView tv_status;
@@ -499,6 +491,7 @@ public class ReservationExpandableListAdapter extends BaseExpandableListAdapter{
         TextView tv_dish_name;
         TextView tv_dish_quantity;
         TextView tv_dish_notes;
+        TextView tv_status;
         CheckBox dish_chechbox;
 
     }
