@@ -93,6 +93,7 @@ public class Restaurant implements Serializable {
     public void setTotalReviews(Long totalReviews){
         this.totalReviews = totalReviews;
     }
+
     public Double getAvgStars(){
         return avgStars;
     }

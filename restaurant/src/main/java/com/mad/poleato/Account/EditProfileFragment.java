@@ -906,16 +906,19 @@ public class EditProfileFragment extends Fragment implements TimePickerDialog.On
         reference.child("IsActive").setValue(statusSwitch.isChecked());
         EditText ed;
         for(String fieldName : editTextFields.keySet()){
-            ed = editTextFields.get(fieldName);
-            if(fieldName.equals("DeliveryCost")){
-                DecimalFormat decimalFormat = new DecimalFormat("#0.00"); //two decimal
-                String s = ed.getText().toString().replace(",", ".");
-                double d = Double.parseDouble(s);
-                String priceStr = decimalFormat.format(d);
-                reference.child(fieldName).setValue(priceStr);
+            if (!fieldName.equals("OldPassword")
+                    && !fieldName.equals("NewPassword")
+                    && !fieldName.equals("ReNewPassword")) {
+                ed = editTextFields.get(fieldName);
+                if (fieldName.equals("DeliveryCost")) {
+                    DecimalFormat decimalFormat = new DecimalFormat("#0.00"); //two decimal
+                    String s = ed.getText().toString().replace(",", ".");
+                    double d = Double.parseDouble(s);
+                    String priceStr = decimalFormat.format(d);
+                    reference.child(fieldName).setValue(priceStr);
+                } else
+                    reference.child(fieldName).setValue(ed.getText().toString());
             }
-            else
-                reference.child(fieldName).setValue(ed.getText().toString());
         }
 
         //if already set do not touch it during upload phase. Otherwise set it to 0

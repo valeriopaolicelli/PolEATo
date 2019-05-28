@@ -3,35 +3,42 @@
     android:layout_width="fill_parent"
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools">
+
     <LinearLayout
         android:id="@+id/layout_total"
-        android:layout_height="wrap_content"
         android:layout_width="match_parent"
+        android:layout_height="wrap_content"
         android:padding="5dp"
         android:weightSum="2">
-        <TextView android:gravity="end"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
+
+        <TextView
             android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="4dp"
+            android:layout_weight="1"
+            android:gravity="end"
             android:text="@string/total"
             android:textColor="@color/colorTextField"
-            android:textSize="20sp">
-        </TextView>
+            android:textSize="20sp"></TextView>
 
         <TextView
             android:id="@+id/tv_total"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:layout_width="match_parent"
-            android:textSize="20sp">
-        </TextView>
+            android:textSize="20sp"></TextView>
     </LinearLayout>
 
     <LinearLayout
         android:id="@+id/time_layout"
-        android:layout_width="match_parent"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@id/layout_total">
+        android:layout_below="@id/layout_total"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentEnd="true"
+        android:layout_marginStart="143dp"
+        android:layout_marginTop="-1dp"
+        android:layout_marginEnd="132dp">
 
         <TextView
             android:id="@+id/time_label"
@@ -48,14 +55,14 @@
             android:id="@+id/input_time"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignTop="@+id/time_layout"
             android:layout_marginEnd="10dp"
             android:layout_weight="1"
             android:focusable="false"
-            android:hint="hh:mm"
+            android:hint="@string/time_default"
             android:inputType="none"
             android:maxLength="6"
-            android:textSize="20sp" />
+            android:textSize="20sp"
+            tools:ignore="Autofill" />
     </LinearLayout>
 
     <TextView

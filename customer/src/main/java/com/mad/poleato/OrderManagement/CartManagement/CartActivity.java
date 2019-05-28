@@ -120,6 +120,9 @@ public class CartActivity extends AppCompatActivity implements Interface,TimePic
         tvEmptyCart = (TextView) findViewById(R.id.empty_cart);
 
         time= findViewById(R.id.input_time);
+        if(order.getTime() != null && (!order.getTime().equals("")))
+            time.setText(order.getTime());
+        
         time.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -393,13 +396,15 @@ public class CartActivity extends AppCompatActivity implements Interface,TimePic
                        Toast.makeText(getApplicationContext(), "Restaurant will be closed at that time", Toast.LENGTH_SHORT).show();
                        timeok[0] = false;
                    }
-                    else if(hourOfDay == closingHour[0])
+                   else if(hourOfDay == closingHour[0])
                         if(minute > closingMinute[0]) {
                             Toast.makeText(getApplicationContext(), "Restaurant will be closed at that time", Toast.LENGTH_SHORT).show();
                             timeok[0] = false;
                         }
-                    if(timeok[0])
-                        time.setText(hourStr +":"+minStr);
+                   if(timeok[0]) {
+                       time.setText(hourStr + ":" + minStr);
+                       order.setTime(time.getText().toString());
+                   }
             }
 
             @Override

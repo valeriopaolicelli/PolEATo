@@ -380,6 +380,13 @@ public class RestaurantRecyclerViewAdapter extends RecyclerView.Adapter<Restaura
 
         @Override
         public int compare(Restaurant r1, Restaurant r2) {
+            if(r1.getAvgStars().isNaN())
+                return 1;
+            if(r2.getAvgStars().isNaN())
+                return -1;
+            if(r1.getAvgStars().isNaN() && r2.getAvgStars().isNaN())
+                return r1.getName().compareTo(r2.getName()); // if both haven't ratings, sort by name
+
             return Double.compare(r1.getAvgStars(), r2.getAvgStars()) * -1;
         }
     }

@@ -199,7 +199,6 @@ public class Holder_history extends Fragment {
                             else
                                 note= "Without comments";
                         }
-
                         dishes.add(new Dish(nameDish, quantity, note));
                     }
                     r = new Reservation(orderID, restaurantName, date, time, totalPrice);
@@ -255,7 +254,12 @@ public class Holder_history extends Fragment {
                         nameDish = dish.child("name").getValue().toString();
                         quantity = Integer.parseInt(dish.child("quantity").getValue().toString());
                         note = dish.child("notes").getValue().toString();
-
+                        if(note.equals("")){
+                            if(localeShort.equals("it"))
+                                note= "Non hai lasciato commenti";
+                            else
+                                note= "Without comments";
+                        }
                         dishes.add(new Dish(nameDish, quantity, note));
                     }
                     r = new Reservation(orderID, restaurantName, date, time, totalPrice);
