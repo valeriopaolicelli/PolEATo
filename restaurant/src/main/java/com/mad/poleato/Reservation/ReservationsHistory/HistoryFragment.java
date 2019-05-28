@@ -17,6 +17,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ExpandableListView;
+import android.widget.ImageView;
 import android.widget.Toast;
 
 import androidx.navigation.Navigation;
@@ -52,6 +53,7 @@ public class HistoryFragment extends Fragment {
     private View view;
 
     private ExpandableListView listView;
+    private ImageView empty_view;
     private HistoryExpandableListAdapter listAdapter;
     private Display display;
     private Point size;
@@ -67,12 +69,6 @@ public class HistoryFragment extends Fragment {
     private int indexCustomerChanged;
 
 
-    private Handler handler = new Handler() {
-        @Override
-        public void handleMessage(Message msg) {
-            progressDialog.dismiss();
-        }
-    };
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -113,8 +109,25 @@ public class HistoryFragment extends Fragment {
         listAdapter = new HistoryExpandableListAdapter(getActivity(), reservations, listHash, currentUserID);
         listView.setAdapter(listAdapter);
 
+        show_empty_view();
+
         return view;
     }
+
+
+    private void show_empty_view() {
+
+        listView.setVisibility(View.GONE);
+        empty_view.setVisibility(View.VISIBLE);
+    }
+
+
+    private void show_history_view(){
+
+        empty_view.setVisibility(View.GONE);
+        listView.setVisibility(View.VISIBLE);
+    }
+
 
     public int GetDipsFromPixel(float pixels) {
         /** Get the screen's density scale*/
@@ -220,12 +233,14 @@ public class HistoryFragment extends Fragment {
         dbReferenceList.get("history").setValueListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                handler.sendEmptyMessage(0);
+                if(progressDialog.isShowing())
+                    progressDialog.dismiss();
             }
 
             @Override
             public void onCancelled(@NonNull DatabaseError databaseError) {
-                handler.sendEmptyMessage(0);
+                if(progressDialog.isShowing())
+                    progressDialog.dismiss();
             }
         });
 
@@ -314,6 +329,7 @@ public class HistoryFragment extends Fragment {
                     Collections.sort(reservations, Reservation.timeComparatorReverse);
                     listAdapter.notifyDataSetChanged();
                     listAdapter.updateReservationList(reservations,listHash);
+                    show_history_view();
                 }
             }
 
@@ -403,6 +419,7 @@ public class HistoryFragment extends Fragment {
                     listAdapter.notifyDataSetChanged();
                     Collections.sort(reservations, Reservation.timeComparatorReverse);
                     listAdapter.updateReservationList(reservations, listHash);
+                    show_history_view();
                 }
 
             }
@@ -418,6 +435,8 @@ public class HistoryFragment extends Fragment {
                     }
                 listHash.remove(order_id);
                 listAdapter.notifyDataSetChanged();
+                if(listHash.isEmpty())
+                    show_empty_view();
             }
 
             @Override
