@@ -380,7 +380,7 @@ public class RestaurantRecyclerViewAdapter extends RecyclerView.Adapter<Restaura
 
         @Override
         public int compare(Restaurant r1, Restaurant r2) {
-            return Double.compare(r1.getAvgStars(), r2.getAvgStars());
+            return Double.compare(r1.getAvgStars(), r2.getAvgStars()) * -1;
         }
     }
 
