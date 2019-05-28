@@ -268,7 +268,7 @@ public class AboutUsFragment extends Fragment {
                 // here take the foods that exceed the average threshold and populate the recycleViewAdapter
                 for(DataSnapshot foodReference : dataSnapshot.getChildren()){
                     long popularityCounter= Integer.parseInt(foodReference.child("PopularityCounter").getValue().toString());
-                    if(popularityCounter >= popularityAverage){
+                    if(popularityCounter > popularityAverage){
                         String name =  foodReference.child("Name").getValue().toString();
                         String description = foodReference.child("Description").getValue().toString();
                         String price = foodReference.child("Price").getValue().toString();
