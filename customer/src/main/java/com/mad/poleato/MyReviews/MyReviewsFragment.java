@@ -126,7 +126,7 @@ public class MyReviewsFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        fragView = inflater.inflate(R.layout.restaurantreviews_fragment_layout, container, false);
+        fragView = inflater.inflate(R.layout.fragment_my_reviews, container, false);
         // Inflate the layout for this fragment
 
         return fragView;
