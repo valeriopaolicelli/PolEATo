@@ -19,7 +19,7 @@
         android:label="@string/app_name"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".MyReviews.MyReviewsFragment"></activity>
+
         <activity
             android:name=".SignInActivity"
             android:screenOrientation="portrait"
@@ -42,7 +42,7 @@
         <activity
             android:name=".OrderManagement.CartManagement.CartActivity"
             android:screenOrientation="portrait"
-            android:windowSoftInputMode="stateHidden|adjustPan"></activity>
+            android:windowSoftInputMode="stateHidden|adjustPan"/>
         <activity
             android:name=".OrderManagement.OrderActivity"
             android:screenOrientation="portrait"

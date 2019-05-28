@@ -7,6 +7,11 @@
         android:title="@string/title_bottombar_restaurantSearch" />
 
     <item
+        android:id="@+id/favoriteRestaurantFragment_id"
+        android:icon="@drawable/ic_favorite_icon"
+        android:title="@string/title_bottombar_favoriteRestaurant" />
+
+    <item
         android:id="@+id/holder_history_id"
         android:icon="@drawable/ic_baseline_receipt_24px"
         android:title="@string/title_bottombar_historyOrder" />

@@ -90,6 +90,9 @@
     <string name="title_bottombar_historyOrder">Orders</string>
     <string name="title_actionbar_historyOrder">Orders</string>
 
+    <string name="title_bottombar_favoriteRestaurant">Favorite</string>
+    <string name="title_actionbar_favoriteRestaurant">Favorite</string>
+
     <string name="title_bottombar_myReviews">Reviews</string>
     <string name="title_actionbar_myReviews">Reviews</string>
 

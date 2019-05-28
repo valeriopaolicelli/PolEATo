@@ -88,6 +88,9 @@
     <string name="title_bottombar_restaurantSearch">Ricerca</string>
     <string name="title_actionbar_restaurantSearch">Ricerca</string>
 
+    <string name="title_bottombar_favoriteRestaurant">Preferiti</string>
+    <string name="title_actionbar_favoriteRestaurant">Preferiti</string>
+
     <string name="title_bottombar_historyOrder">Ordini</string>
     <string name="title_actionbar_historyOrder">Ordini</string>
 

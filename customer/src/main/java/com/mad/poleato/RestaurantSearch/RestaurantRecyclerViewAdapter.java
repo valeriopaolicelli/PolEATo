@@ -218,7 +218,7 @@ public class RestaurantRecyclerViewAdapter extends RecyclerView.Adapter<Restaura
         DatabaseReference reference= FirebaseDatabase.getInstance().getReference("customers/"+currentUserID+"/Favorite");
         dbReferenceList.put("favorite", new MyDatabaseReference(reference));
 
-        dbReferenceList.get("favorite").setSingleValueListener(new ValueEventListener() {
+        dbReferenceList.get("favorite").setValueListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 if(dataSnapshot.exists()) {
@@ -380,7 +380,7 @@ public class RestaurantRecyclerViewAdapter extends RecyclerView.Adapter<Restaura
 
         @Override
         public int compare(Restaurant r1, Restaurant r2) {
-            return Double.compare(r1.getAvgStars(), r2.getAvgStars());
+            return Double.compare(r1.getAvgStars(), r2.getAvgStars()) * -1;
         }
     }
 
