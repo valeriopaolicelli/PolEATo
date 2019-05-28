@@ -109,6 +109,7 @@ public class HistoryFragment extends Fragment {
         listAdapter = new HistoryExpandableListAdapter(getActivity(), reservations, listHash, currentUserID);
         listView.setAdapter(listAdapter);
 
+        empty_view = (ImageView) view.findViewById(R.id.history_empty_view);
         show_empty_view();
 
         return view;

@@ -4,11 +4,13 @@ package com.mad.poleato.AboutUs;
 import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.media.Image;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.constraint.ConstraintLayout;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
@@ -21,6 +23,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -70,6 +73,9 @@ public class AboutUsFragment extends Fragment {
     private HashMap<TimeSlot, Integer> mapMostPopularTime;
 
     private ProgressDialog progressDialog;
+    private MenuItem starButton;
+    private ConstraintLayout main_view;
+    private ImageView empty_view;
 
     public AboutUsFragment() {
         // Required empty public constructor
@@ -81,7 +87,24 @@ public class AboutUsFragment extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         fragView = inflater.inflate(R.layout.fragment_about_us, container, false);
+        main_view = (ConstraintLayout) fragView.findViewById(R.id.main_view);
+        empty_view = (ImageView) fragView.findViewById(R.id.aboutus_empty_view);
+
         return fragView;
+    }
+
+    private void show_empty_view(){
+
+        main_view.setVisibility(View.GONE);
+        starButton.setVisible(false);
+        empty_view.setVisibility(View.VISIBLE);
+    }
+
+    private void show_aboutus_view() {
+
+        empty_view.setVisibility(View.GONE);
+        starButton.setVisible(true);
+        main_view.setVisibility(View.VISIBLE);
     }
 
     @Override
@@ -164,6 +187,10 @@ public class AboutUsFragment extends Fragment {
             }
         });
 
+        starButton = (MenuItem) menu.findItem(R.id.aboutus_id);
+
+        show_empty_view();
+
         super.onCreateOptionsMenu(menu, inflater);
     }
 
@@ -191,11 +218,12 @@ public class AboutUsFragment extends Fragment {
                                 }
                             }
                         }
+                        show_aboutus_view();
                     }
                     popularTiming.setText(popularTimeSlot.getSlot());
                 }
                 else{
-                    //TODO matteo empty view
+                    show_empty_view();
                 }
 
                 if(progressDialog.isShowing())
