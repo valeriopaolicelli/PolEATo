@@ -149,7 +149,7 @@
 
     <!-- dialogs -->
     <string name="title_confirm_dialog">Confirm Delivery</string>
-    <string name="message_confirm_dialog">Has your order arrived? Have you payed the rider?</string>
+    <string name="message_confirm_dialog">Has your order arrived? Have you paid the rider?</string>
     <string name="confirm_btn">Confirm</string>
 
     <string name="title_review_dialog">Leave a review</string>
@@ -160,7 +160,9 @@
     <string name="notnowBtn">Not now</string>
     <string name="message_review">Thank you for your order. Please do not forget to leave a review, is really important for us and the restaurant.</string>
 
+    <string name="my_reviews">Reviews about us</string>
     <string name="checkBoxComments">Only Comments</string>
+    <string name="no_rating">No rating for now</string>
 
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>

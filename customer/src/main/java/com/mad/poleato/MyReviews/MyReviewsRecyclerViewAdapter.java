@@ -1,5 +1,6 @@
 package com.mad.poleato.MyReviews;
 
+import android.content.Context;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -7,7 +8,9 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.RatingBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import com.google.firebase.auth.FirebaseAuth;
 import com.mad.poleato.Classes.Rating;
 import com.mad.poleato.FavoriteRestaurants.FavoriteRestaurantRecyclerViewAdapter;
 import com.mad.poleato.R;
@@ -15,58 +18,61 @@ import com.mad.poleato.R;
 import java.util.List;
 import java.util.ListIterator;
 
-public class MyReviewsRecyclerViewAdapter extends RecyclerView.Adapter<MyReviewsRecyclerViewAdapter.MyReviewsViewHolder> {
+public class MyReviewsRecyclerViewAdapter extends RecyclerView.Adapter<MyReviewsRecyclerViewAdapter.MyReviewViewHolder> {
 
-    private List<Rating> ratingList; //current displayed list
+    private List<Rating> reviewList;
+    private Context context;
+    private FirebaseAuth mAuth;
+    private boolean comments_flag;
 
+    private Toast myToast;
 
-    public MyReviewsRecyclerViewAdapter(List<Rating> ratingList) {
-        this.ratingList = ratingList;
+    public static class MyReviewViewHolder extends RecyclerView.ViewHolder{
+
+        public RatingBar ratingBar;
+        public TextView customerData,date,comment;
+        public View itemView;
+
+        public MyReviewViewHolder(View itemView){
+            super(itemView);
+            this.itemView=itemView;
+            this.ratingBar = (RatingBar) itemView.findViewById(R.id.rating_bar_review);
+            this.customerData = (TextView) itemView.findViewById(R.id.customer_data_tv);
+            this.date = (TextView) itemView.findViewById(R.id.date_review_tv);
+            this.comment = (TextView) itemView.findViewById(R.id.customer_comment);
+        }
     }
 
-    @NonNull
+    public MyReviewsRecyclerViewAdapter(Context context, List<Rating>reviewList){
+        this.reviewList = reviewList;
+        this.context = context;
+        if(context != null)
+            myToast = Toast.makeText(context, "", Toast.LENGTH_SHORT);
+
+    }
+
     @Override
-    public MyReviewsViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int i) {
-
-        LayoutInflater layoutInflater = LayoutInflater.from(viewGroup.getContext());
-        final View listItem = layoutInflater.inflate(R.layout.fragment_my_reviews_child, viewGroup, false);
-        final MyReviewsViewHolder viewHolder = new MyReviewsRecyclerViewAdapter.MyReviewsViewHolder(listItem);
-
+    public MyReviewViewHolder onCreateViewHolder(ViewGroup parent, int viewType){
+        LayoutInflater layoutInflater = LayoutInflater.from(parent.getContext());
+        final View listItem = layoutInflater.inflate(R.layout.restaurantreviews_item,parent, false);
+        final MyReviewViewHolder viewHolder = new MyReviewViewHolder(listItem);
         return viewHolder;
     }
 
-    // Replace the contents of a view (invoked by the layout manager)
     @Override
-    public void onBindViewHolder(@NonNull MyReviewsViewHolder myReviewsViewHolder, int i) {
-        // - get element from your dataset at this position
-        // - replace the contents of the view with that element
-        myReviewsViewHolder.textRestaurant.setText(ratingList.get(i).getRestaurantID());
-        myReviewsViewHolder.ratingBar.setNumStars(ratingList.get(i).getRate());
-        myReviewsViewHolder.showReview.setText(ratingList.get(i).getComment());
+    public void onBindViewHolder(@NonNull MyReviewViewHolder reviewViewHolder, int position) {
+
+
+        String customerData = reviewList.get(position).getCustomerData();
+        reviewViewHolder.customerData.setText(customerData);
+        reviewViewHolder.ratingBar.setRating(reviewList.get(position).getRate());
+        reviewViewHolder.date.setText(reviewList.get(position).getDate());
+        reviewViewHolder.comment.setText(reviewList.get(position).getComment());
+
     }
 
     @Override
     public int getItemCount() {
-        return ratingList.size();
-    }
-
-
-    // Provide a reference to the views for each data item
-    // Complex data items may need more than one view per item, and
-    // you provide access to all the views for a data item in a view holder
-    public class MyReviewsViewHolder extends RecyclerView.ViewHolder {
-
-        private TextView textRestaurant, showReview;
-        private RatingBar ratingBar;
-
-        public MyReviewsViewHolder(@NonNull View itemView) {
-            super(itemView);
-
-            this.textRestaurant = itemView.findViewById(R.id.textRestaurant);
-            this.showReview = itemView.findViewById(R.id.showReview);
-            this.ratingBar = itemView.findViewById(R.id.ratingBar);
-
-
-        }
+        return reviewList.size();
     }
 }
