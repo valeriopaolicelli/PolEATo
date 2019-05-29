@@ -143,6 +143,7 @@
     <string name="ride_start_alert">Inizio consegna</string>
     <string name="ride_start_confirm">Sei sicuro di voler iniziare questa consegna?</string>
     <string name="already_delivering">Già in consegna ...</string>
-
+    <string name="alert_is_active">Devi avere lo status su attivo per iniziare questa corsa</string>
+    <string name="turn_on_status">Vuoi passare su attivo e iniziare questa consegna?</string>
 
 </resources>
