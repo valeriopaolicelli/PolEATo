@@ -19,14 +19,14 @@
             android:gravity="end"
             android:text="@string/total"
             android:textColor="@color/colorTextField"
-            android:textSize="20sp"></TextView>
+            android:textSize="20sp" />
 
         <TextView
             android:id="@+id/tv_total"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:textSize="20sp"></TextView>
+            android:textSize="20sp" />
     </LinearLayout>
 
     <LinearLayout
@@ -36,15 +36,16 @@
         android:layout_below="@id/layout_total"
         android:layout_alignParentStart="true"
         android:layout_alignParentEnd="true"
-        android:layout_marginStart="143dp"
+
         android:layout_marginTop="-1dp"
-        android:layout_marginEnd="132dp">
+        android:layout_marginEnd="14dp">
 
         <TextView
             android:id="@+id/time_label"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="10dp"
+            android:lines="1"
             android:layout_weight="1"
             android:text="@string/time"
             android:textAlignment="textEnd"

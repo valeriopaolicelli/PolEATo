@@ -32,7 +32,7 @@
     <string name="price_range"><font size="18">Price</font></string>
     <string name="free_delivery">Free</string>
     <string name="date">Date</string>
-    <string name="time">Time</string>
+    <string name="time">Delivery Time</string>
     <string name="status">Status</string>
     <string name="new_order">New order</string>
     <string name="cooking">Cooking</string>
