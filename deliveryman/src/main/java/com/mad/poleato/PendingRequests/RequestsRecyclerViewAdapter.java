@@ -45,6 +45,9 @@ public class RequestsRecyclerViewAdapter extends RecyclerView.Adapter<RequestsRe
     private DatabaseReference rideReference;
     private DatabaseReference requestsReference;
     private Boolean busy;
+    private Boolean isActive;
+    private String currentUserID;
+
     private Toast myToast;
 
 
@@ -79,6 +82,7 @@ public class RequestsRecyclerViewAdapter extends RecyclerView.Adapter<RequestsRe
         this.rideSet = new TreeSet<>(new RideComparator());
         this.rideList = new ArrayList<>();
         this.context = context;
+        this.currentUserID= currentUserID;
         rideReference = FirebaseDatabase.getInstance().getReference("deliveryman").child(currentUserID)
                                                             .child("ride");
         requestsReference = FirebaseDatabase.getInstance().getReference("deliveryman").child(currentUserID)
@@ -86,6 +90,7 @@ public class RequestsRecyclerViewAdapter extends RecyclerView.Adapter<RequestsRe
 
         //wait for the listener to initialize it to the correct value
         busy = null;
+        isActive = null;
     }
 
 
@@ -106,6 +111,10 @@ public class RequestsRecyclerViewAdapter extends RecyclerView.Adapter<RequestsRe
 
     public void setBusy(Boolean busy){
         this.busy = busy;
+    }
+
+    public void setIsActive(Boolean isActive){
+        this.isActive= isActive;
     }
 
 
@@ -149,18 +158,41 @@ public class RequestsRecyclerViewAdapter extends RecyclerView.Adapter<RequestsRe
 
                     if(busy != null && !busy){
 
-                        new AlertDialog.Builder(v.getContext())
-                                .setTitle(context.getString(R.string.ride_start_alert))
-                                .setMessage(context.getString(R.string.ride_start_confirm))
-                                .setPositiveButton(context.getString(R.string.yes), new DialogInterface.OnClickListener() {
-                                    @Override
-                                    public void onClick(DialogInterface dialog, int which) {
-                                        confirm_ride(ride, rideViewHolder);
-                                    }
-                                })
-                                .setNegativeButton(context.getString(R.string.no), null)
-                                .show();
-                    }else {
+                        if(isActive != null){
+                            if(!isActive){
+                                new AlertDialog.Builder(v.getContext())
+                                    .setTitle(context.getString(R.string.alert_is_active))
+                                    .setMessage(context.getString(R.string.turn_on_status))
+                                    .setPositiveButton(context.getString(R.string.yes), new DialogInterface.OnClickListener() {
+                                        @Override
+                                        public void onClick(DialogInterface dialog, int which) {
+                                            FirebaseDatabase.getInstance().getReference("deliveryman/"
+                                                                                    +currentUserID+"/IsActive").setValue(true);
+                                            isActive= true;
+                                            confirm_ride(ride, rideViewHolder);
+                                        }
+                                    })
+                                    .setNegativeButton(context.getString(R.string.no), null)
+                                    .show();
+                            }
+                        }
+
+                        if(isActive != null && isActive) {
+                            new AlertDialog.Builder(v.getContext())
+                                    .setTitle(context.getString(R.string.ride_start_alert))
+                                    .setMessage(context.getString(R.string.ride_start_confirm))
+                                    .setPositiveButton(context.getString(R.string.yes), new DialogInterface.OnClickListener() {
+                                        @Override
+                                        public void onClick(DialogInterface dialog, int which) {
+                                            confirm_ride(ride, rideViewHolder);
+                                        }
+                                    })
+                                    .setNegativeButton(context.getString(R.string.no), null)
+                                    .show();
+                        }
+
+                    }
+                    else {
                         myToast.setText(context.getString(R.string.already_busy));
                         myToast.show();
                     }

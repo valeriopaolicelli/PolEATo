@@ -139,6 +139,7 @@
     <string name="ride_start_alert">Ride start</string>
     <string name="ride_start_confirm">Are you sure you want to start this ride?</string>
     <string name="already_delivering">Already delivering ...</string>
-
+    <string name="alert_is_active">You must be active to start this ride</string>
+    <string name="turn_on_status">Would you switch to active your status and start this ride?</string>
 
 </resources>

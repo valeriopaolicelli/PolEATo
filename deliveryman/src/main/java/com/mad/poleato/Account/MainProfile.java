@@ -73,6 +73,8 @@ public class MainProfile extends Fragment {
         if(currentUserID == null)
             logout();
 
+        deliveryProfileReference = new MyDatabaseReference(FirebaseDatabase.getInstance()
+                .getReference("deliveryman/"+ currentUserID));
 
         OneSignal.startInit(getContext())
                 .inFocusDisplaying(OneSignal.OSInFocusDisplayOption.Notification)
@@ -112,9 +114,25 @@ public class MainProfile extends Fragment {
         menu.findItem(R.id.logout).setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
             @Override
             public boolean onMenuItemClick(MenuItem item) {
-                //logout
-                FirebaseDatabase.getInstance().getReference("deliveryman/")
-                                                .child(currentUserID+"/IsActive").setValue(false); //set inactive
+
+                deliveryProfileReference.setSingleValueListener(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                        if(dataSnapshot.hasChild("Busy") && dataSnapshot.hasChild("IsActive")){
+                            Boolean busy = (Boolean) dataSnapshot.child("Busy").getValue();
+                            if(!busy){
+                                //logout
+                                FirebaseDatabase.getInstance().getReference("deliveryman/")
+                                        .child(currentUserID+"/IsActive").setValue(false); //set inactive
+                            }
+                        }
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                    }
+                });
                 logout();
                 return true;
             }
@@ -166,8 +184,6 @@ public class MainProfile extends Fragment {
 
     private void fillFields() {
 
-        deliveryProfileReference = new MyDatabaseReference(FirebaseDatabase.getInstance()
-                                            .getReference("deliveryman/"+ currentUserID));
         deliveryProfileReference.setValueListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {

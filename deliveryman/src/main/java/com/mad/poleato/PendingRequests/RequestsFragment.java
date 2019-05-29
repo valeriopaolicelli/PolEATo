@@ -149,8 +149,34 @@ public class RequestsFragment extends Fragment {
 
     private void attachFirebaseListeners(){
 
-        //listen for busy value changes
-        referenceMap.put("busy", new MyDatabaseReference(FirebaseDatabase.getInstance().getReference("deliveryman")
+        //listen for isActive and busy values changes
+
+        referenceMap.put("currentRider", new MyDatabaseReference(FirebaseDatabase.getInstance()
+                                                            .getReference("deliveryman/"+currentUserID)));
+        referenceMap.get("currentRider").setValueListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                if(dataSnapshot.exists()){
+                    if(dataSnapshot.hasChild("Busy") && dataSnapshot.hasChild("IsActive")){
+                        Boolean busy =  (Boolean) dataSnapshot.child("Busy").getValue();
+                        requestsAdapter.setBusy(busy);
+                        Boolean isActive= (Boolean) dataSnapshot.child("IsActive").getValue();
+                        requestsAdapter.setIsActive(isActive);
+                    }else{
+                        Log.d("matte", "[ERROR] Busy and isActive values not found on DB!!");
+                        myToast.setText("ERROR WITH BUSY VALUE FB");
+                        myToast.show();
+                    }
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+
+        /*referenceMap.put("busy", new MyDatabaseReference(FirebaseDatabase.getInstance().getReference("deliveryman")
                                                                 .child(currentUserID+"/Busy")));
         referenceMap.get("busy").setValueListener(new ValueEventListener() {
             @Override
@@ -172,7 +198,7 @@ public class RequestsFragment extends Fragment {
 
             }
         });
-
+*/
         //listen for requests list
         referenceMap.put("requests", new MyDatabaseReference(FirebaseDatabase.getInstance().getReference("deliveryman")
                                                                     .child(currentUserID+"/requests")));
