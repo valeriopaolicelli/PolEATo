@@ -31,12 +31,12 @@
 
         <TextView
             android:id="@+id/dateLabel"
-            android:layout_width="0dp"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="4dp"
             android:layout_marginBottom="4dp"
             android:text="@string/date"
-            android:textColor="@color/colorTextField"
+            android:textColor="@color/colorPanelPrimary"
             android:textSize="20sp"
             app:layout_constraintBottom_toTopOf="@+id/totalPriceLabel"
             app:layout_constraintEnd_toStartOf="@+id/tvDateField"
@@ -45,10 +45,10 @@
 
         <TextView
             android:id="@+id/tvDateField"
-            android:layout_width="0dp"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="24dp"
-            android:layout_marginEnd="16dp"
+            android:layout_marginStart="16dp"
+            android:layout_marginEnd="8dp"
             android:maxLength="40"
             android:singleLine="true"
             android:textColor="@color/colorTextTitle"
@@ -56,15 +56,17 @@
             app:layout_constraintBottom_toBottomOf="@id/dateLabel"
             app:layout_constraintEnd_toStartOf="@id/timeLabel"
             app:layout_constraintStart_toEndOf="@id/dateLabel"
-            app:layout_constraintTop_toTopOf="@id/dateLabel" />
+            app:layout_constraintTop_toTopOf="@id/dateLabel"
+            app:layout_constraintVertical_bias="0.7" />
 
         <TextView
             android:id="@+id/timeLabel"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
             android:layout_marginTop="4dp"
             android:text="@string/time"
-            android:textColor="@color/colorTextField"
+            android:textColor="@color/colorPanelPrimary"
             android:textSize="20sp"
             app:layout_constraintBottom_toBottomOf="@id/dateLabel"
             app:layout_constraintEnd_toStartOf="@id/tvTimeField"
@@ -76,7 +78,7 @@
             android:id="@+id/tvTimeField"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginStart="24dp"
+            android:layout_marginStart="16dp"
             android:layout_marginEnd="16dp"
             android:maxLength="40"
             android:singleLine="true"
@@ -85,18 +87,19 @@
             app:layout_constraintBottom_toBottomOf="@id/timeLabel"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toEndOf="@id/timeLabel"
-            app:layout_constraintTop_toTopOf="@id/timeLabel" />
+            app:layout_constraintTop_toTopOf="@id/timeLabel"
+            app:layout_constraintVertical_bias="0.7" />
 
         <TextView
             android:id="@+id/restaurantLabel"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="8dp"
+            android:layout_marginStart="24dp"
             android:layout_marginBottom="4dp"
             android:maxLength="40"
             android:singleLine="true"
             android:text="@string/restaurant"
-            android:textColor="@color/colorTextField"
+            android:textColor="@color/colorPanelPrimary"
             android:textSize="20sp"
             app:layout_constraintBottom_toTopOf="@+id/dateLabel"
             app:layout_constraintEnd_toStartOf="@+id/tvRestaurantField"
@@ -115,7 +118,8 @@
             app:layout_constraintBottom_toBottomOf="@id/restaurantLabel"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toEndOf="@id/restaurantLabel"
-            app:layout_constraintTop_toTopOf="@id/restaurantLabel" />
+            app:layout_constraintTop_toTopOf="@id/restaurantLabel"
+            app:layout_constraintVertical_bias="0.7" />
 
         <TextView
             android:id="@+id/totalPriceLabel"
@@ -125,7 +129,7 @@
             android:layout_marginBottom="8dp"
             android:singleLine="true"
             android:text="@string/total_price"
-            android:textColor="@color/colorTextField"
+            android:textColor="@color/colorPanelPrimary"
             android:textSize="20sp"
             app:layout_constraintBottom_toTopOf="@+id/confirmBtn"
             app:layout_constraintEnd_toStartOf="@id/tvTotalPrice"
@@ -134,7 +138,7 @@
 
         <TextView
             android:id="@+id/tvTotalPrice"
-            android:layout_width="0dp"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
             android:layout_marginEnd="16dp"
@@ -145,7 +149,8 @@
             app:layout_constraintEnd_toStartOf="@id/statusLabel"
             app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toEndOf="@+id/totalPriceLabel"
-            app:layout_constraintTop_toTopOf="@+id/totalPriceLabel" />
+            app:layout_constraintTop_toTopOf="@+id/totalPriceLabel"
+            app:layout_constraintVertical_bias="0.7" />
 
         <TextView
             android:id="@+id/statusLabel"
@@ -154,7 +159,7 @@
             android:layout_marginBottom="8dp"
             android:singleLine="true"
             android:text="Status"
-            android:textColor="@color/colorTextField"
+            android:textColor="@color/colorPanelPrimary"
             android:textSize="20sp"
             app:layout_constraintBottom_toBottomOf="@id/totalPriceLabel"
             app:layout_constraintEnd_toStartOf="@id/statusTv"
@@ -166,7 +171,7 @@
             android:id="@+id/statusTv"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginStart="20dp"
+            android:layout_marginStart="8dp"
             android:layout_marginEnd="16dp"
             android:text=""
             android:textSize="15sp"
@@ -174,7 +179,8 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.101"
             app:layout_constraintStart_toEndOf="@+id/statusLabel"
-            app:layout_constraintTop_toTopOf="@+id/statusLabel" />
+            app:layout_constraintTop_toTopOf="@+id/statusLabel"
+            app:layout_constraintVertical_bias="0.7" />
 
         <TextView
             android:id="@+id/reviewtv"

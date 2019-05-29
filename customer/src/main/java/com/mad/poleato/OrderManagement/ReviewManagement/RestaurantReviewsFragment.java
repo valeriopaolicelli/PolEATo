@@ -198,7 +198,7 @@ public class RestaurantReviewsFragment extends Fragment {
                         avgReviews = (float)totalStars/totalReviews;
                         ratingBar.setRating(avgReviews);
 
-                        final Rating rating = new Rating(customerID, rate, comment, restaurantID, ds.getKey(),date);
+                        final Rating rating = new Rating(customerID, rate, comment, restaurantID, ds.getKey(), date);
                         reviewsList.add(rating);
                         displayedList.add(rating);
                         reviewsMap.put(ds.getKey(), rating);

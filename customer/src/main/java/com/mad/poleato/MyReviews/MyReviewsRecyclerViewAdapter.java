@@ -22,22 +22,20 @@ public class MyReviewsRecyclerViewAdapter extends RecyclerView.Adapter<MyReviews
 
     private List<Rating> reviewList;
     private Context context;
-    private FirebaseAuth mAuth;
-    private boolean comments_flag;
 
     private Toast myToast;
 
     public static class MyReviewViewHolder extends RecyclerView.ViewHolder{
 
         public RatingBar ratingBar;
-        public TextView customerData,date,comment;
+        public TextView restaurantName, date, comment;
         public View itemView;
 
         public MyReviewViewHolder(View itemView){
             super(itemView);
             this.itemView=itemView;
             this.ratingBar = (RatingBar) itemView.findViewById(R.id.rating_bar_review);
-            this.customerData = (TextView) itemView.findViewById(R.id.customer_data_tv);
+            this.restaurantName = (TextView) itemView.findViewById(R.id.restaurant_data_tv);
             this.date = (TextView) itemView.findViewById(R.id.date_review_tv);
             this.comment = (TextView) itemView.findViewById(R.id.customer_comment);
         }
@@ -63,8 +61,8 @@ public class MyReviewsRecyclerViewAdapter extends RecyclerView.Adapter<MyReviews
     public void onBindViewHolder(@NonNull MyReviewViewHolder reviewViewHolder, int position) {
 
 
-        String customerData = reviewList.get(position).getCustomerData();
-        reviewViewHolder.customerData.setText(customerData);
+        String restaurantName = reviewList.get(position).getRestaurantName();
+        reviewViewHolder.restaurantName.setText(restaurantName);
         reviewViewHolder.ratingBar.setRating(reviewList.get(position).getRate());
         reviewViewHolder.date.setText(reviewList.get(position).getDate());
         reviewViewHolder.comment.setText(reviewList.get(position).getComment());

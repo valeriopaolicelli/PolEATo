@@ -10,6 +10,7 @@ public class Rating {
     private Integer rate;
     private String comment;
     private String restaurantID;
+    private String restaurantName;
     private String orderID;
     private String customerData;
     private String date;
@@ -76,7 +77,6 @@ public class Rating {
         @Override
         public int compare(Rating r1, Rating r2) {
             SimpleDateFormat formatDate = new SimpleDateFormat("dd/MM/yyyy");
-            SimpleDateFormat formatTime = new SimpleDateFormat("HH:mm");
 
             Date date1 = null, date2= null;
 
@@ -98,5 +98,13 @@ public class Rating {
 
     public void setCustomerData(String customerData) {
         this.customerData = customerData;
+    }
+
+    public String getRestaurantName(){
+        return restaurantName;
+    }
+
+    public void setRestaurantName(String restaurantName) {
+        this.restaurantName = restaurantName;
     }
 }

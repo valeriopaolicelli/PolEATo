@@ -32,6 +32,7 @@ import com.google.firebase.database.ValueEventListener;
 import com.mad.poleato.Classes.Rating;
 import com.mad.poleato.Classes.Restaurant;
 import com.mad.poleato.FavoriteRestaurants.FavoriteRestaurantRecyclerViewAdapter;
+import com.mad.poleato.MyDatabaseReference;
 import com.mad.poleato.R;
 import com.onesignal.OneSignal;
 
@@ -68,7 +69,7 @@ public class MyReviewsFragment extends Fragment {
     private float avgReviews;
     private int totalStars;
 
-    DatabaseReference reviewsReference;
+    MyDatabaseReference reviewsReference;
 
     private HashMap<String, Rating>reviewsMap;
     private List<Rating>reviewsList;
@@ -110,7 +111,7 @@ public class MyReviewsFragment extends Fragment {
 
         OneSignal.sendTag("User_ID", currentUserID);
 
-        reviewsReference = FirebaseDatabase.getInstance().getReference("restaurants/"+ currentUserID + "/Ratings");
+        reviewsReference = new MyDatabaseReference(FirebaseDatabase.getInstance().getReference("customers/"+ currentUserID + "/Ratings"));
 
         if(getActivity() != null){
             progressDialog = ProgressDialog.show(getActivity(), "", getString(R.string.loading));
@@ -165,7 +166,7 @@ public class MyReviewsFragment extends Fragment {
 
     public void fillFields(){
 
-        reviewsReference.addValueEventListener(new ValueEventListener() {
+        reviewsReference.setValueListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 handler.sendEmptyMessage(0);
@@ -180,12 +181,10 @@ public class MyReviewsFragment extends Fragment {
         });
 
 
-        reviewsReference.addChildEventListener(new ChildEventListener() {
+        reviewsReference.setChildListener(new ChildEventListener() {
             @Override
             public void onChildAdded(@NonNull DataSnapshot ds, @Nullable String s) {
                 if (ds.exists()) {
-                    final String[] customerName = new String[1];
-                    final String[] customerSurname = new String[1];
 
                     if (ds.hasChild("comment") &&
                             ds.hasChild("customerID") &&
@@ -193,6 +192,7 @@ public class MyReviewsFragment extends Fragment {
                             ds.hasChild("rate") &&
                             ds.hasChild("restaurantID")) {
                         String customerID = ds.child("customerID").getValue().toString();
+                        String restaurantID = ds.child("restaurantID").getValue().toString();
                         int rate = Integer.parseInt(ds.child("rate").getValue().toString());
                         final String date = ds.child("date").getValue().toString();
                         String comment = ds.child("comment").getValue().toString();
@@ -206,14 +206,12 @@ public class MyReviewsFragment extends Fragment {
                         reviewsList.add(rating);
                         displayedList.add(rating);
                         reviewsMap.put(ds.getKey(), rating);
-//Get customer data
-                        DatabaseReference customerReference = FirebaseDatabase.getInstance().getReference("customers/" + customerID);
+//Get restaurant name
+                        DatabaseReference customerReference = FirebaseDatabase.getInstance().getReference("restaurants/" + restaurantID);
                         customerReference.addListenerForSingleValueEvent(new ValueEventListener() {
                             @Override
                             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                                customerName[0] = dataSnapshot.child("Name").getValue().toString();
-                                customerSurname[0] = dataSnapshot.child("Surname").getValue().toString();
-                                rating.setCustomerData(customerName[0] + " " + customerSurname[0]);
+                                rating.setRestaurantName(dataSnapshot.child("Name").getValue().toString());
                                 recyclerViewAdapter.notifyDataSetChanged();
                             }
 
@@ -236,8 +234,6 @@ public class MyReviewsFragment extends Fragment {
             @Override
             public void onChildChanged(@NonNull DataSnapshot ds, @Nullable String s) {
                 if (ds.exists()) {
-                    final String[] customerName = new String[1];
-                    final String[] customerSurname = new String[1];
 
                     if (ds.hasChild("comment") &&
                             ds.hasChild("customerID") &&
@@ -245,6 +241,7 @@ public class MyReviewsFragment extends Fragment {
                             ds.hasChild("rate") &&
                             ds.hasChild("restaurantID")) {
                         String customerID = ds.child("customerID").getValue().toString();
+                        String restaurantID = ds.child("restaurantID").getValue().toString();
                         int rate = Integer.parseInt(ds.child("rate").getValue().toString());
                         final String date = ds.child("date").getValue().toString();
                         String comment = ds.child("comment").getValue().toString();
@@ -265,14 +262,12 @@ public class MyReviewsFragment extends Fragment {
                             }
                         }
                         reviewsMap.put(ds.getKey(), rating);
-//Get customer data
-                        DatabaseReference customerReference = FirebaseDatabase.getInstance().getReference("customers/" + customerID);
+//Get restaurant name
+                        DatabaseReference customerReference = FirebaseDatabase.getInstance().getReference("restaurants/" + restaurantID);
                         customerReference.addListenerForSingleValueEvent(new ValueEventListener() {
                             @Override
                             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                                customerName[0] = dataSnapshot.child("Name").getValue().toString();
-                                customerSurname[0] = dataSnapshot.child("Surname").getValue().toString();
-                                rating.setCustomerData(customerName[0] + " " + customerSurname[0]);
+                                rating.setRestaurantName(dataSnapshot.child("Name").getValue().toString());
                                 recyclerViewAdapter.notifyDataSetChanged();
                             }
 
@@ -280,6 +275,7 @@ public class MyReviewsFragment extends Fragment {
                             public void onCancelled(@NonNull DatabaseError databaseError) {
                             }
                         });
+
                         Collections.sort(displayedList,Rating.timeComparator);
                         recyclerViewAdapter.notifyDataSetChanged();
                     }
@@ -334,5 +330,17 @@ public class MyReviewsFragment extends Fragment {
 
     private boolean isValidToDsplay(Rating rating){
         return !rating.getComment().equals("");
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        reviewsReference.removeAllListener();
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        reviewsReference.removeAllListener();
     }
 }
