@@ -16,6 +16,7 @@ import android.os.Message;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.design.widget.BottomNavigationView;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
@@ -77,6 +78,7 @@ public class AddFoodFragment extends Fragment {
 
 
     private FloatingActionButton change_im;
+    private BottomNavigationView navigation;
     private ImageView imageFood;
     private Spinner spinnerFood;
     private String dishCategory;
@@ -158,6 +160,10 @@ public class AddFoodFragment extends Fragment {
             });
         }
 
+        /** Hide bottomBar for this fragment*/
+        navigation = getActivity().findViewById(R.id.navigation);
+        navigation.setVisibility(View.GONE);
+
 
         //retrieve the spinnerFood for the category
         spinnerFood = (Spinner) v.findViewById(R.id.spinnerFood);
@@ -214,6 +220,12 @@ public class AddFoodFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
         handleButton();
         buttonListener();
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        navigation.setVisibility(View.VISIBLE);
     }
 
     private void saveChanges(){

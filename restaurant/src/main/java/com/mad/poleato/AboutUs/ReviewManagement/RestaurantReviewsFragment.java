@@ -9,6 +9,7 @@ import android.os.Handler;
 import android.os.Message;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.design.widget.BottomNavigationView;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -57,6 +58,7 @@ public class RestaurantReviewsFragment extends Fragment {
 
     private String currentUserID;
     private FirebaseAuth mAuth;
+    private BottomNavigationView navigation;
 
     private long totalReviews;
     private float avgReviews;
@@ -124,6 +126,10 @@ public class RestaurantReviewsFragment extends Fragment {
                              Bundle savedInstanceState) {
         fragView = inflater.inflate(R.layout.restaurantreviews_fragment_layout, container, false);
         // Inflate the layout for this fragment
+
+        /** Hide bottomBar for this fragment*/
+        navigation = getActivity().findViewById(R.id.navigation);
+        navigation.setVisibility(View.GONE);
 
         return fragView;
     }
@@ -345,6 +351,9 @@ public class RestaurantReviewsFragment extends Fragment {
     @Override
     public void onDestroy() {
         super.onDestroy();
+
+        navigation.setVisibility(View.VISIBLE);
+
         for(MyDatabaseReference my_ref : dbReferenceList.values())
             my_ref.removeAllListener();
     }

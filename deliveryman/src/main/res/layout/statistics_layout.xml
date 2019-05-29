@@ -237,6 +237,7 @@
 
         <com.jjoe64.graphview.GraphView
             android:id="@+id/graphView"
+
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_marginStart="16dp"

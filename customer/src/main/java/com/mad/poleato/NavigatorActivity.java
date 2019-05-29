@@ -11,11 +11,14 @@ import android.support.v7.app.AppCompatActivity;
 
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
+import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.onesignal.OneSignal;
+
+import static com.google.android.gms.common.util.CollectionUtils.setOf;
 
 public class NavigatorActivity extends AppCompatActivity{
     BottomNavigationView navigation;
@@ -75,10 +78,18 @@ public class NavigatorActivity extends AppCompatActivity{
         OneSignal.sendTag("User_ID", currentUserID);
 
         navigation = findViewById(R.id.navigation);
-//        navView.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
+
+
         navController = Navigation.findNavController(this,R.id.nav_host_fragment);
         NavigationUI.setupWithNavController(navigation, navController);
-        NavigationUI.setupActionBarWithNavController(this, navController);
+
+        /** Custom action bar to hide back Icon */
+        AppBarConfiguration appBarConfiguration = new AppBarConfiguration.Builder(R.id.restaurantSearchFragment_id,
+                R.id.favoriteRestaurantFragment_id,
+                R.id.holder_history_id,
+                R.id.myReviewsFragment_id,
+                R.id.mainProfile_id).build();
+        NavigationUI.setupActionBarWithNavController(this, navController, appBarConfiguration);
     }
     @Override
     protected void onStart() {

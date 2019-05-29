@@ -17,6 +17,7 @@ import android.os.Message;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.design.widget.BottomNavigationView;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.content.ContextCompat;
@@ -91,6 +92,7 @@ public class EditFoodFragment extends DialogFragment {
 
 
     private FloatingActionButton change_im;
+    private BottomNavigationView navigation;
     private ImageView imageFood;
 
     private Map<String, ImageButton> imageButtons;
@@ -159,6 +161,10 @@ public class EditFoodFragment extends DialogFragment {
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
         v = inflater.inflate(R.layout.edit_food_fragment, container, false);
+
+        /** Hide bottomBar for this fragment*/
+        navigation = getActivity().findViewById(R.id.navigation);
+        navigation.setVisibility(View.GONE);
 
         //collects the editText
         editTextFields = new HashMap<>();
@@ -763,6 +769,9 @@ public class EditFoodFragment extends DialogFragment {
     @Override
     public void onDestroy() {
         super.onDestroy();
+
+        navigation.setVisibility(View.VISIBLE);
+
         foodReference.removeAllListener();
     }
 

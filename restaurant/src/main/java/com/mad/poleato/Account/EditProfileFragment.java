@@ -23,6 +23,7 @@ import android.os.Message;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.design.widget.BottomNavigationView;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
@@ -113,6 +114,7 @@ public class EditProfileFragment extends Fragment implements TimePickerDialog.On
 
     private View v; //this view
     private FloatingActionButton change_im;
+    private BottomNavigationView navigation;
     private ImageView profileImage;
     private Switch statusSwitch;
     private Switch switchPass; //for password
@@ -262,6 +264,10 @@ public class EditProfileFragment extends Fragment implements TimePickerDialog.On
         editTextFields.get("OldPassword").setEnabled(false);
         editTextFields.get("NewPassword").setEnabled(false);
         editTextFields.get("ReNewPassword").setEnabled(false);
+
+        /** Hide bottomBar for this fragment*/
+        navigation = getActivity().findViewById(R.id.navigation);
+        navigation.setVisibility(View.GONE);
 
         //set the listener for all the checkbox
         CheckListener checkListener = new CheckListener();
@@ -1242,6 +1248,9 @@ public class EditProfileFragment extends Fragment implements TimePickerDialog.On
     @Override
     public void onDestroy() {
         super.onDestroy();
+
+        navigation.setVisibility(View.VISIBLE);
+
         profileReference.removeAllListener();
     }
 

@@ -8,8 +8,7 @@
     android:layout_height="match_parent"
     android:background="@color/colorPanelPrimary"
     android:orientation="vertical"
-    tools:context=".NavigatorActivity"
-    android:layout_marginBottom="?attr/actionBarSize">
+    tools:context=".NavigatorActivity">
 
 
     <ScrollView

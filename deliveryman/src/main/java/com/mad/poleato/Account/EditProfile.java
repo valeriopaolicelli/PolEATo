@@ -17,6 +17,7 @@ import android.os.Environment;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.design.widget.BottomNavigationView;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
@@ -87,6 +88,7 @@ public class EditProfile extends Fragment {
     private View v;
     private static CircleImageView profileImage;
     private FloatingActionButton change_im;
+    private BottomNavigationView navigation;
     private Switch switchPass; //for password
     private Switch statusSwitch;
 
@@ -197,6 +199,11 @@ public class EditProfile extends Fragment {
 
         profileImage = v.findViewById(R.id.profile_image);
         change_im = v.findViewById(R.id.change_im);
+
+
+        /** Hide bottomBar for this fragment*/
+        navigation = getActivity().findViewById(R.id.navigation);
+        navigation.setVisibility(View.GONE);
 
         //fill the fields with initial values (uses FireBase)
         if(getActivity() != null)
@@ -946,6 +953,9 @@ public class EditProfile extends Fragment {
     @Override
     public void onDestroy() {
         super.onDestroy();
+
+        navigation.setVisibility(View.VISIBLE);
+
         deliveryProfileReference.removeAllListener();
     }
 }

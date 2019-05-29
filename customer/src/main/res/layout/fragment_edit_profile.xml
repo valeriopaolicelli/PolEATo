@@ -5,12 +5,12 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:layout_marginBottom="?attr/actionBarSize"
     android:background="@color/colorBodyPrimary"
     android:id="@+id/editScrollView"
     tools:context=".Account.EditProfile">
     <android.support.constraint.ConstraintLayout
         android:layout_width="match_parent"
+        android:id="@+id/constr_editLayout_id"
         android:layout_height="wrap_content">
 
         <ImageView

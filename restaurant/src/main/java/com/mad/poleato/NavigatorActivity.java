@@ -12,6 +12,7 @@ import android.widget.TextView;
 
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
+import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
 
 import com.google.firebase.auth.FirebaseAuth;
@@ -84,7 +85,16 @@ public class NavigatorActivity extends AppCompatActivity {
 //        navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
         navController = Navigation.findNavController(this,R.id.nav_host_fragment);
         NavigationUI.setupWithNavController(navigation, navController);
-        NavigationUI.setupActionBarWithNavController(this, navController);
+
+        /** Custom action bar to hide back Icon */
+        AppBarConfiguration appBarConfiguration = new AppBarConfiguration.Builder(
+                R.id.reservation_id,
+                R.id.history_id,
+                R.id.daily_offer_id,
+                R.id.aboutus_id,
+                R.id.account_id).build();
+
+        NavigationUI.setupActionBarWithNavController(this, navController, appBarConfiguration);
 
     }
 

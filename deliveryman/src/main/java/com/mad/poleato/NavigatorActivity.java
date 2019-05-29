@@ -19,6 +19,7 @@ import android.util.Log;
 
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
+import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
 
 import com.google.firebase.auth.FirebaseAuth;
@@ -40,7 +41,7 @@ public class NavigatorActivity extends AppCompatActivity {
     private FirebaseAuth mAuth;
     private ConnectionManager connectionManager;
 
-//    private BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener
+    //    private BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener
 //            = new BottomNavigationView.OnNavigationItemSelectedListener() {
 //
 //        @Override
@@ -59,14 +60,14 @@ public class NavigatorActivity extends AppCompatActivity {
 //            return false;
 //        }
 //    };
-BroadcastReceiver networkReceiver = new BroadcastReceiver() {
-    @Override
-    public void onReceive(Context context, Intent intent) {
+    BroadcastReceiver networkReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
 
-        if(!connectionManager.haveNetworkConnection(context))
-            connectionManager.showDialog(context);
-    }
-};
+            if (!connectionManager.haveNetworkConnection(context))
+                connectionManager.showDialog(context);
+        }
+    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -77,7 +78,7 @@ BroadcastReceiver networkReceiver = new BroadcastReceiver() {
         mAuth = FirebaseAuth.getInstance();
         FirebaseUser currentUser = mAuth.getCurrentUser();
         currentUserID = currentUser.getUid();
-        if(currentUserID == null)
+        if (currentUserID == null)
             logout();
 
         OneSignal.startInit(this)
@@ -92,8 +93,8 @@ BroadcastReceiver networkReceiver = new BroadcastReceiver() {
         dbReference.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                if(dataSnapshot.exists())
-                    if(dataSnapshot.getValue().toString().equals("true")) {
+                if (dataSnapshot.exists())
+                    if (dataSnapshot.getValue().toString().equals("true")) {
                         askPermission();
                     }
             }
@@ -105,15 +106,24 @@ BroadcastReceiver networkReceiver = new BroadcastReceiver() {
         });
 
         navigation = (BottomNavigationView) findViewById(R.id.navigation);
-//        navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
-        navController = Navigation.findNavController(this,R.id.nav_host_fragment);
+
+        navController = Navigation.findNavController(this, R.id.nav_host_fragment);
         NavigationUI.setupWithNavController(navigation, navController);
-        NavigationUI.setupActionBarWithNavController(this, navController);
+
+        /** Custom action bar to hide back Icon */
+        AppBarConfiguration appBarConfiguration = new AppBarConfiguration.Builder(
+                R.id.pendingReservations_id,
+                R.id.rides_id,
+                R.id.routes_id,
+                R.id.statistics_id,
+                R.id.mainProfile_id).build();
+
+        NavigationUI.setupActionBarWithNavController(this, navController, appBarConfiguration);
 
     }
 
 
-    private void logout(){
+    private void logout() {
         //logout
         Log.d("matte", "Logout");
         FirebaseAuth.getInstance().signOut();
@@ -128,7 +138,7 @@ BroadcastReceiver networkReceiver = new BroadcastReceiver() {
     protected void onStart() {
         super.onStart();
         IntentFilter filter = new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION);
-        registerReceiver(networkReceiver,filter);
+        registerReceiver(networkReceiver, filter);
     }
 
     @Override
@@ -150,12 +160,12 @@ BroadcastReceiver networkReceiver = new BroadcastReceiver() {
 
     public boolean checkLocationPermission() {
         if (ContextCompat.checkSelfPermission(this,
-                Manifest.permission. ACCESS_FINE_LOCATION)
+                Manifest.permission.ACCESS_FINE_LOCATION)
                 != PackageManager.PERMISSION_GRANTED) {
 
             // Should we show an explanation?
             if (ActivityCompat.shouldShowRequestPermissionRationale(this,
-                    Manifest.permission. ACCESS_FINE_LOCATION)) {
+                    Manifest.permission.ACCESS_FINE_LOCATION)) {
 
                 // Show an explanation to the user *asynchronously* -- don't block
                 // this thread waiting for the user's response! After the user
@@ -179,7 +189,7 @@ BroadcastReceiver networkReceiver = new BroadcastReceiver() {
             } else {
                 // No explanation needed, we can request the permission.
                 ActivityCompat.requestPermissions(this,
-                        new String[]{Manifest.permission. ACCESS_FINE_LOCATION},
+                        new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
                         MY_PERMISSIONS_REQUEST_LOCATION);
             }
             return false;
@@ -200,7 +210,7 @@ BroadcastReceiver networkReceiver = new BroadcastReceiver() {
                     // permission was granted, yay! Do the
                     // location-related task you need to do.
                     if (ContextCompat.checkSelfPermission(this,
-                            Manifest.permission. ACCESS_FINE_LOCATION)
+                            Manifest.permission.ACCESS_FINE_LOCATION)
                             == PackageManager.PERMISSION_GRANTED) {
 
                         startService(new Intent(this, BackgroundLocationService.class));

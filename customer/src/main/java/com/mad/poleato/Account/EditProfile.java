@@ -22,6 +22,8 @@ import android.os.Message;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.constraint.ConstraintLayout;
+import android.support.design.widget.BottomNavigationView;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
@@ -46,6 +48,7 @@ import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -102,6 +105,7 @@ public class EditProfile extends Fragment {
     private View v;
     private static CircleImageView profileImage;
     private FloatingActionButton change_im;
+    private BottomNavigationView navigation;
     private Switch switchPass; //for password
 
     private boolean rightPass;
@@ -201,6 +205,11 @@ public class EditProfile extends Fragment {
         });
 
 
+        /** Hide bottomBar for this fragment*/
+        navigation = getActivity().findViewById(R.id.navigation);
+        navigation.setVisibility(View.GONE);
+
+
         profileImage = v.findViewById(R.id.profile_image);
         change_im = v.findViewById(R.id.change_im);
 
@@ -217,6 +226,11 @@ public class EditProfile extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+
+//        NavController navController = Navigation.findNavController(getActivity(),R.id.nav_host_fragment);
+//        navController.
+
+
 
         handleButton();
         buttonListener();
@@ -913,6 +927,9 @@ public class EditProfile extends Fragment {
     @Override
     public void onDestroy() {
         super.onDestroy();
+
+        navigation.setVisibility(View.VISIBLE);
+
         for(MyDatabaseReference ref : dbReferenceList.values())
             ref.removeAllListener();
     }
