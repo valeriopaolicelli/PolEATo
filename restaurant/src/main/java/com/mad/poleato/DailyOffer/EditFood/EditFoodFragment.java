@@ -121,7 +121,7 @@ public class EditFoodFragment extends DialogFragment {
     private MyDatabaseReference foodReference;
     int indexReference;
 
-    /* ***********************************
+    /** ***********************************
      ********   ANDROID CALLBACKS   ****
      *********************************** */
 
