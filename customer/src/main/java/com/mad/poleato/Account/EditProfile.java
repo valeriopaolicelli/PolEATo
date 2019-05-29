@@ -230,8 +230,6 @@ public class EditProfile extends Fragment {
 //        NavController navController = Navigation.findNavController(getActivity(),R.id.nav_host_fragment);
 //        navController.
 
-
-
         handleButton();
         buttonListener();
         handleSwitch();
@@ -252,11 +250,11 @@ public class EditProfile extends Fragment {
         super.onCreateOptionsMenu(menu,inflater);
     }
 
-//    @Override
-//    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
-//        super.onActivityCreated(savedInstanceState);
-//        getActivity().getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE);
-//    }
+    @Override
+    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+        getActivity().getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE);
+    }
 
     private void fillFields(){
 
