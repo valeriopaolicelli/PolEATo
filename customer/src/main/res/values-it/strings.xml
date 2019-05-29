@@ -35,7 +35,7 @@
     <string name="slash">/</string>
     <string name="price">Prezzo: </string>
     <string name="date">Data</string>
-    <string name="time">Orario</string>
+    <string name="time">Orario di consegna</string>
     <string name="status">Status</string>
     <string name="total_price">Totale ordine</string>
     <string name="dishes">Piatto</string>
