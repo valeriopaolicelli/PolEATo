@@ -22,6 +22,9 @@ import android.widget.Toast;
 
 import androidx.navigation.Navigation;
 
+import com.google.android.gms.auth.api.signin.GoogleSignIn;
+import com.google.android.gms.auth.api.signin.GoogleSignInClient;
+import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
@@ -56,6 +59,8 @@ public class MainProfile extends Fragment {
     private String currentUserID;
     private FirebaseAuth mAuth;
 
+    private GoogleSignInClient mGoogleSignInClient;
+
     private MyDatabaseReference deliveryProfileReference;
 
 
@@ -64,17 +69,26 @@ public class MainProfile extends Fragment {
         //in order to create the logout menu (don't move!)
         setHasOptionsMenu(true);
         super.onCreate(savedInstanceState);
-        if(getActivity() != null)
+        if (getActivity() != null)
             myToast = Toast.makeText(getActivity(), "", Toast.LENGTH_SHORT);
 
         mAuth = FirebaseAuth.getInstance();
         FirebaseUser currentUser = mAuth.getCurrentUser();
         currentUserID = currentUser.getUid();
-        if(currentUserID == null)
-            logout();
+        if (currentUserID == null)
+            revokeAccess();
 
         deliveryProfileReference = new MyDatabaseReference(FirebaseDatabase.getInstance()
-                .getReference("deliveryman/"+ currentUserID));
+                .getReference("deliveryman/" + currentUserID));
+
+        /** GoogleSignInOptions */
+        GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+                .requestIdToken(getString(R.string.default_web_client_id))
+                .requestEmail()
+                .build();
+
+        /** Build a GoogleSignInClient with the options specified by gso. */
+        mGoogleSignInClient = GoogleSignIn.getClient(getActivity(), gso);
 
         OneSignal.startInit(getContext())
                 .inFocusDisplaying(OneSignal.OSInFocusDisplayOption.Notification)
@@ -94,7 +108,7 @@ public class MainProfile extends Fragment {
     }
 
 
-    private void logout(){
+    private void logout() {
         //logout
         Log.d("matte", "Logout");
         FirebaseAuth.getInstance().signOut();
@@ -118,15 +132,14 @@ public class MainProfile extends Fragment {
                 deliveryProfileReference.setSingleValueListener(new ValueEventListener() {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                        if(dataSnapshot.hasChild("Busy") && dataSnapshot.hasChild("IsActive")){
+                        if (dataSnapshot.hasChild("Busy") && dataSnapshot.hasChild("IsActive")) {
                             Boolean busy = (Boolean) dataSnapshot.child("Busy").getValue();
-                            if(!busy){
-                                //logout
+                            if (!busy) {
+
                                 FirebaseDatabase.getInstance().getReference("deliveryman/")
                                         .child(currentUserID+"/IsActive").setValue(false); //set inactive
                             }
-                            deliveryProfileReference.removeAllListener();
-                            logout();
+
                         }
                     }
 
@@ -136,10 +149,14 @@ public class MainProfile extends Fragment {
                     }
                 });
 
+                deliveryProfileReference.removeAllListener();
+
+                /** logout */
+                revokeAccess();
                 return true;
             }
         });
-        super.onCreateOptionsMenu(menu,inflater);
+        super.onCreateOptionsMenu(menu, inflater);
     }
 
     @Override
@@ -148,13 +165,13 @@ public class MainProfile extends Fragment {
 
         // Retrieve all fields (restaurant details) in the xml file
         tvFields = new HashMap<>();
-        tvFields.put("Name", (TextView)view.findViewById(R.id.tvNameField));
-        tvFields.put("Surname", (TextView)view.findViewById(R.id.tvSurnameField));
-        tvFields.put("Address", (TextView)view.findViewById(R.id.tvAddressField));
-        tvFields.put("Email", (TextView)view.findViewById(R.id.tvEmailField));
-        tvFields.put("Phone", (TextView)view.findViewById(R.id.tvPhoneField));
-        tvFields.put("ID", (TextView)view.findViewById(R.id.tvIdField));
-        tvFields.put("IsActive", (TextView)view.findViewById(R.id.tvStatusField));
+        tvFields.put("Name", (TextView) view.findViewById(R.id.tvNameField));
+        tvFields.put("Surname", (TextView) view.findViewById(R.id.tvSurnameField));
+        tvFields.put("Address", (TextView) view.findViewById(R.id.tvAddressField));
+        tvFields.put("Email", (TextView) view.findViewById(R.id.tvEmailField));
+        tvFields.put("Phone", (TextView) view.findViewById(R.id.tvPhoneField));
+        tvFields.put("ID", (TextView) view.findViewById(R.id.tvIdField));
+        tvFields.put("IsActive", (TextView) view.findViewById(R.id.tvStatusField));
 
         profileImage = view.findViewById(R.id.profile_image);
 
@@ -176,7 +193,7 @@ public class MainProfile extends Fragment {
     public void onResume() {
         super.onResume();
         //fill the views fields
-        if(getActivity() != null)
+        if (getActivity() != null)
             progressDialog = ProgressDialog.show(getActivity(), "", getString(R.string.loading));
 
         //start a new thread to process job
@@ -190,29 +207,27 @@ public class MainProfile extends Fragment {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
 
-                    // dataSnapshot is the "issue" node with all children
+                // dataSnapshot is the "issue" node with all children
 
-                    if(dataSnapshot.hasChild("Name") &&
-                            dataSnapshot.hasChild("Surname") &&
-                            dataSnapshot.hasChild("Address") &&
-                            dataSnapshot.hasChild("Email") &&
-                            dataSnapshot.hasChild("Phone") &&
-                            dataSnapshot.hasChild("IsActive"))
-                    {
-                        for(DataSnapshot snap : dataSnapshot.getChildren()){
-                            if(tvFields.containsKey(snap.getKey())){
+                if (dataSnapshot.hasChild("Name") &&
+                        dataSnapshot.hasChild("Surname") &&
+                        dataSnapshot.hasChild("Address") &&
+                        dataSnapshot.hasChild("Email") &&
+                        dataSnapshot.hasChild("Phone") &&
+                        dataSnapshot.hasChild("IsActive")) {
+                    for (DataSnapshot snap : dataSnapshot.getChildren()) {
+                        if (tvFields.containsKey(snap.getKey())) {
 
-                                if(snap.getKey().equals("IsActive") && getActivity() != null){
-                                    if((Boolean)snap.getValue())
-                                        tvFields.get(snap.getKey()).setText(getString(R.string.active_status));
-                                    else
-                                        tvFields.get(snap.getKey()).setText(getString(R.string.inactive_status));
-                                }
+                            if (snap.getKey().equals("IsActive") && getActivity() != null) {
+                                if ((Boolean) snap.getValue())
+                                    tvFields.get(snap.getKey()).setText(getString(R.string.active_status));
                                 else
-                                    tvFields.get(snap.getKey()).setText(snap.getValue().toString());
-                            }
-                        } //end for
-                    } //end if
+                                    tvFields.get(snap.getKey()).setText(getString(R.string.inactive_status));
+                            } else
+                                tvFields.get(snap.getKey()).setText(snap.getValue().toString());
+                        }
+                    } //end for
+                } //end if
 
             }
 
@@ -228,8 +243,8 @@ public class MainProfile extends Fragment {
 
         //Download the profile pic
         StorageReference storageReference = FirebaseStorage.getInstance().getReference();
-        StorageReference photoReference= storageReference.child(currentUserID +"/ProfileImage/img.jpg");
-        
+        StorageReference photoReference = storageReference.child(currentUserID + "/ProfileImage/img.jpg");
+
         final long ONE_MEGABYTE = 1024 * 1024;
         photoReference.getBytes(ONE_MEGABYTE).addOnSuccessListener(new OnSuccessListener<byte[]>() {
             @Override
@@ -237,7 +252,7 @@ public class MainProfile extends Fragment {
                 Bitmap bmp = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
                 profileImage.setImageBitmap(bmp);
                 //send message to main thread
-                if(progressDialog.isShowing())
+                if (progressDialog.isShowing())
                     progressDialog.dismiss();
             }
         }).addOnFailureListener(new OnFailureListener() {
@@ -247,18 +262,38 @@ public class MainProfile extends Fragment {
                 //set predefined image
                 profileImage.setImageResource(R.drawable.image_empty);
                 //send message to main thread
-                if(progressDialog.isShowing())
+                if (progressDialog.isShowing())
                     progressDialog.dismiss();
             }
         });
 
     }
 
+    private void revokeAccess() {
+        // Firebase sign out
+        //mAuth.signOut();
+
+        Log.d("miche", "Logout");
+        FirebaseAuth.getInstance().signOut();
+        // Google revoke access
+        mGoogleSignInClient.revokeAccess();
+
+        OneSignal.setSubscription(false);
+
+        /**
+         *  GO TO LOGIN ****
+         */
+        Navigation.findNavController(view).navigate(R.id.action_mainProfile_id_to_signInActivity);
+        getActivity().finish();
+    }
+
+
     @Override
     public void onStop() {
         super.onStop();
         deliveryProfileReference.removeAllListener();
     }
+
 
     @Override
     public void onDestroy() {

@@ -25,6 +25,9 @@ import android.widget.Toast;
 
 import androidx.navigation.Navigation;
 
+import com.google.android.gms.auth.api.signin.GoogleSignIn;
+import com.google.android.gms.auth.api.signin.GoogleSignInClient;
+import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
@@ -67,6 +70,8 @@ public class AccountFragment extends Fragment {
     private String currentUserID;
     private FirebaseAuth mAuth;
 
+    private GoogleSignInClient mGoogleSignInClient;
+
     private MyDatabaseReference profileReference;
 
 
@@ -87,6 +92,14 @@ public class AccountFragment extends Fragment {
         FirebaseUser currentUser = mAuth.getCurrentUser();
         currentUserID = currentUser.getUid();
 
+        /** GoogleSignInOptions */
+        GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+                .requestIdToken(getString(R.string.default_web_client_id))
+                .requestEmail()
+                .build();
+
+        /** Build a GoogleSignInClient with the options specified by gso. */
+        mGoogleSignInClient = GoogleSignIn.getClient(getActivity(), gso);
 
         OneSignal.startInit(getContext())
                 .inFocusDisplaying(OneSignal.OSInFocusDisplayOption.Notification)
@@ -113,17 +126,12 @@ public class AccountFragment extends Fragment {
         menu.findItem(R.id.logout).setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
             @Override
             public boolean onMenuItemClick(MenuItem item) {
+                profileReference.removeAllListener();
                 //logout
-                Log.d("matte", "Logout");
-                FirebaseAuth.getInstance().signOut();
-                OneSignal.setSubscription(false);
-                //OneSignal.sendTag("User_ID", "");
 
-                /**
-                 *  GO TO LOGIN ****
-                 */
-                Navigation.findNavController(view).navigate(R.id.action_account_id_to_signInActivity);
-                getActivity().finish();
+                /** logout */
+                revokeAccess();
+
                 return true;
             }
         });
@@ -262,6 +270,24 @@ public class AccountFragment extends Fragment {
             }
         });
 
+    }
+
+    private void revokeAccess() {
+        // Firebase sign out
+        //mAuth.signOut();
+
+        Log.d("miche", "Logout");
+        FirebaseAuth.getInstance().signOut();
+        // Google revoke access
+        mGoogleSignInClient.revokeAccess();
+
+        OneSignal.setSubscription(false);
+
+        /**
+         *  GO TO LOGIN ****
+         */
+        Navigation.findNavController(view).navigate(R.id.action_account_id_to_signInActivity);
+        getActivity().finish();
     }
 
     @Override

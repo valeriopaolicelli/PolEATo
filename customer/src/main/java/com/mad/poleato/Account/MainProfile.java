@@ -27,8 +27,13 @@ import android.widget.Toast;
 
 import androidx.navigation.Navigation;
 
+import com.google.android.gms.auth.api.signin.GoogleSignIn;
+import com.google.android.gms.auth.api.signin.GoogleSignInClient;
+import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
+import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -57,6 +62,9 @@ import de.hdodenhof.circleimageview.CircleImageView;
  * A simple {@link Fragment} subclass.
  */
 public class MainProfile extends Fragment {
+    /**
+     * This class...
+     */
 
     private Toast myToast;
 
@@ -79,6 +87,8 @@ public class MainProfile extends Fragment {
 
     private HashMap<String, MyDatabaseReference> dbReferenceList;
 
+    private GoogleSignInClient mGoogleSignInClient;
+
     public MainProfile() {
         // Required empty public constructor
     }
@@ -94,6 +104,14 @@ public class MainProfile extends Fragment {
         FirebaseUser currentUser = mAuth.getCurrentUser();
         currentUserID = currentUser.getUid();
 
+        GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+                .requestIdToken(getString(R.string.default_web_client_id))
+                .requestEmail()
+                .build();
+
+        /** Build a GoogleSignInClient with the options specified by gso. */
+        mGoogleSignInClient = GoogleSignIn.getClient(getActivity(), gso);
+
 // OneSignal is used to send notifications between applications
 
         OneSignal.startInit(getContext())
@@ -105,7 +123,7 @@ public class MainProfile extends Fragment {
 
         OneSignal.sendTag("User_ID", currentUserID);
 
-        dbReferenceList= new HashMap<>();
+        dbReferenceList = new HashMap<>();
     }
 
     @Override
@@ -117,16 +135,12 @@ public class MainProfile extends Fragment {
             @Override
             public boolean onMenuItemClick(MenuItem item) {
                 //logout
-                Log.d("matte", "Logout");
-                FirebaseAuth.getInstance().signOut();
-                //                OneSignal.sendTag("User_ID", "");
-                OneSignal.setSubscription(false);
+                for (MyDatabaseReference my_ref : dbReferenceList.values())
+                    my_ref.removeAllListener();
 
-                /**
-                 *  GO TO LOGIN ****
-                 */
-                Navigation.findNavController(view).navigate(R.id.action_mainProfile_id_to_signInActivity);
-                getActivity().finish();
+                revokeAccess();
+                //                OneSignal.sendTag("User_ID", "");
+
                 return true;
             }
         });
@@ -212,7 +226,7 @@ public class MainProfile extends Fragment {
 
         //Download the profile pic
         StorageReference storageReference = FirebaseStorage.getInstance().getReference();
-        StorageReference photoReference= storageReference.child(currentUserID +"/ProfileImage/img.jpg");
+        StorageReference photoReference = storageReference.child(currentUserID + "/ProfileImage/img.jpg");
 
         final long ONE_MEGABYTE = 1024 * 1024;
         photoReference.getBytes(ONE_MEGABYTE).addOnSuccessListener(new OnSuccessListener<byte[]>() {
@@ -221,7 +235,7 @@ public class MainProfile extends Fragment {
                 Bitmap bmp = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
                 profileImage.setImageBitmap(bmp);
                 //send message to main thread
-                if(progressDialog.isShowing())
+                if (progressDialog.isShowing())
                     handler.sendEmptyMessage(0);
             }
         }).addOnFailureListener(new OnFailureListener() {
@@ -231,16 +245,34 @@ public class MainProfile extends Fragment {
                 //set predefined image
                 profileImage.setImageResource(R.drawable.image_empty);
                 //send message to main thread
-                if(progressDialog.isShowing())
+                if (progressDialog.isShowing())
                     handler.sendEmptyMessage(0);
             }
         });
     }
 
+    private void revokeAccess() {
+        // Firebase sign out
+        //mAuth.signOut();
+
+        Log.d("miche", "Logout");
+        FirebaseAuth.getInstance().signOut();
+        // Google revoke access
+        mGoogleSignInClient.revokeAccess();
+
+        OneSignal.setSubscription(false);
+
+        /**
+         *  GO TO LOGIN ****
+         */
+        Navigation.findNavController(view).navigate(R.id.action_mainProfile_id_to_signInActivity);
+        getActivity().finish();
+    }
+
     @Override
     public void onDestroy() {
         super.onDestroy();
-        for(MyDatabaseReference ref : dbReferenceList.values())
+        for (MyDatabaseReference ref : dbReferenceList.values())
             ref.removeAllListener();
     }
 
