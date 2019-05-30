@@ -125,6 +125,7 @@ public class MainProfile extends Fragment {
                                 FirebaseDatabase.getInstance().getReference("deliveryman/")
                                         .child(currentUserID+"/IsActive").setValue(false); //set inactive
                             }
+                            logout();
                         }
                     }
 
@@ -133,7 +134,6 @@ public class MainProfile extends Fragment {
 
                     }
                 });
-                logout();
                 return true;
             }
         });
