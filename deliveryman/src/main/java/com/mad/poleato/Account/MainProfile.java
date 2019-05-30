@@ -125,6 +125,7 @@ public class MainProfile extends Fragment {
                                 FirebaseDatabase.getInstance().getReference("deliveryman/")
                                         .child(currentUserID+"/IsActive").setValue(false); //set inactive
                             }
+                            deliveryProfileReference.removeAllListener();
                             logout();
                         }
                     }
@@ -216,7 +217,7 @@ public class MainProfile extends Fragment {
 
             @Override
             public void onCancelled(@NonNull DatabaseError databaseError) {
-                Log.d("matte", "onCancelled | ERROR: " + databaseError.getDetails() +
+                Log.d("matte_logout", "onCancelled | ERROR: " + databaseError.getDetails() +
                         " | MESSAGE: " + databaseError.getMessage());
                 myToast.setText(databaseError.getMessage().toString());
                 myToast.show();
@@ -250,6 +251,12 @@ public class MainProfile extends Fragment {
             }
         });
 
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        deliveryProfileReference.removeAllListener();
     }
 
     @Override
