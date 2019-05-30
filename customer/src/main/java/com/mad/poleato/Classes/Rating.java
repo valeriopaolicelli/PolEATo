@@ -88,7 +88,7 @@ public class Rating {
                 return -1;
             }
 
-            return date2.compareTo(date1);
+            return date2.compareTo(date1)*-1;
         }
     };
 

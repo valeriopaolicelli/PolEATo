@@ -29,37 +29,38 @@
 
         <TextView
             android:id="@+id/popular_timing_label"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:text="@string/popular_timing"
-            android:layout_marginTop="8dp"
             android:layout_marginStart="8dp"
+            android:layout_marginTop="8dp"
             android:layout_marginEnd="8dp"
             android:layout_marginBottom="8dp"
+            android:text="@string/popular_timing"
             android:textColor="@color/colorTextField"
             android:textSize="20sp"
+            app:layout_constraintBottom_toBottomOf="@id/time_icon"
+            app:layout_constraintEnd_toStartOf="@id/popular_timing_tv"
             app:layout_constraintHorizontal_bias="0"
             app:layout_constraintStart_toEndOf="@id/time_icon"
-            app:layout_constraintEnd_toStartOf="@id/popular_timing_tv"
-            app:layout_constraintTop_toTopOf="@id/time_icon"
-            app:layout_constraintBottom_toBottomOf="@id/time_icon"/>
+            app:layout_constraintTop_toTopOf="@id/time_icon" />
 
         <TextView
             android:id="@+id/popular_timing_tv"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:textSize="18sp"
+            android:layout_marginEnd="8dp"
             android:textColor="#444444"
-            app:layout_constraintStart_toEndOf="@id/popular_timing_label"
+            android:textSize="18sp"
+            app:layout_constraintBottom_toBottomOf="@id/popular_timing_label"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="@id/popular_timing_label"
-            app:layout_constraintBottom_toBottomOf="@id/popular_timing_label"/>
+            app:layout_constraintStart_toEndOf="@id/popular_timing_label"
+            app:layout_constraintTop_toTopOf="@id/popular_timing_label" />
 
         <ImageView
             android:id="@+id/top_icon"
             android:layout_width="24dp"
             android:layout_height="24dp"
-            android:layout_marginTop="24dp"
+            android:layout_marginTop="32dp"
             android:backgroundTint="#ffffffff"
             android:src="@drawable/ic_top_icon"
             app:layout_constraintBottom_toTopOf="@id/recyclerView"

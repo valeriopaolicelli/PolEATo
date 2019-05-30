@@ -35,7 +35,7 @@ public class ReviewRecyclerViewAdapter extends RecyclerView.Adapter<ReviewRecycl
                 super(itemView);
                 this.itemView=itemView;
                 this.ratingBar = (RatingBar) itemView.findViewById(R.id.rating_bar_review);
-                this.customerData = (TextView) itemView.findViewById(R.id.customer_data_tv);
+                this.customerData = (TextView) itemView.findViewById(R.id.restaurant_data_tv);
                 this.date = (TextView) itemView.findViewById(R.id.date_review_tv);
                 this.comment = (TextView) itemView.findViewById(R.id.customer_comment);
             }

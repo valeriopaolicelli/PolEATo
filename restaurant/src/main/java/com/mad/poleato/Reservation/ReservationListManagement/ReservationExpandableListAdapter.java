@@ -127,7 +127,6 @@ public class ReservationExpandableListAdapter extends BaseExpandableListAdapter{
             LayoutInflater inflater = (LayoutInflater)this.context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
             view = inflater.inflate(R.layout.layout_reservation_group,null);
 
-            holder.tv_date = (TextView)view.findViewById(R.id.tvDateField);
             holder.tv_time = (TextView) view.findViewById(R.id.tvTimeField);
             holder.tv_status = (TextView) view.findViewById(R.id.tvStatusField);
             holder.button = (Button) view.findViewById(R.id.myButton);
@@ -136,7 +135,6 @@ public class ReservationExpandableListAdapter extends BaseExpandableListAdapter{
         }else{
             holder = (ViewHolder) view.getTag();
         }
-        holder.tv_date.setText(r.getDate());
         holder.tv_time.setText(r.getTime());
         holder.tv_status.setText(r.getStat());
 
@@ -482,7 +480,6 @@ public class ReservationExpandableListAdapter extends BaseExpandableListAdapter{
 
     private class ViewHolder {
         Button button;
-        TextView tv_date;
         TextView tv_time;
         TextView tv_status;
     }
