@@ -78,10 +78,14 @@ public class SignInActivity extends AppCompatActivity {
         // Configure sign-in to request the user's ID, email address, and basic
         // profile. ID and basic profile are included in DEFAULT_SIGN_IN.
         GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+                .requestIdToken(getString(R.string.default_web_client_id))
                 .requestEmail()
+                .build();
+                // new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+                // .requestEmail()
                 //.requestIdToken("504775808769-jbk1ab9gqb7gsi149mmvqhre1v37ji2k.apps.googleusercontent.com")
                 //.requestServerAuthCode("504775808769-jbk1ab9gqb7gsi149mmvqhre1v37ji2k.apps.googleusercontent.com", false)
-                .build();
+                // .build();
 
         // Build a GoogleSignInClient with the options specified by gso.
         mGoogleSignInClient = GoogleSignIn.getClient(this, gso);
@@ -217,7 +221,7 @@ public class SignInActivity extends AppCompatActivity {
     }
 
 
-    private boolean implemented = false;
+    private boolean implemented = true;
     //request code for the Google sign in activity
     private int RC_SIGN_IN = 0;
     private View.OnClickListener signInRoutine = new View.OnClickListener() {

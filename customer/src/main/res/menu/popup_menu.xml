@@ -3,7 +3,7 @@
 
     <item android:id="@+id/camera"
         android:title="@string/camera"
-        android:orderInCategory="10" />
+        android:orderInCategory="10"/>
     <item android:id="@+id/gallery"
         android:title="@string/gallery"
         android:orderInCategory="20"/>
