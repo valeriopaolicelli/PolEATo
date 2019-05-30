@@ -145,7 +145,6 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
                 popup.show();
                 Menu itemList = popup.getMenu();
 
-
                 MenuItem modify = itemList.getItem(0);
                 modify.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
                     @Override

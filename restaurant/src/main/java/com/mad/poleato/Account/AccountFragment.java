@@ -113,6 +113,7 @@ public class AccountFragment extends Fragment {
         menu.findItem(R.id.logout).setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
             @Override
             public boolean onMenuItemClick(MenuItem item) {
+                profileReference.removeAllListener();
                 //logout
                 Log.d("matte", "Logout");
                 FirebaseAuth.getInstance().signOut();
