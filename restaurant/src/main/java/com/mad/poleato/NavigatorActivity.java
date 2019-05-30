@@ -9,6 +9,7 @@ import android.os.Bundle;
 import android.support.design.widget.BottomNavigationView;
 import android.support.v7.app.AppCompatActivity;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
@@ -113,6 +114,8 @@ public class NavigatorActivity extends AppCompatActivity {
 
     @Override
     public boolean onSupportNavigateUp() {
+
+
         return navController.navigateUp();
     }
 }

@@ -15,6 +15,7 @@ import android.os.AsyncTask;
 import android.os.StrictMode;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.design.widget.BottomNavigationView;
 import android.support.v4.app.Fragment;
 import android.os.Bundle;
 import android.support.v4.content.ContextCompat;
@@ -27,7 +28,10 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ListView;
 
+import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
+import androidx.navigation.Navigator;
+import androidx.navigation.ui.NavigationUI;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -85,6 +89,8 @@ public class MapsFragment extends Fragment implements
     private View fragView;
     private Reservation reservation;
 
+    private BottomNavigationView navigation;
+
     private String loggedID;
 
     private String localeShort;
@@ -107,12 +113,17 @@ public class MapsFragment extends Fragment implements
         //in order to create the logout menu (don't move!)
         setHasOptionsMenu(true);
         super.onCreate(savedInstanceState);
+
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         fragView = inflater.inflate(R.layout.activity_maps, container, false);
+
+        /** Hide bottomBar for this fragment*/
+        navigation = getActivity().findViewById(R.id.navigation);
+        navigation.setVisibility(View.GONE);
 
         /**
          * Value of Order FROM RESERVATION FRAGMENT
@@ -192,6 +203,22 @@ public class MapsFragment extends Fragment implements
         });
 
         super.onCreateOptionsMenu(menu, inflater);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                if (mapFragment.getView().getVisibility() == View.VISIBLE) {
+                    mapFragment.getView().setVisibility(View.GONE);
+                    item.setIcon(R.drawable.ic_map_icon);
+                }else{
+                    Navigation.findNavController(getActivity(),R.id.nav_host_fragment).navigateUp();
+                }
+                break;
+
+        }
+        return true;
     }
 
     /**
@@ -987,9 +1014,14 @@ public class MapsFragment extends Fragment implements
         return Math.pow(Math.sin(val / 2), 2);
     }
 
+
+
     @Override
     public void onDestroy() {
         super.onDestroy();
+
+        navigation.setVisibility(View.VISIBLE);
+
         for(MyDatabaseReference ref : dbReferenceList.values())
             ref.removeAllListener();
 
