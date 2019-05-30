@@ -62,6 +62,9 @@ import de.hdodenhof.circleimageview.CircleImageView;
  * A simple {@link Fragment} subclass.
  */
 public class MainProfile extends Fragment {
+    /**
+     * This class...
+     */
 
     private Toast myToast;
 
@@ -132,6 +135,9 @@ public class MainProfile extends Fragment {
             @Override
             public boolean onMenuItemClick(MenuItem item) {
                 //logout
+                for (MyDatabaseReference my_ref : dbReferenceList.values())
+                    my_ref.removeAllListener();
+
                 revokeAccess();
                 //                OneSignal.sendTag("User_ID", "");
 

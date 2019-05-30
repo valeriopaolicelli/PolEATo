@@ -137,9 +137,9 @@ public class MainProfile extends Fragment {
                             if (!busy) {
 
                                 FirebaseDatabase.getInstance().getReference("deliveryman/")
-                                        .child(currentUserID + "/IsActive").setValue(false); //set inactive
+                                        .child(currentUserID+"/IsActive").setValue(false); //set inactive
+                            }
 
-                                }
                         }
                     }
 
@@ -148,6 +148,8 @@ public class MainProfile extends Fragment {
 
                     }
                 });
+
+                deliveryProfileReference.removeAllListener();
 
                 /** logout */
                 revokeAccess();
@@ -231,7 +233,7 @@ public class MainProfile extends Fragment {
 
             @Override
             public void onCancelled(@NonNull DatabaseError databaseError) {
-                Log.d("matte", "onCancelled | ERROR: " + databaseError.getDetails() +
+                Log.d("matte_logout", "onCancelled | ERROR: " + databaseError.getDetails() +
                         " | MESSAGE: " + databaseError.getMessage());
                 myToast.setText(databaseError.getMessage().toString());
                 myToast.show();
@@ -284,6 +286,14 @@ public class MainProfile extends Fragment {
         Navigation.findNavController(view).navigate(R.id.action_mainProfile_id_to_signInActivity);
         getActivity().finish();
     }
+
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        deliveryProfileReference.removeAllListener();
+    }
+
 
     @Override
     public void onDestroy() {

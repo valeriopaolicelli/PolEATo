@@ -28,6 +28,8 @@ import android.text.TextWatcher;
 import android.util.Base64;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
@@ -128,6 +130,9 @@ public class EditFoodFragment extends DialogFragment {
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        setHasOptionsMenu(true);
+
         myToast = Toast.makeText(getActivity(), "", Toast.LENGTH_SHORT);
 
         //translate the food Category based on the current active Locale
@@ -155,7 +160,23 @@ public class EditFoodFragment extends DialogFragment {
         OneSignal.sendTag("User_ID", currentUserID);
     }
 
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        menu.clear();
+        /** Inflate the menu; this adds items to the action bar if it is present.*/
+        inflater.inflate(R.menu.save_menu, menu);
 
+        /** Button to show map */
+        menu.findItem(R.id.map_id).setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
+            @Override
+            public boolean onMenuItemClick(MenuItem item) {
+                saveChanges();
+                return true;
+            }
+        });
+
+        super.onCreateOptionsMenu(menu, inflater);
+    }
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,

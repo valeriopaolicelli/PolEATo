@@ -352,8 +352,8 @@ public class EditProfileFragment extends Fragment implements TimePickerDialog.On
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         menu.clear();
         // Inflate the menu; this adds items to the action bar if it is present.
-        inflater.inflate(R.menu.my_edit_menu, menu);
-        menu.findItem(R.id.applyMod).setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
+        inflater.inflate(R.menu.save_menu, menu);
+        menu.findItem(R.id.save_id).setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
             @Override
             public boolean onMenuItemClick(MenuItem item) {
                 try {
