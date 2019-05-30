@@ -110,7 +110,7 @@ public class MapsFragment extends Fragment implements
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
-        //in order to create the logout menu (don't move!)
+        //in order to open the map view
         setHasOptionsMenu(true);
         super.onCreate(savedInstanceState);
 

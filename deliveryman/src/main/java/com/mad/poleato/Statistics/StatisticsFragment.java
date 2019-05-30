@@ -369,7 +369,7 @@ public class StatisticsFragment extends Fragment {
 
         // set manual Y bounds
         graphView.getViewport().setMinY(0);
-        graphView.getViewport().setMaxY(110);
+        graphView.getViewport().setMaxY(70);
         graphView.getViewport().setYAxisBoundsManual(true);
 
         // as we use dates as labels, the human rounding to nice readable numbers
@@ -385,7 +385,7 @@ public class StatisticsFragment extends Fragment {
             public String formatLabel(double value, boolean isValueX){
 
                 if(isValueX){
-                    SimpleDateFormat format = new SimpleDateFormat("mm/dd");
+                    SimpleDateFormat format = new SimpleDateFormat("MM/dd");
                     long millis = (long) value;
                     String date = format.format(new Date(millis));
                     return date;
@@ -412,7 +412,7 @@ public class StatisticsFragment extends Fragment {
 
     private Long timeDiff(String start, String end){
 
-        SimpleDateFormat format = new SimpleDateFormat("yyy/mm/dd HH:mm");
+        SimpleDateFormat format = new SimpleDateFormat("yyyy/MM/dd HH:mm");
         long difference = 0;
         try {
             Date startTime = format.parse(start);
