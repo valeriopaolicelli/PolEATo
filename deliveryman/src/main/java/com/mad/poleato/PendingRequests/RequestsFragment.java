@@ -158,7 +158,7 @@ public class RequestsFragment extends Fragment {
         DatabaseReference reference= FirebaseDatabase.getInstance().getReference("deliveryman");
         referenceMap.put("deliveryman", new MyDatabaseReference(reference));
 
-        referenceMap.get("deliveryman").setValueListener(new ValueEventListener() {
+        referenceMap.get("deliveryman").setSingleValueListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 if(dataSnapshot.hasChild(currentUserID)){

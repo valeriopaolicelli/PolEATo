@@ -178,7 +178,7 @@ public class RestaurantSearchFragment extends Fragment {
         DatabaseReference reference= FirebaseDatabase.getInstance().getReference("customers");
         dbReferenceList.put("customers", new MyDatabaseReference(reference));
 
-        dbReferenceList.get("customers").setValueListener(new ValueEventListener() {
+        dbReferenceList.get("customers").setSingleValueListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 if(dataSnapshot.hasChild(currentUserID)){

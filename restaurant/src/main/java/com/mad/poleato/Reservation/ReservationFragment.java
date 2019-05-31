@@ -196,7 +196,7 @@ public class ReservationFragment extends Fragment {
         DatabaseReference reference= FirebaseDatabase.getInstance().getReference("restaurants");
         dbReferenceList.put("restaurants", new MyDatabaseReference(reference));
 
-        dbReferenceList.get("restaurants").setValueListener(new ValueEventListener() {
+        dbReferenceList.get("restaurants").setSingleValueListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 if(dataSnapshot.hasChild(currentUserID)){
