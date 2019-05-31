@@ -296,7 +296,7 @@ public class SignInActivity extends AppCompatActivity {
         }
     }
 
-    private void firebaseAuthWithGoogle(GoogleSignInAccount account) {
+    private void firebaseAuthWithGoogle(final GoogleSignInAccount account) {
         Log.d("matte", "firebaseAuthWithGoogle:" + account.getId());
 
         String s = account.getIdToken();
@@ -323,6 +323,8 @@ public class SignInActivity extends AppCompatActivity {
                                             show_login_form();
                                             FirebaseAuth.getInstance().signOut();
                                         }
+                                        else
+                                            access();
                                     }
                                     else
                                         access();

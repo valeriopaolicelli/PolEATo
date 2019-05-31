@@ -3,6 +3,9 @@ package com.mad.poleato.Ride;
 import java.io.Serializable;
 import java.util.Comparator;
 
+/**
+ * This class represents a single ride
+ */
 public class Ride implements Serializable {
 
     private String orderID;
