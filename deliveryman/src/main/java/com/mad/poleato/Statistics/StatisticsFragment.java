@@ -49,9 +49,16 @@ import java.util.TreeMap;
  */
 public class StatisticsFragment extends Fragment {
 
-
+    /**
+     * The inflated view object for this fragment
+     */
     private View fragView;              //the view for this fragment
+
+    /**
+     * The activity that hosts this fragment
+     */
     private Activity hostActivity;     //the activity that host this fragment
+
     private Toast myToast;
 
     //auth
@@ -159,6 +166,9 @@ public class StatisticsFragment extends Fragment {
     }
 
 
+    /**
+     * Collect all the view inside the map tv_Fields
+     */
     private void collectFields() {
 
         tv_Fields.put("today", (TextView) fragView.findViewById(R.id.today_tv));
@@ -181,6 +191,9 @@ public class StatisticsFragment extends Fragment {
     }
 
 
+    /**
+     * read all the history table from Firebase
+     */
     private void readHistory() {
 
         historyFireBaseReference = new MyDatabaseReference(FirebaseDatabase.getInstance().getReference("deliveryman")
@@ -242,6 +255,15 @@ public class StatisticsFragment extends Fragment {
     }
 
 
+    /**
+     * computes all the following statistics (based on the history values) and the updates the textViews:
+     *          - total working days
+     *          - total working hours
+     *          - total revenues
+     *          - avg revenues per day
+     *          - total km
+     *          - avg total km per day
+     */
     private void computeStatistics() {
 
         String workingDays = "" + workingHourPerDay.keySet().size() + "d";
@@ -278,6 +300,9 @@ public class StatisticsFragment extends Fragment {
     }
 
 
+    /**
+     * computes the revenues for each single day and insert it in the revenues map
+     */
     private void computeRevenues() {
 
         for (Date day : workingHourPerDay.keySet()) {
@@ -291,121 +316,12 @@ public class StatisticsFragment extends Fragment {
     }
 
 
-
-/*
-    private void setGraph(){
-
-        // enable scaling and scrolling
-        graphView.getViewport().setScalable(true);
-        //graphView.getViewport().setScalableY(true);
-
-        DecimalFormat decimalFormat = new DecimalFormat("#0.00"); //two decimal
-        String revenueHourStr = decimalFormat.format(REVENUE_HOUR);
-        graphView.setTitle(hostActivity.getString(R.string.chart_title) +" (" + revenueHourStr + "€/h)");
-        graphView.setTitleTextSize(40);
-        graphView.setTitleColor(Color.GRAY);
-
-
-        DataPoint[] dp = new DataPoint[revenues.size()];
-        int curr_idx = 0;
-        for(Date day : revenues.keySet()){
-
-            dp[curr_idx] = new DataPoint(day.getTime(), revenues.get(day));
-            curr_idx ++;
-        }
-
-        LineGraphSeries<DataPoint> lines = new LineGraphSeries<>(dp);
-        PointsGraphSeries<DataPoint> points = new PointsGraphSeries<>(dp);
-
-        points.setOnDataPointTapListener(new OnDataPointTapListener() {
-            @Override
-            public void onTap(Series series, DataPointInterface dataPoint) {
-
-                Log.d("matte", "clicked");
-                DateFormat simple = new SimpleDateFormat("MM/dd");
-                long millis = (long)dataPoint.getX();
-
-                // Creating date from milliseconds
-                // using Date() constructor
-                Date result = new Date(millis);
-
-                //price
-                DecimalFormat decimalFormat = new DecimalFormat("#0.00"); //two decimal
-                double d = Double.parseDouble(((Double) dataPoint.getY()).toString());
-                String priceStr = decimalFormat.format(d);
-
-                myToast.setText(simple.format(result) + " -> " + priceStr + " €");
-                myToast.show();
-            }
-        });
-
-        //graphView.addSeries(lines);
-        graphView.addSeries(points);
-
-
-        // set date label formatter
-        graphView.getGridLabelRenderer().setLabelFormatter(new DateAsXAxisLabelFormatter(getActivity()));
-
-        // set manual x bounds to have nice steps
-        Date minDate, maxDate;
-        List<Date> dates = new ArrayList<>(revenues.keySet());
-        if(dates.size() >= NUM_DAYS_GRAPH) {
-
-            minDate = dates.get(dates.size() - NUM_DAYS_GRAPH);
-            maxDate = dates.get(dates.size() - 1);
-        }
-        else{
-
-            minDate = dates.get(0);
-            maxDate = dates.get(dates.size() - 1);
-        }
-        graphView.getViewport().setMinX(minDate.getTime());
-        graphView.getViewport().setMaxX(maxDate.getTime());
-        graphView.getViewport().setXAxisBoundsManual(true);
-
-        // set manual Y bounds
-        graphView.getViewport().setMinY(0);
-        graphView.getViewport().setMaxY(70);
-        graphView.getViewport().setYAxisBoundsManual(true);
-
-        // as we use dates as labels, the human rounding to nice readable numbers
-        // is not necessary
-        graphView.getGridLabelRenderer().setHumanRounding(false);
-        graphView.getGridLabelRenderer().setNumVerticalLabels(10);
-        //graphView.getGridLabelRenderer().setHighlightZeroLines(true);
-        graphView.getGridLabelRenderer().setGridStyle(GridLabelRenderer.GridStyle.VERTICAL);
-
-        graphView.getGridLabelRenderer().setLabelFormatter(new DefaultLabelFormatter(){
-
-            @Override
-            public String formatLabel(double value, boolean isValueX){
-
-                if(isValueX){
-                    SimpleDateFormat format = new SimpleDateFormat("MM/dd");
-                    long millis = (long) value;
-                    String date = format.format(new Date(millis));
-                    return date;
-                }
-
-                //y value
-                Double v = new Double(value);
-                DecimalFormat decimalFormat = new DecimalFormat("#0.00"); //two decimal
-                double d = Double.parseDouble(v.toString());
-                String priceStr = decimalFormat.format(d);
-                Integer i = v.intValue();
-                Boolean b1 = value % 1 == 0; //must not have decimal part
-                Boolean b2 = i % 10 == 0; //must be a multiple of 10
-                if(b1 && b2)
-                    return priceStr+"€";
-                return null;
-
-            }
-        });
-
-
-    }*/
-
-
+    /**
+     * Computes the millis elapsed between start and end
+     * @param start
+     * @param end
+     * @return total elapsed millis
+     */
     private Long timeDiff(String start, String end) {
 
         SimpleDateFormat format = new SimpleDateFormat("yyyy/MM/dd HH:mm");
@@ -430,6 +346,9 @@ public class StatisticsFragment extends Fragment {
     }
 
 
+    /**
+     * Initializes the chart with all the collected data
+     */
     private void setChart() {
 
         List<Entry> entries = new ArrayList<Entry>();
@@ -496,6 +415,10 @@ public class StatisticsFragment extends Fragment {
     }
 
 
+    /**
+     * The formatter for the X values.
+     * Format: month / day
+     */
     private class XValueFormatter extends ValueFormatter{
 
         @Override
@@ -510,6 +433,11 @@ public class StatisticsFragment extends Fragment {
         }
     }
 
+
+    /**
+     * The formatter for the Y values.
+     * Format: x.xx$
+     */
     private class YValueFormatter extends ValueFormatter{
 
         @Override
@@ -526,10 +454,6 @@ public class StatisticsFragment extends Fragment {
             if(b1 && b2)
                 return priceStr+"€";
             return "";
-            /*Double v = new Double(value);
-            DecimalFormat format = new DecimalFormat("#0.00");
-            String priceStr = format.format(v) + "€";
-            return priceStr;*/
         }
 
     }

@@ -210,7 +210,7 @@
                 android:text="@string/kmPerDay_label"
                 android:textColor="@color/colorPrimaryDark"
                 android:textSize="15sp"
-                app:layout_constraintBottom_toBottomOf="@id/kmPerDay_tv"
+                app:layout_constraintBottom_toBottomOf="@id/totKm_label"
                 app:layout_constraintEnd_toStartOf="@id/kmPerDay_tv"
                 app:layout_constraintHorizontal_bias="0.0"
                 app:layout_constraintStart_toStartOf="@id/revenuesPerDay_label"
