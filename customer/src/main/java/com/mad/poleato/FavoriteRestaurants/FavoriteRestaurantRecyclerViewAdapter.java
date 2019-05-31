@@ -35,6 +35,10 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+/**
+ * Adapter for the Favorite Restaurant recycler view
+ */
+
 public class FavoriteRestaurantRecyclerViewAdapter extends RecyclerView.Adapter<FavoriteRestaurantRecyclerViewAdapter.FavoriteRestaurantViewHolder> {
 
 

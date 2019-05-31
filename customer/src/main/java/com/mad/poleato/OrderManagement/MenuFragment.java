@@ -44,6 +44,9 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 
+/**
+ * This fragment is about the menu of the selected restaurant
+ */
 public class MenuFragment extends Fragment {
 
     private Activity hostActivity;
@@ -86,6 +89,7 @@ public class MenuFragment extends Fragment {
         this.hostActivity = this.getActivity();
         try {
             listener = (Interface) context;
+            //get the order using interface from parent Activity
             order = listener.getOrder();
         } catch (ClassCastException castException) {
             /** The activity does not implement the listener. */
@@ -108,7 +112,7 @@ public class MenuFragment extends Fragment {
         FirebaseUser currentUser = mAuth.getCurrentUser();
         String currentUserID = currentUser.getUid();
 
-// OneSignal is used to send notifications between applications
+        // OneSignal is used to send notifications between applications
 
         OneSignal.startInit(getContext())
                 .inFocusDisplaying(OneSignal.OSInFocusDisplayOption.Notification)
@@ -208,10 +212,15 @@ public class MenuFragment extends Fragment {
                 listAdapter.notifyDataSetChanged();
     }
 
+    /**
+     * Interface is used also to keep track of changes to the order between
+     * OrderActivity and CartActivity
+     */
     @Override
     public void onResume() {
         super.onResume();
         try {
+            //Using interface to get the order from parent activity
             order = listener.getOrder();
             listAdapter.setOrder(order);
             listAdapter.updateLitDataChild();
@@ -222,6 +231,9 @@ public class MenuFragment extends Fragment {
         expListView.setAdapter(listAdapter);
     }
 
+    /**
+     * Method called to set the ExpandableList
+     */
     public void setList(){
         listDataGroup = new ArrayList<>();
         listDataChild = new HashMap<>();
@@ -316,7 +328,6 @@ public class MenuFragment extends Fragment {
                         public void onSuccess(byte[] bytes) {
                             String s = imageUrl;
                             Log.d("matte", "onSuccess");
-                            //SerialBitmap bmp = new SerialBitmap(BitmapFactory.decodeByteArray(bytes, 0, bytes.length));
                             setImg(category, curr_index, s);
                         }
                     }).addOnFailureListener(new OnFailureListener() {
@@ -328,6 +339,7 @@ public class MenuFragment extends Fragment {
                             setImg(category, curr_index, s);
                         }
                     });
+                    //Sorting categoris
                     Collections.sort(listDataGroup,sortMenu);
                     listAdapter.notifyDataSetChanged();
                 }
@@ -388,6 +400,7 @@ public class MenuFragment extends Fragment {
                         }
                     }
 
+                    //Check if food is already in the collections
                     if(found){
                         listDataChild.get(category).set(i, f);
                     }
@@ -403,7 +416,6 @@ public class MenuFragment extends Fragment {
                         public void onSuccess(byte[] bytes) {
                             String s = imageUrl;
                             Log.d("matte", "onSuccess");
-                           // SerialBitmap bmp = new SerialBitmap(BitmapFactory.decodeByteArray(bytes, 0, bytes.length));
                             setImg(category, curr_index, s);
 
                         }
@@ -462,6 +474,9 @@ public class MenuFragment extends Fragment {
         listDataChild.get(category).get(idx).setImg(img);
     }
 
+    /**
+     * Comparator to sort categories
+     */
     private class SortMenu implements Comparator<String>{
         @Override
         public int compare(String s, String t1) {

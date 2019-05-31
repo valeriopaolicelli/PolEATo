@@ -5,7 +5,9 @@ import com.google.firebase.database.Exclude;
 
 import java.io.Serializable;
 
-
+/**
+ * Class about selected food from customer
+ */
 public class Food implements Serializable {
 
     private String img;

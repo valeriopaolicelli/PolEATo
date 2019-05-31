@@ -46,7 +46,7 @@ import java.util.Set;
 
 
 /**
- * A simple {@link Fragment} subclass.
+ * This fragment shows all the customer reviews and the overall of his reviews
  */
 public class MyReviewsFragment extends Fragment {
 
@@ -60,7 +60,6 @@ public class MyReviewsFragment extends Fragment {
     private RatingBar ratingBar;
     private TextView noRating;
     private CheckBox onlyCommentCheckBox;
-    private String resName;
 
     private String currentUserID;
     private FirebaseAuth mAuth;
@@ -149,6 +148,7 @@ public class MyReviewsFragment extends Fragment {
         this.recyclerViewAdapter = new MyReviewsRecyclerViewAdapter(this.hostActivity,displayedList);
         rv.setAdapter(recyclerViewAdapter);
 
+        //checkbox to filter reviews with non-empty comments
         onlyCommentCheckBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
@@ -163,7 +163,10 @@ public class MyReviewsFragment extends Fragment {
         });
 
     }
-
+    /**
+     * Method dedicate to fill the view elements
+     * Getting data from database
+     */
     public void fillFields(){
 
         reviewsReference.setValueListener(new ValueEventListener() {
@@ -180,7 +183,7 @@ public class MyReviewsFragment extends Fragment {
             }
         });
 
-
+        //getting all ratings of the customer
         reviewsReference.setChildListener(new ChildEventListener() {
             @Override
             public void onChildAdded(@NonNull DataSnapshot ds, @Nullable String s) {
@@ -197,6 +200,7 @@ public class MyReviewsFragment extends Fragment {
                         final String date = ds.child("date").getValue().toString();
                         String comment = ds.child("comment").getValue().toString();
 
+                        //Compute overall rating of restaurant selected
                         totalStars+=rate;
                         totalReviews++;
                         avgReviews = (float)totalStars/totalReviews;
@@ -206,7 +210,7 @@ public class MyReviewsFragment extends Fragment {
                         reviewsList.add(rating);
                         displayedList.add(rating);
                         reviewsMap.put(ds.getKey(), rating);
-//Get restaurant name
+                        //Get restaurant name
                         DatabaseReference customerReference = FirebaseDatabase.getInstance().getReference("restaurants/" + restaurantID);
                         customerReference.addListenerForSingleValueEvent(new ValueEventListener() {
                             @Override
@@ -219,7 +223,7 @@ public class MyReviewsFragment extends Fragment {
                             public void onCancelled(@NonNull DatabaseError databaseError) {
                             }
                         });
-
+                        //Sorting list in terms of data
                         Collections.sort(displayedList,Rating.timeComparator);
                         recyclerViewAdapter.notifyDataSetChanged();
 
@@ -246,23 +250,27 @@ public class MyReviewsFragment extends Fragment {
                         final String date = ds.child("date").getValue().toString();
                         String comment = ds.child("comment").getValue().toString();
 
+                        //Compute overall rating of restaurant selected
                         totalStars += rate;
                         totalReviews++;
                         avgReviews = (float) totalStars / totalReviews;
                         ratingBar.setRating(avgReviews);
 
                         final Rating rating = new Rating(customerID, rate, comment, currentUserID, ds.getKey(), date);
+                        //Check if this rating is not already in the collections
                         if(!reviewsMap.containsKey(ds.getKey())){
+                            //adding rating to list
                             displayedList.add(rating);
                         }else{
                             for(Rating r : reviewsList){
                                 if(r.getOrderID().equals(rating.getOrderID())){
+                                    //if is already in the collection, update
                                     r = rating;
                                 }
                             }
                         }
                         reviewsMap.put(ds.getKey(), rating);
-//Get restaurant name
+                        //Get restaurant name
                         DatabaseReference customerReference = FirebaseDatabase.getInstance().getReference("restaurants/" + restaurantID);
                         customerReference.addListenerForSingleValueEvent(new ValueEventListener() {
                             @Override
@@ -302,18 +310,25 @@ public class MyReviewsFragment extends Fragment {
         });
 
     }
-
+    /**
+     * This method shows the original list of reviews
+     */
     private void restoreOriginalList(){
         displayedList.clear();
         displayedList.addAll(reviewsList);
     }
-
+    /**
+     * This method removes rating from the displayed list
+     * @param rating
+     */
     private void removeFromDisplayable(Rating rating){
         displayedList.remove(rating);
         recyclerViewAdapter.notifyDataSetChanged();
     }
 
-
+    /**
+     * This method filter the ratings that doesn't match the constraints
+     */
     private void filterList(){
         if(displayedList.isEmpty())
             return;
@@ -327,7 +342,11 @@ public class MyReviewsFragment extends Fragment {
         }
     }
 
-
+    /**
+     * This method check if rating is valid to display i.e. it has a non-empty comment
+     * @param rating
+     * @return
+     */
     private boolean isValidToDsplay(Rating rating){
         return !rating.getComment().equals("");
     }
@@ -335,6 +354,7 @@ public class MyReviewsFragment extends Fragment {
     @Override
     public void onDestroy() {
         super.onDestroy();
+        //remove all listener of Firebase
         reviewsReference.removeAllListener();
     }
 

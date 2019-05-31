@@ -45,6 +45,9 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
+/**
+ * Fragment that shows all infos about selected restaurant
+ */
 public class InfoFragment extends Fragment {
 
     private Toast myToast;
@@ -141,6 +144,9 @@ public class InfoFragment extends Fragment {
 
     }
 
+    /**
+     * This method fills the the view's elements
+     */
     public void fillFields() {
 
         DatabaseReference reference = FirebaseDatabase.getInstance().getReference("restaurants/"+restaurantID);
@@ -244,6 +250,7 @@ public class InfoFragment extends Fragment {
     @Override
     public void onStop() {
         super.onStop();
+        //Remove firebase listener
         for (MyDatabaseReference my_ref : dbReferenceList.values())
             my_ref.removeAllListener();
     }

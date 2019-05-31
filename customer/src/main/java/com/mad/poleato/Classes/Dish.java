@@ -1,5 +1,8 @@
 package com.mad.poleato.Classes;
 
+/**
+ * Class about dish to upload on database
+ */
 public class Dish {
 
     private String name;

@@ -47,7 +47,7 @@ import java.util.Locale;
 
 
 /**
- * A simple {@link Fragment} subclass.
+ * Fragment that handle all customer's orders
  */
 public class Holder_history extends Fragment {
 
@@ -128,13 +128,17 @@ public class Holder_history extends Fragment {
         return view;
     }
 
-
+    /**
+     * Method to populate the view's element
+     */
     private void initData() {
         reservations = new ArrayList<>();
         listHash = new HashMap<>();
 
+        //get all customer reservations
         DatabaseReference reference = FirebaseDatabase.getInstance().getReference("customers")
                 .child(currentUserID).child("reservations");
+
         dbReferenceList.put("reservation", new MyDatabaseReference(reference));
 
         dbReferenceList.get("reservation").setValueListener(new ValueEventListener() {
@@ -178,6 +182,7 @@ public class Holder_history extends Fragment {
                     Boolean reviewFlag = Boolean.parseBoolean(dataSnapshot.child("reviewFlag").getValue().toString());
                     final String status = dataSnapshot.child("status").child(localeShort).getValue().toString();
 
+                    //Convert date
                     DateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
                     Calendar calendar = Calendar.getInstance();
                     calendar.setTimeInMillis(dateInMills);
@@ -189,6 +194,7 @@ public class Holder_history extends Fragment {
                     final String totalPrice = dataSnapshot.child("totalPrice").getValue().toString();
                     String restaurantID = dataSnapshot.child("restaurantID").getValue().toString();
                     DataSnapshot dishesOfReservation = dataSnapshot.child("dishes");
+                    //get all dishes details
                     for (DataSnapshot dish : dishesOfReservation.getChildren()) {
                         nameDish = dish.child("name").getValue().toString();
                         quantity = Integer.parseInt(dish.child("quantity").getValue().toString());

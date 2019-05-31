@@ -1,20 +1,22 @@
 package com.mad.poleato.Classes;
 
-import android.graphics.Bitmap;
 
 import java.io.Serializable;
 
+/**
+ * Class that regards restaurant
+ */
 public class Restaurant implements Serializable {
 
-    String id;
-    String image;
-    String name;
-    String type;
-    Boolean isOpen;
-    Integer priceRange;
-    Double deliveryCost;
-    Double avgStars;
-    Long totalReviews;
+    private String id;
+    private String image;
+    private String name;
+    private String type;
+    private Boolean isOpen;
+    private Integer priceRange;
+    private Double deliveryCost;
+    private Double avgStars;
+    private Long totalReviews;
 
     public Restaurant(String id, String img, String name, String type, Boolean isOpen, int priceRange, double deliveryCost){
         setId(id);

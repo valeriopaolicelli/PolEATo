@@ -1,5 +1,6 @@
 package com.mad.poleato.OrderManagement;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
@@ -34,7 +35,11 @@ import com.squareup.picasso.Picasso;
 import java.text.DecimalFormat;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Objects;
 
+/**
+ * Adapter for the ExpandableList of the restaurant's menu
+ */
 public class MenuExpandableListAdapter extends BaseExpandableListAdapter {
 
     private Toast myToast;
@@ -80,11 +85,14 @@ public class MenuExpandableListAdapter extends BaseExpandableListAdapter {
         this.order=order;
     }
 
-    public void updateLitDataChild(){
+    /**
+     * Method used to update the collection of the adapter
+     */
+     void updateLitDataChild(){
         for(String s: _listDataChild.keySet()){
-            for(Food f : _listDataChild.get(s)){
+            for(Food f : Objects.requireNonNull(_listDataChild.get(s))){
                 if(order.getSelectedFoods().containsKey(f.getFoodID()))
-                    f.setSelectedQuantity(order.getSelectedFoods().get(f.getFoodID()).getSelectedQuantity());
+                    f.setSelectedQuantity(Objects.requireNonNull(order.getSelectedFoods().get(f.getFoodID())).getSelectedQuantity());
                 else
                     f.setSelectedQuantity(0);
             }
@@ -92,10 +100,8 @@ public class MenuExpandableListAdapter extends BaseExpandableListAdapter {
         notifyDataSetChanged();
     }
 
-    public void refresh(){
-        notifyDataSetChanged();
-    }
 
+    @SuppressLint("SetTextI18n")
     @Override
     public View getChildView(final int groupPosition, final int childPosition,
                              boolean isLastChild, View convertView, ViewGroup parent) {
@@ -136,7 +142,8 @@ public class MenuExpandableListAdapter extends BaseExpandableListAdapter {
         }else{
             food.setSelectedQuantity(0);
         }
-       // holder.img.setImageBitmap(food.getImg().getBitmap());
+
+        //Using Picasso to download images
         if(food.getImg().equals("")){
             Picasso.with(host.getApplicationContext()).load(R.drawable.plate_fork).into(holder.img);
         }else
@@ -155,6 +162,7 @@ public class MenuExpandableListAdapter extends BaseExpandableListAdapter {
             holder.selectedQuantity.setText(host.getResources().getString(R.string.slash));
         else
             holder.selectedQuantity.setText(Integer.toString(food.getSelectedQuantity()));
+
         //buttons for handling increase and decrease of quantity
         holder.increase.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -168,11 +176,11 @@ public class MenuExpandableListAdapter extends BaseExpandableListAdapter {
                     if(!order.getSelectedFoods().containsKey(food.getFoodID())) {
                         order.addFoodToOrder(food);
                     }
-                    order.getSelectedFoods().get(food.getFoodID()).setSelectedQuantity(food.getSelectedQuantity());
+                    Objects.requireNonNull(order.getSelectedFoods().get(food.getFoodID())).setSelectedQuantity(food.getSelectedQuantity());
+                    //Updating order attributes
                     order.updateTotalPrice();
                     order.increaseToTotalQuantity();
                     listener.setQuantity(order.getTotalQuantity());
-                    //((OrderActivity)host).setOrder(order); //works but it's bad programming => better use interfaces
                     Log.d("fabio", "new total price: "+ order.getTotalQuantity());
                     myToast.setText(host.getString(R.string.added_to_cart));
                     myToast.show();
@@ -189,14 +197,16 @@ public class MenuExpandableListAdapter extends BaseExpandableListAdapter {
             @Override
             public void onClick(View view) {
                 int selectedQuantity = food.getSelectedQuantity();
+                //Quantity selected cannot be empty
                 if(selectedQuantity>0){
                    food.decreaseSelectedQuantity();
                     if(food.getSelectedQuantity()==0){
                         order.removeFoodFromOrder(food);
                     }
                     else
-                        order.getSelectedFoods().get(food.getFoodID()).setSelectedQuantity(food.getSelectedQuantity());
+                        Objects.requireNonNull(order.getSelectedFoods().get(food.getFoodID())).setSelectedQuantity(food.getSelectedQuantity());
 
+                    //Updating order attributes
                     order.decreaseToTotalQuantity();
                     Log.d("fabio", "Setting quantity in badge from listAdapter: " + order.getTotalQuantity());
                     listener.setQuantity(order.getTotalQuantity());

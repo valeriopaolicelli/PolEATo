@@ -59,6 +59,13 @@ import java.util.Locale;
 import java.util.Scanner;
 import java.util.TimeZone;
 
+/**
+ * Activity related to cart
+ * Here the user can still change is choices in terms of quantity
+ * select the delivery time and finally confirm the order
+ */
+
+
 public class CartActivity extends AppCompatActivity implements Interface,TimePickerDialog.OnTimeSetListener {
 
     private Order order;
@@ -76,6 +83,10 @@ public class CartActivity extends AppCompatActivity implements Interface,TimePic
     private String currentUserID;
     private FirebaseAuth mAuth;
     private ConnectionManager connectionManager;
+
+    /**
+     * Broadcast receiver invoked when there is a change in connection settings
+     */
     BroadcastReceiver networkReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
@@ -115,8 +126,9 @@ public class CartActivity extends AppCompatActivity implements Interface,TimePic
 
         OneSignal.sendTag("User_ID", currentUserID);
 
+        //Get order from bundle
         order = (Order) getIntent().getSerializableExtra("order");
-
+        //Get list of foods from the order
         foodList = new ArrayList<>(order.getSelectedFoods().values());
 
         tvTotal = (TextView) findViewById(R.id.tv_total);
@@ -148,6 +160,7 @@ public class CartActivity extends AppCompatActivity implements Interface,TimePic
         DividerItemDecoration itemDecoration = new DividerItemDecoration(getApplicationContext(), 1 );
         rv.addItemDecoration(itemDecoration);
 
+        //if object order has no food change the layout
         if(order.getSelectedFoods().isEmpty()) {
             rv.setVisibility(View.GONE);
             tvEmptyCart.setVisibility(View.VISIBLE);
@@ -157,6 +170,7 @@ public class CartActivity extends AppCompatActivity implements Interface,TimePic
 
         }
 
+        //compute the total of the Order
         computeTotal(order.getTotalPrice());
         orderBtn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -222,6 +236,7 @@ public class CartActivity extends AppCompatActivity implements Interface,TimePic
     protected void onStart() {
         super.onStart();
         IntentFilter filter = new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION);
+        //Receiver to check if connection is enabled
         registerReceiver(networkReceiver,filter);
     }
 
@@ -295,6 +310,7 @@ public class CartActivity extends AppCompatActivity implements Interface,TimePic
     @Override
     public void onBackPressed() {
         if(!flag){
+            //Order can be modified, pass the object to Order Activity
             Intent resultIntent= new Intent();
             resultIntent.putExtra("old_order", order);
             setResult(Activity.RESULT_CANCELED,resultIntent);
@@ -434,6 +450,7 @@ public class CartActivity extends AppCompatActivity implements Interface,TimePic
         time.setText(hourStr +":"+minStr);
         order.setTime(time.getText().toString());
     }
+
     @Override
     protected void onStop() {
         super.onStop();

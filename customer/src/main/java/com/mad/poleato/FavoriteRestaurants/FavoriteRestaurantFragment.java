@@ -46,7 +46,9 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Set;
 
-
+/**
+ * Fragment that handle favorite restaurants of the customers
+ */
 public class FavoriteRestaurantFragment extends Fragment {
 
     private Toast myToast;

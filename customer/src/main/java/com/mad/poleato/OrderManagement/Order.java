@@ -20,12 +20,15 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+/**
+ * Class that manages the order of the customer
+ */
 public class Order implements Serializable {
 
    private HashMap<String, Food> selectedFoods;
    private List<Food> dishes;
    private Double totalPrice;
-   private String customerID; //TODO: must be implemented with login phase
+   private String customerID;
    private String date;
    private String status;
    private String restaurantID;
@@ -40,16 +43,6 @@ public class Order implements Serializable {
         selectedFoods=new HashMap<>();
         status = "New Order";
         customerID = currentUserID;
-        dbReferenceList= new HashMap<>();
-        this.totalQuantity = 0;
-    }
-
-    public Order(String status, String customerID, Double totalPrice, String date, String time){
-        this.status=status;
-        this.customerID=customerID;
-        this.totalPrice=totalPrice;
-        this.date=date;
-        this.time=time;
         dbReferenceList= new HashMap<>();
         this.totalQuantity = 0;
     }
@@ -133,6 +126,9 @@ public class Order implements Serializable {
         return dbReferenceList;
     }
 
+    /**
+     * This method upload the order on database
+     */
     public void uploadOrder() {
         /*
          * Update counter in restaurant menu -> for each dish (to compute the most popular foods)
@@ -159,7 +155,7 @@ public class Order implements Serializable {
             });
         }
 
-        /*
+        /**
          * UPLOAD order into restaurant table
          */
         DatabaseReference dbReferenceRestaurant = FirebaseDatabase.getInstance().getReference("restaurants");
@@ -168,14 +164,13 @@ public class Order implements Serializable {
                                                         .push();
 
         Order o = new Order(customerID);
-
-       // o.setDate(ServerValue.TIMESTAMP.values());
         o.setTime(this.time);
         o.setTotalPrice(this.totalPrice);
         o.setCustomerID(this.customerID);
         o.setRestaurantID(this.restaurantID);
         o.setTotalQuantity(this.totalQuantity);
 
+        //Uploading order in restaurant reservations
         reservationRestaurant.setValue(o);
         reservationRestaurant.child("date").setValue(ServerValue.TIMESTAMP);
         reservationRestaurant.child("status").child("it").setValue("Nuovo ordine");
@@ -236,14 +231,6 @@ public class Order implements Serializable {
     }
     public void decreaseToTotalQuantity(){
         totalQuantity -=1;
-    }
-
-    public int computeTotalQuantity(){
-        int totalQuantity = 0;
-        for(Food f: selectedFoods.values()){
-            totalQuantity += f.getSelectedQuantity();
-        }
-        return totalQuantity;
     }
 
     @Exclude

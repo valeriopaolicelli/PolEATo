@@ -43,6 +43,9 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 
+/**
+ * Fragment that shows the favorite dishes of the selected restaurant
+ */
 public class FavoriteMenuFragment extends Fragment {
 
     private Activity hostActivity;
