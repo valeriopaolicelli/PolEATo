@@ -235,9 +235,8 @@
         android:layout_height="0dp"
         android:layout_weight="75">
 
-        <com.jjoe64.graphview.GraphView
-            android:id="@+id/graphView"
-
+        <com.github.mikephil.charting.charts.LineChart
+            android:id="@+id/lineChart"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_marginStart="16dp"
@@ -249,9 +248,9 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:seriesColor="@color/colorPrimary"
-            app:seriesType="line" />
+            app:layout_constraintTop_toTopOf="parent">
+        </com.github.mikephil.charting.charts.LineChart>
+
 
     </android.support.constraint.ConstraintLayout>
 

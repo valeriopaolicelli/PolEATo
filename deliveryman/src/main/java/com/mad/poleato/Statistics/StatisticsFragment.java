@@ -3,7 +3,6 @@ package com.mad.poleato.Statistics;
 
 import android.app.Activity;
 import android.content.Context;
-import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -17,27 +16,24 @@ import android.widget.Toast;
 
 import androidx.navigation.Navigation;
 
+import com.github.mikephil.charting.charts.LineChart;
+import com.github.mikephil.charting.components.AxisBase;
+import com.github.mikephil.charting.components.XAxis;
+import com.github.mikephil.charting.components.YAxis;
+import com.github.mikephil.charting.data.Entry;
+import com.github.mikephil.charting.data.LineData;
+import com.github.mikephil.charting.data.LineDataSet;
+import com.github.mikephil.charting.formatter.ValueFormatter;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
-import com.jjoe64.graphview.DefaultLabelFormatter;
-import com.jjoe64.graphview.GraphView;
-import com.jjoe64.graphview.GridLabelRenderer;
-import com.jjoe64.graphview.helper.DateAsXAxisLabelFormatter;
-import com.jjoe64.graphview.series.DataPoint;
-import com.jjoe64.graphview.series.DataPointInterface;
-import com.jjoe64.graphview.series.LineGraphSeries;
-import com.jjoe64.graphview.series.OnDataPointTapListener;
-import com.jjoe64.graphview.series.PointsGraphSeries;
-import com.jjoe64.graphview.series.Series;
 import com.mad.poleato.Firebase.MyDatabaseReference;
 import com.mad.poleato.R;
 import com.onesignal.OneSignal;
 
-import java.text.DateFormat;
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -66,7 +62,7 @@ public class StatisticsFragment extends Fragment {
 
 
     private Map<String, TextView> tv_Fields;    //TextView map
-    private GraphView graphView;                //statistics graph
+    private LineChart dailyChart;                //statistics graph
 
     private static final double REVENUE_HOUR = 7.00;
     private static final int NUM_DAYS_GRAPH = 7; //num of days to show on a single graph window
@@ -77,16 +73,13 @@ public class StatisticsFragment extends Fragment {
     private double totKm;
 
 
-
-
-
-
+    //mapping index -> day
+    List<Long> xValues;
 
 
     public StatisticsFragment() {
         // Required empty public constructor
     }
-
 
 
     @Override
@@ -107,7 +100,7 @@ public class StatisticsFragment extends Fragment {
         mAuth = FirebaseAuth.getInstance();
         FirebaseUser currentUser = mAuth.getCurrentUser();
         currentUserID = currentUser.getUid();
-        if(currentUser == null)
+        if (currentUser == null)
             logout();
 
         OneSignal.startInit(getContext())
@@ -127,7 +120,7 @@ public class StatisticsFragment extends Fragment {
     }
 
 
-    private void logout(){
+    private void logout() {
         FirebaseAuth.getInstance().signOut();
         OneSignal.setSubscription(false);
 
@@ -166,7 +159,7 @@ public class StatisticsFragment extends Fragment {
     }
 
 
-    private void collectFields(){
+    private void collectFields() {
 
         tv_Fields.put("today", (TextView) fragView.findViewById(R.id.today_tv));
 
@@ -179,7 +172,7 @@ public class StatisticsFragment extends Fragment {
         tv_Fields.put("totKm", (TextView) fragView.findViewById(R.id.totKm_tv));
         tv_Fields.put("kmPerDay", (TextView) fragView.findViewById(R.id.kmPerDay_tv));
 
-        graphView = (GraphView) fragView.findViewById(R.id.graphView);
+        dailyChart = (LineChart) fragView.findViewById(R.id.lineChart);
 
         //set current day in the upper TextView
         SimpleDateFormat dateFormat = new SimpleDateFormat("EEE MM/dd");
@@ -188,21 +181,21 @@ public class StatisticsFragment extends Fragment {
     }
 
 
-    private void readHistory(){
+    private void readHistory() {
 
         historyFireBaseReference = new MyDatabaseReference(FirebaseDatabase.getInstance().getReference("deliveryman")
-                                                        .child(currentUserID+"/history"));
+                .child(currentUserID + "/history"));
 
         historyFireBaseReference.setValueListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
 
-                if(!dataSnapshot.exists())
+                if (!dataSnapshot.exists())
                     return;
 
-                for(DataSnapshot historyItem : dataSnapshot.getChildren()){
+                for (DataSnapshot historyItem : dataSnapshot.getChildren()) {
 
-                    try{
+                    try {
                         //a day is considered working days if the rider accepts at least 1 reservation no matter if it is delivered after 00:00
                         String workDay = historyItem.child("startTime").getValue().toString().split(" ")[0];
                         String startTime = historyItem.child("startTime").getValue().toString();
@@ -212,14 +205,13 @@ public class StatisticsFragment extends Fragment {
 
                         Date day = new SimpleDateFormat("yyyy/MM/dd").parse(workDay);
 
-                        if(workingHourPerDay.containsKey(day)){
+                        if (workingHourPerDay.containsKey(day)) {
                             //then increment the working hours value
                             Long prevMillis = workingHourPerDay.get(day);
                             workHour += prevMillis;
                             workingHourPerDay.put(day, workHour);
 
-                        }
-                        else
+                        } else
                             workingHourPerDay.put(day, workHour);
 
                         //count km
@@ -227,7 +219,7 @@ public class StatisticsFragment extends Fragment {
                         totKm += curr_km;
 
 
-                    }catch(Exception e){
+                    } catch (Exception e) {
                         Log.d("matte", e.getMessage());
                     }
 
@@ -238,7 +230,7 @@ public class StatisticsFragment extends Fragment {
 
                 computeRevenues();//fill the revenues map
 
-                setGraph(); //draw data on graph
+                setChart(); //draw data on graph
 
             }
 
@@ -250,15 +242,17 @@ public class StatisticsFragment extends Fragment {
     }
 
 
-    private void computeStatistics(){
+    private void computeStatistics() {
 
         String workingDays = "" + workingHourPerDay.keySet().size() + "d";
         Long sumMillis = 0L;
-        for(Long l : workingHourPerDay.values())
+        for (Long l : workingHourPerDay.values())
             sumMillis += l;
 
         double effectiveHours = sumMillis / (60 * 60 * 1000) % 24;
-        String totHours = (int)effectiveHours + ":" + sumMillis/(60 * 1000) % 60;
+        double minutes = sumMillis / (60 * 1000) % 60;
+        DecimalFormat format = new DecimalFormat("00");
+        String totHours = (int) effectiveHours + ":" + format.format(minutes);
 
         double totRevenues = effectiveHours * REVENUE_HOUR;
 
@@ -284,9 +278,9 @@ public class StatisticsFragment extends Fragment {
     }
 
 
-    private void computeRevenues(){
+    private void computeRevenues() {
 
-        for(Date day : workingHourPerDay.keySet()){
+        for (Date day : workingHourPerDay.keySet()) {
             //compute the total revenues for each single day
             long totMillis = workingHourPerDay.get(day);
             long totHours = totMillis / (60 * 60 * 1000) % 24;
@@ -297,6 +291,8 @@ public class StatisticsFragment extends Fragment {
     }
 
 
+
+/*
     private void setGraph(){
 
         // enable scaling and scrolling
@@ -343,7 +339,7 @@ public class StatisticsFragment extends Fragment {
             }
         });
 
-        graphView.addSeries(lines);
+        //graphView.addSeries(lines);
         graphView.addSeries(points);
 
 
@@ -407,10 +403,10 @@ public class StatisticsFragment extends Fragment {
         });
 
 
-    }
+    }*/
 
 
-    private Long timeDiff(String start, String end){
+    private Long timeDiff(String start, String end) {
 
         SimpleDateFormat format = new SimpleDateFormat("yyyy/MM/dd HH:mm");
         long difference = 0;
@@ -425,15 +421,119 @@ public class StatisticsFragment extends Fragment {
             long diffHours = difference / (60 * 60 * 1000) % 24;
             long diffDays = difference / (24 * 60 * 60 * 1000);
 
-        } catch (Exception e){
+        } catch (Exception e) {
             Log.d("matte", e.getMessage());
         }
 
 
         return difference;
+    }
+
+
+    private void setChart() {
+
+        List<Entry> entries = new ArrayList<Entry>();
+
+        //creates entries such: < day and month, revenues for this day>
+        xValues = new ArrayList<>();
+        for (Date day : revenues.keySet()) {
+
+            //entries.add(new Entry((float) day.getTime(), revenues.get(day).floatValue()));
+            entries.add(new Entry(xValues.size(), revenues.get(day).floatValue()));
+            xValues.add(day.getTime());
+        }
+
+        LineDataSet dataSet = new LineDataSet(entries, "");
+        dataSet.setLineWidth(2f);
+        dataSet.setColor(getResources().getColor(R.color.colorPrimaryDark));
+        dataSet.setCircleColor(getResources().getColor(R.color.colorPrimaryDark));
+        dataSet.setCircleRadius(7f);
+        dataSet.setCircleHoleRadius(5f);
+        LineData line = new LineData(dataSet);
+
+        dailyChart.setData(line);
+        dailyChart.invalidate();
+
+
+        //format the X labels
+        XAxis xAxis = dailyChart.getXAxis();
+        xAxis.setPosition(XAxis.XAxisPosition.BOTTOM);
+        xAxis.setValueFormatter(new XValueFormatter());
+
+        xAxis.setGranularityEnabled(true);
+        //xAxis.setGranularity(8.64e+7f);
+        xAxis.setGranularity(1f);
+
+        xAxis.setLabelCount(entries.size()); //to show all x labels
+        xAxis.setSpaceMax(.3f);
+
+        //format the Y labels
+        YAxis yAxis = dailyChart.getAxisLeft();
+        yAxis.setValueFormatter(new YValueFormatter());
+
+
+
+
+        //remove the right Y label
+        dailyChart.getAxisRight().setEnabled(false);
+
+        //to remove the description from the bottom right corner
+        dailyChart.getDescription().setEnabled(false);
+        dailyChart.getLegend().setEnabled(false);
+
+        //dailyChart.setVisibleXRangeMaximum(8.64e+7f * 7);
+        dailyChart.setVisibleXRange(1, 7);
+        dailyChart.setVisibleYRange(1, 80, YAxis.AxisDependency.LEFT);
+
+        //to remove negative values on y axis
+        yAxis.setAxisMinimum(0);
+        yAxis.setGranularity(1f);
+
+        dailyChart.setScaleEnabled(false);
+        dailyChart.setHorizontalScrollBarEnabled(true);
 
 
     }
+
+
+    private class XValueFormatter extends ValueFormatter{
+
+        @Override
+        public String getAxisLabel(float value, AxisBase axis) {
+
+            long millis = xValues.get((int) value);
+            SimpleDateFormat format = new SimpleDateFormat("MM/dd");
+            //long millis = (long) value;
+            String date = format.format(new Date(millis));
+            Log.d("matte", date);
+            return date;
+        }
+    }
+
+    private class YValueFormatter extends ValueFormatter{
+
+        @Override
+        public String getAxisLabel(float value, AxisBase axis) {
+
+            //y value
+            Double v = new Double(value);
+            DecimalFormat decimalFormat = new DecimalFormat("#0.00"); //two decimal
+            double d = Double.parseDouble(v.toString());
+            String priceStr = decimalFormat.format(d);
+            Integer i = v.intValue();
+            Boolean b1 = value % 1 == 0; //must not have decimal part
+            Boolean b2 = i % 10 == 0; //must be a multiple of 10
+            if(b1 && b2)
+                return priceStr+"€";
+            return "";
+            /*Double v = new Double(value);
+            DecimalFormat format = new DecimalFormat("#0.00");
+            String priceStr = format.format(v) + "€";
+            return priceStr;*/
+        }
+
+    }
+
 
 
 }
