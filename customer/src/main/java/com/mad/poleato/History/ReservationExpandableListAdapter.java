@@ -109,14 +109,13 @@ public class ReservationExpandableListAdapter extends BaseExpandableListAdapter 
             holder.tv_review.setVisibility(View.VISIBLE);
             holder.confirm_button.setVisibility(View.GONE);
             holder.tv_status.setText(c.getStatus());
-            holder.tv_status.setTextColor(context.getResources().getColor(R.color.colorTextAccepted));
             holder.tv_status.setPaintFlags(holder.tv_review.getPaintFlags() | Paint.UNDERLINE_TEXT_FLAG);
             //Check if this order has been reviewed
             if (c.isReviewFlag()) {
                 holder.tv_review.setText(context.getResources().getString(R.string.review_history_done));
                 holder.tv_review.setClickable(false);
-                holder.tv_review.setTextColor(Color.GREEN);
                 holder.tv_review.setPaintFlags(holder.tv_review.getPaintFlags() & (~Paint.UNDERLINE_TEXT_FLAG));
+                holder.tv_review.setVisibility(View.GONE);
             } else {
                 holder.tv_review.setText(context.getResources().getString(R.string.review_history_request));
                 holder.tv_review.setClickable(true);
@@ -146,7 +145,6 @@ public class ReservationExpandableListAdapter extends BaseExpandableListAdapter 
             holder.tv_review.setVisibility(View.GONE);
             holder.confirm_button.setVisibility(View.VISIBLE);
             holder.tv_status.setText(c.getStatus());
-            holder.tv_status.setTextColor(context.getResources().getColor(R.color.colorTextAccepted));
             holder.confirm_button.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
