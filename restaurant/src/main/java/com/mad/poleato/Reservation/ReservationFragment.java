@@ -179,9 +179,9 @@ public class ReservationFragment extends Fragment {
         Log.d("Valerio_login", "Email: " + mAuth.getCurrentUser().getEmail());
         Log.d("Valerio_login", currentUserID);
         DatabaseReference reference= FirebaseDatabase.getInstance().getReference("restaurants");
-        dbReferenceList.put("customers", new MyDatabaseReference(reference));
+        dbReferenceList.put("restaurants", new MyDatabaseReference(reference));
 
-        dbReferenceList.get("customers").setValueListener(new ValueEventListener() {
+        dbReferenceList.get("restaurants").setValueListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 if(dataSnapshot.hasChild(currentUserID)){

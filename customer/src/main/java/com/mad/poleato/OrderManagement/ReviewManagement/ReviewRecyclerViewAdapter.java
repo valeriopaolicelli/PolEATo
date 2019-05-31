@@ -16,6 +16,9 @@ import com.mad.poleato.R;
 
 import java.util.List;
 
+/**
+ * RecyclerView Adapter for RestaurantReviewsFragment
+ */
 public class ReviewRecyclerViewAdapter extends RecyclerView.Adapter<ReviewRecyclerViewAdapter.ReviewViewHolder> {
 
     private List<Rating> reviewList;
@@ -40,13 +43,14 @@ public class ReviewRecyclerViewAdapter extends RecyclerView.Adapter<ReviewRecycl
                 this.comment = (TextView) itemView.findViewById(R.id.customer_comment);
             }
         }
-public ReviewRecyclerViewAdapter(Context context, List<Rating>reviewList){
-    this.reviewList = reviewList;
-    this.context = context;
-    if(context != null)
+
+        ReviewRecyclerViewAdapter(Context context, List<Rating> reviewList){
+            this.reviewList = reviewList;
+            this.context = context;
+            if(context != null)
                 myToast = Toast.makeText(context, "", Toast.LENGTH_SHORT);
 
-}
+        }
 
 
     @Override
@@ -59,13 +63,11 @@ public ReviewRecyclerViewAdapter(Context context, List<Rating>reviewList){
 
     @Override
     public void onBindViewHolder(@NonNull ReviewViewHolder reviewViewHolder, int position) {
-
-
-                String customerData = reviewList.get(position).getCustomerData();
-                reviewViewHolder.customerData.setText(customerData);
-                reviewViewHolder.ratingBar.setRating(reviewList.get(position).getRate());
-                reviewViewHolder.date.setText(reviewList.get(position).getDate());
-                reviewViewHolder.comment.setText(reviewList.get(position).getComment());
+            String customerData = reviewList.get(position).getCustomerData();
+            reviewViewHolder.customerData.setText(customerData);
+            reviewViewHolder.ratingBar.setRating(reviewList.get(position).getRate());
+            reviewViewHolder.date.setText(reviewList.get(position).getDate());
+            reviewViewHolder.comment.setText(reviewList.get(position).getComment());
 
     }
 

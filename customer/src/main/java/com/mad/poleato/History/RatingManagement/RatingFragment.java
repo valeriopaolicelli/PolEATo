@@ -32,7 +32,10 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-
+/**
+ * Fragment related to a review of order.
+ * Here a user can select the rating and leave an optional comment
+ */
 public class RatingFragment extends Fragment {
 
     private Toast myToast;
@@ -61,6 +64,7 @@ public class RatingFragment extends Fragment {
         super.onAttach(context);
         this.context=context;
     }
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -112,6 +116,7 @@ public class RatingFragment extends Fragment {
         String ratingL = context.getString(R.string.reviewLabel) + " " + restaurantName;
         ratingLabel.setText(ratingL);
 
+        //Changing textview based on customer rating
         ratingBar.setOnRatingBarChangeListener(new RatingBar.OnRatingBarChangeListener() {
             @Override
             public void onRatingChanged(RatingBar ratingBar, float v, boolean b) {
@@ -136,6 +141,7 @@ public class RatingFragment extends Fragment {
             }
         });
 
+        //Upload review on Database
         submitBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -148,6 +154,7 @@ public class RatingFragment extends Fragment {
                     Rating rating = new Rating(currentUserID,(int)ratingBar.getRating(),
                                                             review_et.getText().toString(),restaurantID,orderID, dateOrder);
                     DatabaseReference newRatingR = restaurantReference.child(orderID);
+                    //Uploading new rating for restaurant
                     newRatingR.setValue(rating);
                     //Set flag of reservation=true => Customer has reviewed that order
                     DatabaseReference dbReference = FirebaseDatabase.getInstance()

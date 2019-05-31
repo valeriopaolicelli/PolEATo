@@ -8,6 +8,9 @@ import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 
+/**
+ * Class about the customer's reservation
+ */
 
 public class Reservation {
     private String orderID;

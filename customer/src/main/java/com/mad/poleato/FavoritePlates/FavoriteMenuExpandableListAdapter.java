@@ -34,6 +34,10 @@ import java.text.DecimalFormat;
 import java.util.HashMap;
 import java.util.List;
 
+
+/**
+ * Adapter for the ExpandableList of the favorite dishes
+ */
 public class FavoriteMenuExpandableListAdapter extends BaseExpandableListAdapter {
 
     private Toast myToast;
@@ -78,6 +82,9 @@ public class FavoriteMenuExpandableListAdapter extends BaseExpandableListAdapter
         this.order=order;
     }
 
+    /**
+     * Method that updates the adapter collections
+     */
     public void updateLitDataChild(){
         for(String s: _listDataChild.keySet()){
             for(Food f : _listDataChild.get(s)){
@@ -90,9 +97,7 @@ public class FavoriteMenuExpandableListAdapter extends BaseExpandableListAdapter
         notifyDataSetChanged();
     }
 
-    public void refresh(){
-        notifyDataSetChanged();
-    }
+
 
     @Override
     public View getChildView(final int groupPosition, final int childPosition,
@@ -134,7 +139,6 @@ public class FavoriteMenuExpandableListAdapter extends BaseExpandableListAdapter
             food.setSelectedQuantity(0);
         }
 
-       // holder.img.setImageBitmap(food.getImg().getBitmap());
         if(food.getImg().equals("")){
             Picasso.with(host.getApplicationContext()).load(R.drawable.plate_fork).into(holder.img);
         }else

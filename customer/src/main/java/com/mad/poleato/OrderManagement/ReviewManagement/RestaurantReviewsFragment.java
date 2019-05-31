@@ -40,7 +40,8 @@ import java.util.Iterator;
 import java.util.List;
 
 /**
- * A simple {@link Fragment} subclass.
+ * Fragment related to show all reviews of selected restaurants
+ *
  */
 public class RestaurantReviewsFragment extends Fragment {
 
@@ -144,6 +145,7 @@ public class RestaurantReviewsFragment extends Fragment {
         this.recyclerViewAdapter = new ReviewRecyclerViewAdapter(this.hostActivity,displayedList);
         rv.setAdapter(recyclerViewAdapter);
 
+        //checkbox to filter reviews with non-empty comments
         onlyCommentCheckBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
@@ -159,6 +161,10 @@ public class RestaurantReviewsFragment extends Fragment {
 
     }
 
+    /**
+     * Method dedicate to fill the view elements
+     * Getting data from database
+     */
     public void fillFields(){
 
         dbReferenceList.get("ratings").setValueListener(new ValueEventListener() {
@@ -175,7 +181,7 @@ public class RestaurantReviewsFragment extends Fragment {
             }
         });
 
-
+        //Get all ratings of restaurant selected
         dbReferenceList.get("ratings").setChildListener(new ChildEventListener() {
             @Override
             public void onChildAdded(@NonNull DataSnapshot ds, @Nullable String s) {
@@ -193,16 +199,19 @@ public class RestaurantReviewsFragment extends Fragment {
                         final String date = ds.child("date").getValue().toString();
                         String comment = ds.child("comment").getValue().toString();
 
+                        //Compute overall rating of restaurant selected
                         totalStars+=rate;
                         totalReviews++;
                         avgReviews = (float)totalStars/totalReviews;
                         ratingBar.setRating(avgReviews);
 
+                        //Creating new rating object and adding it to the collections
                         final Rating rating = new Rating(customerID, rate, comment, restaurantID, ds.getKey(), date);
                         reviewsList.add(rating);
                         displayedList.add(rating);
                         reviewsMap.put(ds.getKey(), rating);
-//Get customer data
+
+                        //Get customer data
                         DatabaseReference customerReference = FirebaseDatabase.getInstance().getReference("customers/" + customerID);
                         dbReferenceList.put("customerAdded", new MyDatabaseReference(customerReference));
 
@@ -220,6 +229,7 @@ public class RestaurantReviewsFragment extends Fragment {
                             }
                         });
 
+                        //Sorting list in terms of data
                         Collections.sort(displayedList,Rating.timeComparator);
                         recyclerViewAdapter.notifyDataSetChanged();
 
@@ -247,23 +257,27 @@ public class RestaurantReviewsFragment extends Fragment {
                         final String date = ds.child("date").getValue().toString();
                         String comment = ds.child("comment").getValue().toString();
 
+                        //Compute overall rating of restaurant selected
                         totalStars += rate;
                         totalReviews++;
                         avgReviews = (float) totalStars / totalReviews;
                         ratingBar.setRating(avgReviews);
 
                         final Rating rating = new Rating(customerID, rate, comment, restaurantID, ds.getKey(), date);
+                        //Check if this rating is not already in the collections
                         if(!reviewsMap.containsKey(ds.getKey())){
+                            //adding rating to list
                             displayedList.add(rating);
                         }else{
                             for(Rating r : reviewsList){
+                                //if is already in the collection, update
                                 if(r.getOrderID().equals(rating.getOrderID())){
                                     r = rating;
                                 }
                             }
                         }
                         reviewsMap.put(ds.getKey(), rating);
-//Get customer data
+                        //Get customer data
                         DatabaseReference customerReference = FirebaseDatabase.getInstance().getReference("customers/" + customerID);
                         dbReferenceList.put("customerChanged", new MyDatabaseReference(customerReference));
 
@@ -280,6 +294,7 @@ public class RestaurantReviewsFragment extends Fragment {
                             public void onCancelled(@NonNull DatabaseError databaseError) {
                             }
                         });
+                        //Sorting list in terms of date
                         Collections.sort(displayedList,Rating.timeComparator);
                         recyclerViewAdapter.notifyDataSetChanged();
                     }
@@ -307,17 +322,27 @@ public class RestaurantReviewsFragment extends Fragment {
 
     }
 
+    /**
+     * This method shows the original list of reviews
+     */
     private void restoreOriginalList(){
         displayedList.clear();
         displayedList.addAll(reviewsList);
     }
 
+    /**
+     * This method removes rating from the displayed list
+     * @param rating
+     */
     private void removeFromDisplayable(Rating rating){
         displayedList.remove(rating);
         recyclerViewAdapter.notifyDataSetChanged();
     }
 
 
+    /**
+     * This method filter the ratings that doesn't match the constraints
+     */
     private void filterList(){
         if(displayedList.isEmpty())
             return;
@@ -332,6 +357,11 @@ public class RestaurantReviewsFragment extends Fragment {
     }
 
 
+    /**
+     * This method check if rating is valid to display i.e. it has a non-empty comment
+     * @param rating
+     * @return
+     */
     private boolean isValidToDsplay(Rating rating){
         return !rating.getComment().equals("");
     }
@@ -339,6 +369,7 @@ public class RestaurantReviewsFragment extends Fragment {
     @Override
     public void onStop() {
         super.onStop();
+        //remove all listener of Firebase
         for (MyDatabaseReference my_ref : dbReferenceList.values())
             my_ref.removeAllListener();
     }

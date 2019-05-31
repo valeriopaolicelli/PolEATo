@@ -131,7 +131,7 @@
 
     <!-- Menu expandable list-->
     <string name="added_to_cart">Aggiunto al carrello</string>
-    <string name="max_quantity_cart">Quantità massima raggiunta</string>
+    <string name="max_quantity_cart">Quantità massima disponibile raggiunta</string>
     <string name="removed_from_cart">Rimosso dal carrello</string>
 
     <!--- Internet dialog -->

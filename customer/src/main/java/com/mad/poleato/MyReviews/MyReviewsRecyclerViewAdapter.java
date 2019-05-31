@@ -18,6 +18,9 @@ import com.mad.poleato.R;
 import java.util.List;
 import java.util.ListIterator;
 
+/**
+ * RecyclerView Adapter for MyReviewsFragment
+ */
 public class MyReviewsRecyclerViewAdapter extends RecyclerView.Adapter<MyReviewsRecyclerViewAdapter.MyReviewViewHolder> {
 
     private List<Rating> reviewList;
@@ -41,7 +44,7 @@ public class MyReviewsRecyclerViewAdapter extends RecyclerView.Adapter<MyReviews
         }
     }
 
-    public MyReviewsRecyclerViewAdapter(Context context, List<Rating>reviewList){
+    MyReviewsRecyclerViewAdapter(Context context, List<Rating> reviewList){
         this.reviewList = reviewList;
         this.context = context;
         if(context != null)

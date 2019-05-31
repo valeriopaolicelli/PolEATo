@@ -30,7 +30,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Scanner;
 
-
+/**
+ * Adapter of the reservation ExpandableList
+ */
 public class ReservationExpandableListAdapter extends BaseExpandableListAdapter {
     private Context context;
     private List<Reservation> reservations;

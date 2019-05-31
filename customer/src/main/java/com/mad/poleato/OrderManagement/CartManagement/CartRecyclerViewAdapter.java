@@ -20,6 +20,10 @@ import com.mad.poleato.R;
 import java.text.DecimalFormat;
 import java.util.List;
 
+
+/**
+ * RecyclerViewAdapter for CartActivity recyclerview
+ */
 public class CartRecyclerViewAdapter extends RecyclerView.Adapter<CartRecyclerViewAdapter.CartViewHolder> {
 
     private List<Food> foodList;
@@ -95,10 +99,12 @@ public class CartRecyclerViewAdapter extends RecyclerView.Adapter<CartRecyclerVi
             @Override
             public void onClick(View view) {
                 int selectedQuantity = foodList.get(i).getSelectedQuantity();
+                //Quantity selected cannot be negative
                 if(selectedQuantity>0){
                     foodList.get(i).decreaseSelectedQuantity();
                     order.decreaseToTotalQuantity();
                     if(foodList.get(i).getSelectedQuantity()==0) {
+                        //if quantity equals to 0, remove food from order
                         order.removeFoodFromOrder(foodList.get(i));
                         foodList.remove(i);
                     }
@@ -114,6 +120,7 @@ public class CartRecyclerViewAdapter extends RecyclerView.Adapter<CartRecyclerVi
             public void onClick(View view) {
                 int quantity = foodList.get(i).getQuantity();
                 int selectedQuantity = foodList.get(i).getSelectedQuantity();
+                //Customer quantity cannot be greater than quantity of restaurant
                 if(selectedQuantity<quantity){
                     foodList.get(i).increaseSelectedQuantity();
                     order.increaseToTotalQuantity();

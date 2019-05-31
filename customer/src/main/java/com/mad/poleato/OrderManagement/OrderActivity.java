@@ -44,6 +44,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 
+/**
+ * This activity hosts all the fragment that manages customer's order
+ */
 
 public class OrderActivity extends AppCompatActivity implements Interface {
 
@@ -70,6 +73,7 @@ public class OrderActivity extends AppCompatActivity implements Interface {
 
     private String localeShort;
 
+    //Receiver that listens to connection's settings changes
     BroadcastReceiver networkReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
@@ -78,6 +82,12 @@ public class OrderActivity extends AppCompatActivity implements Interface {
                 connectionManager.showDialog(context);
         }
     };
+
+    /**
+     * This method reuses already instantiated fragment (if created)
+     * and adds them to the adapter
+     * @param bundle
+     */
     private void addFragmentToAdapter(Bundle bundle) {
         infoFragment = null;
         menuFragment = null;
@@ -163,11 +173,11 @@ public class OrderActivity extends AppCompatActivity implements Interface {
         //gettin id of restaurant selected by user and name
         Bundle bundle = getIntent().getExtras();
 
-
         order.setRestaurantID(bundle.getString("id"));
 
-        DatabaseReference dbReferece = FirebaseDatabase.getInstance().getReference("restaurants").child(order.getRestaurantID());
-        dbReferenceList.put("restaurant", new MyDatabaseReference(dbReferece));
+        //Retrieve restaurants data from database
+        DatabaseReference dbReference = FirebaseDatabase.getInstance().getReference("restaurants").child(order.getRestaurantID());
+        dbReferenceList.put("restaurant", new MyDatabaseReference(dbReference));
 
         dbReferenceList.get("restaurant").setValueListener(new ValueEventListener() {
             @Override
@@ -178,7 +188,6 @@ public class OrderActivity extends AppCompatActivity implements Interface {
                         dataSnapshot.child("Type").hasChild("it") &&
                         dataSnapshot.child("Type").hasChild("en") &&
                         dataSnapshot.hasChild("IsActive") &&
-                        //dataSnapshot.hasChild("PriceRange") &&
                         dataSnapshot.hasChild("DeliveryCost")
                 ) {
                     String name = dataSnapshot.child("Name").getValue().toString();
@@ -199,6 +208,7 @@ public class OrderActivity extends AppCompatActivity implements Interface {
             }
         });
 
+        //Set toolbar
         android.support.v7.widget.Toolbar toolbar = findViewById(R.id.toolbar_order);
         TabLayout tabLayout = findViewById(R.id.tabs);
 
@@ -227,8 +237,8 @@ public class OrderActivity extends AppCompatActivity implements Interface {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
+            //If user press back arrow, return to previous activity
             case android.R.id.home:
-                /**CONTROLLARE NEL CASO DI PERDITA DI DATI*/
                 onBackPressed();
                 finish();
                 return true;
@@ -259,6 +269,10 @@ public class OrderActivity extends AppCompatActivity implements Interface {
         return super.onCreateOptionsMenu(menu);
     }
 
+    /**
+     * This method update the badge of items on the cart button in the toolbar
+     * @param quantity
+     */
     public void setUpBadge(int quantity){
 
         mCartItemCount = quantity;
@@ -278,6 +292,10 @@ public class OrderActivity extends AppCompatActivity implements Interface {
         }
     }
 
+    /**
+     * Go to CartActivity
+     * @param item
+     */
     public void goToCart(MenuItem item) {
         Intent intent = new Intent(this, CartActivity.class);
         intent.putExtra("order", order);
@@ -289,9 +307,13 @@ public class OrderActivity extends AppCompatActivity implements Interface {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == 1) {
+            //If RESULT_OK the customer has finished the order request
+            //Go back to main activity
             if (resultCode == Activity.RESULT_OK)
                 finish();
             else if (resultCode == Activity.RESULT_CANCELED) {
+                //User has not finished the order request
+                //Get the order object from CartActivity
                 order = (Order) data.getExtras().getSerializable("old_order");
             }
         }
@@ -328,6 +350,10 @@ public class OrderActivity extends AppCompatActivity implements Interface {
         setUpBadge(quantity);
     }
 
+    /**
+     * Unregister broadcast receiver and
+     * remove Firebase listeners
+     */
     @Override
     protected void onStop() {
         super.onStop();

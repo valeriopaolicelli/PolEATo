@@ -5,6 +5,9 @@ import java.text.SimpleDateFormat;
 import java.util.Comparator;
 import java.util.Date;
 
+/**
+ * Class about the rating of the customer
+ */
 public class Rating {
     private String customerID;
     private Integer rate;
