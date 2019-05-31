@@ -40,6 +40,8 @@ public class NavigatorActivity extends AppCompatActivity {
 
     private String currentUserID;
     private FirebaseAuth mAuth;
+    private AlertDialog.Builder myBuilder;
+    private AlertDialog myAlert;
     private ConnectionManager connectionManager;
     private LocationManager manager;
     //    private BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener
@@ -82,6 +84,13 @@ public class NavigatorActivity extends AppCompatActivity {
             if (intent.getAction().matches("android.location.PROVIDERS_CHANGED")) {
                 if ( (!manager.isProviderEnabled( LocationManager.GPS_PROVIDER )) && (!manager.isProviderEnabled(LocationManager.NETWORK_PROVIDER)) ) {
                     buildAlertMessageNoGps();
+                }
+                else {
+                    if (myBuilder != null && myAlert != null) {
+                        myAlert.dismiss();
+                        myBuilder = null;
+                        myAlert = null;
+                    }
                 }
         }
         }
@@ -153,22 +162,28 @@ public class NavigatorActivity extends AppCompatActivity {
     }
 
     private void buildAlertMessageNoGps() {
-        final AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setMessage("To have in-app road directions you must enable GPS with 'Battery saving' or 'High accuracy' location method")
-                .setCancelable(false)
-                .setPositiveButton("Location Setting", new DialogInterface.OnClickListener() {
-                    public void onClick(@SuppressWarnings("unused") final DialogInterface dialog, @SuppressWarnings("unused") final int id) {
-                        startActivity(new Intent(android.provider.Settings.ACTION_LOCATION_SOURCE_SETTINGS));
-                        dialog.dismiss();
-                    }
-                })
-                .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-                    public void onClick(final DialogInterface dialog, @SuppressWarnings("unused") final int id) {
-                        dialog.cancel();
-                    }
-                });
-        final AlertDialog alert = builder.create();
-        alert.show();
+        if(myBuilder == null) {
+            myBuilder = new AlertDialog.Builder(this);
+
+            myBuilder.setMessage("To have in-app road directions you must enable GPS with 'Battery saving' or 'High accuracy' location method")
+                    .setCancelable(false)
+                    .setPositiveButton("Location Setting", new DialogInterface.OnClickListener() {
+                        public void onClick(@SuppressWarnings("unused") final DialogInterface dialog, @SuppressWarnings("unused") final int id) {
+                            startActivity(new Intent(android.provider.Settings.ACTION_LOCATION_SOURCE_SETTINGS));
+                            myBuilder= null;
+                            dialog.dismiss();
+                        }
+                    })
+                    .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                        public void onClick(final DialogInterface dialog, @SuppressWarnings("unused") final int id) {
+                            myBuilder= null;
+                            dialog.cancel();
+                        }
+                    });
+            myAlert = myBuilder.create();
+            myAlert.show();
+
+        }
     }
     private void logout() {
         //logout

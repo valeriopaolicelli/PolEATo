@@ -28,6 +28,9 @@ import android.widget.Toast;
 
 import androidx.navigation.Navigation;
 
+import com.google.android.gms.auth.api.signin.GoogleSignIn;
+import com.google.android.gms.auth.api.signin.GoogleSignInClient;
+import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.ChildEventListener;
@@ -56,6 +59,8 @@ public class RequestsFragment extends Fragment {
     private String currentUserID;
     private FirebaseAuth mAuth;
 
+    private GoogleSignInClient mGoogleSignInClient;
+
     private View fragView;
     private Activity hostActivity;
 
@@ -65,8 +70,6 @@ public class RequestsFragment extends Fragment {
     private ImageView empty_view;
 
     private HashMap<String, MyDatabaseReference> referenceMap;
-
-
 
     public RequestsFragment() {
         // Required empty public constructor
@@ -95,7 +98,17 @@ public class RequestsFragment extends Fragment {
         FirebaseUser currentUser = mAuth.getCurrentUser();
         currentUserID = currentUser.getUid();
         if(currentUserID == null)
-            logout();
+            revokeAccess();
+
+
+        /** GoogleSignInOptions */
+        GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+                .requestIdToken(getString(R.string.default_web_client_id))
+                .requestEmail()
+                .build();
+
+        /** Build a GoogleSignInClient with the options specified by gso. */
+        mGoogleSignInClient = GoogleSignIn.getClient(getActivity(), gso);
 
         OneSignal.startInit(getContext())
                 .inFocusDisplaying(OneSignal.OSInFocusDisplayOption.Notification)
@@ -157,6 +170,7 @@ public class RequestsFragment extends Fragment {
                          * incomplete account profile
                          */
                         new AlertDialog.Builder(view.getContext())
+                                .setCancelable(false)
                                 .setTitle(view.getContext().getString(R.string.missing_fields_title))
                                 .setMessage(view.getContext().getString(R.string.missing_fields_body))
                                 .setPositiveButton(view.getContext().getString(R.string.go_to_edit), new DialogInterface.OnClickListener() {
@@ -167,6 +181,19 @@ public class RequestsFragment extends Fragment {
                                          * GO TO EditProfile
                                          */
                                         Navigation.findNavController(view).navigate(R.id.action_pendingReservations_id_to_editProfile_id);
+                                    }
+                                })
+                                .setNegativeButton(view.getContext().getString(R.string.logout),
+                                new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialog, int which) {
+                                        for(MyDatabaseReference my_ref : referenceMap.values())
+                                            my_ref.removeAllListener();
+                                        //logout
+
+                                        //TODO miche logout
+                                        /** logout */
+                                        revokeAccess();
                                     }
                                 })
                                 .show();
@@ -387,6 +414,24 @@ public class RequestsFragment extends Fragment {
 
         requestsAdapter.addRequest(r);
 
+    }
+
+    private void revokeAccess() {
+        // Firebase sign out
+        //mAuth.signOut();
+
+        Log.d("miche", "Logout");
+        FirebaseAuth.getInstance().signOut();
+        // Google revoke access
+        mGoogleSignInClient.revokeAccess();
+
+        OneSignal.setSubscription(false);
+
+        /**
+         *  GO TO LOGIN ****
+         */
+        Navigation.findNavController(fragView).navigate(R.id.action_pendingReservations_id_to_signInActivity);
+        getActivity().finish();
     }
 
     @Override
