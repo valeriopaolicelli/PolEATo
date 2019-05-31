@@ -53,7 +53,6 @@ public class SignInActivity extends AppCompatActivity {
     private ImageButton cancPassword, cancEmail;
     private Button signInButton, signUpButton;
     private SignInButton googleButton;
-    private LoginButton facebookButton;
     ConnectionManager connectionManager;
 
     //this is the layout that must be hide as default: it contains the mail and password fields
@@ -98,13 +97,12 @@ public class SignInActivity extends AppCompatActivity {
 
         googleButton = (SignInButton) findViewById(R.id.google_button);
         googleButton.setSize(SignInButton.SIZE_STANDARD);
-        facebookButton = (LoginButton) findViewById(R.id.facebook_button);
+
         signInButton = (Button) findViewById(R.id.ButtonSignIn);
         signUpButton = (Button) findViewById(R.id.ButtonSignUp);
 
         //set the listener
         googleButton.setOnClickListener(signInRoutine);
-        facebookButton.setOnClickListener(signInRoutine);
         signInButton.setOnClickListener(signInRoutine);
         signUpButton.setOnClickListener(signInRoutine);
 
@@ -241,13 +239,6 @@ public class SignInActivity extends AppCompatActivity {
                         myToast.setText("This feature will be supported in the next version :) ");
                         myToast.show();
                     }
-
-                    break;
-
-                case R.id.facebook_button:
-
-                    myToast.setText("This feature will be supported in the next version :) ");
-                    myToast.show();
 
                     break;
 
