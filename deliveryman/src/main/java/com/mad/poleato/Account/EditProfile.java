@@ -982,6 +982,11 @@ public class EditProfile extends Fragment {
         });
     }
 
+    @Override
+    public void onResume() {
+        super.onResume();
+        navigation.setVisibility(View.GONE);
+    }
 
     @Override
     public void onDestroy() {
@@ -989,6 +994,13 @@ public class EditProfile extends Fragment {
 
         navigation.setVisibility(View.VISIBLE);
 
+        deliveryProfileReference.removeAllListener();
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        navigation.setVisibility(View.VISIBLE);
         deliveryProfileReference.removeAllListener();
     }
 }

@@ -1281,10 +1281,14 @@ public class EditProfileFragment extends Fragment implements TimePickerDialog.On
     }
 
     @Override
+    public void onResume() {
+        super.onResume();
+        navigation.setVisibility(View.GONE);
+    }
+
+    @Override
     public void onDestroy() {
         super.onDestroy();
-
-        navigation.setVisibility(View.VISIBLE);
 
         profileReference.removeAllListener();
     }
@@ -1292,6 +1296,9 @@ public class EditProfileFragment extends Fragment implements TimePickerDialog.On
     @Override
     public void onStop() {
         super.onStop();
+
+        navigation.setVisibility(View.VISIBLE);
+
         profileReference.removeAllListener();
     }
 }

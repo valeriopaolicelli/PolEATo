@@ -961,10 +961,14 @@ public class EditProfile extends Fragment {
     }
 
     @Override
+    public void onResume() {
+        super.onResume();
+        navigation.setVisibility(View.GONE);
+    }
+
+    @Override
     public void onDestroy() {
         super.onDestroy();
-
-        navigation.setVisibility(View.VISIBLE);
 
         for(MyDatabaseReference ref : dbReferenceList.values())
             ref.removeAllListener();
@@ -973,6 +977,9 @@ public class EditProfile extends Fragment {
     @Override
     public void onStop() {
         super.onStop();
+
+        navigation.setVisibility(View.VISIBLE);
+
         for (MyDatabaseReference my_ref : dbReferenceList.values())
             my_ref.removeAllListener();
     }
