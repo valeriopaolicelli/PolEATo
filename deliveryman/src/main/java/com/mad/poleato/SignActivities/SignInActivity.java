@@ -331,6 +331,8 @@ public class SignInActivity extends AppCompatActivity {
                                             show_login_form();
                                             FirebaseAuth.getInstance().signOut();
                                         }
+                                        else
+                                            access();
                                     }
                                     else
                                         access();
