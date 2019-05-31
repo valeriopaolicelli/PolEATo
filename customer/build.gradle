@@ -15,14 +15,14 @@ repositories {
 apply plugin: 'com.android.application'
 
 android {
-    signingConfigs {
+    /*signingConfigs {
         signin {
             storeFile file('C:\\Users\\valer\\keystore\\upload-keystore.jks')
             storePassword 'progettomad'
             keyAlias = 'key-signin'
             keyPassword 'poleato'
         }
-    }
+    }*/
     compileSdkVersion 28
 
     defaultConfig {
@@ -41,6 +41,7 @@ android {
         ]
 
     }
+    
 /*
     buildTypes {
         release {

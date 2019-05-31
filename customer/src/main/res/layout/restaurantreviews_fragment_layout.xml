@@ -10,13 +10,13 @@
     tools:context=".OrderManagement.ReviewManagement.RestaurantReviewsFragment">
 
     <android.support.v7.widget.CardView
+        android:id="@+id/restaurantreviews_cardView"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="25">
         <android.support.constraint.ConstraintLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            >
+            android:layout_height="match_parent">
 
             <TextView
                 android:id="@+id/restaurantName_tv"
@@ -86,13 +86,14 @@
         android:layout_width="match_parent">
     </android.support.v7.widget.RecyclerView>
 
-    <TextView
-        android:id="@+id/noRatingsTv"
-        android:layout_weight="75"
+    <ImageView
+        android:id="@+id/reviews_empty_view"
         android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:gravity="center_vertical|center_horizontal"
-        android:text="No rating for this restaurant"
+        android:layout_height="match_parent"
+        android:layout_gravity="center_horizontal|center_vertical"
+        android:src="@drawable/empty_mail"
+        android:alpha=".5"
+        android:scaleType="fitCenter"
         android:visibility="gone"/>
 
 </LinearLayout>

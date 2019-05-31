@@ -13,6 +13,7 @@ import android.os.Handler;
 import android.os.Message;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.constraint.ConstraintLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.widget.DividerItemDecoration;
@@ -31,6 +32,7 @@ import android.view.animation.ScaleAnimation;
 import android.widget.Button;
 import android.widget.CompoundButton;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.PopupMenu;
 import android.widget.SearchView;
 import android.widget.Toast;
@@ -95,6 +97,9 @@ public class RestaurantSearchFragment extends Fragment {
     private FirebaseAuth mAuth;
     private boolean allFields;
 
+    private ConstraintLayout main_view;
+    private ImageView empty_view;
+
     //id for the filter fragment
     public static final int FILTER_FRAGMENT = 26;
 
@@ -142,8 +147,24 @@ public class RestaurantSearchFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         fragView = inflater.inflate(R.layout.restaurant_recyclerview, container, false);
 
-        return fragView;
+        main_view = (ConstraintLayout) fragView.findViewById(R.id.search_main_view);
+        empty_view = (ImageView) fragView.findViewById(R.id.search_empty_view);
 
+        show_empty_view();
+
+        return fragView;
+    }
+
+    private void show_main_view(){
+
+        empty_view.setVisibility(View.GONE);
+        main_view.setVisibility(View.VISIBLE);
+    }
+
+    private void show_empty_view(){
+
+        main_view.setVisibility(View.GONE);
+        empty_view.setVisibility(View.VISIBLE);
     }
 
     @Override
@@ -591,6 +612,7 @@ public class RestaurantSearchFragment extends Fragment {
         currDisplayedList.clear();
         for (Restaurant r : restaurantList)
             currDisplayedList.add(r);
+        show_main_view();
     }
 
     private void addToDisplay(Restaurant r) {
@@ -598,11 +620,14 @@ public class RestaurantSearchFragment extends Fragment {
         currDisplayedList.add(r);
         //notify the adapter to show it by keeping the actual order
         recyclerAdapter.updateLayout();
+        show_main_view();
     }
 
     private void removeFromDisplay(Restaurant r) {
 
         currDisplayedList.remove(r);
+        if(currDisplayedList.isEmpty())
+            show_empty_view();
         // simply update. No order is compromised by removing an item
         recyclerAdapter.notifyDataSetChanged();
     }
@@ -618,7 +643,6 @@ public class RestaurantSearchFragment extends Fragment {
             if (!isValidToDisplay(s))
                 rIterator.remove();
         }
-
 
     }
 
