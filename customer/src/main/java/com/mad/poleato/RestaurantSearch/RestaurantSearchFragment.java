@@ -41,6 +41,9 @@ import android.widget.ToggleButton;
 
 import androidx.navigation.Navigation;
 
+import com.google.android.gms.auth.api.signin.GoogleSignIn;
+import com.google.android.gms.auth.api.signin.GoogleSignInClient;
+import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
@@ -95,6 +98,9 @@ public class RestaurantSearchFragment extends Fragment {
 
     private String currentUserID;
     private FirebaseAuth mAuth;
+
+    private GoogleSignInClient mGoogleSignInClient;
+
     private boolean allFields;
 
     private ConstraintLayout main_view;
@@ -125,6 +131,16 @@ public class RestaurantSearchFragment extends Fragment {
         mAuth = FirebaseAuth.getInstance();
         FirebaseUser currentUser = mAuth.getCurrentUser();
         currentUserID = currentUser.getUid();
+
+        /** GoogleSignInOptions */
+        GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+                .requestIdToken(getString(R.string.default_web_client_id))
+                .requestEmail()
+                .build();
+
+        /** Build a GoogleSignInClient with the options specified by gso. */
+        mGoogleSignInClient = GoogleSignIn.getClient(getActivity(), gso);
+
         allFields= false;
 
         restaurantMap = new HashMap<>();
@@ -196,9 +212,11 @@ public class RestaurantSearchFragment extends Fragment {
                          * incomplete account profile
                          */
                         new AlertDialog.Builder(view.getContext())
+                                .setCancelable(false)
                                 .setTitle(view.getContext().getString(R.string.missing_fields_title))
                                 .setMessage(view.getContext().getString(R.string.missing_fields_body))
-                                .setPositiveButton(view.getContext().getString(R.string.go_to_edit), new DialogInterface.OnClickListener() {
+                                .setPositiveButton(view.getContext().getString(R.string.go_to_edit),
+                                        new DialogInterface.OnClickListener() {
                                     @Override
                                     public void onClick(DialogInterface dialog, int which) {
 
@@ -206,6 +224,19 @@ public class RestaurantSearchFragment extends Fragment {
                                          * GO TO EditProfile
                                          */
                                         Navigation.findNavController(view).navigate(R.id.action_restaurantSearchFragment_id_to_editProfile_id);
+                                    }
+                                })
+                                .setNegativeButton(view.getContext().getString(R.string.logout),
+                                        new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialog, int which) {
+                                        for(MyDatabaseReference my_ref : dbReferenceList.values())
+                                            my_ref.removeAllListener();
+                                        //logout
+
+                                        //TODO miche logout
+                                        /** logout */
+                                        revokeAccess();
                                     }
                                 })
                                 .show();
@@ -658,6 +689,24 @@ public class RestaurantSearchFragment extends Fragment {
             }
         }
         return false;
+    }
+
+    private void revokeAccess() {
+        // Firebase sign out
+        //mAuth.signOut();
+
+        Log.d("miche", "Logout");
+        FirebaseAuth.getInstance().signOut();
+        // Google revoke access
+        mGoogleSignInClient.revokeAccess();
+
+        OneSignal.setSubscription(false);
+
+        /**
+         *  GO TO LOGIN ****
+         */
+        Navigation.findNavController(fragView).navigate(R.id.action_restaurantSearchFragment_id_to_signInActivity);
+        getActivity().finish();
     }
 
     @Override

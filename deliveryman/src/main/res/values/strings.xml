@@ -53,7 +53,7 @@
     <string name="restaurant_name">Restaurant: </string>
     <string name="phone_number">Phone: </string>
     <string name="dishes">#Dishes: </string>
-    <string name="delivery_hour">Delivery hour: </string>
+    <string name="delivery_hour">Time: </string>
     <string name="total_cost">Total: </string>
     <string name="delivered_date">Date: </string>
 

@@ -32,7 +32,7 @@
     <string name="price_range"><font size="18">Price</font></string>
     <string name="free_delivery">Free</string>
     <string name="date">Date</string>
-    <string name="time">Delivery Time</string>
+    <string name="time">Time</string>
     <string name="status">Status</string>
     <string name="new_order">New order</string>
     <string name="cooking">Cooking</string>
@@ -72,7 +72,7 @@
     <string name="dishes">Dish</string>
     <string name="quantity">Quantity</string>
     <string name="note">Notes</string>
-    <string name="total_price">Total price</string>
+    <string name="total_price">Total</string>
 
     <string name="specify_date">Specify the date to receive the order</string>
     <string name="specify_time">Specify the time to receive the order</string>

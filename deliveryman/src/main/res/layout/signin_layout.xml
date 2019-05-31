@@ -44,28 +44,12 @@
             android:id="@+id/login_constraint"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="32dp"
+            android:layout_marginTop="28dp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/tvTitle">
 
-
-            <com.facebook.login.widget.LoginButton
-                android:id="@+id/facebook_button"
-                android:layout_width="236dp"
-                android:layout_height="31dp"
-                android:layout_margin="10dp"
-                android:layout_marginStart="87dp"
-                android:layout_marginTop="32dp"
-                android:layout_marginEnd="165dp"
-                android:layout_marginBottom="8dp"
-                android:elevation="@dimen/default_gap"
-                android:textSize="18sp"
-                app:layout_constraintBottom_toTopOf="@+id/google_button"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/ButtonSignIn" />
 
             <android.support.design.widget.TextInputLayout
                 android:id="@+id/tiEmail"
@@ -153,13 +137,13 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="76dp"
-                android:layout_marginTop="8dp"
+                android:layout_marginTop="16dp"
                 android:layout_marginEnd="79dp"
-                android:layout_marginBottom="16dp"
+                android:layout_marginBottom="10dp"
                 android:background="@drawable/ripple"
                 android:text="@string/signin"
                 android:textColor="@color/colorBodyPrimary"
-                app:layout_constraintBottom_toTopOf="@+id/facebook_button"
+                app:layout_constraintBottom_toTopOf="@+id/google_button"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/tiPassword" />
@@ -189,9 +173,10 @@
                 android:layout_marginEnd="8dp"
                 android:elevation="@dimen/default_gap"
                 android:textSize="18sp"
+                app:layout_constraintBottom_toTopOf="@+id/ButtonSignUp"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/facebook_button" />
+                app:layout_constraintTop_toBottomOf="@+id/ButtonSignIn" />
 
             <TextView
                 android:id="@+id/textView"

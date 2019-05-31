@@ -67,7 +67,7 @@
 
             <TextView
                 android:id="@+id/customerName_label"
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
                 android:layout_marginEnd="8dp"
@@ -84,9 +84,8 @@
                 android:id="@+id/customerName_tv"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="8dp"
-                android:textSize="15sp"
                 android:textColor="@color/browser_actions_title_color"
+                android:textSize="15sp"
                 app:layout_constraintBottom_toBottomOf="@id/customerName_label"
                 app:layout_constraintEnd_toStartOf="@id/restaurant_label"
                 app:layout_constraintStart_toEndOf="@+id/customerName_label"
@@ -94,7 +93,7 @@
 
             <TextView
                 android:id="@+id/restaurant_label"
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="8dp"
                 android:layout_marginEnd="8dp"
@@ -131,9 +130,9 @@
 
             <TextView
                 android:id="@+id/phone_label"
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="16dp"
+                android:layout_marginTop="24dp"
                 android:layout_marginEnd="8dp"
                 android:text="@string/phone_number"
                 android:textColor="@color/colorPrimaryDark"
@@ -158,7 +157,7 @@
 
             <TextView
                 android:id="@+id/dishes_label"
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginEnd="8dp"
                 android:text="@string/dishes"
@@ -184,7 +183,7 @@
 
             <TextView
                 android:id="@+id/time_label"
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="16dp"
                 android:layout_marginEnd="8dp"
@@ -212,7 +211,7 @@
 
             <TextView
                 android:id="@+id/cost_label"
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginEnd="8dp"
                 android:text="@string/total_cost"
