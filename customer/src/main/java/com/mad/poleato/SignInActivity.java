@@ -17,7 +17,6 @@ import android.widget.ImageButton;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 
-import com.facebook.login.widget.LoginButton;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
@@ -96,7 +95,7 @@ public class SignInActivity extends AppCompatActivity {
 
         googleButton = (SignInButton) findViewById(R.id.google_button);
         googleButton.setSize(SignInButton.SIZE_STANDARD);
-        //facebookButton.
+
         signInButton = (Button) findViewById(R.id.ButtonSignIn);
         signUpButton = (Button) findViewById(R.id.ButtonSignUp);
 

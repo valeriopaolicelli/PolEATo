@@ -31,9 +31,9 @@
 
         <TextView
             android:id="@+id/dateLabel"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginTop="4dp"
+            android:layout_marginTop="16dp"
             android:layout_marginBottom="4dp"
             android:text="@string/date"
             android:textColor="@color/colorPanelPrimary"
@@ -45,9 +45,9 @@
 
         <TextView
             android:id="@+id/tvDateField"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginStart="16dp"
+            android:layout_marginStart="8dp"
             android:layout_marginEnd="8dp"
             android:maxLength="40"
             android:singleLine="true"
@@ -61,24 +61,22 @@
 
         <TextView
             android:id="@+id/timeLabel"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginStart="16dp"
-            android:layout_marginTop="4dp"
+            android:layout_marginStart="8dp"
             android:text="@string/time"
             android:textColor="@color/colorPanelPrimary"
             android:textSize="20sp"
             app:layout_constraintBottom_toBottomOf="@id/dateLabel"
             app:layout_constraintEnd_toStartOf="@id/tvTimeField"
             app:layout_constraintStart_toEndOf="@id/tvDateField"
-            app:layout_constraintTop_toTopOf="@id/dateLabel"
-            app:layout_constraintVertical_bias="1.0" />
+            app:layout_constraintTop_toTopOf="@id/dateLabel" />
 
         <TextView
             android:id="@+id/tvTimeField"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginStart="16dp"
+            android:layout_marginStart="8dp"
             android:layout_marginEnd="16dp"
             android:maxLength="40"
             android:singleLine="true"
@@ -87,14 +85,14 @@
             app:layout_constraintBottom_toBottomOf="@id/timeLabel"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toEndOf="@id/timeLabel"
-            app:layout_constraintTop_toTopOf="@id/timeLabel"
-            app:layout_constraintVertical_bias="0.7" />
+            app:layout_constraintTop_toTopOf="@id/timeLabel" />
 
         <TextView
             android:id="@+id/restaurantLabel"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="24dp"
+            android:layout_marginTop="8dp"
             android:layout_marginBottom="4dp"
             android:maxLength="40"
             android:singleLine="true"
@@ -118,14 +116,13 @@
             app:layout_constraintBottom_toBottomOf="@id/restaurantLabel"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toEndOf="@id/restaurantLabel"
-            app:layout_constraintTop_toTopOf="@id/restaurantLabel"
-            app:layout_constraintVertical_bias="0.7" />
+            app:layout_constraintTop_toTopOf="@id/restaurantLabel" />
 
         <TextView
             android:id="@+id/totalPriceLabel"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginTop="4dp"
+            android:layout_marginTop="16dp"
             android:layout_marginBottom="8dp"
             android:singleLine="true"
             android:text="@string/total_price"
@@ -138,7 +135,7 @@
 
         <TextView
             android:id="@+id/tvTotalPrice"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
             android:layout_marginEnd="16dp"
@@ -154,7 +151,7 @@
 
         <TextView
             android:id="@+id/statusLabel"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginBottom="8dp"
             android:singleLine="true"

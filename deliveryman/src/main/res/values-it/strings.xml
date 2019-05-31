@@ -55,7 +55,7 @@
     <string name="restaurant_name">Ristorante: </string>
     <string name="phone_number">Telefono: </string>
     <string name="dishes">#Piatti: </string>
-    <string name="delivery_hour">Orario consegna: </string>
+    <string name="delivery_hour">Orario: </string>
     <string name="total_cost">Totale: </string>
 
     <!-- HistoryFragment cardview-->

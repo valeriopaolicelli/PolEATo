@@ -26,7 +26,7 @@
     <string name="query_hint">Cerca ristoranti</string>
     <string name="currency">€</string>
     <string name="restaurant_name"><font size="18">Nome locale</font></string>
-    <string name="restaurant"><font size="18">Ristorante</font></string>
+    <string name="restaurant">Ristorante</string>
     <string name="type"><font size="18">Tipo di cucina</font></string>
     <string name="info"><font size="18">Descrizione</font></string>
     <string name="cart"><font size="18">Carrello</font></string>
@@ -35,9 +35,9 @@
     <string name="slash">/</string>
     <string name="price">Prezzo: </string>
     <string name="date">Data</string>
-    <string name="time">Orario di consegna</string>
+    <string name="time">Orario</string>
     <string name="status">Status</string>
-    <string name="total_price">Totale ordine</string>
+    <string name="total_price">Totale</string>
     <string name="dishes">Piatto</string>
     <string name="quantity">Quantità</string>
     <string name="note">Note</string>
