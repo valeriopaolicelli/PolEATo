@@ -4,12 +4,14 @@ package com.mad.poleato.History;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.graphics.Point;
+import android.media.Image;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.Display;
 import android.view.LayoutInflater;
@@ -19,6 +21,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ExpandableListView;
+import android.widget.ImageView;
 
 import androidx.navigation.Navigation;
 
@@ -52,6 +55,7 @@ import java.util.Locale;
 public class Holder_history extends Fragment {
 
     private ExpandableListView lv;
+    private ImageView empty_view;
     private ReservationExpandableListAdapter listAdapter;
     private List<Reservation> reservations;
     private String localeShort;
@@ -125,7 +129,22 @@ public class Holder_history extends Fragment {
         listAdapter = new ReservationExpandableListAdapter(getActivity(), reservations, listHash, currentUserID);
         lv.setAdapter(listAdapter);
 
+        empty_view = (ImageView) view.findViewById(R.id.history_empty_view);
+        show_empty_view();
+
         return view;
+    }
+
+    private void show_history_view(){
+
+        empty_view.setVisibility(View.GONE);
+        lv.setVisibility(View.VISIBLE);
+    }
+
+    private void show_empty_view(){
+
+        lv.setVisibility(View.GONE);
+        empty_view.setVisibility(View.VISIBLE);
     }
 
     /**
@@ -219,6 +238,7 @@ public class Holder_history extends Fragment {
                     listHash.put(r.getOrderID(), r.getDishes());
                     Collections.sort(reservations, Reservation.timeComparator);
                     listAdapter.notifyDataSetChanged();
+                    show_history_view();
                 }
             }
 
@@ -292,6 +312,7 @@ public class Holder_history extends Fragment {
                     Collections.sort(reservations, Reservation.timeComparator);
                     listAdapter.updateReservations(reservations);
                     listAdapter.notifyDataSetChanged();
+                    show_history_view();
                 }
             }
 
@@ -305,6 +326,8 @@ public class Holder_history extends Fragment {
                     }
                 listHash.remove(order_id);
                 listAdapter.notifyDataSetChanged();
+                if(listHash.isEmpty())
+                    show_empty_view();
             }
 
             @Override

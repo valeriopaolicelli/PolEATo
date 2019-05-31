@@ -10,6 +10,7 @@ import android.os.Message;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v7.widget.CardView;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -18,6 +19,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
+import android.widget.ImageView;
 import android.widget.RatingBar;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -53,7 +55,7 @@ public class RestaurantReviewsFragment extends Fragment {
     private RecyclerView rv;
 
     private RatingBar ratingBar;
-    private TextView restaurantName, noRating;
+    private TextView restaurantName;
     private CheckBox onlyCommentCheckBox;
     private String restaurantID;
     private String resName;
@@ -67,14 +69,13 @@ public class RestaurantReviewsFragment extends Fragment {
     private List<Rating>displayedList;
 
     private ProgressDialog progressDialog;
-    Handler handler = new Handler(){
-        @Override
-        public void handleMessage(Message msg) {
-            progressDialog.dismiss();
-        }
-    };
 
     private HashMap<String, MyDatabaseReference> dbReferenceList;
+
+    private ImageView empty_view;
+    private CardView main_cardview;
+
+    private Boolean already_created; //if this fragment was already created
 
     @Override
     public void onAttach(Context context) {
@@ -109,6 +110,8 @@ public class RestaurantReviewsFragment extends Fragment {
             progressDialog = ProgressDialog.show(getActivity(), "", getString(R.string.loading));
         }
         fillFields();
+
+        already_created = false;
     }
 
     public RestaurantReviewsFragment() {
@@ -131,7 +134,6 @@ public class RestaurantReviewsFragment extends Fragment {
         ratingBar = (RatingBar) fragView.findViewById(R.id.rating_bar_avg);
         restaurantName = (TextView) fragView.findViewById(R.id.restaurantName_tv);
         onlyCommentCheckBox = (CheckBox) fragView.findViewById(R.id.checkBoxComments);
-        noRating = (TextView) fragView.findViewById(R.id.noRatingsTv);
         restaurantName.setText(resName);
 
 
@@ -159,7 +161,27 @@ public class RestaurantReviewsFragment extends Fragment {
             }
         });
 
+        main_cardview = (CardView) fragView.findViewById(R.id.restaurantreviews_cardView);
+        empty_view = (ImageView) fragView.findViewById(R.id.reviews_empty_view);
+
+        if(!already_created || (displayedList != null && displayedList.isEmpty()))
+            show_empty_view();
+        already_created = true;
     }
+
+
+    private void show_empty_view(){
+
+        main_cardview.setVisibility(View.GONE);
+        empty_view.setVisibility(View.VISIBLE);
+    }
+
+    private void show_main_view(){
+
+        empty_view.setVisibility(View.GONE);
+        main_cardview.setVisibility(View.VISIBLE);
+    }
+
 
     /**
      * Method dedicate to fill the view elements
@@ -170,14 +192,14 @@ public class RestaurantReviewsFragment extends Fragment {
         dbReferenceList.get("ratings").setValueListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                handler.sendEmptyMessage(0);
-
+                if(progressDialog.isShowing())
+                    progressDialog.dismiss();
             }
 
             @Override
             public void onCancelled(@NonNull DatabaseError databaseError) {
-                handler.sendEmptyMessage(0);
-
+                if(progressDialog.isShowing())
+                    progressDialog.dismiss();
             }
         });
 
@@ -232,6 +254,7 @@ public class RestaurantReviewsFragment extends Fragment {
                         //Sorting list in terms of data
                         Collections.sort(displayedList,Rating.timeComparator);
                         recyclerViewAdapter.notifyDataSetChanged();
+                        show_main_view();
 
                     }
                 }else{
@@ -297,6 +320,7 @@ public class RestaurantReviewsFragment extends Fragment {
                         //Sorting list in terms of date
                         Collections.sort(displayedList,Rating.timeComparator);
                         recyclerViewAdapter.notifyDataSetChanged();
+                        show_main_view();
                     }
                 }
             }
@@ -328,6 +352,8 @@ public class RestaurantReviewsFragment extends Fragment {
     private void restoreOriginalList(){
         displayedList.clear();
         displayedList.addAll(reviewsList);
+        if(!displayedList.isEmpty())
+            show_main_view();
     }
 
     /**
@@ -337,6 +363,8 @@ public class RestaurantReviewsFragment extends Fragment {
     private void removeFromDisplayable(Rating rating){
         displayedList.remove(rating);
         recyclerViewAdapter.notifyDataSetChanged();
+        if(displayedList.isEmpty())
+            show_empty_view();
     }
 
 
