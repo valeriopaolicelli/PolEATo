@@ -1,7 +1,9 @@
 package com.mad.poleato.Reservation;
 
+import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
@@ -9,6 +11,10 @@ import android.os.Message;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentTransaction;
+import android.support.v7.widget.DividerItemDecoration;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -22,7 +28,10 @@ import android.graphics.Point;
 import android.view.Display;
 import android.widget.Button;
 import android.widget.ExpandableListView;
+import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.PopupMenu;
+import android.widget.SearchView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -51,6 +60,8 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 
@@ -153,12 +164,72 @@ public class ReservationFragment extends Fragment {
                              Bundle savedInstanceState) {
         view = inflater.inflate(R.layout.reservation_frag_layout, container, false);
 
+
+        lv = view.findViewById(R.id.reservationslv);
+        empty_view = (ImageView) view.findViewById(R.id.reservation_empty_view);
+        show_empty_view();
+
+        checkUser(view);
+
+        return view;
+    }
+
+    private void checkUser(final View view) {
+
+        Log.d("Valerio_login", "Email: " + mAuth.getCurrentUser().getEmail());
+        Log.d("Valerio_login", currentUserID);
+        DatabaseReference reference= FirebaseDatabase.getInstance().getReference("restaurants");
+        dbReferenceList.put("customers", new MyDatabaseReference(reference));
+
+        dbReferenceList.get("customers").setValueListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                if(dataSnapshot.hasChild(currentUserID)){
+                    if(!dataSnapshot.child(currentUserID).hasChild("Address") ||
+                            !dataSnapshot.child(currentUserID).hasChild("Name")){
+
+                        /*
+                         * incomplete account profile
+                         */
+                        new AlertDialog.Builder(view.getContext())
+                                .setTitle(view.getContext().getString(R.string.missing_fields_title))
+                                .setMessage(view.getContext().getString(R.string.missing_fields_body))
+                                .setPositiveButton(view.getContext().getString(R.string.go_to_edit), new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialog, int which) {
+
+                                        /**
+                                         * GO TO EditProfile
+                                         */
+                                        Navigation.findNavController(view).navigate(R.id.action_reservation_id_to_editProfile_id);
+                                    }
+                                })
+                                .show();
+                    }
+                    else
+                        composeView();
+                }
+                else{
+                    FirebaseDatabase.getInstance().getReference("users")
+                            .child(currentUserID).setValue("restaurant");
+                    FirebaseDatabase.getInstance().getReference("restaurants")
+                            .child(currentUserID+"/Email")
+                            .setValue(mAuth.getCurrentUser().getEmail());
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+            }
+        });
+    }
+
+    private void composeView(){
         if(getActivity() != null)
             progressDialog = ProgressDialog.show(getActivity(), "", getString(R.string.loading));
 
         initData();
 
-        lv = view.findViewById(R.id.reservationslv);
         /*fix expandablelistview arrow position */
         lv.setIndicatorBounds(width - GetDipsFromPixel(35), width - GetDipsFromPixel(5));
         listAdapter = new ReservationExpandableListAdapter(getActivity(), reservations, listHash, currentUserID);
@@ -175,9 +246,7 @@ public class ReservationFragment extends Fragment {
             }
         });
 
-        empty_view = (ImageView) view.findViewById(R.id.reservation_empty_view);
         show_empty_view();
-        return view;
     }
 
 

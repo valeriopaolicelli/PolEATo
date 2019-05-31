@@ -2,27 +2,38 @@ package com.mad.poleato.PendingRequests;
 
 
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.media.Image;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.PopupMenu;
+import android.widget.SearchView;
 import android.widget.Toast;
+
+import androidx.navigation.Navigation;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.mad.poleato.Firebase.MyDatabaseReference;
@@ -31,6 +42,8 @@ import com.mad.poleato.Ride.Ride;
 import com.onesignal.OneSignal;
 
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
 
 
 /**
@@ -114,10 +127,69 @@ public class RequestsFragment extends Fragment {
         // Inflate the layout for this fragment
         fragView =  inflater.inflate(R.layout.pending_requests_recycler, container, false);
 
+
         empty_view = (ImageView) fragView.findViewById(R.id.requests_empty_view);
         rv = (RecyclerView) fragView.findViewById(R.id.requests_recyler);
         rv.setHasFixedSize(true);
+        show_empty_view();
 
+        checkUser(fragView);
+
+        return fragView;
+    }
+
+    private void checkUser(final View view) {
+
+        Log.d("Valerio_login", "Email: " + mAuth.getCurrentUser().getEmail());
+        Log.d("Valerio_login", currentUserID);
+        DatabaseReference reference= FirebaseDatabase.getInstance().getReference("deliveryman");
+        referenceMap.put("customers", new MyDatabaseReference(reference));
+
+        referenceMap.get("customers").setValueListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                if(dataSnapshot.hasChild(currentUserID)){
+                    if(!dataSnapshot.child(currentUserID).hasChild("Address") ||
+                            !dataSnapshot.child(currentUserID).hasChild("Name") ||
+                            !dataSnapshot.child(currentUserID).hasChild("Surname")){
+
+                        /*
+                         * incomplete account profile
+                         */
+                        new AlertDialog.Builder(view.getContext())
+                                .setTitle(view.getContext().getString(R.string.missing_fields_title))
+                                .setMessage(view.getContext().getString(R.string.missing_fields_body))
+                                .setPositiveButton(view.getContext().getString(R.string.go_to_edit), new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialog, int which) {
+
+                                        /**
+                                         * GO TO EditProfile
+                                         */
+                                        Navigation.findNavController(view).navigate(R.id.action_pendingReservations_id_to_editProfile_id);
+                                    }
+                                })
+                                .show();
+                    }
+                    else
+                        composeView();
+                }
+                else{
+                    FirebaseDatabase.getInstance().getReference("users")
+                            .child(currentUserID).setValue("deliveryman");
+                    FirebaseDatabase.getInstance().getReference("deliveryman")
+                            .child(currentUserID+"/Email")
+                            .setValue(mAuth.getCurrentUser().getEmail());
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+            }
+        });
+    }
+
+    private void composeView(){
         layoutManager = new LinearLayoutManager(hostActivity);
         rv.setLayoutManager(layoutManager);
 
@@ -129,9 +201,6 @@ public class RequestsFragment extends Fragment {
 
         show_empty_view();
         attachFirebaseListeners();
-
-
-        return fragView;
     }
 
     private void show_empty_view(){
@@ -145,7 +214,6 @@ public class RequestsFragment extends Fragment {
         empty_view.setVisibility(View.GONE);
         rv.setVisibility(View.VISIBLE);
     }
-
 
     private void attachFirebaseListeners(){
 
@@ -293,8 +361,6 @@ public class RequestsFragment extends Fragment {
         });
     }
 
-
-
     private void createRequest(DataSnapshot snap){
 
         String orderID = snap.child("orderID").getValue().toString();
@@ -322,8 +388,6 @@ public class RequestsFragment extends Fragment {
         requestsAdapter.addRequest(r);
 
     }
-
-
 
     @Override
     public void onDestroy() {

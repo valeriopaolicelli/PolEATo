@@ -1,8 +1,10 @@
 package com.mad.poleato.RestaurantSearch;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -40,6 +42,7 @@ import androidx.navigation.Navigation;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -88,6 +91,9 @@ public class RestaurantSearchFragment extends Fragment {
         }
     };
 
+    private String currentUserID;
+    private FirebaseAuth mAuth;
+    private boolean allFields;
 
     //id for the filter fragment
     public static final int FILTER_FRAGMENT = 26;
@@ -111,6 +117,10 @@ public class RestaurantSearchFragment extends Fragment {
 //        setHasOptionsMenu(true);
         super.onCreate(savedInstanceState);
 
+        mAuth = FirebaseAuth.getInstance();
+        FirebaseUser currentUser = mAuth.getCurrentUser();
+        currentUserID = currentUser.getUid();
+        allFields= false;
 
         restaurantMap = new HashMap<>();
         restaurantList = new ArrayList<>();
@@ -118,11 +128,6 @@ public class RestaurantSearchFragment extends Fragment {
         currDisplayedList = new ArrayList<>();
 
         dbReferenceList= new HashMap<>();
-
-        if(getActivity() != null)
-            progressDialog = ProgressDialog.show(getActivity(), "", getString(R.string.loading));
-
-        fillFields();
 
     }
 
@@ -142,12 +147,67 @@ public class RestaurantSearchFragment extends Fragment {
     }
 
     @Override
-    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+    public void onViewCreated(@NonNull final View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-
 
         sv = (SearchView) fragView.findViewById(R.id.searchView);
         sv.setFocusable(false);
+
+        checkUser(view);
+    }
+
+    private void checkUser(final View view) {
+
+        Log.d("Valerio_login", "Email: " + mAuth.getCurrentUser().getEmail());
+        Log.d("Valerio_login", currentUserID);
+        DatabaseReference reference= FirebaseDatabase.getInstance().getReference("customers");
+        dbReferenceList.put("customers", new MyDatabaseReference(reference));
+
+        dbReferenceList.get("customers").setValueListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                if(dataSnapshot.hasChild(currentUserID)){
+                    if(!dataSnapshot.child(currentUserID).hasChild("Address") ||
+                        !dataSnapshot.child(currentUserID).hasChild("Name") ||
+                        !dataSnapshot.child(currentUserID).hasChild("Surname")){
+
+                        /*
+                         * incomplete account profile
+                         */
+                        new AlertDialog.Builder(view.getContext())
+                                .setTitle(view.getContext().getString(R.string.missing_fields_title))
+                                .setMessage(view.getContext().getString(R.string.missing_fields_body))
+                                .setPositiveButton(view.getContext().getString(R.string.go_to_edit), new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialog, int which) {
+
+                                        /**
+                                         * GO TO EditProfile
+                                         */
+                                        Navigation.findNavController(view).navigate(R.id.action_restaurantSearchFragment_id_to_editProfile_id);
+                                    }
+                                })
+                                .show();
+                    }
+                    else
+                        composeView();
+                }
+                else{
+                    FirebaseDatabase.getInstance().getReference("users")
+                            .child(currentUserID).setValue("customer");
+                    FirebaseDatabase.getInstance().getReference("customers")
+                            .child(currentUserID+"/Email")
+                            .setValue(mAuth.getCurrentUser().getEmail());
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+            }
+        });
+    }
+
+    private void composeView(){
         sv.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
 
             int previousLen, currLen;
@@ -250,7 +310,7 @@ public class RestaurantSearchFragment extends Fragment {
                             return true;
                         }
 
-                        if(itemName[1].equals("sortByStar")) {
+                        if (itemName[1].equals("sortByStar")) {
                             Log.d("matte", "SORT: byStar");
                             recyclerAdapter.sortByStar();
                             return true;
@@ -279,12 +339,16 @@ public class RestaurantSearchFragment extends Fragment {
                 FilterFragment filterFrag = new FilterFragment();
                 Bundle bundle = new Bundle();
                 //pass the current checkbox state to the fragment
-                bundle.putSerializable("checkbox_state", (HashSet<String>)typesToFilter);
+                bundle.putSerializable("checkbox_state", (HashSet<String>) typesToFilter);
                 filterFrag.setArguments(bundle);
                 filterFrag.setTargetFragment(f, FILTER_FRAGMENT);
                 filterFrag.show(ft, "filter_fragment");
             }
         });
+
+        if(getActivity() != null)
+            progressDialog = ProgressDialog.show(getActivity(), "", getString(R.string.loading));
+        fillFields();
     }
 
     @Override

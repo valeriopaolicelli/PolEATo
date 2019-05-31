@@ -265,11 +265,12 @@ public class EditProfile extends Fragment {
         dbReferenceList.get("customer").setValueListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                if(dataSnapshot.hasChild("Email"))
+                    editTextFields.get("Email").setText(dataSnapshot.child("Email").getValue().toString());
 
                 if (dataSnapshot.hasChild("Name") &&
                         dataSnapshot.hasChild("Surname") &&
                         dataSnapshot.hasChild("Address") &&
-                        dataSnapshot.hasChild("Email") &&
                         dataSnapshot.hasChild("Phone")) {
                     // it is setted to the first record (restaurant)
                     // when the sign in and log in procedures will be handled, it will be the proper one

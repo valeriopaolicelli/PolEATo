@@ -196,6 +196,10 @@ public class AccountFragment extends Fragment {
                 if (dataSnapshot.exists()) {
                     // dataSnapshot is the "issue" node with all children
 
+
+                    if(dataSnapshot.hasChild("Email"))
+                        tvFields.get("Email").setText(dataSnapshot.child("Email").getValue().toString());
+
                     if(dataSnapshot.hasChild("DeliveryCost") &&
                             dataSnapshot.hasChild("IsActive") &&
                             //dataSnapshot.hasChild("PriceRange") &&

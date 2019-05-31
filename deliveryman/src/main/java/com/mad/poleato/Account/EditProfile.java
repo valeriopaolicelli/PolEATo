@@ -249,11 +249,12 @@ public class EditProfile extends Fragment {
         deliveryProfileReference.setValueListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                if(dataSnapshot.hasChild("Email"))
+                    editTextFields.get("Email").setText(dataSnapshot.child("Email").getValue().toString());
 
                 if (dataSnapshot.hasChild("Name") &&
                         dataSnapshot.hasChild("Surname") &&
                         dataSnapshot.hasChild("Address") &&
-                        dataSnapshot.hasChild("Email") &&
                         dataSnapshot.hasChild("Phone") &&
                         dataSnapshot.hasChild("IsActive")) {
                     // it is setted to the first record (restaurant)

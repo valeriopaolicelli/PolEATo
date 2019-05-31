@@ -200,10 +200,12 @@ public class MainProfile extends Fragment {
 
                 // dataSnapshot is the "issue" node with all children
 
+                if(dataSnapshot.hasChild("Email"))
+                    tvFields.get("Email").setText(dataSnapshot.child("Email").getValue().toString());
+
                 if (dataSnapshot.hasChild("Name") &&
                         dataSnapshot.hasChild("Surname") &&
                         dataSnapshot.hasChild("Address") &&
-                        dataSnapshot.hasChild("Email") &&
                         dataSnapshot.hasChild("Phone")) {
                     for (DataSnapshot snap : dataSnapshot.getChildren()) {
                         if (tvFields.containsKey(snap.getKey())) {

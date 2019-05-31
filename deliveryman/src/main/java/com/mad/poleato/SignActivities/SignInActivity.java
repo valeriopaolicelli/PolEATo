@@ -42,6 +42,7 @@ import com.mad.poleato.NavigatorActivity;
 import com.mad.poleato.R;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 public class SignInActivity extends AppCompatActivity {
@@ -63,7 +64,7 @@ public class SignInActivity extends AppCompatActivity {
     private ProgressBar progress_bar;
     private ConnectionManager connectionManager;
 
-    private List<MyDatabaseReference> dbReferenceList;
+    private HashMap<String, MyDatabaseReference> dbReferenceList;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -114,7 +115,7 @@ public class SignInActivity extends AppCompatActivity {
         //default: show the progressBar only
         show_progress();
 
-        dbReferenceList= new ArrayList<>();
+        dbReferenceList= new HashMap<>();
     }
 
 
@@ -144,10 +145,9 @@ public class SignInActivity extends AppCompatActivity {
         FirebaseUser currentUser = mAuth.getCurrentUser();
         if(currentUser != null) {
             DatabaseReference reference = FirebaseDatabase.getInstance().getReference("users").child(currentUser.getUid());
-            dbReferenceList.add(new MyDatabaseReference(reference));
-            int indexReference= dbReferenceList.size()-1;
+            dbReferenceList.put("user", new MyDatabaseReference(reference));
 
-            dbReferenceList.get(indexReference).setValueListener(new ValueEventListener() {
+            dbReferenceList.get("user").setValueListener(new ValueEventListener() {
                 @Override
                 public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                     if (dataSnapshot.exists())
@@ -168,9 +168,30 @@ public class SignInActivity extends AppCompatActivity {
         else
             show_login_form();
         //check if signed in with Google
-        GoogleSignInAccount account = GoogleSignIn.getLastSignedInAccount(this);
-        if(account != null)
-            firebaseAuthWithGoogle(account);
+        final GoogleSignInAccount account = GoogleSignIn.getLastSignedInAccount(this);
+        if (currentUser != null && account != null){
+            final DatabaseReference reference = FirebaseDatabase.getInstance().getReference("users").child(currentUser.getUid());
+            dbReferenceList.put("user", new MyDatabaseReference(reference));
+
+            dbReferenceList.get("user").setSingleValueListener(new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                    if (dataSnapshot.exists()) {
+                        if (dataSnapshot.getValue().toString().equals("deliveryman"))
+                            firebaseAuthWithGoogle(account);
+                        else {
+                            show_login_form();
+                            FirebaseAuth.getInstance().signOut();
+                        }
+                    }
+                }
+
+                @Override
+                public void onCancelled(@NonNull DatabaseError databaseError) {
+                    Log.d("Valerio", "SignIn customer -> onStart -> onCancelled: " + databaseError.getMessage());
+                }
+            });
+        }
     }
 
     //access to the app
@@ -191,10 +212,9 @@ public class SignInActivity extends AppCompatActivity {
                             Log.d("matte", "signInWithEmail:success");
                             FirebaseUser user = mAuth.getCurrentUser();
                             DatabaseReference reference = FirebaseDatabase.getInstance().getReference("users").child(user.getUid());
-                            dbReferenceList.add(new MyDatabaseReference(reference));
-                            int indexReference= dbReferenceList.size()-1;
+                            dbReferenceList.put("user", new MyDatabaseReference(reference));
 
-                            dbReferenceList.get(indexReference).setValueListener(new ValueEventListener() {
+                            dbReferenceList.get("user").setValueListener(new ValueEventListener() {
                                 @Override
                                 public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                                     if (dataSnapshot.exists())
@@ -317,8 +337,31 @@ public class SignInActivity extends AppCompatActivity {
                         if (task.isSuccessful()) {
                             // Sign in success, update UI with the signed-in user's information
                             Log.d("matte", "signInWithCredential:success");
-                            FirebaseUser user = mAuth.getCurrentUser();
-                            access();
+
+                            final DatabaseReference reference = FirebaseDatabase.getInstance()
+                                    .getReference("users").child(mAuth.getCurrentUser().getUid());
+                            dbReferenceList.put("user", new MyDatabaseReference(reference));
+
+                            dbReferenceList.get("user").setSingleValueListener(new ValueEventListener() {
+                                @Override
+                                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                                    if (dataSnapshot.exists()) {
+                                        if (dataSnapshot.getValue().toString().equals("deliveryman"))
+                                            access();
+                                        else {
+                                            myToast.setText(getApplicationContext().getString(R.string.already_used));
+                                            myToast.show();
+                                            show_login_form();
+                                            FirebaseAuth.getInstance().signOut();
+                                        }
+                                    }
+                                }
+
+                                @Override
+                                public void onCancelled(@NonNull DatabaseError databaseError) {
+                                    Log.d("Valerio", "SignIn deliveryman -> onStart -> onCancelled: " + databaseError.getMessage());
+                                }
+                            });
                         } else {
                             // If sign in fails, display a message to the user.
                             Log.d("matte", "signInWithCredential:failure", task.getException());
@@ -432,8 +475,14 @@ public class SignInActivity extends AppCompatActivity {
     @Override
     public void onDestroy() {
         super.onDestroy();
-        for (int i=0; i < dbReferenceList.size(); i++)
-            dbReferenceList.get(i).removeAllListener();
+        for (MyDatabaseReference my_ref : dbReferenceList.values())
+            my_ref.removeAllListener();
     }
 
+    @Override
+    protected void onStop() {
+        super.onStop();
+        for (MyDatabaseReference my_ref : dbReferenceList.values())
+            my_ref.removeAllListener();
+    }
 }

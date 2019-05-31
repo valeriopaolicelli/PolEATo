@@ -18,6 +18,12 @@
         <action
             android:id="@+id/action_reservation_id_to_mapsFragment_id"
             app:destination="@id/mapsFragment_id" />
+
+        <action
+            android:id="@+id/action_reservation_id_to_editProfile_id"
+            app:destination="@id/editProfile_id"
+            app:popUpTo="@+id/editProfile_id"
+            app:popUpToInclusive="true" />
     </fragment>
 
     <fragment

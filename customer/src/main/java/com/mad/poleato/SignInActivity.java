@@ -161,10 +161,32 @@ public class SignInActivity extends AppCompatActivity {
             });
         } else
             show_login_form();
+
         //check if signed in with Google
-        GoogleSignInAccount account = GoogleSignIn.getLastSignedInAccount(this);
-        if (account != null)
-            firebaseAuthWithGoogle(account);
+        final GoogleSignInAccount account = GoogleSignIn.getLastSignedInAccount(this);
+        if (currentUser != null && account != null){
+            final DatabaseReference reference = FirebaseDatabase.getInstance().getReference("users").child(currentUser.getUid());
+            dbReferenceList.put("user", new MyDatabaseReference(reference));
+
+            dbReferenceList.get("user").setSingleValueListener(new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                    if (dataSnapshot.exists()) {
+                        if (dataSnapshot.getValue().toString().equals("customer"))
+                            firebaseAuthWithGoogle(account);
+                        else {
+                            show_login_form();
+                            FirebaseAuth.getInstance().signOut();
+                        }
+                    }
+                }
+
+                @Override
+                public void onCancelled(@NonNull DatabaseError databaseError) {
+                    Log.d("Valerio", "SignIn customer -> onStart -> onCancelled: " + databaseError.getMessage());
+                }
+            });
+        }
     }
 
     //access to the app
@@ -304,8 +326,31 @@ public class SignInActivity extends AppCompatActivity {
                         if (task.isSuccessful()) {
                             // Sign in success, update UI with the signed-in user's information
                             Log.d("matte", "signInWithCredential:success");
-                            FirebaseUser user = mAuth.getCurrentUser();
-                            access();
+
+                            final DatabaseReference reference = FirebaseDatabase.getInstance()
+                                    .getReference("users").child(mAuth.getCurrentUser().getUid());
+                            dbReferenceList.put("user", new MyDatabaseReference(reference));
+
+                            dbReferenceList.get("user").setSingleValueListener(new ValueEventListener() {
+                                @Override
+                                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                                    if (dataSnapshot.exists()) {
+                                        if (dataSnapshot.getValue().toString().equals("customer"))
+                                            access();
+                                        else {
+                                            myToast.setText(getApplicationContext().getString(R.string.already_used));
+                                            myToast.show();
+                                            show_login_form();
+                                            FirebaseAuth.getInstance().signOut();
+                                        }
+                                    }
+                                }
+
+                                @Override
+                                public void onCancelled(@NonNull DatabaseError databaseError) {
+                                    Log.d("Valerio", "SignIn customer -> onStart -> onCancelled: " + databaseError.getMessage());
+                                }
+                            });
                         } else {
                             // If sign in fails, display a message to the user.
                             Log.d("matte", "signInWithCredential:failure", task.getException());

@@ -150,6 +150,13 @@
     <string name="creation_fail">Creazione account fallita! Devi inserire una mail valida e una password di almeno 6 caratteri</string>
     <string name="title_activity_maps">Mappa</string>
 
+    <!-- Incomplete account, after login with google/facebook -->
+    <string name="missing_fields_title">Profilo account non completo</string>
+    <string name="missing_fields_body">Manca poco, compila il tuo profilo, per usare l\'app!</string>
+    <string name="go_to_edit">Vai al mio profilo</string>
+    <string name="already_used">Email usata già per un altro tipo di account</string>
+
+
     <!-- Address convertion -->
     <string name="no_address">Indirizzo non valido</string>
 

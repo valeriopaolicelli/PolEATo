@@ -24,6 +24,11 @@
             app:popExitAnim="@anim/nav_default_pop_exit_anim"
             app:popUpToInclusive="true">
         </action>
+        <action
+            android:id="@+id/action_pendingReservations_id_to_editProfile_id"
+            app:destination="@id/editProfile_id"
+            app:popUpTo="@+id/editProfile_id"
+            app:popUpToInclusive="true" />
     </fragment>
 
     <fragment

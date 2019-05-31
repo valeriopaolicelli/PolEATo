@@ -103,6 +103,12 @@
     <string name="creation_succ">Account created!</string>
     <string name="creation_fail">Account creation failed! Email must be valid and password composed by at least 6 characters</string>
 
+    <!-- Incomplete account, after login with google/facebook -->
+    <string name="missing_fields_title">Account profile not complete</string>
+    <string name="missing_fields_body">Missing fields in your profile. Complete it to use the application!</string>
+    <string name="go_to_edit">Go to my profile</string>
+    <string name="already_used">Email already used for other kind of profile</string>
+
     <!-- Address conversion -->
     <string name="no_address">Address not valid</string>
 

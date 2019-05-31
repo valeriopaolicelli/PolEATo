@@ -19,6 +19,11 @@
         <action
             android:id="@+id/action_restaurantSearchFragment_id_to_favoriteRestaurantFragment_id"
             app:destination="@id/favoriteRestaurantFragment_id" />
+        <action
+            android:id="@+id/action_restaurantSearchFragment_id_to_editProfile_id"
+            app:destination="@id/editProfile_id"
+            app:popUpTo="@+id/editProfile_id"
+            app:popUpToInclusive="true" />
     </fragment>
 
 

@@ -383,45 +383,48 @@ public class EditProfileFragment extends Fragment implements TimePickerDialog.On
         profileReference.setValueListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                if(dataSnapshot.exists()) {
+                    if (dataSnapshot.hasChild("Email"))
+                        editTextFields.get("Email").setText(dataSnapshot.child("Email").getValue().toString());
 
-                //if not set upload it at the end (set it to 0)
-                if(!dataSnapshot.hasChild("PriceRange"))
-                    priceRangeUninitialized = true;
+                    //if not set upload it at the end (set it to 0)
+                    if (!dataSnapshot.hasChild("PriceRange"))
+                        priceRangeUninitialized = true;
 
-                if(dataSnapshot.hasChild("DeliveryCost") &&
-                        dataSnapshot.hasChild("IsActive") &&
-                        //dataSnapshot.hasChild("PriceRange") &&
-                        dataSnapshot.hasChild("Type") &&
-                        dataSnapshot.child("Type").hasChild("it") &&
-                        dataSnapshot.child("Type").hasChild("en"))
-                {
-                    // it is setted to the first record (restaurant)
-                    // when the sign in and log in procedures will be handled, it will be the proper one
-                    if (dataSnapshot.exists()) {
+                    if (dataSnapshot.hasChild("DeliveryCost") &&
+                            dataSnapshot.hasChild("IsActive") &&
+                            //dataSnapshot.hasChild("PriceRange") &&
+                            dataSnapshot.hasChild("Type") &&
+                            dataSnapshot.child("Type").hasChild("it") &&
+                            dataSnapshot.child("Type").hasChild("en")) {
+                        // it is setted to the first record (restaurant)
+                        // when the sign in and log in procedures will be handled, it will be the proper one
+                        if (dataSnapshot.exists()) {
 
-                        //if already set do not touch it during upload phase
-                        if(dataSnapshot.hasChild("PriceRange"))
-                            priceRangeUninitialized = false;
+                            //if already set do not touch it during upload phase
+                            if (dataSnapshot.hasChild("PriceRange"))
+                                priceRangeUninitialized = false;
 
-                        // dataSnapshot is the "issue" node with all children
-                        for (DataSnapshot snap : dataSnapshot.getChildren()) {
-                            if (editTextFields.containsKey(snap.getKey())) {
-                                if (snap.getKey().equals("DeliveryCost")) {
-                                    editTextFields.get(snap.getKey()).setText(snap.getValue().toString());
-                                } else
-                                    editTextFields.get(snap.getKey()).setText(snap.getValue().toString());
-                            } else if (snap.getKey().equals("Type") && !snap.child(localeShort).getValue().toString().isEmpty()) {
+                            // dataSnapshot is the "issue" node with all children
+                            for (DataSnapshot snap : dataSnapshot.getChildren()) {
+                                if (editTextFields.containsKey(snap.getKey())) {
+                                    if (snap.getKey().equals("DeliveryCost")) {
+                                        editTextFields.get(snap.getKey()).setText(snap.getValue().toString());
+                                    } else
+                                        editTextFields.get(snap.getKey()).setText(snap.getValue().toString());
+                                } else if (snap.getKey().equals("Type") && !snap.child(localeShort).getValue().toString().isEmpty()) {
 
-                                String[] types = snap.child(localeShort).getValue().toString().toLowerCase().split(",(\\s)*");
-                                for (String t : types)
-                                    checkBoxes.get(t).setChecked(true);
-                            } else if (snap.getKey().equals("IsActive")) {
-                                statusSwitch.setChecked((Boolean) snap.getValue());
-                            }
-                        } //for end
+                                    String[] types = snap.child(localeShort).getValue().toString().toLowerCase().split(",(\\s)*");
+                                    for (String t : types)
+                                        checkBoxes.get(t).setChecked(true);
+                                } else if (snap.getKey().equals("IsActive")) {
+                                    statusSwitch.setChecked((Boolean) snap.getValue());
+                                }
+                            } //for end
 
-                    }
-                } //end if
+                        }
+                    } //end if
+                }
             }
 
             @Override
