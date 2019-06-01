@@ -12,8 +12,6 @@ import android.media.ExifInterface;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
-import android.os.Handler;
-import android.os.Message;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -25,7 +23,6 @@ import android.support.v4.content.FileProvider;
 import android.support.v7.widget.PopupMenu;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.util.Base64;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -33,18 +30,13 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
-import android.widget.Spinner;
 import android.widget.Toast;
 
-import androidx.navigation.NavDirections;
 import androidx.navigation.Navigation;
-import androidx.navigation.Navigator;
 
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -166,8 +158,8 @@ public class EditFoodFragment extends DialogFragment {
         /** Inflate the menu; this adds items to the action bar if it is present.*/
         inflater.inflate(R.menu.save_menu, menu);
 
-        /** Button to show map */
-        menu.findItem(R.id.map_id).setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
+        /** Button to save changes */
+        menu.findItem(R.id.save_id).setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
             @Override
             public boolean onMenuItemClick(MenuItem item) {
                 saveChanges();
@@ -434,8 +426,9 @@ public class EditFoodFragment extends DialogFragment {
                             /**
                              * SAVE ON MODEL_VIEW
                              */
-                            model.removeChild(toModifyCategory, toModifyID);
-                            model.insertChild(toModifyCategory, f);
+                            model.updateChild(toModifyCategory, toModifyID, f);
+                            //model.removeChild(toModifyCategory, toModifyID);
+                            //model.insertChild(toModifyCategory, f);
 
                             //set the priceRange for the restaurant after the insertion
                             DatabaseReference reference = FirebaseDatabase.getInstance().getReference()
@@ -478,8 +471,9 @@ public class EditFoodFragment extends DialogFragment {
                         Bitmap bmp = BitmapFactory.decodeResource(getResources(), R.drawable.plate_fork);
                         f.setImg(bmp);
                         //here insert new food even without image
-                        model.removeChild(toModifyCategory, toModifyID);
-                        model.insertChild(toModifyCategory, f);
+                        model.updateChild(toModifyCategory, toModifyID, f);
+                        /*model.removeChild(toModifyCategory, toModifyID);
+                        model.insertChild(toModifyCategory, f)*/
 
                         //set the priceRange for the restaurant after the insertion
                         DatabaseReference reference = FirebaseDatabase.getInstance().getReference()

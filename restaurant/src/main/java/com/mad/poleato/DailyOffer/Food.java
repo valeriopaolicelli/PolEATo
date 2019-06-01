@@ -4,7 +4,7 @@ import android.graphics.Bitmap;
 
 import java.io.Serializable;
 
-public class Food implements Serializable {
+public class Food implements Serializable, Comparable {
 
     private Bitmap img;
     private String id;
@@ -65,5 +65,10 @@ public class Food implements Serializable {
         }else{
             return false;
         }
+    }
+
+    @Override
+    public int compareTo(Object o) {
+        return this.getName().compareTo(((Food)o).getName());
     }
 }

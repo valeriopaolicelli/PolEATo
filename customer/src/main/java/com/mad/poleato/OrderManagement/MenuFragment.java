@@ -124,6 +124,7 @@ public class MenuFragment extends Fragment {
         OneSignal.sendTag("User_ID", currentUserID);
 
         dbReferenceList= new HashMap<>();
+        popularityAverage= 0;
     }
 
     @Nullable
@@ -250,11 +251,13 @@ public class MenuFragment extends Fragment {
                 long sum = 0;
                 long numberOfFood= dataSnapshot.getChildrenCount();
 
-                for(DataSnapshot foodReference : dataSnapshot.getChildren()){
-                    sum += Integer.parseInt(foodReference.child("PopularityCounter").getValue().toString());
-                }
+                if(numberOfFood>0) {
+                    for (DataSnapshot foodReference : dataSnapshot.getChildren()) {
+                        sum += Integer.parseInt(foodReference.child("PopularityCounter").getValue().toString());
+                    }
 
-                popularityAverage= sum/numberOfFood;
+                    popularityAverage = sum / numberOfFood;
+                }
             }
 
             @Override
