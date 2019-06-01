@@ -150,11 +150,12 @@ public class SignInActivity extends AppCompatActivity {
                 @Override
                 public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                     if (dataSnapshot.exists())
-                        if (dataSnapshot.getValue().toString().equals("restaurant"))
-                            if(!alreadyAccessed) {
+                        if (dataSnapshot.getValue().toString().equals("restaurant")) {
+                            if (!alreadyAccessed) {
                                 alreadyAccessed = true;
                                 access();
                             }
+                        }
                         else{
                             FirebaseAuth.getInstance().signOut();
                             show_login_form();
