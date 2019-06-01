@@ -182,10 +182,8 @@ public class AddFoodFragment extends Fragment {
             });
         }
 
-        /** Hide bottomBar for this fragment*/
-        navigation = getActivity().findViewById(R.id.navigation);
-        navigation.setVisibility(View.GONE);
 
+        navigation = getActivity().findViewById(R.id.navigation);
 
         //retrieve the spinnerFood for the category
         spinnerFood = (Spinner) v.findViewById(R.id.spinnerFood);
@@ -245,10 +243,18 @@ public class AddFoodFragment extends Fragment {
     }
 
     @Override
-    public void onDestroy() {
-        super.onDestroy();
+    public void onResume() {
+        super.onResume();
+        /** Hide bottomBar for this fragment*/
+        navigation.setVisibility(View.GONE);
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
         navigation.setVisibility(View.VISIBLE);
     }
+
 
     private void saveChanges(){
 

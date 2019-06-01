@@ -573,23 +573,23 @@ public class ReservationFragment extends Fragment {
         void onCallBack(List<String> customerDetails);
     }
 
-    private void revokeAccess() {
-        // Firebase sign out
-        //mAuth.signOut();
-
-        Log.d("miche", "Logout");
-        FirebaseAuth.getInstance().signOut();
-        // Google revoke access
-        mGoogleSignInClient.revokeAccess();
-
-        OneSignal.setSubscription(false);
-
-        /**
-         *  GO TO LOGIN ****
-         */
-        Navigation.findNavController(view).navigate(R.id.action_reservation_id_to_signInActivity);
-        getActivity().finish();
-    }
+//    private void revokeAccess() {
+//        // Firebase sign out
+//        //mAuth.signOut();
+//
+//        Log.d("miche", "Logout");
+//        FirebaseAuth.getInstance().signOut();
+//        // Google revoke access
+//        mGoogleSignInClient.revokeAccess();
+//
+//        OneSignal.setSubscription(false);
+//
+//        /**
+//         *  GO TO LOGIN ****
+//         */
+//        Navigation.findNavController(view).navigate(R.id.action_reservation_id_to_signInActivity);
+//        getActivity().finish();
+//    }
 
     @Override
     public void onDestroy() {

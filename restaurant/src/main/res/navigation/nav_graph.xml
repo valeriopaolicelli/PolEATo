@@ -11,11 +11,6 @@
         android:label="@string/title_actionbar_reservation"
         tools:layout="@layout/reservation_frag_layout" >
         <action
-            android:id="@+id/action_reservation_id_to_signInActivity"
-            app:destination="@id/signInActivity"
-            app:popUpTo="@+id/signInActivity"
-            app:popUpToInclusive="true" />
-        <action
             android:id="@+id/action_reservation_id_to_mapsFragment_id"
             app:destination="@id/mapsFragment_id" />
 
@@ -31,13 +26,7 @@
         android:name="com.mad.poleato.Reservation.ReservationsHistory.HistoryFragment"
         android:label="@string/title_actionbar_history"
         tools:layout="@layout/history_reservation_layout"
-        >
-        <action
-            android:id="@+id/action_history_id_to_signInActivity"
-            app:destination="@id/signInActivity"
-            app:popUpTo="@+id/signInActivity"
-            app:popUpToInclusive="true" />
-    </fragment>
+        />
 
     <fragment
         android:id="@+id/daily_offer_id"
@@ -54,11 +43,6 @@
             app:destination="@id/editFoodFragment_id"
             app:enterAnim="@anim/fui_slide_in_right"
             app:popExitAnim="@anim/nav_default_pop_exit_anim" />
-        <action
-            android:id="@+id/action_daily_offer_id_to_signInActivity"
-            app:destination="@id/signInActivity"
-            app:popUpTo="@+id/signInActivity"
-            app:popUpToInclusive="true" />
     </fragment>
 
     <fragment
@@ -92,11 +76,6 @@
         android:name="com.mad.poleato.AboutUs.AboutUsFragment"
         android:label="@string/title_actionbar_deliveryStatistic"
         tools:layout="@layout/fragment_about_us" >
-        <action
-            android:id="@+id/action_aboutus_id_to_signInActivity"
-            app:destination="@id/signInActivity"
-            app:popUpTo="@+id/signInActivity"
-            app:popUpToInclusive="true" />
 
         <action
             android:id="@+id/action_aboutus_id_to_reviews_id"
@@ -130,11 +109,6 @@
             app:destination="@id/editProfile_id"
             app:enterAnim="@anim/fui_slide_in_right"
             app:popExitAnim="@anim/nav_default_pop_exit_anim"/>
-        <action
-            android:id="@+id/action_account_id_to_signInActivity"
-            app:destination="@id/signInActivity"
-            app:popUpTo="@+id/signInActivity"
-            app:popUpToInclusive="true" />
     </fragment>
 
     <fragment
@@ -174,6 +148,9 @@
             app:argType="com.mad.poleato.Reservation.Reservation"
             app:nullable="true" />
     </fragment>
+    <action
+        android:id="@+id/action_global_signInActivity"
+        app:destination="@id/signInActivity" />
 
 
 </navigation>

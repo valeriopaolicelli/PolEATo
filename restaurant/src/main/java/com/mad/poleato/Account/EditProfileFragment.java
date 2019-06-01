@@ -297,9 +297,7 @@ public class EditProfileFragment extends Fragment implements TimePickerDialog.On
             reNewPass.setVisibility(View.GONE);
         }
 
-        /** Hide bottomBar for this fragment*/
         navigation = getActivity().findViewById(R.id.navigation);
-        navigation.setVisibility(View.GONE);
 
         //set the listener for all the checkbox
         CheckListener checkListener = new CheckListener();
@@ -405,6 +403,13 @@ public class EditProfileFragment extends Fragment implements TimePickerDialog.On
         handleButton();
         buttonListener();
         handleSwitch();
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        /** Hide bottomBar for this fragment*/
+        navigation.setVisibility(View.GONE);
     }
 
     private void fillFields(){
@@ -1278,12 +1283,6 @@ public class EditProfileFragment extends Fragment implements TimePickerDialog.On
                     })
                     .show();
         }
-    }
-
-    @Override
-    public void onResume() {
-        super.onResume();
-        navigation.setVisibility(View.GONE);
     }
 
     @Override

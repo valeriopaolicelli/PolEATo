@@ -73,7 +73,6 @@ import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
-import com.mad.poleato.AuthenticatorC.Authenticator;
 import com.mad.poleato.MyDatabaseReference;
 import com.mad.poleato.R;
 import com.onesignal.OneSignal;
@@ -186,10 +185,6 @@ public class EditProfile extends Fragment {
                              Bundle savedInstanceState) {
         v = inflater.inflate(R.layout.fragment_edit_profile, container, false);
 
-        /** Logout a priori if access is revoked */
-        if(currentUserID == null)
-            Authenticator.revokeAccess(Objects.requireNonNull(getActivity()), v);
-
         editTextFields.put("Name",(EditText) v.findViewById(R.id.editTextName));
         editTextFields.put("Surname",(EditText) v.findViewById(R.id.editTextSurname));
         editTextFields.put("Address",(EditText) v.findViewById(R.id.editTextAddress));
@@ -248,11 +243,6 @@ public class EditProfile extends Fragment {
         });
 
 
-        /** Hide bottomBar for this fragment*/
-        navigation = getActivity().findViewById(R.id.navigation);
-        navigation.setVisibility(View.GONE);
-
-
         profileImage = v.findViewById(R.id.profile_image);
         change_im = v.findViewById(R.id.change_im);
 
@@ -298,6 +288,13 @@ public class EditProfile extends Fragment {
         super.onActivityCreated(savedInstanceState);
         getActivity().getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE);
     }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        navigation.setVisibility(View.GONE);
+    }
+
 
     private void fillFields(){
 
@@ -964,12 +961,6 @@ public class EditProfile extends Fragment {
         public void onClick(View v) {
             clearText(v);
         }
-    }
-
-    @Override
-    public void onResume() {
-        super.onResume();
-        navigation.setVisibility(View.GONE);
     }
 
     @Override

@@ -92,15 +92,6 @@ public class AccountFragment extends Fragment {
         FirebaseUser currentUser = mAuth.getCurrentUser();
         currentUserID = currentUser.getUid();
 
-        /** GoogleSignInOptions */
-        GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
-                .requestIdToken(getString(R.string.default_web_client_id))
-                .requestEmail()
-                .build();
-
-        /** Build a GoogleSignInClient with the options specified by gso. */
-        mGoogleSignInClient = GoogleSignIn.getClient(getActivity(), gso);
-
         OneSignal.startInit(getContext())
                 .inFocusDisplaying(OneSignal.OSInFocusDisplayOption.Notification)
                 .unsubscribeWhenNotificationsAreDisabled(true)
@@ -276,9 +267,20 @@ public class AccountFragment extends Fragment {
 
     }
 
-    private void revokeAccess() {
+
+    public void revokeAccess() {
         // Firebase sign out
         //mAuth.signOut();
+        GoogleSignInClient mGoogleSignInClient;
+
+        /** GoogleSignInOptions */
+        GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+                .requestIdToken(getActivity().getString(R.string.default_web_client_id))
+                .requestEmail()
+                .build();
+
+        /** Build a GoogleSignInClient with the options specified by gso. */
+        mGoogleSignInClient = GoogleSignIn.getClient(getActivity(), gso);
 
         Log.d("miche", "Logout");
         FirebaseAuth.getInstance().signOut();
@@ -290,7 +292,9 @@ public class AccountFragment extends Fragment {
         /**
          *  GO TO LOGIN ****
          */
-        Navigation.findNavController(view).navigate(R.id.action_account_id_to_signInActivity);
+//        Navigation.findNavController(view).navigate(R.id.action_mainProfile_id_to_signInActivity);
+//        getActivity().finish();
+        Navigation.findNavController(view).navigate(R.id.action_global_signInActivity);
         getActivity().finish();
     }
 

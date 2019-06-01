@@ -16,11 +16,6 @@
         android:label="@string/title_actionbar_restaurantSearch"
         tools:layout="@layout/restaurant_recyclerview" >
         <action
-            android:id="@+id/action_restaurantSearchFragment_id_to_signInActivity"
-            app:destination="@id/signInActivity"
-            app:popUpTo="@+id/signInActivity"
-            app:popUpToInclusive="true" />
-        <action
             android:id="@+id/action_restaurantSearchFragment_id_to_favoriteRestaurantFragment_id"
             app:destination="@id/favoriteRestaurantFragment_id" />
         <action
@@ -35,13 +30,7 @@
         android:id="@+id/favoriteRestaurantFragment_id"
         android:name="com.mad.poleato.FavoriteRestaurants.FavoriteRestaurantFragment"
         android:label="@string/favorite_list_button"
-        tools:layout="@layout/favorite_restaurant_recyclerview" >
-        <action
-            android:id="@+id/action_restaurantSearchFragment_id_to_signInActivity"
-            app:destination="@id/signInActivity"
-            app:popUpTo="@+id/signInActivity"
-            app:popUpToInclusive="true" />
-    </fragment>
+        tools:layout="@layout/favorite_restaurant_recyclerview" />
 
 
     <fragment
@@ -49,11 +38,6 @@
         android:name="com.mad.poleato.History.Holder_history"
         android:label="@string/title_actionbar_historyOrder"
         tools:layout="@layout/fragment_holder_history" >
-        <action
-            android:id="@+id/action_holder_history_id_to_signInActivity"
-            app:destination="@id/signInActivity"
-            app:popUpTo="@+id/signInActivity"
-            app:popUpToInclusive="true" />
         <action
             android:id="@+id/action_holder_history_id_to_ratingFragment"
             app:destination="@id/rating_fragment_id"
@@ -87,11 +71,6 @@
         android:name="com.mad.poleato.MyReviews.MyReviewsFragment"
         android:label="@string/title_actionbar_myReviews"
         tools:layout="@layout/fragment_my_reviews" >
-        <action
-            android:id="@+id/action_myReviewsFragment_id_to_signInActivity"
-            app:destination="@id/signInActivity"
-            app:popUpTo="@+id/signInActivity"
-            app:popUpToInclusive="true" />
         <action
             android:id="@+id/action_myReviewsFragment_id_to_restaurantSearchFragment_id"
             app:destination="@id/restaurantSearchFragment_id"

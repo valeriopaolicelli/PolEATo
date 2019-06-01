@@ -127,9 +127,7 @@ public class RestaurantReviewsFragment extends Fragment {
         fragView = inflater.inflate(R.layout.restaurantreviews_fragment_layout, container, false);
         // Inflate the layout for this fragment
 
-        /** Hide bottomBar for this fragment*/
         navigation = getActivity().findViewById(R.id.navigation);
-        navigation.setVisibility(View.GONE);
 
         return fragView;
     }
@@ -163,6 +161,13 @@ public class RestaurantReviewsFragment extends Fragment {
             }
         });
 
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        /** Hide bottomBar for this fragment*/
+        navigation.setVisibility(View.GONE);
     }
 
     public void fillFields(){
@@ -344,6 +349,9 @@ public class RestaurantReviewsFragment extends Fragment {
     @Override
     public void onStop() {
         super.onStop();
+
+        navigation.setVisibility(View.VISIBLE);
+
         for(MyDatabaseReference my_ref : dbReferenceList.values())
             my_ref.removeAllListener();
     }
@@ -351,8 +359,6 @@ public class RestaurantReviewsFragment extends Fragment {
     @Override
     public void onDestroy() {
         super.onDestroy();
-
-        navigation.setVisibility(View.VISIBLE);
 
         for(MyDatabaseReference my_ref : dbReferenceList.values())
             my_ref.removeAllListener();

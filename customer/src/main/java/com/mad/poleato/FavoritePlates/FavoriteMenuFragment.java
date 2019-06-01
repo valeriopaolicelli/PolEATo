@@ -31,7 +31,6 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
-import com.mad.poleato.AuthenticatorC.Authenticator;
 import com.mad.poleato.Classes.Food;
 import com.mad.poleato.Interface;
 import com.mad.poleato.MyDatabaseReference;
@@ -134,10 +133,6 @@ public class FavoriteMenuFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
 
         fragView = inflater.inflate(R.layout.favorite_plate_menu_fragment_layout,container,false );
-
-        /** Logout a priori if access is revoked */
-        if(currentUserID == null)
-            Authenticator.revokeAccess(Objects.requireNonNull(getActivity()), fragView);
 
         //get the listview
         expListView = (ExpandableListView) fragView.findViewById(R.id.menuList);

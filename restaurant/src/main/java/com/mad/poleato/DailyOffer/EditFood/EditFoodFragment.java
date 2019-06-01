@@ -183,9 +183,7 @@ public class EditFoodFragment extends DialogFragment {
                              @Nullable Bundle savedInstanceState) {
         v = inflater.inflate(R.layout.edit_food_fragment, container, false);
 
-        /** Hide bottomBar for this fragment*/
         navigation = getActivity().findViewById(R.id.navigation);
-        navigation.setVisibility(View.GONE);
 
         //collects the editText
         editTextFields = new HashMap<>();
@@ -249,6 +247,12 @@ public class EditFoodFragment extends DialogFragment {
         buttonListener();
     }
 
+    @Override
+    public void onResume() {
+        super.onResume();
+        /** Hide bottomBar for this fragment*/
+        navigation.setVisibility(View.GONE);
+    }
 
     private void fillFields(){
 
@@ -788,8 +792,8 @@ public class EditFoodFragment extends DialogFragment {
     }
 
     @Override
-    public void onDestroy() {
-        super.onDestroy();
+    public void onStop() {
+        super.onStop();
 
         navigation.setVisibility(View.VISIBLE);
 
@@ -797,8 +801,11 @@ public class EditFoodFragment extends DialogFragment {
     }
 
     @Override
-    public void onStop() {
-        super.onStop();
+    public void onDestroy() {
+        super.onDestroy();
+
         foodReference.removeAllListener();
     }
+
+
 }
