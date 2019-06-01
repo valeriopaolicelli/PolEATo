@@ -36,6 +36,7 @@ import com.mad.poleato.View.ViewModel.MyViewModel;
 import com.onesignal.OneSignal;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 
@@ -135,6 +136,12 @@ public class DailyOfferFragment extends Fragment {
         });
     }
 
+    /*@Override
+    public void setUserVisibleHint(boolean isVisibleToUser) {
+        super.setUserVisibleHint(isVisibleToUser);
+        if(isVisibleToUser)
+            listAdapter.notifyDataSetChanged();
+    }*/
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -198,4 +205,15 @@ public class DailyOfferFragment extends Fragment {
         return (int) (pixels * scale + 0.5f);
     }
 
+    @Override
+    public void onStop() {
+        super.onStop();
+        model.detachListeners();
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        model.detachListeners();
+    }
 }

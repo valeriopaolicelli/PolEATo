@@ -12,8 +12,6 @@ import android.media.ExifInterface;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
-import android.os.Handler;
-import android.os.Message;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -25,7 +23,6 @@ import android.support.v4.content.FileProvider;
 import android.support.v7.widget.PopupMenu;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.util.Base64;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -33,18 +30,13 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
-import android.widget.Spinner;
 import android.widget.Toast;
 
-import androidx.navigation.NavDirections;
 import androidx.navigation.Navigation;
-import androidx.navigation.Navigator;
 
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -58,11 +50,9 @@ import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
-import com.mad.poleato.DailyOffer.DailyOfferFragmentDirections;
 import com.mad.poleato.DailyOffer.DishCategoryTranslator;
 import com.mad.poleato.DailyOffer.Food;
 import com.mad.poleato.MyDatabaseReference;
-import com.mad.poleato.NavigatorActivity;
 import com.mad.poleato.R;
 import com.mad.poleato.View.ViewModel.MyViewModel;
 import com.onesignal.OneSignal;
@@ -72,12 +62,9 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-import java.util.TreeMap;
 
 
 
@@ -430,8 +417,9 @@ public class EditFoodFragment extends DialogFragment {
                             /**
                              * SAVE ON MODEL_VIEW
                              */
-                            model.removeChild(toModifyCategory, toModifyID);
-                            model.insertChild(toModifyCategory, f);
+                            model.updateChild(toModifyCategory, toModifyID, f);
+                            //model.removeChild(toModifyCategory, toModifyID);
+                            //model.insertChild(toModifyCategory, f);
 
                             //set the priceRange for the restaurant after the insertion
                             DatabaseReference reference = FirebaseDatabase.getInstance().getReference()
@@ -474,8 +462,9 @@ public class EditFoodFragment extends DialogFragment {
                         Bitmap bmp = BitmapFactory.decodeResource(getResources(), R.drawable.plate_fork);
                         f.setImg(bmp);
                         //here insert new food even without image
-                        model.removeChild(toModifyCategory, toModifyID);
-                        model.insertChild(toModifyCategory, f);
+                        model.updateChild(toModifyCategory, toModifyID, f);
+                        /*model.removeChild(toModifyCategory, toModifyID);
+                        model.insertChild(toModifyCategory, f)*/
 
                         //set the priceRange for the restaurant after the insertion
                         DatabaseReference reference = FirebaseDatabase.getInstance().getReference()
