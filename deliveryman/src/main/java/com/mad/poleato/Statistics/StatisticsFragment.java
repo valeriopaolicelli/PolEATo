@@ -219,7 +219,7 @@ public class StatisticsFragment extends Fragment {
 
         // Create an ArrayAdapter using the string array and a default spinner layout
         ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(hostActivity,
-                                                    R.array.chart_array, android.R.layout.simple_spinner_item);
+                                                    R.array.chart_array, android.R.layout.simple_spinner_dropdown_item);
         // Specify the layout to use when the list of choices appears
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         // Apply the adapter to the spinner
@@ -501,8 +501,8 @@ public class StatisticsFragment extends Fragment {
 
         //to remove negative values on y axis
         yAxis.setAxisMinimum(0);
-        yAxis.setAxisMaximum(1500);
-        yAxis.setLabelCount(9);
+        yAxis.setAxisMaximum(1000);
+        yAxis.setLabelCount(7);
         yAxis.setGranularity(250f);
 
         monthlyChart.setScaleEnabled(false);
