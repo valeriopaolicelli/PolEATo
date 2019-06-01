@@ -133,7 +133,6 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
 
         /** three dots vertical menu */
         ImageButton settingsButton = convertView.findViewById(R.id.cardSettings);
-
         final View finalConvertView = convertView;
         settingsButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -143,6 +142,7 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
                 MenuInflater inflater = popup.getMenuInflater();
                 inflater.inflate(R.menu.popup_cardview, popup.getMenu());
                 popup.show();
+
                 Menu itemList = popup.getMenu();
 
                 MenuItem modify = itemList.getItem(0);
