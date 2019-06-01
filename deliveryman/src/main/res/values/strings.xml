@@ -148,4 +148,24 @@
     <string name="alert_is_active">You must be active to start this ride</string>
     <string name="turn_on_status">Would you switch to active your status and start this ride?</string>
 
+
+    <!-- Chart types array -->
+    <string-array name="chart_array">
+        <item>Daily</item>
+        <item>Monthly</item>
+    </string-array>
+
+    <string name="jan">Jan</string>
+    <string name="feb">Feb</string>
+    <string name="mar">Mar</string>
+    <string name="apr">Apr</string>
+    <string name="may">May</string>
+    <string name="jun">Jun</string>
+    <string name="jul">Jul</string>
+    <string name="aug">Aug</string>
+    <string name="sep">Sep</string>
+    <string name="oct">Oct</string>
+    <string name="nov">Nov</string>
+    <string name="dec">Dec</string>
+
 </resources>

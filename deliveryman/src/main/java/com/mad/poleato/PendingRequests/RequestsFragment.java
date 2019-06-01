@@ -181,29 +181,6 @@ public class RequestsFragment extends Fragment {
             }
         });
 
-        /*referenceMap.put("busy", new MyDatabaseReference(FirebaseDatabase.getInstance().getReference("deliveryman")
-                                                                .child(currentUserID+"/Busy")));
-        referenceMap.get("busy").setValueListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-
-                if(dataSnapshot.exists()){
-                    Boolean busy =  (Boolean) dataSnapshot.getValue();
-                    requestsAdapter.setBusy(busy);
-                }
-                else{
-                    Log.d("matte", "[ERROR] Busy value not found on DB!!");
-                    myToast.setText("ERROR WITH BUSY VALUE FB");
-                    myToast.show();
-                }
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
-
-            }
-        });
-*/
         //listen for requests list
         referenceMap.put("requests", new MyDatabaseReference(FirebaseDatabase.getInstance().getReference("deliveryman")
                                                                     .child(currentUserID+"/requests")));
