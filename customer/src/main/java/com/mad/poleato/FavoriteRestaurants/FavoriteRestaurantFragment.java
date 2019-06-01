@@ -165,7 +165,6 @@ public class FavoriteRestaurantFragment extends Fragment {
          *         Thus it notifies the end of the children
          */
         dbReferenceList.put("favorite", new MyDatabaseReference(dbReference));
-        final int indexReference= dbReferenceList.size()-1;
 
         dbReferenceList.get("favorite").setValueListener(new ValueEventListener() {
 

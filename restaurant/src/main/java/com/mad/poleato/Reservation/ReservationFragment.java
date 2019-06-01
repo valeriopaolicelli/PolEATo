@@ -196,13 +196,20 @@ public class ReservationFragment extends Fragment {
         DatabaseReference reference= FirebaseDatabase.getInstance().getReference("restaurants");
         dbReferenceList.put("restaurants", new MyDatabaseReference(reference));
 
-        dbReferenceList.get("restaurants").setValueListener(new ValueEventListener() {
+        dbReferenceList.get("restaurants").setSingleValueListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 if(dataSnapshot.hasChild(currentUserID)){
-                    if(!dataSnapshot.child(currentUserID).hasChild("Address") ||
-                            !dataSnapshot.child(currentUserID).hasChild("Name")){
-
+                    if(dataSnapshot.child(currentUserID).hasChild("Address") &&
+                            dataSnapshot.child(currentUserID).hasChild("Name")&&
+                            dataSnapshot.child(currentUserID).hasChild("Coordinates")&&
+                            dataSnapshot.child(currentUserID).hasChild("DeliveryCost")&&
+                            dataSnapshot.child(currentUserID).hasChild("Email")&&
+                            dataSnapshot.child(currentUserID).hasChild("IsActive")&&
+                            dataSnapshot.child(currentUserID).hasChild("Phone")&&
+                            dataSnapshot.child(currentUserID).hasChild("photoUrl"))
+                        composeView();
+                    else{
                         /*
                          * incomplete account profile
                          */
@@ -232,11 +239,9 @@ public class ReservationFragment extends Fragment {
                                                 /** logout */
                                                 revokeAccess();
                                             }
-                                })
+                                        })
                                 .show();
                     }
-                    else
-                        composeView();
                 }
                 else{
                     FirebaseDatabase.getInstance().getReference("users")
@@ -575,16 +580,17 @@ public class ReservationFragment extends Fragment {
         super.onSaveInstanceState(outState);
         ArrayList<String> statusPersistence = new ArrayList<>();
         ArrayList<String> textButtonPersistence = new ArrayList<>();
-
-        for (int i = 0; i < listAdapter.getGroupCount(); i++) {
-            View v = listAdapter.getGroupView(i, false, null, lv);
-            TextView status = v.findViewById(R.id.tvStatusField);
-            Button button = v.findViewById(R.id.myButton);
-            statusPersistence.add(i, status.getText().toString());
-            textButtonPersistence.add(i, button.getText().toString());
+        if(listAdapter != null) {
+            for (int i = 0; i < listAdapter.getGroupCount(); i++) {
+                View v = listAdapter.getGroupView(i, false, null, lv);
+                TextView status = v.findViewById(R.id.tvStatusField);
+                Button button = v.findViewById(R.id.myButton);
+                statusPersistence.add(i, status.getText().toString());
+                textButtonPersistence.add(i, button.getText().toString());
+            }
+            outState.putStringArrayList("Status_Persistence", statusPersistence);
+            outState.putStringArrayList("Button_Text_Persistence", textButtonPersistence);
         }
-        outState.putStringArrayList("Status_Persistence", statusPersistence);
-        outState.putStringArrayList("Button_Text_Persistence", textButtonPersistence);
     }
 
     @Override

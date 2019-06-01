@@ -158,14 +158,20 @@ public class RequestsFragment extends Fragment {
         DatabaseReference reference= FirebaseDatabase.getInstance().getReference("deliveryman");
         referenceMap.put("deliveryman", new MyDatabaseReference(reference));
 
-        referenceMap.get("deliveryman").setValueListener(new ValueEventListener() {
+        referenceMap.get("deliveryman").setSingleValueListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 if(dataSnapshot.hasChild(currentUserID)){
-                    if(!dataSnapshot.child(currentUserID).hasChild("Address") ||
-                            !dataSnapshot.child(currentUserID).hasChild("Name") ||
-                            !dataSnapshot.child(currentUserID).hasChild("Surname")){
-
+                    if(dataSnapshot.child(currentUserID).hasChild("Address") &&
+                            dataSnapshot.child(currentUserID).hasChild("Name") &&
+                            dataSnapshot.child(currentUserID).hasChild("Surname") &&
+                            dataSnapshot.child(currentUserID).hasChild("Phone") &&
+                            dataSnapshot.child(currentUserID).hasChild("IsActive") &&
+                            dataSnapshot.child(currentUserID).hasChild("Email") &&
+                            dataSnapshot.child(currentUserID).hasChild("photoUrl") &&
+                            dataSnapshot.child(currentUserID).hasChild("Busy"))
+                        composeView();
+                    else{
                         /*
                          * incomplete account profile
                          */
@@ -184,22 +190,20 @@ public class RequestsFragment extends Fragment {
                                     }
                                 })
                                 .setNegativeButton(view.getContext().getString(R.string.logout),
-                                new DialogInterface.OnClickListener() {
-                                    @Override
-                                    public void onClick(DialogInterface dialog, int which) {
-                                        for(MyDatabaseReference my_ref : referenceMap.values())
-                                            my_ref.removeAllListener();
-                                        //logout
+                                        new DialogInterface.OnClickListener() {
+                                            @Override
+                                            public void onClick(DialogInterface dialog, int which) {
+                                                for(MyDatabaseReference my_ref : referenceMap.values())
+                                                    my_ref.removeAllListener();
+                                                //logout
 
-                                        //TODO miche logout
-                                        /** logout */
-                                        revokeAccess();
-                                    }
-                                })
+                                                //TODO miche logout
+                                                /** logout */
+                                                revokeAccess();
+                                            }
+                                        })
                                 .show();
                     }
-                    else
-                        composeView();
                 }
                 else{
                     FirebaseDatabase.getInstance().getReference("users")
@@ -207,6 +211,9 @@ public class RequestsFragment extends Fragment {
                     FirebaseDatabase.getInstance().getReference("deliveryman")
                             .child(currentUserID+"/Email")
                             .setValue(mAuth.getCurrentUser().getEmail());
+                    FirebaseDatabase.getInstance().getReference("deliveryman")
+                            .child(currentUserID+"/Busy")
+                            .setValue(false);
                 }
             }
 

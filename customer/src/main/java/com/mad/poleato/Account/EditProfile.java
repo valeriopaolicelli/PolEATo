@@ -25,6 +25,8 @@ import android.support.annotation.Nullable;
 import android.support.constraint.ConstraintLayout;
 import android.support.design.widget.BottomNavigationView;
 import android.support.design.widget.FloatingActionButton;
+import android.support.design.widget.TextInputEditText;
+import android.support.design.widget.TextInputLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.content.FileProvider;
@@ -43,6 +45,7 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.ScrollView;
 import android.widget.Switch;
 import android.widget.TextView;
@@ -51,6 +54,9 @@ import android.widget.Toast;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 
+import com.google.android.gms.auth.api.signin.GoogleSignIn;
+import com.google.android.gms.auth.api.signin.GoogleSignInClient;
+import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -93,6 +99,8 @@ public class EditProfile extends Fragment {
 
     private Map<String, ImageButton> imageButtons;
     private Map<String, EditText> editTextFields;
+    private TextInputLayout oldPass, newPass, reNewPass;
+    private ImageView iconPass;
     private DatabaseReference reference;
     private Toast myToast;
 
@@ -120,6 +128,7 @@ public class EditProfile extends Fragment {
 
     private String currentUserID;
     private FirebaseAuth mAuth;
+    private GoogleSignInClient mGoogleSignInClient;
 
     private double latitude;
     private double longitude;
@@ -138,6 +147,15 @@ public class EditProfile extends Fragment {
         mAuth = FirebaseAuth.getInstance();
         FirebaseUser currentUser = mAuth.getCurrentUser();
         currentUserID = currentUser.getUid();
+
+        /** GoogleSignInOptions */
+        GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+                .requestIdToken(getString(R.string.default_web_client_id))
+                .requestEmail()
+                .build();
+
+        /** Build a GoogleSignInClient with the options specified by gso. */
+        mGoogleSignInClient = GoogleSignIn.getClient(getActivity(), gso);
 
         // OneSignal is used to send notifications between applications
 
@@ -185,11 +203,30 @@ public class EditProfile extends Fragment {
         imageButtons.put("NewPassword", (ImageButton) v.findViewById(R.id.cancel_newpass));
         imageButtons.put("ReNewPassword", (ImageButton) v.findViewById(R.id.cancel_renewpass));
 
+        iconPass= (ImageView) v.findViewById(R.id.password_icon);
         switchPass = (Switch) v.findViewById(R.id.switchPass);
+        oldPass= (TextInputLayout) v.findViewById(R.id.input_layout_old_password);
+        newPass= (TextInputLayout) v.findViewById(R.id.input_layout_new_password);
+        reNewPass= (TextInputLayout) v.findViewById(R.id.input_layout_re_new_password);
+
         switchPass.setChecked(false);
         editTextFields.get("OldPassword").setEnabled(false);
         editTextFields.get("NewPassword").setEnabled(false);
         editTextFields.get("ReNewPassword").setEnabled(false);
+
+        if(GoogleSignIn.getLastSignedInAccount(v.getContext()) != null){
+            iconPass.setVisibility(View.GONE);
+            switchPass.setVisibility(View.GONE);
+            editTextFields.get("OldPassword").setVisibility(View.GONE);
+            editTextFields.get("NewPassword").setVisibility(View.GONE);
+            editTextFields.get("ReNewPassword").setVisibility(View.GONE);
+            imageButtons.get("OldPassword").setVisibility(View.GONE);
+            imageButtons.get("NewPassword").setVisibility(View.GONE);
+            imageButtons.get("ReNewPassword").setVisibility(View.GONE);
+            oldPass.setVisibility(View.GONE);
+            newPass.setVisibility(View.GONE);
+            reNewPass.setVisibility(View.GONE);
+        }
 
         //set listener for all the X button to clear the text
         ClearListener clearListener = new ClearListener();
@@ -924,10 +961,14 @@ public class EditProfile extends Fragment {
     }
 
     @Override
+    public void onResume() {
+        super.onResume();
+        navigation.setVisibility(View.GONE);
+    }
+
+    @Override
     public void onDestroy() {
         super.onDestroy();
-
-        navigation.setVisibility(View.VISIBLE);
 
         for(MyDatabaseReference ref : dbReferenceList.values())
             ref.removeAllListener();
@@ -936,6 +977,9 @@ public class EditProfile extends Fragment {
     @Override
     public void onStop() {
         super.onStop();
+
+        navigation.setVisibility(View.VISIBLE);
+
         for (MyDatabaseReference my_ref : dbReferenceList.values())
             my_ref.removeAllListener();
     }
