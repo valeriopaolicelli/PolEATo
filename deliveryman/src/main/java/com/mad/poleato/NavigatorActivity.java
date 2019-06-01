@@ -7,6 +7,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.pm.PackageManager;
+import android.location.LocationManager;
 import android.net.ConnectivityManager;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -39,8 +40,10 @@ public class NavigatorActivity extends AppCompatActivity {
 
     private String currentUserID;
     private FirebaseAuth mAuth;
+    private AlertDialog.Builder myBuilder;
+    private AlertDialog myAlert;
     private ConnectionManager connectionManager;
-
+    private LocationManager manager;
     //    private BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener
 //            = new BottomNavigationView.OnNavigationItemSelectedListener() {
 //
@@ -60,6 +63,9 @@ public class NavigatorActivity extends AppCompatActivity {
 //            return false;
 //        }
 //    };
+    /**
+     * Broadcast receiver to check if network connection is turned off
+     */
     BroadcastReceiver networkReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
@@ -69,11 +75,35 @@ public class NavigatorActivity extends AppCompatActivity {
         }
     };
 
+    /**
+     * Broadcast receiver to check if gps is turned off
+     */
+    BroadcastReceiver gpsLocationReceiver = new BroadcastReceiver(){
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            if (intent.getAction().matches("android.location.PROVIDERS_CHANGED")) {
+                if ( (!manager.isProviderEnabled( LocationManager.GPS_PROVIDER )) && (!manager.isProviderEnabled(LocationManager.NETWORK_PROVIDER)) ) {
+                    buildAlertMessageNoGps();
+                }
+                else {
+                    if (myBuilder != null && myAlert != null) {
+                        myAlert.dismiss();
+                        myBuilder = null;
+                        myAlert = null;
+                    }
+                }
+        }
+        }
+    };
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.navigator_layout);
         connectionManager = new ConnectionManager();
+
+         manager = (LocationManager) getSystemService( Context.LOCATION_SERVICE );
 
         mAuth = FirebaseAuth.getInstance();
         FirebaseUser currentUser = mAuth.getCurrentUser();
@@ -122,7 +152,39 @@ public class NavigatorActivity extends AppCompatActivity {
 
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        //Check if gps is enabled
+        if ( (!manager.isProviderEnabled( LocationManager.GPS_PROVIDER )) && (!manager.isProviderEnabled(LocationManager.NETWORK_PROVIDER)) ) {
+            buildAlertMessageNoGps();
+        }
+    }
 
+    private void buildAlertMessageNoGps() {
+        if(myBuilder == null) {
+            myBuilder = new AlertDialog.Builder(this);
+
+            myBuilder.setMessage("To have in-app road directions you must enable GPS with 'Battery saving' or 'High accuracy' location method")
+                    .setCancelable(false)
+                    .setPositiveButton("Location Setting", new DialogInterface.OnClickListener() {
+                        public void onClick(@SuppressWarnings("unused") final DialogInterface dialog, @SuppressWarnings("unused") final int id) {
+                            startActivity(new Intent(android.provider.Settings.ACTION_LOCATION_SOURCE_SETTINGS));
+                            myBuilder= null;
+                            dialog.dismiss();
+                        }
+                    })
+                    .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                        public void onClick(final DialogInterface dialog, @SuppressWarnings("unused") final int id) {
+                            myBuilder= null;
+                            dialog.cancel();
+                        }
+                    });
+            myAlert = myBuilder.create();
+            myAlert.show();
+
+        }
+    }
     private void logout() {
         //logout
         Log.d("matte", "Logout");
@@ -139,6 +201,7 @@ public class NavigatorActivity extends AppCompatActivity {
         super.onStart();
         IntentFilter filter = new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION);
         registerReceiver(networkReceiver, filter);
+        registerReceiver(gpsLocationReceiver, new IntentFilter(LocationManager.PROVIDERS_CHANGED_ACTION));
     }
 
     @Override

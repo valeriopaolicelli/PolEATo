@@ -9,6 +9,7 @@ import android.os.Handler;
 import android.os.Message;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.constraint.ConstraintLayout;
 import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.Display;
@@ -16,6 +17,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ExpandableListView;
+import android.widget.ImageView;
 
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -69,16 +71,11 @@ public class FavoriteMenuFragment extends Fragment {
 
     private SortMenu sortMenu;
 
-    private ProgressDialog progressDialog;
-    private Handler handler = new Handler() {
-        @Override
-        public void handleMessage(Message msg) {
-            progressDialog.dismiss();
-        }
-    };
-
     private HashMap<String, MyDatabaseReference> dbReferenceList;
 
+    private ConstraintLayout main_view;
+    private ImageView empty_view;
+    private Boolean already_created; //if this fragment was already created
 
     private enum groupType{
         STARTERS,
@@ -129,6 +126,7 @@ public class FavoriteMenuFragment extends Fragment {
         OneSignal.sendTag("User_ID", currentUserID);
 
         dbReferenceList= new HashMap<>();
+        already_created = false;
     }
 
     @Nullable
@@ -147,10 +145,30 @@ public class FavoriteMenuFragment extends Fragment {
         expListView.setIndicatorBounds(width-GetDipsFromPixel(35), width-GetDipsFromPixel(5));
 
         restaurantID = getArguments().getString("id");
-        //restaurantID= "8toBMYgZThTy9eySxX7NdNSxQTF3";
+
+        main_view = (ConstraintLayout) fragView.findViewById(R.id.main_view);
+        empty_view = (ImageView) fragView.findViewById(R.id.favorite_plate_empty_view);
+
+        if( !already_created || (listDataChild != null && listDataChild.isEmpty()))
+            show_empty_view();
+
+        already_created = true;
 
         return fragView;
     }
+
+    private void show_empty_view(){
+
+        main_view.setVisibility(View.GONE);
+        empty_view.setVisibility(View.VISIBLE);
+    }
+
+    private void show_main_view(){
+
+        empty_view.setVisibility(View.GONE);
+        main_view.setVisibility(View.VISIBLE);
+    }
+
 
     public int GetDipsFromPixel(float pixels){
         // Get the screen's density scale
@@ -304,6 +322,7 @@ public class FavoriteMenuFragment extends Fragment {
 
                                                 Collections.sort(listDataGroup,sortMenu);
                                                 listAdapter.notifyDataSetChanged();
+                                                show_main_view();
                                             }
                                         }
                                     }
@@ -376,6 +395,7 @@ public class FavoriteMenuFragment extends Fragment {
 
                                                 Collections.sort(listDataGroup,sortMenu);
                                                 listAdapter.notifyDataSetChanged();
+                                                show_main_view();
                                             }
                                         }
                                     }
@@ -402,6 +422,8 @@ public class FavoriteMenuFragment extends Fragment {
 
                                                 Collections.sort(listDataGroup,sortMenu);
                                                 listAdapter.notifyDataSetChanged();
+                                                if(listDataChild.isEmpty())
+                                                    show_empty_view();
                                             }
                                         }
                                     }
@@ -455,6 +477,9 @@ public class FavoriteMenuFragment extends Fragment {
 
                                                     Collections.sort(listDataGroup,sortMenu);
                                                     listAdapter.notifyDataSetChanged();
+
+                                                    if(listDataChild.isEmpty())
+                                                        show_empty_view();
                                                 }
                                             }
                                         }

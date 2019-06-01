@@ -9,6 +9,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.design.widget.TextInputLayout;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.text.Editable;
@@ -20,40 +21,45 @@ import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.Toast;
 
-import androidx.navigation.Navigation;
-
-import com.google.android.gms.common.SignInButton;
+import com.google.android.gms.auth.api.signin.GoogleSignIn;
+import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
+import com.google.android.gms.auth.api.signin.GoogleSignInClient;
+import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.AuthCredential;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.auth.GoogleAuthProvider;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
-import com.mad.poleato.DailyOffer.Food;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class SignUpActivity extends AppCompatActivity {
+public class SignUpGoogleActivity extends AppCompatActivity {
 
     private FirebaseAuth mAuth;
+
+    private GoogleSignInClient mGoogleSignInClient;
+
     private Toast myToast;
     private DatabaseReference dbReference;
     private ConnectionManager connectionManager;
 
     private Map<String, ImageButton> imageButtons;
     private Map<String, EditText> editTextFields;
-    private Button signIn, signUp;
+    private Button logOut, signUp;
+    private String email;
 
     private double latitude;
     private double longitude;
@@ -69,6 +75,15 @@ public class SignUpActivity extends AppCompatActivity {
         setContentView(R.layout.signup_layout);
         myToast = Toast.makeText(this, "", Toast.LENGTH_SHORT);
         mAuth = FirebaseAuth.getInstance();
+
+        GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+                .requestIdToken(getString(R.string.default_web_client_id))
+                .requestEmail()
+                .build();
+
+        /** Build a GoogleSignInClient with the options specified by gso. */
+        mGoogleSignInClient = GoogleSignIn.getClient(this, gso);
+
         dbReference = FirebaseDatabase.getInstance().getReference("users");
 
 
@@ -77,11 +92,13 @@ public class SignUpActivity extends AppCompatActivity {
         imageButtons = new HashMap<>();
         collectFields();
 
-        signIn = (Button) findViewById(R.id.ButtonSignIn);
+        logOut = (Button) findViewById(R.id.ButtonSignIn);
+        logOut.setText(R.string.logout);
+
         signUp = (Button) findViewById(R.id.ButtonSignUp);
 
         //set the listener
-        signIn.setOnClickListener(signUpRoutine);
+        logOut.setOnClickListener(signUpRoutine);
         signUp.setOnClickListener(signUpRoutine);
     }
 
@@ -106,14 +123,16 @@ public class SignUpActivity extends AppCompatActivity {
         imageButtons.put("Phone", (ImageButton)findViewById(R.id.cancel_phone));
         imageButtons.put("Password", (ImageButton)findViewById(R.id.cancel_password));
 
+        editTextFields.get("Email").setText(mAuth.getCurrentUser().getEmail());
+        editTextFields.get("Email").setEnabled(false); // email is fixed
+        imageButtons.get("Email").setVisibility(View.GONE);
+        imageButtons.get("Password").setVisibility(View.GONE); // there is no password in this sign out
+        TextInputLayout password= (TextInputLayout) findViewById(R.id.tiPassword); // there is no password in this sign out
+        password.setVisibility(View.GONE);
     }
 
-    public void clearText(View view) {
-        if(view.getId() == R.id.cancel_email)
-            editTextFields.get("Email").setText("");
-        else if(view.getId() == R.id.cancel_password)
-            editTextFields.get("Password").setText("");
-        else if (view.getId() == R.id.cancel_name)
+    public void clearText(View view){
+        if (view.getId() == R.id.cancel_name)
             editTextFields.get("Name").setText("");
         else if(view.getId() == R.id.cancel_address)
             editTextFields.get("Address").setText("");
@@ -121,31 +140,32 @@ public class SignUpActivity extends AppCompatActivity {
             editTextFields.get("Phone").setText("");
     }
 
-
     public void handleButton(){
         for(ImageButton b : imageButtons.values())
             b.setVisibility(View.INVISIBLE);
 
         for (String fieldName : editTextFields.keySet()){
-            final EditText field= editTextFields.get(fieldName);
-            final ImageButton button= imageButtons.get(fieldName);
-            if(field != null && button != null) {
-                field.setOnFocusChangeListener(new View.OnFocusChangeListener() {
-                    @Override
-                    public void onFocusChange(View view, boolean hasFocus) {
-                        if (hasFocus)
-                            showButton(field, button);
-                        else
-                            hideButton(button);
-                    }
-                });
+            if(!fieldName.equals("Email")) {
+                final EditText field = editTextFields.get(fieldName);
+                final ImageButton button = imageButtons.get(fieldName);
+                if (field != null && button != null) {
+                    field.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+                        @Override
+                        public void onFocusChange(View view, boolean hasFocus) {
+                            if (hasFocus)
+                                showButton(field, button);
+                            else
+                                hideButton(button);
+                        }
+                    });
 
-                field.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        showButton(field, button);
-                    }
-                });
+                    field.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            showButton(field, button);
+                        }
+                    });
+                }
             }
         }
     }
@@ -153,31 +173,32 @@ public class SignUpActivity extends AppCompatActivity {
     public void buttonListener(){
 
         for (String fieldName : editTextFields.keySet()){
-            final EditText field= editTextFields.get(fieldName);
-            final ImageButton button= imageButtons.get(fieldName);
-            if(button!=null && field != null) {
-                field.addTextChangedListener(new TextWatcher() {
-                    @Override
-                    public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-                        if(field.isFocused())
-                            showButton(field, button);
-                    }
+            if(!fieldName.equals("Email") && !fieldName.equals("Password")) {
+                final EditText field = editTextFields.get(fieldName);
+                final ImageButton button = imageButtons.get(fieldName);
+                if (button != null && field != null) {
+                    field.addTextChangedListener(new TextWatcher() {
+                        @Override
+                        public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+                            if (field.isFocused())
+                                showButton(field, button);
+                        }
 
-                    @Override
-                    public void onTextChanged(CharSequence s, int start, int before, int count) {
-                        if(field.isFocused())
-                            showButton(field, button);
-                    }
+                        @Override
+                        public void onTextChanged(CharSequence s, int start, int before, int count) {
+                            if (field.isFocused())
+                                showButton(field, button);
+                        }
 
-                    @Override
-                    public void afterTextChanged(Editable s) {
-                        if(field.isFocused())
-                            showButton(field, button);
-                    }
-                });
+                        @Override
+                        public void afterTextChanged(Editable s) {
+                            if (field.isFocused())
+                                showButton(field, button);
+                        }
+                    });
+                } else
+                    return;
             }
-            else
-                return;
         }
     }
 
@@ -199,69 +220,54 @@ public class SignUpActivity extends AppCompatActivity {
 
     //access to the app
     public void access(){
-        Intent myIntent = new Intent(SignUpActivity.this, NavigatorActivity.class);
-        SignUpActivity.this.startActivity(myIntent);
+        Intent myIntent = new Intent(SignUpGoogleActivity.this, NavigatorActivity.class);
+        SignUpGoogleActivity.this.startActivity(myIntent);
         finish();
     }
 
     public void signUp(){
 
-        mAuth.createUserWithEmailAndPassword(editTextFields.get("Email").getText().toString(),
-                editTextFields.get("Password").getText().toString())
-                .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
-                    @Override
-                    public void onComplete(@NonNull Task<AuthResult> task) {
-                        if (task.isSuccessful()) {
-                            // Sign in success, update UI with the signed-in user's information
-                            Log.d("matte", "createUserWithEmail:success");
-                            FirebaseUser user = mAuth.getCurrentUser();
-                            dbReference.child(user.getUid()).setValue("restaurant");
-                            myToast.setText(getString(R.string.creation_succ));
-                            myToast.show();
+        /*
+         * save email and role in users reference
+         */
+        FirebaseDatabase.getInstance().getReference("users")
+                .child(mAuth.getCurrentUser().getUid()).setValue("restaurant");
 
-                            /*
-                             * save account details
-                             */
-                            DatabaseReference reference= FirebaseDatabase.getInstance()
-                                    .getReference("restaurants")
-                                    .child(user.getUid());
-                            /*
-                             * Capitalize first letter, clear spaces and store into db
-                             */
-                            String name= editTextFields.get("Name").getText().toString().substring(0,1).toUpperCase() +
-                                    editTextFields.get("Name").getText().toString().substring(1);
-                            name= name.trim().replaceAll(" +", " ");
 
-                            String address= editTextFields.get("Address").getText().toString()
-                                    .trim().replaceAll(" +", " ");
+        /*
+         * save account details
+         */
+        DatabaseReference reference= FirebaseDatabase.getInstance()
+                .getReference("restaurants")
+                .child(mAuth.getCurrentUser().getUid());
+        /*
+         * Capitalize first letter, clear spaces and store into db
+         */
+        String name= editTextFields.get("Name").getText().toString().substring(0,1).toUpperCase() +
+                editTextFields.get("Name").getText().toString().substring(1);
+        name= name.trim().replaceAll(" +", " ");
 
-                            String email= editTextFields.get("Email").getText().toString()
-                                    .trim().replaceAll(" +", "");
+        String address= editTextFields.get("Address").getText().toString()
+                .trim().replaceAll(" +", " ");
 
-                            reference.child("Name").setValue(name);
-                            reference.child("Email").setValue(email);
-                            reference.child("Address").setValue(address);
-                            reference.child("Phone").setValue(editTextFields.get("Phone").getText().toString());
-                            uploadFile(user.getUid());
-                            reference.child("DeliveryCost").setValue("0");
-                            reference.child("IsActive").setValue(false);
-                            reference.child("Info").setValue("");
-                            reference.child("PriceRange").setValue("0");
-                            reference.child("Type").child("it").setValue("");
-                            reference.child("Type").child("en").setValue("");
-                            reference.child("Coordinates").child("Geo").child("Latitude").setValue(latitude);
-                            reference.child("Coordinates").child("Geo").child("Longitude").setValue(longitude);
+        String email= editTextFields.get("Email").getText().toString()
+                .trim().replaceAll(" +", "");
 
-                            access();
-                        } else {
-                            Log.d("matte", "createUserWithEmail:failure", task.getException());
-                            myToast.setText(task.getException().getMessage());
-                            myToast.show();
-                        }
+        reference.child("Name").setValue(name);
+        reference.child("Email").setValue(email);
+        reference.child("Address").setValue(address);
+        reference.child("Phone").setValue(editTextFields.get("Phone").getText().toString());
+        uploadFile(mAuth.getCurrentUser().getUid());
+        reference.child("DeliveryCost").setValue("0");
+        reference.child("IsActive").setValue(false);
+        reference.child("Info").setValue("");
+        reference.child("PriceRange").setValue("0");
+        reference.child("Type").child("it").setValue("");
+        reference.child("Type").child("en").setValue("");
+        reference.child("Coordinates").child("Geo").child("Latitude").setValue(latitude);
+        reference.child("Coordinates").child("Geo").child("Longitude").setValue(longitude);
 
-                        // ...
-                    }
-                });
+        access();
     }
 
     private void uploadFile(final String currentUserID) {
@@ -326,6 +332,11 @@ public class SignUpActivity extends AppCompatActivity {
                     break;
 
                 case R.id.ButtonSignIn:
+                    removeUserAuthenticated();
+                    //TODO mich logout globale
+                    FirebaseAuth.getInstance().signOut();
+                    // Google revoke access
+                    mGoogleSignInClient.revokeAccess();
                     finish();
                     break;
 
@@ -333,25 +344,57 @@ public class SignUpActivity extends AppCompatActivity {
         }
     };
 
+    public void removeUserAuthenticated(){
+        final FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+        final GoogleSignInAccount account = GoogleSignIn.getLastSignedInAccount(this);
+        // Get auth credentials from the user for re-authentication. The example below shows
+        // email and password credentials but there are multiple possible providers,
+        // such as GoogleAuthProvider or FacebookAuthProvider.
+        AuthCredential credential = GoogleAuthProvider.getCredential(account.getIdToken(), null);
+
+        // Prompt the user to re-provide their sign-in credentials
+        user.reauthenticate(credential)
+                .addOnCompleteListener(new OnCompleteListener<Void>() {
+                    @Override
+                    public void onComplete(@NonNull Task<Void> task) {
+                        /*
+                         * delete the user from authenticated user of firebase
+                         */
+                        user.delete()
+                                .addOnCompleteListener(new OnCompleteListener<Void>() {
+                                    @Override
+                                    public void onComplete(@NonNull Task<Void> task) {
+                                        if (task.isSuccessful()) {
+                                            Log.d("Valerio_logout", "Log out from google sign up -> " +
+                                                    "User account deleted.");
+
+                                        }
+                                    }
+                                });
+
+                    }
+                });
+    }
+
     public boolean wrongFields() {
 
         boolean wrongField = false;
 
         // fields cannot be empty
         for(String fieldName : editTextFields.keySet()){
-            EditText ed = editTextFields.get(fieldName);
-            if(ed != null){
-                if(ed.getText().toString().equals("")){
-                    myToast.setText("All fields must be filled");
-                    myToast.show();
-                    ed.setBackground(ContextCompat.getDrawable(getApplicationContext(), R.drawable.border_wrong_field));
-                    wrongField = true;
+            if(!fieldName.equals("Password")) {
+                EditText ed = editTextFields.get(fieldName);
+                if (ed != null) {
+                    if (ed.getText().toString().equals("")) {
+                        myToast.setText("All fields must be filled");
+                        myToast.show();
+                        ed.setBackground(ContextCompat.getDrawable(getApplicationContext(), R.drawable.border_wrong_field));
+                        wrongField = true;
+                    } else
+                        ed.setBackground(ContextCompat.getDrawable(getApplicationContext(), R.drawable.border_right_field));
+                } else {
+                    return false;
                 }
-                else
-                    ed.setBackground(ContextCompat.getDrawable(getApplicationContext(), R.drawable.border_right_field));
-            }
-            else {
-                return false;
             }
         }
 
@@ -412,5 +455,17 @@ public class SignUpActivity extends AppCompatActivity {
             e.printStackTrace();
         }
         return wrongField;
+    }
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        removeUserAuthenticated();
+
+        //TODO mich logout globale
+        FirebaseAuth.getInstance().signOut();
+        // Google revoke access
+        mGoogleSignInClient.revokeAccess();
+        finish();
     }
 }

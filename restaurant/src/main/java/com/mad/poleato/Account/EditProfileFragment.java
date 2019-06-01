@@ -25,6 +25,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.BottomNavigationView;
 import android.support.design.widget.FloatingActionButton;
+import android.support.design.widget.TextInputLayout;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
@@ -52,6 +53,9 @@ import android.widget.Toast;
 
 import androidx.navigation.Navigation;
 
+import com.google.android.gms.auth.api.signin.GoogleSignIn;
+import com.google.android.gms.auth.api.signin.GoogleSignInClient;
+import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -109,7 +113,9 @@ public class EditProfileFragment extends Fragment implements TimePickerDialog.On
 
     private Map<String, ImageButton> imageButtons;
     private Map<String, EditText> editTextFields;
+    private TextInputLayout oldPass, newPass, reNewPass;
     private Map<String, CheckBox> checkBoxes;
+    private ImageView iconPass;
     private Set<String> checkedTypes;
 
     private View v; //this view
@@ -128,13 +134,13 @@ public class EditProfileFragment extends Fragment implements TimePickerDialog.On
 
     private String currentUserID;
     private FirebaseAuth mAuth;
+    private GoogleSignInClient mGoogleSignInClient;
 
     private int FLAG_OPEN_HOUR = 0;
     private int FLAG_CLOSE_HOUR = 1;
     private int FLAG_HOUR;
 
     private MyDatabaseReference profileReference;
-    int indexReference;
 
 
     // TODO: Rename parameter arguments, choose names that match
@@ -200,8 +206,16 @@ public class EditProfileFragment extends Fragment implements TimePickerDialog.On
         FirebaseUser currentUser = mAuth.getCurrentUser();
         currentUserID = currentUser.getUid();
 
+        /** GoogleSignInOptions */
+        GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+                .requestIdToken(getString(R.string.default_web_client_id))
+                .requestEmail()
+                .build();
 
-// OneSignal is used to send notifications between applications
+        /** Build a GoogleSignInClient with the options specified by gso. */
+        mGoogleSignInClient = GoogleSignIn.getClient(getActivity(), gso);
+
+        // OneSignal is used to send notifications between applications
 
         OneSignal.startInit(getContext())
                 .inFocusDisplaying(OneSignal.OSInFocusDisplayOption.Notification)
@@ -259,11 +273,29 @@ public class EditProfileFragment extends Fragment implements TimePickerDialog.On
 
         statusSwitch = (Switch) v.findViewById(R.id.switchStatus);
 
+        iconPass= (ImageView) v.findViewById(R.id.password_icon);
         switchPass = (Switch) v.findViewById(R.id.switchPass);
         switchPass.setChecked(false);
         editTextFields.get("OldPassword").setEnabled(false);
         editTextFields.get("NewPassword").setEnabled(false);
         editTextFields.get("ReNewPassword").setEnabled(false);
+        oldPass= (TextInputLayout) v.findViewById(R.id.input_layout_old_password);
+        newPass= (TextInputLayout) v.findViewById(R.id.input_layout_new_password);
+        reNewPass= (TextInputLayout) v.findViewById(R.id.input_layout_re_new_password);
+
+        if(GoogleSignIn.getLastSignedInAccount(v.getContext()) != null){
+            iconPass.setVisibility(View.GONE);
+            switchPass.setVisibility(View.GONE);
+            editTextFields.get("OldPassword").setVisibility(View.GONE);
+            editTextFields.get("NewPassword").setVisibility(View.GONE);
+            editTextFields.get("ReNewPassword").setVisibility(View.GONE);
+            imageButtons.get("OldPassword").setVisibility(View.GONE);
+            imageButtons.get("NewPassword").setVisibility(View.GONE);
+            imageButtons.get("ReNewPassword").setVisibility(View.GONE);
+            oldPass.setVisibility(View.GONE);
+            newPass.setVisibility(View.GONE);
+            reNewPass.setVisibility(View.GONE);
+        }
 
         /** Hide bottomBar for this fragment*/
         navigation = getActivity().findViewById(R.id.navigation);
@@ -1249,10 +1281,14 @@ public class EditProfileFragment extends Fragment implements TimePickerDialog.On
     }
 
     @Override
+    public void onResume() {
+        super.onResume();
+        navigation.setVisibility(View.GONE);
+    }
+
+    @Override
     public void onDestroy() {
         super.onDestroy();
-
-        navigation.setVisibility(View.VISIBLE);
 
         profileReference.removeAllListener();
     }
@@ -1260,6 +1296,9 @@ public class EditProfileFragment extends Fragment implements TimePickerDialog.On
     @Override
     public void onStop() {
         super.onStop();
+
+        navigation.setVisibility(View.VISIBLE);
+
         profileReference.removeAllListener();
     }
 }

@@ -20,6 +20,7 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnFailureListener;
@@ -68,12 +69,8 @@ public class FavoriteRestaurantFragment extends Fragment {
     private Set<String> typesToFilter;
 
     private ProgressDialog progressDialog;
-    Handler handler = new Handler() {
-        @Override
-        public void handleMessage(Message msg) {
-            progressDialog.dismiss();
-        }
-    };
+
+    private ImageView empty_view;
 
 
     //id for the filter fragment
@@ -149,6 +146,19 @@ public class FavoriteRestaurantFragment extends Fragment {
         return fragView;
     }
 
+    private void show_empty_view(){
+
+        rv.setVisibility(View.GONE);
+        empty_view.setVisibility(View.VISIBLE);
+    }
+
+    private void show_main_view(){
+
+        empty_view.setVisibility(View.GONE);
+        rv.setVisibility(View.VISIBLE);
+    }
+
+
     private void fillFields() {
         Locale locale = Locale.getDefault();
         // get "en" or "it"
@@ -161,19 +171,20 @@ public class FavoriteRestaurantFragment extends Fragment {
          *         Thus it notifies the end of the children
          */
         dbReferenceList.put("favorite", new MyDatabaseReference(dbReference));
-        final int indexReference= dbReferenceList.size()-1;
 
         dbReferenceList.get("favorite").setValueListener(new ValueEventListener() {
 
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                handler.sendEmptyMessage(0);
+                if(progressDialog.isShowing())
+                    progressDialog.dismiss();
             }
 
             @Override
             public void onCancelled(@NonNull DatabaseError databaseError) {
                 Log.d("matte", "ValueEventiListener : OnCancelled() invoked");
-                handler.sendEmptyMessage(0);
+                if(progressDialog.isShowing())
+                    progressDialog.dismiss();
             }
         });
 
@@ -190,13 +201,15 @@ public class FavoriteRestaurantFragment extends Fragment {
 
                     @Override
                     public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                        handler.sendEmptyMessage(0);
+                        if(progressDialog.isShowing())
+                            progressDialog.dismiss();
                     }
 
                     @Override
                     public void onCancelled(@NonNull DatabaseError databaseError) {
                         Log.d("matte", "ValueEventiListener : OnCancelled() invoked");
-                        handler.sendEmptyMessage(0);
+                        if(progressDialog.isShowing())
+                            progressDialog.dismiss();
                     }
                 });
 
@@ -418,11 +431,16 @@ public class FavoriteRestaurantFragment extends Fragment {
         //add separator between list items
         DividerItemDecoration itemDecor = new DividerItemDecoration(hostActivity, 1); // 1 means HORIZONTAL
         rv.addItemDecoration(itemDecor);
+
+        empty_view = (ImageView) fragView.findViewById(R.id.favorite_empty_view);
+
+        show_empty_view();
     }
 
     private void addToDisplay(Restaurant r) {
         //add new item to the displayed list
         currDisplayedList.add(r);
+        show_main_view();
     }
 
     private void removeFromDisplay(Restaurant r) {
@@ -430,6 +448,8 @@ public class FavoriteRestaurantFragment extends Fragment {
         currDisplayedList.remove(r);
         // simply update. No order is compromised by removing an item
         recyclerAdapter.notifyDataSetChanged();
+        if(currDisplayedList.isEmpty())
+            show_empty_view();
     }
 
     private boolean isValidToDisplay(Restaurant r) {

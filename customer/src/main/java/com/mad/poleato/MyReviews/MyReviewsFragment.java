@@ -10,6 +10,7 @@ import android.os.Message;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v7.widget.CardView;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -18,6 +19,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
+import android.widget.ImageView;
 import android.widget.RatingBar;
 import android.widget.TextView;
 
@@ -60,7 +62,6 @@ public class MyReviewsFragment extends Fragment {
     private RecyclerView rv;
 
     private RatingBar ratingBar;
-    private TextView noRating;
     private CheckBox onlyCommentCheckBox;
 
     private String currentUserID;
@@ -70,19 +71,17 @@ public class MyReviewsFragment extends Fragment {
     private float avgReviews;
     private int totalStars;
 
-    MyDatabaseReference reviewsReference;
+    private MyDatabaseReference reviewsReference;
 
     private HashMap<String, Rating>reviewsMap;
     private List<Rating>reviewsList;
     private List<Rating>displayedList;
 
     private ProgressDialog progressDialog;
-    Handler handler = new Handler(){
-        @Override
-        public void handleMessage(Message msg) {
-            progressDialog.dismiss();
-        }
-    };
+
+    //views for this layout
+    private CardView main_cardview;
+    private ImageView empty_view;
 
     @Override
     public void onAttach(Context context) {
@@ -143,7 +142,6 @@ public class MyReviewsFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
         ratingBar = (RatingBar) fragView.findViewById(R.id.rating_bar_avg);
         onlyCommentCheckBox = (CheckBox) fragView.findViewById(R.id.checkBoxComments);
-        noRating = (TextView) fragView.findViewById(R.id.noRatingsTv);
 
         rv = (RecyclerView) fragView.findViewById(R.id.reviews_rv);
         rv.setHasFixedSize(true);
@@ -168,7 +166,28 @@ public class MyReviewsFragment extends Fragment {
             }
         });
 
+        empty_view = (ImageView) fragView.findViewById(R.id.reviews_empty_view);
+        main_cardview = (CardView) fragView.findViewById(R.id.reviews_cardview);
+
+        show_empty_view();
     }
+
+
+    private void show_empty_view(){
+
+        main_cardview.setVisibility(View.GONE);
+        rv.setVisibility(View.GONE);
+        empty_view.setVisibility(View.VISIBLE);
+    }
+
+    private void show_main_view(){
+
+        empty_view.setVisibility(View.GONE);
+        main_cardview.setVisibility(View.VISIBLE);
+        rv.setVisibility(View.VISIBLE);
+    }
+
+
     /**
      * Method dedicate to fill the view elements
      * Getting data from database
@@ -178,14 +197,14 @@ public class MyReviewsFragment extends Fragment {
         reviewsReference.setValueListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                handler.sendEmptyMessage(0);
-
+                if(progressDialog.isShowing())
+                    progressDialog.dismiss();
             }
 
             @Override
             public void onCancelled(@NonNull DatabaseError databaseError) {
-                handler.sendEmptyMessage(0);
-
+                if(progressDialog.isShowing())
+                    progressDialog.dismiss();
             }
         });
 
@@ -232,11 +251,13 @@ public class MyReviewsFragment extends Fragment {
                         //Sorting list in terms of data
                         Collections.sort(displayedList,Rating.timeComparator);
                         recyclerViewAdapter.notifyDataSetChanged();
+                        show_main_view();
 
                     }
                 }else{
                     //no ratings
                     ratingBar.setRating(0);
+                    show_empty_view();
                 }
             }
 
@@ -292,6 +313,7 @@ public class MyReviewsFragment extends Fragment {
 
                         Collections.sort(displayedList,Rating.timeComparator);
                         recyclerViewAdapter.notifyDataSetChanged();
+                        show_main_view();
                     }
                 }
             }
@@ -322,6 +344,8 @@ public class MyReviewsFragment extends Fragment {
     private void restoreOriginalList(){
         displayedList.clear();
         displayedList.addAll(reviewsList);
+        if(!displayedList.isEmpty())
+            show_main_view();
     }
     /**
      * This method removes rating from the displayed list
@@ -329,6 +353,8 @@ public class MyReviewsFragment extends Fragment {
      */
     private void removeFromDisplayable(Rating rating){
         displayedList.remove(rating);
+        if(displayedList.isEmpty())
+            show_empty_view();
         recyclerViewAdapter.notifyDataSetChanged();
     }
 

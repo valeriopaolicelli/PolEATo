@@ -13,6 +13,7 @@ import android.os.Handler;
 import android.os.Message;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.constraint.ConstraintLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.widget.DividerItemDecoration;
@@ -31,6 +32,7 @@ import android.view.animation.ScaleAnimation;
 import android.widget.Button;
 import android.widget.CompoundButton;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.PopupMenu;
 import android.widget.SearchView;
 import android.widget.Toast;
@@ -39,6 +41,9 @@ import android.widget.ToggleButton;
 
 import androidx.navigation.Navigation;
 
+import com.google.android.gms.auth.api.signin.GoogleSignIn;
+import com.google.android.gms.auth.api.signin.GoogleSignInClient;
+import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
@@ -52,6 +57,7 @@ import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.mad.poleato.AuthenticatorC.Authenticator;
+import com.mad.poleato.AuthenticatorC.Authenticator;
 import com.mad.poleato.MyDatabaseReference;
 import com.mad.poleato.R;
 import com.mad.poleato.Classes.Restaurant;
@@ -63,6 +69,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
+import java.util.Objects;
 import java.util.Objects;
 import java.util.Set;
 
@@ -96,6 +103,9 @@ public class RestaurantSearchFragment extends Fragment {
     private String currentUserID;
     private FirebaseAuth mAuth;
     private boolean allFields;
+
+    private ConstraintLayout main_view;
+    private ImageView empty_view;
 
     //id for the filter fragment
     public static final int FILTER_FRAGMENT = 26;
@@ -148,8 +158,24 @@ public class RestaurantSearchFragment extends Fragment {
         if(currentUserID == null)
             Authenticator.revokeAccess(Objects.requireNonNull(getActivity()), fragView);
 
-        return fragView;
+        main_view = (ConstraintLayout) fragView.findViewById(R.id.search_main_view);
+        empty_view = (ImageView) fragView.findViewById(R.id.search_empty_view);
 
+        show_empty_view();
+
+        return fragView;
+    }
+
+    private void show_main_view(){
+
+        empty_view.setVisibility(View.GONE);
+        main_view.setVisibility(View.VISIBLE);
+    }
+
+    private void show_empty_view(){
+
+        main_view.setVisibility(View.GONE);
+        empty_view.setVisibility(View.VISIBLE);
     }
 
     @Override
@@ -159,61 +185,6 @@ public class RestaurantSearchFragment extends Fragment {
         sv = (SearchView) fragView.findViewById(R.id.searchView);
         sv.setFocusable(false);
 
-        checkUser(view);
-    }
-
-    private void checkUser(final View view) {
-
-        Log.d("Valerio_login", "Email: " + mAuth.getCurrentUser().getEmail());
-        Log.d("Valerio_login", currentUserID);
-        DatabaseReference reference= FirebaseDatabase.getInstance().getReference("customers");
-        dbReferenceList.put("customers", new MyDatabaseReference(reference));
-
-        dbReferenceList.get("customers").setValueListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                if(dataSnapshot.hasChild(currentUserID)){
-                    if(!dataSnapshot.child(currentUserID).hasChild("Address") ||
-                        !dataSnapshot.child(currentUserID).hasChild("Name") ||
-                        !dataSnapshot.child(currentUserID).hasChild("Surname")){
-
-                        /*
-                         * incomplete account profile
-                         */
-                        new AlertDialog.Builder(view.getContext())
-                                .setTitle(view.getContext().getString(R.string.missing_fields_title))
-                                .setMessage(view.getContext().getString(R.string.missing_fields_body))
-                                .setPositiveButton(view.getContext().getString(R.string.go_to_edit), new DialogInterface.OnClickListener() {
-                                    @Override
-                                    public void onClick(DialogInterface dialog, int which) {
-
-                                        /**
-                                         * GO TO EditProfile
-                                         */
-                                        Navigation.findNavController(view).navigate(R.id.action_restaurantSearchFragment_id_to_editProfile_id);
-                                    }
-                                })
-                                .show();
-                    }
-                    else
-                        composeView();
-                }
-                else{
-                    FirebaseDatabase.getInstance().getReference("users")
-                            .child(currentUserID).setValue("customer");
-                    FirebaseDatabase.getInstance().getReference("customers")
-                            .child(currentUserID+"/Email")
-                            .setValue(mAuth.getCurrentUser().getEmail());
-                }
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
-            }
-        });
-    }
-
-    private void composeView(){
         sv.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
 
             int previousLen, currLen;
@@ -597,6 +568,7 @@ public class RestaurantSearchFragment extends Fragment {
         currDisplayedList.clear();
         for (Restaurant r : restaurantList)
             currDisplayedList.add(r);
+        show_main_view();
     }
 
     private void addToDisplay(Restaurant r) {
@@ -604,11 +576,14 @@ public class RestaurantSearchFragment extends Fragment {
         currDisplayedList.add(r);
         //notify the adapter to show it by keeping the actual order
         recyclerAdapter.updateLayout();
+        show_main_view();
     }
 
     private void removeFromDisplay(Restaurant r) {
 
         currDisplayedList.remove(r);
+        if(currDisplayedList.isEmpty())
+            show_empty_view();
         // simply update. No order is compromised by removing an item
         recyclerAdapter.notifyDataSetChanged();
     }
@@ -624,7 +599,6 @@ public class RestaurantSearchFragment extends Fragment {
             if (!isValidToDisplay(s))
                 rIterator.remove();
         }
-
 
     }
 

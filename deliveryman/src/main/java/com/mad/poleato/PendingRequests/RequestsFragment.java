@@ -28,6 +28,9 @@ import android.widget.Toast;
 
 import androidx.navigation.Navigation;
 
+import com.google.android.gms.auth.api.signin.GoogleSignIn;
+import com.google.android.gms.auth.api.signin.GoogleSignInClient;
+import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.ChildEventListener;
@@ -67,8 +70,6 @@ public class RequestsFragment extends Fragment {
     private ImageView empty_view;
 
     private HashMap<String, MyDatabaseReference> referenceMap;
-
-
 
     public RequestsFragment() {
         // Required empty public constructor
@@ -110,18 +111,6 @@ public class RequestsFragment extends Fragment {
 
     }
 
-    private void logout(){
-        //logout
-        Log.d("matte", "Logout");
-        FirebaseAuth.getInstance().signOut();
-        OneSignal.setSubscription(false);
-
-        //go to login
-        //Navigation.findNavController(view).navigate(R.id.action_mainProfile_id_to_signInActivity); TODO mich
-        getActivity().finish();
-    }
-
-
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -135,65 +124,7 @@ public class RequestsFragment extends Fragment {
         empty_view = (ImageView) fragView.findViewById(R.id.requests_empty_view);
         rv = (RecyclerView) fragView.findViewById(R.id.requests_recyler);
         rv.setHasFixedSize(true);
-        show_empty_view();
 
-        checkUser(fragView);
-
-        return fragView;
-    }
-
-    private void checkUser(final View view) {
-
-        Log.d("Valerio_login", "Email: " + mAuth.getCurrentUser().getEmail());
-        Log.d("Valerio_login", currentUserID);
-        DatabaseReference reference= FirebaseDatabase.getInstance().getReference("deliveryman");
-        referenceMap.put("deliveryman", new MyDatabaseReference(reference));
-
-        referenceMap.get("deliveryman").setValueListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                if(dataSnapshot.hasChild(currentUserID)){
-                    if(!dataSnapshot.child(currentUserID).hasChild("Address") ||
-                            !dataSnapshot.child(currentUserID).hasChild("Name") ||
-                            !dataSnapshot.child(currentUserID).hasChild("Surname")){
-
-                        /*
-                         * incomplete account profile
-                         */
-                        new AlertDialog.Builder(view.getContext())
-                                .setTitle(view.getContext().getString(R.string.missing_fields_title))
-                                .setMessage(view.getContext().getString(R.string.missing_fields_body))
-                                .setPositiveButton(view.getContext().getString(R.string.go_to_edit), new DialogInterface.OnClickListener() {
-                                    @Override
-                                    public void onClick(DialogInterface dialog, int which) {
-
-                                        /**
-                                         * GO TO EditProfile
-                                         */
-                                        Navigation.findNavController(view).navigate(R.id.action_pendingReservations_id_to_editProfile_id);
-                                    }
-                                })
-                                .show();
-                    }
-                    else
-                        composeView();
-                }
-                else{
-                    FirebaseDatabase.getInstance().getReference("users")
-                            .child(currentUserID).setValue("deliveryman");
-                    FirebaseDatabase.getInstance().getReference("deliveryman")
-                            .child(currentUserID+"/Email")
-                            .setValue(mAuth.getCurrentUser().getEmail());
-                }
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
-            }
-        });
-    }
-
-    private void composeView(){
         layoutManager = new LinearLayoutManager(hostActivity);
         rv.setLayoutManager(layoutManager);
 
@@ -205,6 +136,8 @@ public class RequestsFragment extends Fragment {
 
         show_empty_view();
         attachFirebaseListeners();
+
+        return fragView;
     }
 
     private void show_empty_view(){

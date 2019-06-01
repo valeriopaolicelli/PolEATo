@@ -37,6 +37,9 @@ import android.widget.Toast;
 
 import androidx.navigation.Navigation;
 
+import com.google.android.gms.auth.api.signin.GoogleSignIn;
+import com.google.android.gms.auth.api.signin.GoogleSignInClient;
+import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.ChildEventListener;
@@ -88,6 +91,8 @@ public class ReservationFragment extends Fragment {
     private FirebaseAuth mAuth;
     private String currentUserID;
     private String localeShort;
+
+    private GoogleSignInClient mGoogleSignInClient;
 
     private ProgressDialog progressDialog;
 
@@ -147,6 +152,16 @@ public class ReservationFragment extends Fragment {
         FirebaseUser currentUser = mAuth.getCurrentUser();
         currentUserID = currentUser.getUid();
 
+
+        /** GoogleSignInOptions */
+        GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+                .requestIdToken(getString(R.string.default_web_client_id))
+                .requestEmail()
+                .build();
+
+        /** Build a GoogleSignInClient with the options specified by gso. */
+        mGoogleSignInClient = GoogleSignIn.getClient(getActivity(), gso);
+
         OneSignal.startInit(getContext())
                 .inFocusDisplaying(OneSignal.OSInFocusDisplayOption.Notification)
                 .unsubscribeWhenNotificationsAreDisabled(true)
@@ -167,64 +182,7 @@ public class ReservationFragment extends Fragment {
 
         lv = view.findViewById(R.id.reservationslv);
         empty_view = (ImageView) view.findViewById(R.id.reservation_empty_view);
-        show_empty_view();
 
-        checkUser(view);
-
-        return view;
-    }
-
-    private void checkUser(final View view) {
-
-        Log.d("Valerio_login", "Email: " + mAuth.getCurrentUser().getEmail());
-        Log.d("Valerio_login", currentUserID);
-        DatabaseReference reference= FirebaseDatabase.getInstance().getReference("restaurants");
-        dbReferenceList.put("restaurants", new MyDatabaseReference(reference));
-
-        dbReferenceList.get("restaurants").setValueListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                if(dataSnapshot.hasChild(currentUserID)){
-                    if(!dataSnapshot.child(currentUserID).hasChild("Address") ||
-                            !dataSnapshot.child(currentUserID).hasChild("Name")){
-
-                        /*
-                         * incomplete account profile
-                         */
-                        new AlertDialog.Builder(view.getContext())
-                                .setTitle(view.getContext().getString(R.string.missing_fields_title))
-                                .setMessage(view.getContext().getString(R.string.missing_fields_body))
-                                .setPositiveButton(view.getContext().getString(R.string.go_to_edit), new DialogInterface.OnClickListener() {
-                                    @Override
-                                    public void onClick(DialogInterface dialog, int which) {
-
-                                        /**
-                                         * GO TO EditProfile
-                                         */
-                                        Navigation.findNavController(view).navigate(R.id.action_reservation_id_to_editProfile_id);
-                                    }
-                                })
-                                .show();
-                    }
-                    else
-                        composeView();
-                }
-                else{
-                    FirebaseDatabase.getInstance().getReference("users")
-                            .child(currentUserID).setValue("restaurant");
-                    FirebaseDatabase.getInstance().getReference("restaurants")
-                            .child(currentUserID+"/Email")
-                            .setValue(mAuth.getCurrentUser().getEmail());
-                }
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
-            }
-        });
-    }
-
-    private void composeView(){
         if(getActivity() != null)
             progressDialog = ProgressDialog.show(getActivity(), "", getString(R.string.loading));
 
@@ -247,6 +205,8 @@ public class ReservationFragment extends Fragment {
         });
 
         show_empty_view();
+
+        return view;
     }
 
 
@@ -546,16 +506,17 @@ public class ReservationFragment extends Fragment {
         super.onSaveInstanceState(outState);
         ArrayList<String> statusPersistence = new ArrayList<>();
         ArrayList<String> textButtonPersistence = new ArrayList<>();
-
-        for (int i = 0; i < listAdapter.getGroupCount(); i++) {
-            View v = listAdapter.getGroupView(i, false, null, lv);
-            TextView status = v.findViewById(R.id.tvStatusField);
-            Button button = v.findViewById(R.id.myButton);
-            statusPersistence.add(i, status.getText().toString());
-            textButtonPersistence.add(i, button.getText().toString());
+        if(listAdapter != null) {
+            for (int i = 0; i < listAdapter.getGroupCount(); i++) {
+                View v = listAdapter.getGroupView(i, false, null, lv);
+                TextView status = v.findViewById(R.id.tvStatusField);
+                Button button = v.findViewById(R.id.myButton);
+                statusPersistence.add(i, status.getText().toString());
+                textButtonPersistence.add(i, button.getText().toString());
+            }
+            outState.putStringArrayList("Status_Persistence", statusPersistence);
+            outState.putStringArrayList("Button_Text_Persistence", textButtonPersistence);
         }
-        outState.putStringArrayList("Status_Persistence", statusPersistence);
-        outState.putStringArrayList("Button_Text_Persistence", textButtonPersistence);
     }
 
     @Override
@@ -610,6 +571,24 @@ public class ReservationFragment extends Fragment {
 
     private interface FirebaseCallBack {
         void onCallBack(List<String> customerDetails);
+    }
+
+    private void revokeAccess() {
+        // Firebase sign out
+        //mAuth.signOut();
+
+        Log.d("miche", "Logout");
+        FirebaseAuth.getInstance().signOut();
+        // Google revoke access
+        mGoogleSignInClient.revokeAccess();
+
+        OneSignal.setSubscription(false);
+
+        /**
+         *  GO TO LOGIN ****
+         */
+        Navigation.findNavController(view).navigate(R.id.action_reservation_id_to_signInActivity);
+        getActivity().finish();
     }
 
     @Override
