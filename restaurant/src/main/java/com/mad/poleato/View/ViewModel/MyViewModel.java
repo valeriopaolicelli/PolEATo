@@ -52,6 +52,7 @@ public class MyViewModel extends ViewModel {
         _listDataChild.postValue(listDataChild);
     }
 
+    //TODO does it trigger the ondatachange ? (and then the notifydatasetchanged)
     public void setImg(String groupTag, String foodID, Bitmap img){
 
         for(Food f : _listDataChild.getValue().get(groupTag)){
@@ -217,7 +218,7 @@ public class MyViewModel extends ViewModel {
                         @Override
                         public void onSuccess(byte[] bytes) {
                             String s = imageUrl;
-                            Log.d("matte", "onSuccess");
+                            Log.d("matte", "onSuccess || food ID -> "+food_id);
                             Bitmap bmp = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
                             setImg(category, food_id, bmp);
                         }
@@ -279,7 +280,7 @@ public class MyViewModel extends ViewModel {
                         @Override
                         public void onSuccess(byte[] bytes) {
                             String s = imageUrl;
-                            Log.d("matte", "onSuccess");
+                            Log.d("matte", "onSuccess || food ID -> "+food_id);
                             Bitmap bmp = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
                             setImg(category, food_id, bmp);
 

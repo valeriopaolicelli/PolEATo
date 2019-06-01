@@ -204,8 +204,7 @@ public class RequestsFragment extends Fragment {
 
                     //create the requests and add it to the recyclerView
                     createRequest(dataSnapshot);
-                    if(requestsAdapter.getItemCount() == 1) //previously it was 0
-                        show_requests_view();
+                    show_requests_view();
                 }
             }
 
@@ -228,8 +227,7 @@ public class RequestsFragment extends Fragment {
 
                     //create the requests and add it to the recyclerView
                     createRequest(dataSnapshot);
-                    if(requestsAdapter.getItemCount() == 1) //previously it was 0
-                        show_requests_view();
+                    show_requests_view();
                 }
             }
 

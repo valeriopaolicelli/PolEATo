@@ -260,15 +260,10 @@
         <Spinner
             android:id="@+id/chart_spinner"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="16dp"
-            android:layout_marginTop="16dp"
-            android:layout_marginEnd="16dp"
-            android:layout_marginBottom="16dp"
-            android:layout_gravity="right"
-            android:background="@color/colorBodyPrimary"
-            android:spinnerMode="dropdown"
-            android:theme="@style/ThemeOverlay.AppCompat.Light"/>
+            android:layout_height="54dp"
+            android:layout_gravity="right|top"
+            android:layout_marginEnd="8dp"
+            android:spinnerMode="dropdown" />
 
 
     </FrameLayout>
