@@ -182,83 +182,7 @@ public class ReservationFragment extends Fragment {
 
         lv = view.findViewById(R.id.reservationslv);
         empty_view = (ImageView) view.findViewById(R.id.reservation_empty_view);
-        show_empty_view();
 
-        checkUser(view);
-
-        return view;
-    }
-
-    private void checkUser(final View view) {
-
-        Log.d("Valerio_login", "Email: " + mAuth.getCurrentUser().getEmail());
-        Log.d("Valerio_login", currentUserID);
-        DatabaseReference reference= FirebaseDatabase.getInstance().getReference("restaurants");
-        dbReferenceList.put("restaurants", new MyDatabaseReference(reference));
-
-        dbReferenceList.get("restaurants").setSingleValueListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                if(dataSnapshot.hasChild(currentUserID)){
-                    if(dataSnapshot.child(currentUserID).hasChild("Address") &&
-                            dataSnapshot.child(currentUserID).hasChild("Name")&&
-                            dataSnapshot.child(currentUserID).hasChild("Coordinates")&&
-                            dataSnapshot.child(currentUserID).hasChild("DeliveryCost")&&
-                            dataSnapshot.child(currentUserID).hasChild("Email")&&
-                            dataSnapshot.child(currentUserID).hasChild("IsActive")&&
-                            dataSnapshot.child(currentUserID).hasChild("Phone")&&
-                            dataSnapshot.child(currentUserID).hasChild("photoUrl"))
-                        composeView();
-                    else{
-                        /*
-                         * incomplete account profile
-                         */
-                        new AlertDialog.Builder(view.getContext())
-                                .setCancelable(false)
-                                .setTitle(view.getContext().getString(R.string.missing_fields_title))
-                                .setMessage(view.getContext().getString(R.string.missing_fields_body))
-                                .setPositiveButton(view.getContext().getString(R.string.go_to_edit), new DialogInterface.OnClickListener() {
-                                    @Override
-                                    public void onClick(DialogInterface dialog, int which) {
-
-                                        /**
-                                         * GO TO EditProfile
-                                         */
-                                        Navigation.findNavController(view).navigate(R.id.action_reservation_id_to_editProfile_id);
-                                    }
-                                })
-                                .setNegativeButton(view.getContext().getString(R.string.logout),
-                                        new DialogInterface.OnClickListener() {
-                                            @Override
-                                            public void onClick(DialogInterface dialog, int which) {
-                                                for(MyDatabaseReference my_ref : dbReferenceList.values())
-                                                    my_ref.removeAllListener();
-                                                //logout
-
-                                                //TODO miche logout
-                                                /** logout */
-                                                revokeAccess();
-                                            }
-                                        })
-                                .show();
-                    }
-                }
-                else{
-                    FirebaseDatabase.getInstance().getReference("users")
-                            .child(currentUserID).setValue("restaurant");
-                    FirebaseDatabase.getInstance().getReference("restaurants")
-                            .child(currentUserID+"/Email")
-                            .setValue(mAuth.getCurrentUser().getEmail());
-                }
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
-            }
-        });
-    }
-
-    private void composeView(){
         if(getActivity() != null)
             progressDialog = ProgressDialog.show(getActivity(), "", getString(R.string.loading));
 
@@ -281,6 +205,8 @@ public class ReservationFragment extends Fragment {
         });
 
         show_empty_view();
+
+        return view;
     }
 
 

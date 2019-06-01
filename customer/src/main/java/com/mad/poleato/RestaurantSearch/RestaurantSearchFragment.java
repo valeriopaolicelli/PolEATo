@@ -190,80 +190,6 @@ public class RestaurantSearchFragment extends Fragment {
         sv = (SearchView) fragView.findViewById(R.id.searchView);
         sv.setFocusable(false);
 
-        checkUser(view);
-    }
-
-    private void checkUser(final View view) {
-
-        Log.d("Valerio_login", "Email: " + mAuth.getCurrentUser().getEmail());
-        Log.d("Valerio_login", currentUserID);
-        DatabaseReference reference= FirebaseDatabase.getInstance().getReference("customers");
-        dbReferenceList.put("customers", new MyDatabaseReference(reference));
-
-        dbReferenceList.get("customers").setSingleValueListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                if(dataSnapshot.hasChild(currentUserID)){
-                    if(dataSnapshot.child(currentUserID).hasChild("Address") &&
-                        dataSnapshot.child(currentUserID).hasChild("Name") &&
-                            dataSnapshot.child(currentUserID).hasChild("Surname") &&
-                            dataSnapshot.child(currentUserID).hasChild("Email") &&
-                            dataSnapshot.child(currentUserID).hasChild("Latitude") &&
-                            dataSnapshot.child(currentUserID).hasChild("Longitude") &&
-                            dataSnapshot.child(currentUserID).hasChild("Phone") &&
-                            dataSnapshot.child(currentUserID).hasChild("photoUrl")
-                    )
-                        composeView();
-
-                }
-                else{
-                    FirebaseDatabase.getInstance().getReference("users")
-                            .child(currentUserID).setValue("customer");
-                    FirebaseDatabase.getInstance().getReference("customers")
-                            .child(currentUserID+"/Email")
-                            .setValue(mAuth.getCurrentUser().getEmail());
-                    /*
-                     * incomplete account profile
-                     */
-                    new AlertDialog.Builder(view.getContext())
-                            .setCancelable(false)
-                            .setTitle(view.getContext().getString(R.string.missing_fields_title))
-                            .setMessage(view.getContext().getString(R.string.missing_fields_body))
-                            .setPositiveButton(view.getContext().getString(R.string.go_to_edit),
-                                    new DialogInterface.OnClickListener() {
-                                        @Override
-                                        public void onClick(DialogInterface dialog, int which) {
-
-                                            /**
-                                             * GO TO EditProfile
-                                             */
-                                            Navigation.findNavController(view).navigate(R.id.action_restaurantSearchFragment_id_to_editProfile_id);
-                                        }
-                                    })
-                            .setNegativeButton(view.getContext().getString(R.string.logout),
-                                    new DialogInterface.OnClickListener() {
-                                        @Override
-                                        public void onClick(DialogInterface dialog, int which) {
-                                            for(MyDatabaseReference my_ref : dbReferenceList.values())
-                                                my_ref.removeAllListener();
-                                            //logout
-
-                                            //TODO miche logout
-                                            /** logout */
-                                            revokeAccess();
-                                        }
-                                    })
-                            .show();
-                }
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
-            }
-        });
-    }
-
-    private void composeView(){
         sv.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
 
             int previousLen, currLen;
@@ -693,24 +619,6 @@ public class RestaurantSearchFragment extends Fragment {
             }
         }
         return false;
-    }
-
-    private void revokeAccess() {
-        // Firebase sign out
-        //mAuth.signOut();
-
-        Log.d("miche", "Logout");
-        FirebaseAuth.getInstance().signOut();
-        // Google revoke access
-        mGoogleSignInClient.revokeAccess();
-
-        OneSignal.setSubscription(false);
-
-        /**
-         *  GO TO LOGIN ****
-         */
-        Navigation.findNavController(fragView).navigate(R.id.action_restaurantSearchFragment_id_to_signInActivity);
-        getActivity().finish();
     }
 
     @Override

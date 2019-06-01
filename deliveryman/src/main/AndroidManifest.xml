@@ -78,6 +78,11 @@
             android:screenOrientation="portrait"/>
 
         <activity
+            android:name=".SignActivities.SignUpGoogleActivity"
+            android:windowSoftInputMode="adjustPan"
+            android:screenOrientation="portrait"/>
+
+        <activity
             android:name=".NavigatorActivity"
             android:hardwareAccelerated="true"
             android:windowSoftInputMode="adjustPan"

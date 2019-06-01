@@ -122,18 +122,6 @@ public class RequestsFragment extends Fragment {
 
     }
 
-    private void logout(){
-        //logout
-        Log.d("matte", "Logout");
-        FirebaseAuth.getInstance().signOut();
-        OneSignal.setSubscription(false);
-
-        //go to login
-        //Navigation.findNavController(view).navigate(R.id.action_mainProfile_id_to_signInActivity); TODO mich
-        getActivity().finish();
-    }
-
-
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -144,86 +132,7 @@ public class RequestsFragment extends Fragment {
         empty_view = (ImageView) fragView.findViewById(R.id.requests_empty_view);
         rv = (RecyclerView) fragView.findViewById(R.id.requests_recyler);
         rv.setHasFixedSize(true);
-        show_empty_view();
 
-        checkUser(fragView);
-
-        return fragView;
-    }
-
-    private void checkUser(final View view) {
-
-        Log.d("Valerio_login", "Email: " + mAuth.getCurrentUser().getEmail());
-        Log.d("Valerio_login", currentUserID);
-        DatabaseReference reference= FirebaseDatabase.getInstance().getReference("deliveryman");
-        referenceMap.put("deliveryman", new MyDatabaseReference(reference));
-
-        referenceMap.get("deliveryman").setSingleValueListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                if(dataSnapshot.hasChild(currentUserID)){
-                    if(dataSnapshot.child(currentUserID).hasChild("Address") &&
-                            dataSnapshot.child(currentUserID).hasChild("Name") &&
-                            dataSnapshot.child(currentUserID).hasChild("Surname") &&
-                            dataSnapshot.child(currentUserID).hasChild("Phone") &&
-                            dataSnapshot.child(currentUserID).hasChild("IsActive") &&
-                            dataSnapshot.child(currentUserID).hasChild("Email") &&
-                            dataSnapshot.child(currentUserID).hasChild("photoUrl") &&
-                            dataSnapshot.child(currentUserID).hasChild("Busy"))
-                        composeView();
-                    else{
-                        /*
-                         * incomplete account profile
-                         */
-                        new AlertDialog.Builder(view.getContext())
-                                .setCancelable(false)
-                                .setTitle(view.getContext().getString(R.string.missing_fields_title))
-                                .setMessage(view.getContext().getString(R.string.missing_fields_body))
-                                .setPositiveButton(view.getContext().getString(R.string.go_to_edit), new DialogInterface.OnClickListener() {
-                                    @Override
-                                    public void onClick(DialogInterface dialog, int which) {
-
-                                        /**
-                                         * GO TO EditProfile
-                                         */
-                                        Navigation.findNavController(view).navigate(R.id.action_pendingReservations_id_to_editProfile_id);
-                                    }
-                                })
-                                .setNegativeButton(view.getContext().getString(R.string.logout),
-                                        new DialogInterface.OnClickListener() {
-                                            @Override
-                                            public void onClick(DialogInterface dialog, int which) {
-                                                for(MyDatabaseReference my_ref : referenceMap.values())
-                                                    my_ref.removeAllListener();
-                                                //logout
-
-                                                //TODO miche logout
-                                                /** logout */
-                                                revokeAccess();
-                                            }
-                                        })
-                                .show();
-                    }
-                }
-                else{
-                    FirebaseDatabase.getInstance().getReference("users")
-                            .child(currentUserID).setValue("deliveryman");
-                    FirebaseDatabase.getInstance().getReference("deliveryman")
-                            .child(currentUserID+"/Email")
-                            .setValue(mAuth.getCurrentUser().getEmail());
-                    FirebaseDatabase.getInstance().getReference("deliveryman")
-                            .child(currentUserID+"/Busy")
-                            .setValue(false);
-                }
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
-            }
-        });
-    }
-
-    private void composeView(){
         layoutManager = new LinearLayoutManager(hostActivity);
         rv.setLayoutManager(layoutManager);
 
@@ -235,6 +144,8 @@ public class RequestsFragment extends Fragment {
 
         show_empty_view();
         attachFirebaseListeners();
+
+        return fragView;
     }
 
     private void show_empty_view(){

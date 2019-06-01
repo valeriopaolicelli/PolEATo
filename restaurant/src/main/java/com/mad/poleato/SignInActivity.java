@@ -55,6 +55,8 @@ public class SignInActivity extends AppCompatActivity {
     private SignInButton googleButton;
     ConnectionManager connectionManager;
 
+    boolean alreadyAccessed;
+
     //this is the layout that must be hide as default: it contains the mail and password fields
     private ConstraintLayout login_constraint;
     private ProgressBar progress_bar;
@@ -88,6 +90,9 @@ public class SignInActivity extends AppCompatActivity {
 
         // Build a GoogleSignInClient with the options specified by gso.
         mGoogleSignInClient = GoogleSignIn.getClient(this, gso);
+
+        alreadyAccessed= false; // flag to check if the login is already performed with google o normally
+                                // to avoid the other one
 
         //search for the views
         edPassword = (EditText) findViewById(R.id.edPassword);
@@ -138,15 +143,18 @@ public class SignInActivity extends AppCompatActivity {
         super.onStart();
         // Check if user is signed in (non-null) and update UI accordingly.
         FirebaseUser currentUser = mAuth.getCurrentUser();
-        if(currentUser != null) {
+        if(currentUser != null && currentUser.getEmail()!=null) {
             dbReferenceList.put("users", new MyDatabaseReference(FirebaseDatabase.getInstance().getReference("users")
                                                                         .child(currentUser.getUid())));
-            dbReferenceList.get("users").setValueListener(new ValueEventListener() {
+            dbReferenceList.get("users").setSingleValueListener(new ValueEventListener() {
                 @Override
                 public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                     if (dataSnapshot.exists())
                         if (dataSnapshot.getValue().toString().equals("restaurant"))
-                            access();
+                            if(!alreadyAccessed) {
+                                alreadyAccessed = true;
+                                access();
+                            }
                         else{
                             FirebaseAuth.getInstance().signOut();
                             show_login_form();
@@ -164,8 +172,11 @@ public class SignInActivity extends AppCompatActivity {
 
         //check if signed in with Google
         final GoogleSignInAccount account = GoogleSignIn.getLastSignedInAccount(this);
-        if (currentUser != null && account != null)
-            firebaseAuthWithGoogle(account);
+        if (account != null && account.getEmail() != null) {
+            if(!alreadyAccessed) {
+                firebaseAuthWithGoogle(account);
+            }
+        }
     }
 
     //access to the app
@@ -290,8 +301,6 @@ public class SignInActivity extends AppCompatActivity {
     private void firebaseAuthWithGoogle(final GoogleSignInAccount account) {
         Log.d("matte", "firebaseAuthWithGoogle:" + account.getId());
 
-        String s = account.getIdToken();
-
         AuthCredential credential = GoogleAuthProvider.getCredential(account.getIdToken(), null);
         mAuth.signInWithCredential(credential)
                 .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
@@ -305,20 +314,27 @@ public class SignInActivity extends AppCompatActivity {
                             dbReferenceList.put("user", new MyDatabaseReference(reference));
 
                             dbReferenceList.get("user").setSingleValueListener(new ValueEventListener() {
-                                @Override
                                 public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                                     if (dataSnapshot.exists()) {
                                         if (!dataSnapshot.getValue().toString().equals("restaurant")){
                                             myToast.setText(getApplicationContext().getString(R.string.already_used));
                                             myToast.show();
-                                            show_login_form();
                                             FirebaseAuth.getInstance().signOut();
+                                            mGoogleSignInClient.revokeAccess();
+                                            show_login_form();
                                         }
-                                        else
-                                            access();
+                                        else{
+                                            if(!alreadyAccessed) {
+                                                alreadyAccessed = true;
+                                                access();
+                                            }
+                                        }
                                     }
-                                    else
-                                        access();
+                                    else {
+                                        Intent myIntent = new Intent(SignInActivity.this,
+                                                SignUpGoogleActivity.class);
+                                        SignInActivity.this.startActivity(myIntent);
+                                    }
                                 }
 
                                 @Override

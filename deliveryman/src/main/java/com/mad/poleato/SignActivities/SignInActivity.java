@@ -320,14 +320,18 @@ public class SignInActivity extends AppCompatActivity {
                                         if (!dataSnapshot.getValue().toString().equals("deliveryman")){
                                             myToast.setText(getApplicationContext().getString(R.string.already_used));
                                             myToast.show();
-                                            show_login_form();
                                             FirebaseAuth.getInstance().signOut();
+                                            mGoogleSignInClient.revokeAccess();
+                                            show_login_form();
                                         }
                                         else
                                             access();
                                     }
-                                    else
-                                        access();
+                                    else {
+                                        Intent myIntent = new Intent(SignInActivity.this,
+                                                SignUpGoogleActivity.class);
+                                        SignInActivity.this.startActivity(myIntent);
+                                    }
                                 }
 
                                 @Override
