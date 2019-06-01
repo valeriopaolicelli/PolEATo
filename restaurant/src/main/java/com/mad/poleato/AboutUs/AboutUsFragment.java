@@ -262,7 +262,7 @@ public class AboutUsFragment extends Fragment {
                 for(DataSnapshot foodReference : dataSnapshot.getChildren()){
                     sum += Integer.parseInt(foodReference.child("PopularityCounter").getValue().toString());
                 }
-                //TODO: Check division by zero
+
                 if(numberOfFood!=0)
                     popularityAverage= ((double)sum/numberOfFood);
 
