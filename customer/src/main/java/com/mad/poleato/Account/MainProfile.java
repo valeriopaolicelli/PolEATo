@@ -23,7 +23,9 @@ import android.widget.Toast;
 
 import androidx.navigation.Navigation;
 
+import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
+import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
@@ -35,7 +37,6 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
-import com.mad.poleato.AuthenticatorC.Authenticator;
 import com.mad.poleato.MyDatabaseReference;
 import com.mad.poleato.R;
 import com.onesignal.OneSignal;
@@ -127,7 +128,7 @@ public class MainProfile extends Fragment {
                 for (MyDatabaseReference my_ref : dbReferenceList.values())
                     my_ref.removeAllListener();
 
-                Authenticator.revokeAccess(getActivity(), view);
+                revokeAccess();
                 //                OneSignal.sendTag("User_ID", "");
 
                 return true;
@@ -261,6 +262,34 @@ public class MainProfile extends Fragment {
 //        Navigation.findNavController(view).navigate(R.id.action_global_signInActivity);
 //        getActivity().finish();
 //    }
+
+    public void revokeAccess() {
+        // Firebase sign out
+        //mAuth.signOut();
+        GoogleSignInClient mGoogleSignInClient;
+        GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+                .requestIdToken(getActivity().getString(R.string.default_web_client_id))
+                .requestEmail()
+                .build();
+
+        /** Build a GoogleSignInClient with the options specified by gso. */
+        mGoogleSignInClient = GoogleSignIn.getClient(getActivity(), gso);
+
+        Log.d("miche", "Logout");
+        FirebaseAuth.getInstance().signOut();
+        // Google revoke access
+        mGoogleSignInClient.revokeAccess();
+
+        OneSignal.setSubscription(false);
+
+        /**
+         *  GO TO LOGIN ****
+         */
+//        Navigation.findNavController(view).navigate(R.id.action_mainProfile_id_to_signInActivity);
+//        getActivity().finish();
+        Navigation.findNavController(view).navigate(R.id.action_global_signInActivity);
+        getActivity().finish();
+    }
 
     @Override
     public void onDestroy() {

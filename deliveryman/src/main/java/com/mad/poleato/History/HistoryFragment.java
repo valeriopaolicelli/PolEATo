@@ -25,7 +25,6 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
-import com.mad.poleato.AuthentucatorD.Authenticator;
 import com.mad.poleato.Firebase.MyDatabaseReference;
 import com.mad.poleato.R;
 import com.onesignal.OneSignal;
@@ -122,9 +121,6 @@ public class HistoryFragment extends Fragment {
         // Inflate the layout for this fragment
         fragView = inflater.inflate(R.layout.history_recyclerview, container, false);
 
-        /** Logout a priori if access is revoked */
-        if(currentUserID == null)
-            Authenticator.revokeAccess(Objects.requireNonNull(getActivity()), fragView);
 
         empty_view = (ImageView) fragView.findViewById(R.id.history_empty_view);
         rv = (RecyclerView) fragView.findViewById(R.id.history_recyclerview);

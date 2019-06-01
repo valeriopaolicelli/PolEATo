@@ -12,11 +12,6 @@
         android:label="@string/title_actionbar_pendingReservations"
         tools:layout="@layout/pending_requests_recycler" >
         <action
-            android:id="@+id/action_pendingReservations_id_to_signInActivity"
-            app:destination="@id/signInActivity"
-            app:popUpTo="@+id/signInActivity"
-            app:popUpToInclusive="true" />
-        <action
             android:id="@+id/action_pendingReservations_id_to_ride_id"
             app:destination="@id/rides_id"
             app:popUpTo="@+id/rides_id"
@@ -37,11 +32,6 @@
         android:label="@string/title_actionbar_deliveryRide"
         tools:layout="@layout/ride_layout" >
         <action
-            android:id="@+id/action_rides_id_to_signInActivity"
-            app:destination="@id/signInActivity"
-            app:popUpTo="@+id/signInActivity"
-            app:popUpToInclusive="true" />
-        <action
             android:id="@+id/action_ride_id_to_pendingReservations_id"
             app:destination="@id/pendingReservations_id"
             app:popUpTo="@+id/pendingReservations_id"
@@ -55,13 +45,7 @@
         android:id="@+id/routes_id"
         android:name="com.mad.poleato.History.HistoryFragment"
         android:label="@string/title_actionbar_deliveryHistory"
-        tools:layout="@layout/history_recyclerview" >
-        <action
-            android:id="@+id/action_routes_id_to_signInActivity"
-            app:destination="@id/signInActivity"
-            app:popUpTo="@+id/signInActivity"
-            app:popUpToInclusive="true" />
-    </fragment>
+        tools:layout="@layout/history_recyclerview" />
 
 
 
@@ -69,13 +53,7 @@
         android:id="@+id/statistics_id"
         android:name="com.mad.poleato.Statistics.StatisticsFragment"
         android:label="@string/title_actionbar_deliveryStatistics"
-        tools:layout="@layout/statistics_layout" >
-        <action
-            android:id="@+id/action_statisticsFragment_to_signInActivity"
-            app:destination="@id/signInActivity"
-            app:popUpTo="@+id/signInActivity"
-            app:popUpToInclusive="true" />
-    </fragment>
+        tools:layout="@layout/statistics_layout" />
 
 
 
@@ -89,11 +67,6 @@
             app:destination="@id/editProfile_id"
             app:enterAnim="@anim/fui_slide_in_right"
             app:popExitAnim="@anim/nav_default_pop_exit_anim" />
-        <action
-            android:id="@+id/action_mainProfile_id_to_signInActivity"
-            app:destination="@id/signInActivity"
-            app:popUpTo="@+id/signInActivity"
-            app:popUpToInclusive="true" />
     </fragment>
     <fragment
         android:id="@+id/editProfile_id"
