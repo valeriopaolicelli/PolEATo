@@ -52,7 +52,9 @@
         tools:layout="@layout/add_food_fragment">
         <action
             android:id="@+id/action_addFoodFragment_to_daily_offer"
-            app:destination="@id/daily_offer_id" />
+            app:destination="@id/daily_offer_id"
+            app:popUpTo="@+id/daily_offer_id"
+            app:popUpToInclusive="true" />
     </fragment>
 
     <fragment
@@ -62,7 +64,9 @@
         tools:layout="@layout/edit_food_fragment">
         <action
             android:id="@+id/action_editFoodFragment_id_to_daily_offer_id"
-            app:destination="@id/daily_offer_id" />
+            app:destination="@id/daily_offer_id"
+            app:popUpTo="@+id/daily_offer_id"
+            app:popUpToInclusive="true" />
         <argument
             android:name="id"
             app:argType="string" />

@@ -92,7 +92,6 @@ public class EditFoodFragment extends DialogFragment {
     private Map<String, ImageButton> imageButtons;
     private Map<String,EditText> editTextFields;
 
-    private Button buttonSave;
     private DishCategoryTranslator translator;
 
     //price ranges
@@ -203,16 +202,7 @@ public class EditFoodFragment extends DialogFragment {
 
         change_im = v.findViewById(R.id.frag_change_im);
         imageFood = v.findViewById(R.id.imageFood);
-        buttonSave = v.findViewById(R.id.button_frag_save);
 
-
-        buttonSave.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
-                saveChanges();
-            }
-        });
 
         //set the listener to change the image
         change_im.setOnClickListener(new View.OnClickListener() {

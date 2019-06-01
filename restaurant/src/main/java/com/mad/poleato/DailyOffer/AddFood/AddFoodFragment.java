@@ -88,7 +88,6 @@ public class AddFoodFragment extends Fragment {
     private Map<String, ImageButton> imageButtons;
     private Map<String, EditText> editTextFields;
 
-    private Button buttonSave;
     private DishCategoryTranslator translator;
 
     //price ranges
@@ -212,17 +211,9 @@ public class AddFoodFragment extends Fragment {
 
         change_im = v.findViewById(R.id.frag_change_im);
         imageFood = v.findViewById(R.id.imageFood);
-        buttonSave = v.findViewById(R.id.button_frag_save);
 
         // Set listener to send DATA to main activity that sends them to DailyOfferFragment
 
-        buttonSave.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
-                saveChanges();
-            }
-        });
 
         change_im.setOnClickListener(new View.OnClickListener() {
             @Override

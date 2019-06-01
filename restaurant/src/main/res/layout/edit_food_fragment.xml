@@ -53,6 +53,7 @@
             android:layout_marginStart="8dp"
             android:layout_marginTop="32dp"
             android:layout_marginEnd="8dp"
+            android:layout_marginBottom="8dp"
             android:theme="@style/FloatLabel"
             app:layout_constraintBottom_toTopOf="@id/input_layout_description"
             app:layout_constraintEnd_toStartOf="@id/cancel_name"
@@ -97,6 +98,7 @@
             android:layout_height="56dp"
             android:layout_marginStart="8dp"
             android:layout_marginEnd="8dp"
+            android:layout_marginBottom="8dp"
             android:theme="@style/FloatLabel"
             app:layout_constraintBottom_toTopOf="@id/input_layout_price"
             app:layout_constraintEnd_toStartOf="@id/cancel_description"
@@ -140,6 +142,7 @@
             android:layout_height="56dp"
             android:layout_marginStart="8dp"
             android:layout_marginEnd="8dp"
+            android:layout_marginBottom="8dp"
             android:theme="@style/FloatLabel"
             app:layout_constraintBottom_toTopOf="@id/input_layout_quantity"
             app:layout_constraintEnd_toStartOf="@id/cancel_price"
@@ -183,13 +186,12 @@
             android:layout_height="56dp"
             android:layout_marginStart="8dp"
             android:layout_marginEnd="8dp"
-            android:layout_marginBottom="16dp"
+            android:layout_marginBottom="24dp"
             android:theme="@style/FloatLabel"
-            app:layout_constraintBottom_toTopOf="@id/button_frag_save"
+            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toStartOf="@id/cancel_quantity"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/input_layout_price"
-            app:layout_constraintVertical_bias="1.0">
+            app:layout_constraintTop_toBottomOf="@id/input_layout_price">
 
             <EditText
                 android:id="@+id/editQuantity"
@@ -220,19 +222,6 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toEndOf="@+id/input_layout_quantity"
             app:layout_constraintTop_toBottomOf="@id/input_layout_price" />
-
-        <Button
-            android:id="@+id/button_frag_save"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
-            android:layout_marginBottom="48dp"
-            android:layout_weight="1"
-            android:text="@string/save"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/input_layout_quantity" />
 
     </android.support.constraint.ConstraintLayout>
 </ScrollView>
