@@ -257,13 +257,15 @@ public class AboutUsFragment extends Fragment {
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 long sum = 0;
                 long numberOfFood= dataSnapshot.getChildrenCount();
-                double popularityAverage; // average of popularity counter of all foods in menu
+                double popularityAverage=0; // average of popularity counter of all foods in menu
 
                 for(DataSnapshot foodReference : dataSnapshot.getChildren()){
                     sum += Integer.parseInt(foodReference.child("PopularityCounter").getValue().toString());
                 }
+                //TODO: Check division by zero
+                if(numberOfFood!=0)
+                    popularityAverage= ((double)sum/numberOfFood);
 
-                popularityAverage= sum/numberOfFood;
 
                 // here take the foods that exceed the average threshold and populate the recycleViewAdapter
                 for(DataSnapshot foodReference : dataSnapshot.getChildren()){

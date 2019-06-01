@@ -166,8 +166,8 @@ public class EditFoodFragment extends DialogFragment {
         /** Inflate the menu; this adds items to the action bar if it is present.*/
         inflater.inflate(R.menu.save_menu, menu);
 
-        /** Button to show map */
-        menu.findItem(R.id.map_id).setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
+        /** Button to save changes */
+        menu.findItem(R.id.save_id).setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
             @Override
             public boolean onMenuItemClick(MenuItem item) {
                 saveChanges();
@@ -791,7 +791,6 @@ public class EditFoodFragment extends DialogFragment {
     public void onDestroy() {
         super.onDestroy();
 
-        navigation.setVisibility(View.VISIBLE);
 
         foodReference.removeAllListener();
     }
@@ -799,6 +798,13 @@ public class EditFoodFragment extends DialogFragment {
     @Override
     public void onStop() {
         super.onStop();
+        navigation.setVisibility(View.VISIBLE);
         foodReference.removeAllListener();
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        navigation.setVisibility(View.GONE);
     }
 }

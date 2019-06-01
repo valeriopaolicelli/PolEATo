@@ -245,9 +245,15 @@ public class AddFoodFragment extends Fragment {
     }
 
     @Override
-    public void onDestroy() {
-        super.onDestroy();
+    public void onStop() {
+        super.onStop();
         navigation.setVisibility(View.VISIBLE);
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        navigation.setVisibility(View.GONE);
     }
 
     private void saveChanges(){

@@ -205,8 +205,14 @@ public class NavigatorActivity extends AppCompatActivity {
     }
 
     @Override
-    protected void onStop() {
+    protected void onPause() {
         unregisterReceiver(networkReceiver);
+        unregisterReceiver(gpsLocationReceiver);
+        super.onPause();
+    }
+
+    @Override
+    protected void onStop() {
         super.onStop();
     }
 
