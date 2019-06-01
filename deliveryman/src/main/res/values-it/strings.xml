@@ -153,4 +153,24 @@
     <string name="alert_is_active">Devi avere lo status su attivo per iniziare questa corsa</string>
     <string name="turn_on_status">Vuoi passare su attivo e iniziare questa consegna?</string>
 
+
+    <!-- Chart types array -->
+    <string-array name="chart_array">
+        <item>Giornaliero</item>
+        <item>Mensile</item>
+    </string-array>
+
+    <string name="jan">Gen</string>
+    <string name="feb">Feb</string>
+    <string name="mar">Mar</string>
+    <string name="apr">Apr</string>
+    <string name="may">Mag</string>
+    <string name="jun">Giu</string>
+    <string name="jul">Lug</string>
+    <string name="aug">Ago</string>
+    <string name="sep">Set</string>
+    <string name="oct">Ott</string>
+    <string name="nov">Nov</string>
+    <string name="dec">Dic</string>
+
 </resources>
