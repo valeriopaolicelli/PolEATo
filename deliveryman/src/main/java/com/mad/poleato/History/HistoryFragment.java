@@ -25,12 +25,14 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.mad.poleato.AuthentucatorD.Authenticator;
 import com.mad.poleato.Firebase.MyDatabaseReference;
 import com.mad.poleato.R;
 import com.onesignal.OneSignal;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 
 /**
@@ -84,8 +86,7 @@ public class HistoryFragment extends Fragment {
         mAuth = FirebaseAuth.getInstance();
         FirebaseUser currentUser = mAuth.getCurrentUser();
         currentUserID = currentUser.getUid();
-        if(currentUserID == null)
-            logout();
+
 
         OneSignal.startInit(getContext())
                 .inFocusDisplaying(OneSignal.OSInFocusDisplayOption.Notification)
@@ -104,22 +105,26 @@ public class HistoryFragment extends Fragment {
     }
 
 
-    private void logout(){
-        //logout
-        Log.d("matte", "Logout");
-        FirebaseAuth.getInstance().signOut();
-        OneSignal.setSubscription(false);
-
-        //go to login
-        //Navigation.findNavController(view).navigate(R.id.action_mainProfile_id_to_signInActivity); TODO mich
-        getActivity().finish();
-    }
+//    private void logout(){
+//        //logout
+//        Log.d("matte", "Logout");
+//        FirebaseAuth.getInstance().signOut();
+//        OneSignal.setSubscription(false);
+//
+//        //go to login
+//        //Navigation.findNavController(view).navigate(R.id.action_mainProfile_id_to_signInActivity); TODO mich
+//        getActivity().finish();
+//    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         fragView = inflater.inflate(R.layout.history_recyclerview, container, false);
+
+        /** Logout a priori if access is revoked */
+        if(currentUserID == null)
+            Authenticator.revokeAccess(Objects.requireNonNull(getActivity()), fragView);
 
         empty_view = (ImageView) fragView.findViewById(R.id.history_empty_view);
         rv = (RecyclerView) fragView.findViewById(R.id.history_recyclerview);

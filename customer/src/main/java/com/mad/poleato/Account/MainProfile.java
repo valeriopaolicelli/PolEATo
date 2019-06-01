@@ -2,10 +2,8 @@ package com.mad.poleato.Account;
 
 
 import android.app.ProgressDialog;
-import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -13,7 +11,6 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
-import android.util.Base64;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -21,19 +18,14 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.navigation.Navigation;
 
-import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
-import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
-import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -43,16 +35,12 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
+import com.mad.poleato.AuthenticatorC.Authenticator;
 import com.mad.poleato.MyDatabaseReference;
 import com.mad.poleato.R;
 import com.onesignal.OneSignal;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.InputStream;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import de.hdodenhof.circleimageview.CircleImageView;
@@ -62,6 +50,7 @@ import de.hdodenhof.circleimageview.CircleImageView;
  * A simple {@link Fragment} subclass.
  */
 public class MainProfile extends Fragment {
+
     /**
      * This class...
      */
@@ -104,13 +93,13 @@ public class MainProfile extends Fragment {
         FirebaseUser currentUser = mAuth.getCurrentUser();
         currentUserID = currentUser.getUid();
 
-        GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
-                .requestIdToken(getString(R.string.default_web_client_id))
-                .requestEmail()
-                .build();
-
-        /** Build a GoogleSignInClient with the options specified by gso. */
-        mGoogleSignInClient = GoogleSignIn.getClient(getActivity(), gso);
+//        GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+//                .requestIdToken(getString(R.string.default_web_client_id))
+//                .requestEmail()
+//                .build();
+//
+//        /** Build a GoogleSignInClient with the options specified by gso. */
+//        mGoogleSignInClient = GoogleSignIn.getClient(getActivity(), gso);
 
 // OneSignal is used to send notifications between applications
 
@@ -138,7 +127,7 @@ public class MainProfile extends Fragment {
                 for (MyDatabaseReference my_ref : dbReferenceList.values())
                     my_ref.removeAllListener();
 
-                revokeAccess();
+                Authenticator.revokeAccess(getActivity(), view);
                 //                OneSignal.sendTag("User_ID", "");
 
                 return true;
@@ -200,7 +189,7 @@ public class MainProfile extends Fragment {
 
                 // dataSnapshot is the "issue" node with all children
 
-                if(dataSnapshot.hasChild("Email"))
+                if (dataSnapshot.hasChild("Email"))
                     tvFields.get("Email").setText(dataSnapshot.child("Email").getValue().toString());
 
                 if (dataSnapshot.hasChild("Name") &&
@@ -253,23 +242,25 @@ public class MainProfile extends Fragment {
         });
     }
 
-    private void revokeAccess() {
-        // Firebase sign out
-        //mAuth.signOut();
-
-        Log.d("miche", "Logout");
-        FirebaseAuth.getInstance().signOut();
-        // Google revoke access
-        mGoogleSignInClient.revokeAccess();
-
-        OneSignal.setSubscription(false);
-
-        /**
-         *  GO TO LOGIN ****
-         */
-        Navigation.findNavController(view).navigate(R.id.action_mainProfile_id_to_signInActivity);
-        getActivity().finish();
-    }
+//    private void revokeAccess() {
+//        // Firebase sign out
+//        //mAuth.signOut();
+//
+//        Log.d("miche", "Logout");
+//        FirebaseAuth.getInstance().signOut();
+//        // Google revoke access
+//        mGoogleSignInClient.revokeAccess();
+//
+//        OneSignal.setSubscription(false);
+//
+//        /**
+//         *  GO TO LOGIN ****
+//         */
+////        Navigation.findNavController(view).navigate(R.id.action_mainProfile_id_to_signInActivity);
+////        getActivity().finish();
+//        Navigation.findNavController(view).navigate(R.id.action_global_signInActivity);
+//        getActivity().finish();
+//    }
 
     @Override
     public void onDestroy() {

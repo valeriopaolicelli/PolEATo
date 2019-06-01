@@ -56,6 +56,7 @@ import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
+import com.mad.poleato.AuthentucatorD.Authenticator;
 import com.mad.poleato.Firebase.MyDatabaseReference;
 import com.mad.poleato.R;
 import com.onesignal.OneSignal;
@@ -67,6 +68,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
@@ -113,9 +115,6 @@ public class EditProfile extends Fragment {
         mAuth = FirebaseAuth.getInstance();
         FirebaseUser currentUser = mAuth.getCurrentUser();
         currentUserID = currentUser.getUid();
-        if(currentUserID == null)
-            logout();
-
 
         OneSignal.startInit(getContext())
                 .inFocusDisplaying(OneSignal.OSInFocusDisplayOption.Notification)
@@ -135,16 +134,16 @@ public class EditProfile extends Fragment {
     }
 
 
-    private void logout(){
-        //logout
-        Log.d("matte", "Logout");
-        FirebaseAuth.getInstance().signOut();
-        OneSignal.setSubscription(false);
-
-        //go to signIn activity
-        //Navigation.findNavController(view).navigate(R.id.action_rides_id_to_signInActivity); //TODO mich
-        getActivity().finish();
-    }
+//    private void logout(){
+//        //logout
+//        Log.d("matte", "Logout");
+//        FirebaseAuth.getInstance().signOut();
+//        OneSignal.setSubscription(false);
+//
+//        //go to signIn activity
+//        //Navigation.findNavController(view).navigate(R.id.action_rides_id_to_signInActivity); //TODO mich
+//        getActivity().finish();
+//    }
 
 
     @Override
@@ -152,7 +151,9 @@ public class EditProfile extends Fragment {
                              Bundle savedInstanceState) {
         v = inflater.inflate(R.layout.fragment_edit_profile, container, false);
 
-
+        /** Logout a priori if access is revoked */
+        if(currentUserID == null)
+            Authenticator.revokeAccess(Objects.requireNonNull(getActivity()), v);
 
         editTextFields.put("Name",(EditText) v.findViewById(R.id.editTextName));
         editTextFields.put("Surname",(EditText) v.findViewById(R.id.editTextSurname));

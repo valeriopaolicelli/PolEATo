@@ -29,6 +29,7 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.mad.poleato.AuthenticatorC.Authenticator;
 import com.mad.poleato.Classes.Rating;
 import com.mad.poleato.Classes.Restaurant;
 import com.mad.poleato.FavoriteRestaurants.FavoriteRestaurantRecyclerViewAdapter;
@@ -42,6 +43,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 
 
@@ -128,6 +130,10 @@ public class MyReviewsFragment extends Fragment {
                              Bundle savedInstanceState) {
         fragView = inflater.inflate(R.layout.fragment_my_reviews, container, false);
         // Inflate the layout for this fragment
+
+        /** Logout a priori if access is revoked */
+        if(currentUserID == null)
+            Authenticator.revokeAccess(Objects.requireNonNull(getActivity()), fragView);
 
         return fragView;
     }

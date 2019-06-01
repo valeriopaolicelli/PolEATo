@@ -5,6 +5,10 @@
     android:id="@+id/nav_graph"
     app:startDestination="@id/restaurantSearchFragment_id">
 
+    <action
+        android:id="@+id/action_global_signInActivity"
+        app:destination="@id/signInActivity" />
+
 
     <fragment
         android:id="@+id/restaurantSearchFragment_id"
@@ -110,11 +114,6 @@
         android:name="com.mad.poleato.Account.MainProfile"
         android:label="@string/title_actionbar_account"
         tools:layout="@layout/fragment_main_profile" >
-        <action
-            android:id="@+id/action_mainProfile_id_to_signInActivity"
-            app:destination="@id/signInActivity"
-            app:popUpTo="@+id/signInActivity"
-            app:popUpToInclusive="true" />
         <action
             android:id="@+id/action_mainProfile_id_to_editProfile_id"
             app:destination="@id/editProfile_id"

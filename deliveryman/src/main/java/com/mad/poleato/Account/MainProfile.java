@@ -35,12 +35,14 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
+import com.mad.poleato.AuthentucatorD.Authenticator;
 import com.mad.poleato.Firebase.MyDatabaseReference;
 import com.mad.poleato.R;
 import com.onesignal.OneSignal;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
 
 public class MainProfile extends Fragment {
@@ -75,8 +77,6 @@ public class MainProfile extends Fragment {
         mAuth = FirebaseAuth.getInstance();
         FirebaseUser currentUser = mAuth.getCurrentUser();
         currentUserID = currentUser.getUid();
-        if (currentUserID == null)
-            revokeAccess();
 
         deliveryProfileReference = new MyDatabaseReference(FirebaseDatabase.getInstance()
                 .getReference("deliveryman/" + currentUserID));
@@ -152,7 +152,7 @@ public class MainProfile extends Fragment {
                 deliveryProfileReference.removeAllListener();
 
                 /** logout */
-                revokeAccess();
+                Authenticator.revokeAccess(getActivity(), view);
                 return true;
             }
         });
@@ -162,6 +162,10 @@ public class MainProfile extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         view = inflater.inflate(R.layout.fragment_profile, container, false);
+
+        /** Logout a priori if access is revoked */
+        if (currentUserID == null)
+            Authenticator.revokeAccess(Objects.requireNonNull(getActivity()), view);
 
         // Retrieve all fields (restaurant details) in the xml file
         tvFields = new HashMap<>();
@@ -271,23 +275,23 @@ public class MainProfile extends Fragment {
 
     }
 
-    private void revokeAccess() {
-        // Firebase sign out
-        //mAuth.signOut();
-
-        Log.d("miche", "Logout");
-        FirebaseAuth.getInstance().signOut();
-        // Google revoke access
-        mGoogleSignInClient.revokeAccess();
-
-        OneSignal.setSubscription(false);
-
-        /**
-         *  GO TO LOGIN ****
-         */
-        Navigation.findNavController(view).navigate(R.id.action_mainProfile_id_to_signInActivity);
-        getActivity().finish();
-    }
+//    private void revokeAccess() {
+//        // Firebase sign out
+//        //mAuth.signOut();
+//
+//        Log.d("miche", "Logout");
+//        FirebaseAuth.getInstance().signOut();
+//        // Google revoke access
+//        mGoogleSignInClient.revokeAccess();
+//
+//        OneSignal.setSubscription(false);
+//
+//        /**
+//         *  GO TO LOGIN ****
+//         */
+//        Navigation.findNavController(view).navigate(R.id.action_mainProfile_id_to_signInActivity);
+//        getActivity().finish();
+//    }
 
 
     @Override

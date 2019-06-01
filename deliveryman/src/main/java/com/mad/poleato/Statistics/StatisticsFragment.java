@@ -30,6 +30,7 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.mad.poleato.AuthentucatorD.Authenticator;
 import com.mad.poleato.Firebase.MyDatabaseReference;
 import com.mad.poleato.R;
 import com.onesignal.OneSignal;
@@ -41,6 +42,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.TreeMap;
 
 
@@ -107,8 +109,7 @@ public class StatisticsFragment extends Fragment {
         mAuth = FirebaseAuth.getInstance();
         FirebaseUser currentUser = mAuth.getCurrentUser();
         currentUserID = currentUser.getUid();
-        if (currentUser == null)
-            logout();
+
 
         OneSignal.startInit(getContext())
                 .inFocusDisplaying(OneSignal.OSInFocusDisplayOption.Notification)
@@ -126,15 +127,15 @@ public class StatisticsFragment extends Fragment {
 
     }
 
-
-    private void logout() {
-        FirebaseAuth.getInstance().signOut();
-        OneSignal.setSubscription(false);
-
-        //logout
-        Navigation.findNavController(fragView).navigate(R.id.action_statisticsFragment_to_signInActivity); //TODO mich
-        getActivity().finish();
-    }
+//
+//    private void logout() {
+//        FirebaseAuth.getInstance().signOut();
+//        OneSignal.setSubscription(false);
+//
+//        //logout
+//        Navigation.findNavController(fragView).navigate(R.id.action_statisticsFragment_to_signInActivity); //TODO mich
+//        getActivity().finish();
+//    }
 
 
     @Override
@@ -142,6 +143,10 @@ public class StatisticsFragment extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         fragView = inflater.inflate(R.layout.statistics_layout, container, false);
+
+        /** Logout a priori if access is revoked */
+        if (currentUserID == null)
+            Authenticator.revokeAccess(Objects.requireNonNull(getActivity()), fragView);
 
         collectFields();
 

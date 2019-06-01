@@ -23,6 +23,7 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.mad.poleato.AuthenticatorC.Authenticator;
 import com.mad.poleato.Classes.Rating;
 import com.mad.poleato.MyDatabaseReference;
 import com.mad.poleato.R;
@@ -31,6 +32,7 @@ import com.onesignal.OneSignal;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * Fragment related to a review of order.
@@ -98,6 +100,10 @@ public class RatingFragment extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         fragview = inflater.inflate(R.layout.rating_fragment_layout, container, false);
+
+        /** Logout a priori if access is revoked */
+        if(currentUserID == null)
+            Authenticator.revokeAccess(Objects.requireNonNull(getActivity()), fragview);
 
         return fragview;
     }

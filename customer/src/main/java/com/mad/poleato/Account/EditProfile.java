@@ -67,6 +67,7 @@ import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
+import com.mad.poleato.AuthenticatorC.Authenticator;
 import com.mad.poleato.MyDatabaseReference;
 import com.mad.poleato.R;
 import com.onesignal.OneSignal;
@@ -81,6 +82,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Objects;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
@@ -165,6 +167,10 @@ public class EditProfile extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         v = inflater.inflate(R.layout.fragment_edit_profile, container, false);
+
+        /** Logout a priori if access is revoked */
+        if(currentUserID == null)
+            Authenticator.revokeAccess(Objects.requireNonNull(getActivity()), v);
 
         editTextFields.put("Name",(EditText) v.findViewById(R.id.editTextName));
         editTextFields.put("Surname",(EditText) v.findViewById(R.id.editTextSurname));

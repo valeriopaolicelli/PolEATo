@@ -36,6 +36,7 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.mad.poleato.AuthentucatorD.Authenticator;
 import com.mad.poleato.Firebase.MyDatabaseReference;
 import com.mad.poleato.R;
 import com.mad.poleato.Ride.Ride;
@@ -44,6 +45,7 @@ import com.onesignal.OneSignal;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.Objects;
 
 
 /**
@@ -94,8 +96,7 @@ public class RequestsFragment extends Fragment {
         mAuth = FirebaseAuth.getInstance();
         FirebaseUser currentUser = mAuth.getCurrentUser();
         currentUserID = currentUser.getUid();
-        if(currentUserID == null)
-            logout();
+
 
         OneSignal.startInit(getContext())
                 .inFocusDisplaying(OneSignal.OSInFocusDisplayOption.Notification)
@@ -127,6 +128,9 @@ public class RequestsFragment extends Fragment {
         // Inflate the layout for this fragment
         fragView =  inflater.inflate(R.layout.pending_requests_recycler, container, false);
 
+        /** Logout a priori if access is revoked */
+        if(currentUserID == null)
+            Authenticator.revokeAccess(Objects.requireNonNull(getActivity()), fragView);
 
         empty_view = (ImageView) fragView.findViewById(R.id.requests_empty_view);
         rv = (RecyclerView) fragView.findViewById(R.id.requests_recyler);

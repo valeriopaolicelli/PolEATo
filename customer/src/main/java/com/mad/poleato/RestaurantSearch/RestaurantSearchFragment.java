@@ -51,6 +51,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
+import com.mad.poleato.AuthenticatorC.Authenticator;
 import com.mad.poleato.MyDatabaseReference;
 import com.mad.poleato.R;
 import com.mad.poleato.Classes.Restaurant;
@@ -62,6 +63,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
+import java.util.Objects;
 import java.util.Set;
 
 
@@ -141,6 +143,10 @@ public class RestaurantSearchFragment extends Fragment {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         fragView = inflater.inflate(R.layout.restaurant_recyclerview, container, false);
+
+        /** Logout a priori if access is revoked */
+        if(currentUserID == null)
+            Authenticator.revokeAccess(Objects.requireNonNull(getActivity()), fragView);
 
         return fragView;
 

@@ -56,6 +56,7 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.mad.poleato.AuthentucatorD.Authenticator;
 import com.mad.poleato.Firebase.MyDatabaseReference;
 import com.mad.poleato.LocationService.LocationUtilities;
 import com.mad.poleato.R;
@@ -80,6 +81,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Scanner;
 
 
@@ -168,8 +170,6 @@ public class RideFragment extends Fragment implements OnMapReadyCallback {
         mAuth = FirebaseAuth.getInstance();
         FirebaseUser currentUser = mAuth.getCurrentUser();
         currentUserID = currentUser.getUid();
-        if(currentUserID == null)
-            logout();
 
 
         OneSignal.startInit(getContext())
@@ -190,16 +190,16 @@ public class RideFragment extends Fragment implements OnMapReadyCallback {
     }
 
 
-    private void logout(){
-        //logout
-        Log.d("matte", "Logout");
-        FirebaseAuth.getInstance().signOut();
-        OneSignal.setSubscription(false);
-
-        //go to signIn activity
-        //Navigation.findNavController(fragView).navigate(R.id.action_rides_id_to_signInActivity); //TODO mich
-        getActivity().finish();
-    }
+//    private void logout(){
+//        //logout
+//        Log.d("matte", "Logout");
+//        FirebaseAuth.getInstance().signOut();
+//        OneSignal.setSubscription(false);
+//
+//        //go to signIn activity
+//        //Navigation.findNavController(fragView).navigate(R.id.action_rides_id_to_signInActivity); //TODO mich
+//        getActivity().finish();
+//    }
 
 
     @Override
@@ -207,6 +207,11 @@ public class RideFragment extends Fragment implements OnMapReadyCallback {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         fragView = inflater.inflate(R.layout.ride_layout, container, false);
+
+        /** Logout a priori if access is revoked */
+        if(currentUserID == null)
+            Authenticator.revokeAccess(Objects.requireNonNull(getActivity()), fragView);
+
         //collects all the TextView inside the HashMap tv_Fields and attach the listeners
         collectFields();
 
