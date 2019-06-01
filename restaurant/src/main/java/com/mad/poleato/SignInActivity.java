@@ -55,7 +55,7 @@ public class SignInActivity extends AppCompatActivity {
     private SignInButton googleButton;
     ConnectionManager connectionManager;
 
-    boolean alreadyAccessed;
+    private boolean alreadyAccessed;
 
     //this is the layout that must be hide as default: it contains the mail and password fields
     private ConstraintLayout login_constraint;
@@ -150,7 +150,7 @@ public class SignInActivity extends AppCompatActivity {
                 @Override
                 public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                     if (dataSnapshot.exists())
-                        if (dataSnapshot.getValue().toString().equals("restaurant")) {
+                        if (dataSnapshot.getValue().toString().equals("restaurant")){
                             if (!alreadyAccessed) {
                                 alreadyAccessed = true;
                                 access();

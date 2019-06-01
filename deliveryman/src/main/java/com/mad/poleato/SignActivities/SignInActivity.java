@@ -63,6 +63,8 @@ public class SignInActivity extends AppCompatActivity {
     private ProgressBar progress_bar;
     private ConnectionManager connectionManager;
 
+    private boolean alreadyAccessed;
+
     private HashMap<String, MyDatabaseReference> dbReferenceList;
 
     @Override
@@ -90,6 +92,9 @@ public class SignInActivity extends AppCompatActivity {
 
         // Build a GoogleSignInClient with the options specified by gso.
         mGoogleSignInClient = GoogleSignIn.getClient(this, gso);
+
+        alreadyAccessed= false; // flag to check if the login is already performed with google o normally
+                                // to avoid the other one
 
         //search for the views
         edPassword = (EditText) findViewById(R.id.edPassword);
@@ -150,8 +155,12 @@ public class SignInActivity extends AppCompatActivity {
                 @Override
                 public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                     if (dataSnapshot.exists())
-                        if (dataSnapshot.getValue().toString().equals("deliveryman"))
-                            access();
+                        if (dataSnapshot.getValue().toString().equals("deliveryman")){
+                            if (!alreadyAccessed) {
+                                alreadyAccessed = true;
+                                access();
+                            }
+                        }
                         else{
                             FirebaseAuth.getInstance().signOut();
                             show_login_form();
@@ -168,8 +177,11 @@ public class SignInActivity extends AppCompatActivity {
             show_login_form();
         //check if signed in with Google
         final GoogleSignInAccount account = GoogleSignIn.getLastSignedInAccount(this);
-        if (currentUser != null && account != null)
-            firebaseAuthWithGoogle(account);
+        if (account != null && account.getEmail() != null) {
+            if(!alreadyAccessed) {
+                firebaseAuthWithGoogle(account);
+            }
+        }
     }
 
     //access to the app
@@ -324,8 +336,12 @@ public class SignInActivity extends AppCompatActivity {
                                             mGoogleSignInClient.revokeAccess();
                                             show_login_form();
                                         }
-                                        else
-                                            access();
+                                        else{
+                                            if(!alreadyAccessed) {
+                                                alreadyAccessed = true;
+                                                access();
+                                            }
+                                        }
                                     }
                                     else {
                                         Intent myIntent = new Intent(SignInActivity.this,
