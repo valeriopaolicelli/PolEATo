@@ -42,12 +42,11 @@
                 android:layout_marginStart="8dp"
                 android:layout_marginTop="8dp"
                 android:layout_marginEnd="8dp"
-                android:layout_marginBottom="8dp"
                 android:gravity="center_horizontal|center_vertical"
                 android:text="Carbonara"
                 android:textColor="#444444"
                 android:textSize="20sp"
-                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintBottom_toTopOf="@id/cardDescription"
                 app:layout_constraintEnd_toStartOf="@+id/cardPrice"
                 app:layout_constraintHorizontal_bias="0.0"
                 app:layout_constraintStart_toEndOf="@+id/cardImage"
@@ -92,27 +91,30 @@
                 android:layout_width="wrap_content"
                 android:layout_height="16dp"
                 android:layout_marginStart="8dp"
+                android:layout_marginTop="16dp"
                 android:layout_marginEnd="8dp"
                 android:layout_marginBottom="8dp"
                 android:text="(qty 10)"
                 android:textSize="12sp"
                 app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toStartOf="@+id/cardPrice"
-                app:layout_constraintStart_toEndOf="@+id/cardImage" />
+                app:layout_constraintEnd_toStartOf="@id/cardPrice"
+                app:layout_constraintStart_toEndOf="@id/cardImage"
+                app:layout_constraintTop_toBottomOf="@id/cardDescription" />
 
 
             <ImageButton
                 android:id="@+id/cardSettings"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
                 android:layout_marginStart="32dp"
-                android:layout_marginTop="8dp"
+                android:layout_marginBottom="14dp"
+                android:background="@null"
                 android:src="@drawable/ic_baseline_more_vert_24px"
+                app:layout_constraintBottom_toTopOf="@+id/cardPrice"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toEndOf="@+id/cardName"
-                android:layout_alignParentRight="true"
-                app:layout_constraintTop_toTopOf="parent"
-                android:background="@null"/>
+                app:layout_constraintTop_toTopOf="parent" />
 
 
         </android.support.constraint.ConstraintLayout>

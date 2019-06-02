@@ -306,6 +306,10 @@ public class MenuFragment extends Fragment {
 
                     listDataChild.get(category).add(f);
 
+                    if(listDataChild.containsKey(category) &&
+                            listDataChild.get(category).size() > 0)
+                        Collections.sort(listDataChild.get(category));
+
                     /*
                      * if it's  popular food (popularity counter >= popularity average),
                      * add it to popular list
@@ -318,6 +322,10 @@ public class MenuFragment extends Fragment {
                             listDataGroup.add("Popular");
 
                         listDataChild.get("Popular").add(f);
+
+                        if(listDataChild.containsKey("Popular") &&
+                                listDataChild.get("Popular").size() > 0)
+                            Collections.sort(listDataChild.get("Popular"));
                     }
 
                     /*
@@ -331,7 +339,7 @@ public class MenuFragment extends Fragment {
                         public void onSuccess(byte[] bytes) {
                             String s = imageUrl;
                             Log.d("matte", "onSuccess");
-                            setImg(category, curr_index, s);
+                            setImg(category, id, s);
                         }
                     }).addOnFailureListener(new OnFailureListener() {
                         @Override
@@ -339,7 +347,7 @@ public class MenuFragment extends Fragment {
                             String s = "";
                             Log.d("matte", "onFailure() : excp -> "+exception.getMessage()
                                     +"| restaurantID: "+id);
-                            setImg(category, curr_index, s);
+                            setImg(category, id, s);
                         }
                     });
                     //Sorting categoris
@@ -391,6 +399,10 @@ public class MenuFragment extends Fragment {
                             listDataGroup.add("Popular");
 
                         listDataChild.get("Popular").add(f);
+
+                        if(listDataChild.containsKey("Popular") &&
+                                listDataChild.get("Popular").size() > 0)
+                            Collections.sort(listDataChild.get("Popular"));
                     }
 
                     int lenght= listDataChild.get(category).size();
@@ -419,7 +431,7 @@ public class MenuFragment extends Fragment {
                         public void onSuccess(byte[] bytes) {
                             String s = imageUrl;
                             Log.d("matte", "onSuccess");
-                            setImg(category, curr_index, s);
+                            setImg(category, id, s);
 
                         }
                     }).addOnFailureListener(new OnFailureListener() {
@@ -428,9 +440,14 @@ public class MenuFragment extends Fragment {
                             String s = "";
                             Log.d("matte", "onFailure() : excp -> "+exception.getMessage()
                                     +"| restaurantID: "+id);
-                            setImg(category,curr_index,s);
+                            setImg(category, id, s);
                         }
                     });
+
+                    if(listDataChild.containsKey(category) &&
+                            listDataChild.get(category).size() > 0)
+                        Collections.sort(listDataChild.get(category));
+
                     Collections.sort(listDataGroup,sortMenu);
                     listAdapter.notifyDataSetChanged();
                 }
@@ -456,6 +473,7 @@ public class MenuFragment extends Fragment {
                         listDataChild.remove(category);
                         listDataGroup.remove(category);
                     }
+
                     listAdapter.notifyDataSetChanged();
                 }
             }
@@ -473,8 +491,13 @@ public class MenuFragment extends Fragment {
     }
 
 
-    public void setImg(String category, int idx, String img){
-        listDataChild.get(category).get(idx).setImg(img);
+    public void setImg(String category, String foodID, String img){
+        if(listDataChild.containsKey(category) && listDataChild.get(category) !=null) {
+            for (Food f : listDataChild.get(category)) {
+                if (f.getFoodID().equals(foodID))
+                    f.setImg(img);
+            }
+        }
     }
 
     /**
@@ -509,6 +532,11 @@ public class MenuFragment extends Fragment {
         super.onStop();
         for (MyDatabaseReference my_ref : dbReferenceList.values())
             my_ref.removeAllListener();
+
+        HashMap<String, MyDatabaseReference> referencesOfAdapter= listAdapter.getReferences();
+        if(referencesOfAdapter != null)
+            for (MyDatabaseReference my_ref : referencesOfAdapter.values())
+                my_ref.removeAllListener();
     }
 
     @Override
@@ -516,5 +544,10 @@ public class MenuFragment extends Fragment {
         super.onDestroy();
         for(MyDatabaseReference ref : dbReferenceList.values())
             ref.removeAllListener();
+
+        HashMap<String, MyDatabaseReference> referencesOfAdapter= listAdapter.getReferences();
+        if(referencesOfAdapter != null)
+            for (MyDatabaseReference my_ref : referencesOfAdapter.values())
+                my_ref.removeAllListener();
     }
 }

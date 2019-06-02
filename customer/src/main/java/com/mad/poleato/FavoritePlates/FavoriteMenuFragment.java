@@ -295,11 +295,9 @@ public class FavoriteMenuFragment extends Fragment {
                                                 }
                                                 listDataChild.get(category).add(f);
 
-
                                                 /*
                                                  * download food image
                                                  */
-                                                final int curr_index = listDataChild.get(category).size() - 1;
                                                 StorageReference photoReference = FirebaseStorage.getInstance().getReferenceFromUrl(imageUrl);
                                                 final long ONE_MEGABYTE = 1024 * 1024;
                                                 photoReference.getBytes(ONE_MEGABYTE).addOnSuccessListener(new OnSuccessListener<byte[]>() {
@@ -308,7 +306,7 @@ public class FavoriteMenuFragment extends Fragment {
                                                         String s = imageUrl;
                                                         Log.d("matte", "onSuccess");
                                                         //SerialBitmap bmp = new SerialBitmap(BitmapFactory.decodeByteArray(bytes, 0, bytes.length));
-                                                        setImg(category, curr_index, s);
+                                                        setImg(category, favoriteFoodID, s);
                                                     }
                                                 }).addOnFailureListener(new OnFailureListener() {
                                                     @Override
@@ -316,11 +314,15 @@ public class FavoriteMenuFragment extends Fragment {
                                                         String s = "";
                                                         Log.d("matte", "onFailure() : excp -> " + exception.getMessage()
                                                                 + "| restaurantID: " + favoriteFoodID);
-                                                        setImg(category, curr_index, s);
+                                                        setImg(category, favoriteFoodID, s);
                                                     }
                                                 });
 
-                                                Collections.sort(listDataGroup,sortMenu);
+                                                if(listDataChild.containsKey(category) &&
+                                                        listDataChild.get(category).size() > 0)
+                                                    Collections.sort(listDataChild.get(category));
+
+                                                Collections.sort(listDataGroup, sortMenu);
                                                 listAdapter.notifyDataSetChanged();
                                                 show_main_view();
                                             }
@@ -370,8 +372,6 @@ public class FavoriteMenuFragment extends Fragment {
                                                 } else
                                                     listDataChild.get(category).add(f);
 
-                                                final int curr_index = listDataChild.get(category).size() - 1;
-
                                                 StorageReference photoReference = FirebaseStorage.getInstance().getReferenceFromUrl(imageUrl);
                                                 final long ONE_MEGABYTE = 1024 * 1024;
                                                 photoReference.getBytes(ONE_MEGABYTE).addOnSuccessListener(new OnSuccessListener<byte[]>() {
@@ -380,7 +380,7 @@ public class FavoriteMenuFragment extends Fragment {
                                                         String s = imageUrl;
                                                         Log.d("matte", "onSuccess");
                                                         // SerialBitmap bmp = new SerialBitmap(BitmapFactory.decodeByteArray(bytes, 0, bytes.length));
-                                                        setImg(category, curr_index, s);
+                                                        setImg(category, favoriteFoodID, s);
 
                                                     }
                                                 }).addOnFailureListener(new OnFailureListener() {
@@ -389,9 +389,14 @@ public class FavoriteMenuFragment extends Fragment {
                                                         String s = "";
                                                         Log.d("matte", "onFailure() : excp -> " + exception.getMessage()
                                                                 + "| restaurantID: " + favoriteFoodID);
-                                                        setImg(category, curr_index, s);
+                                                        setImg(category, favoriteFoodID, s);
                                                     }
                                                 });
+
+
+                                                if(listDataChild.containsKey(category) &&
+                                                        listDataChild.get(category).size() > 0)
+                                                    Collections.sort(listDataChild.get(category));
 
                                                 Collections.sort(listDataGroup,sortMenu);
                                                 listAdapter.notifyDataSetChanged();
@@ -421,6 +426,11 @@ public class FavoriteMenuFragment extends Fragment {
                                                 }
 
                                                 Collections.sort(listDataGroup,sortMenu);
+
+                                                if(listDataChild.containsKey(category) &&
+                                                        listDataChild.get(category).size() > 0)
+                                                    Collections.sort(listDataChild.get(category));
+
                                                 listAdapter.notifyDataSetChanged();
                                                 if(listDataChild.isEmpty())
                                                     show_empty_view();
@@ -476,6 +486,9 @@ public class FavoriteMenuFragment extends Fragment {
                                                     }
 
                                                     Collections.sort(listDataGroup,sortMenu);
+                                                    if(listDataChild.containsKey(category) &&
+                                                            listDataChild.get(category).size() > 0)
+                                                        Collections.sort(listDataChild.get(category));
                                                     listAdapter.notifyDataSetChanged();
 
                                                     if(listDataChild.isEmpty())
@@ -515,8 +528,13 @@ public class FavoriteMenuFragment extends Fragment {
                 listAdapter.notifyDataSetChanged();
     }
 
-    public void setImg(String category, int idx, String img){
-        listDataChild.get(category).get(idx).setImg(img);
+    public void setImg(String category, String foodID, String img){
+        if(listDataChild.containsKey(category) && listDataChild.get(category) !=null) {
+            for (Food f : listDataChild.get(category)) {
+                if (f.getFoodID().equals(foodID))
+                    f.setImg(img);
+            }
+        }
     }
 
     private class SortMenu implements Comparator<String>{
@@ -546,6 +564,10 @@ public class FavoriteMenuFragment extends Fragment {
         super.onStop();
         for (MyDatabaseReference my_ref : dbReferenceList.values())
             my_ref.removeAllListener();
+
+        HashMap<String, MyDatabaseReference> referenceAdapter= listAdapter.getDbReferenceList();
+        for (MyDatabaseReference my_ref : referenceAdapter.values())
+            my_ref.removeAllListener();
     }
 
     @Override
@@ -553,5 +575,9 @@ public class FavoriteMenuFragment extends Fragment {
         super.onDestroy();
         for(MyDatabaseReference ref : dbReferenceList.values())
             ref.removeAllListener();
+
+        HashMap<String, MyDatabaseReference> referenceAdapter= listAdapter.getDbReferenceList();
+        for (MyDatabaseReference my_ref : referenceAdapter.values())
+            my_ref.removeAllListener();
     }
 }

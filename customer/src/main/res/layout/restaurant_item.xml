@@ -30,50 +30,53 @@
         android:gravity="center"
         android:text="TextView"
         android:textStyle="bold"
-        app:layout_constraintEnd_toStartOf="@+id/rating_bar"
-        app:layout_constraintStart_toEndOf="@+id/imageView"
-        app:layout_constraintTop_toTopOf="@+id/imageView" />
+        app:layout_constraintEnd_toStartOf="@id/button_favorite"
+        app:layout_constraintStart_toEndOf="@id/imageView"
+        app:layout_constraintTop_toTopOf="@id/imageView"
+        app:layout_constraintBottom_toTopOf="@id/rating_bar"/>
 
     <TextView
         android:id="@+id/textViewType"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:gravity="center"
         android:layout_marginStart="32dp"
         android:layout_marginTop="8dp"
-        android:layout_marginEnd="8dp"
+        android:layout_marginEnd="16dp"
+        android:gravity="center"
         android:text="TextView"
-        app:layout_constraintEnd_toStartOf="@+id/textViewOpen"
-        app:layout_constraintStart_toEndOf="@+id/imageView"
-        app:layout_constraintTop_toBottomOf="@+id/textViewTitle" />
+        app:layout_constraintBottom_toTopOf="@id/linearLayout"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@id/imageView"
+        app:layout_constraintTop_toBottomOf="@id/rating_bar" />
 
     <ToggleButton
         android:id="@+id/button_favorite"
         android:layout_width="20dp"
         android:layout_height="20dp"
-        android:layout_marginStart="8dp"
-        android:layout_marginEnd="8dp"
+        android:layout_marginEnd="16dp"
         android:background="@drawable/button_favorite"
         android:checked="false"
         android:text=""
         android:textOff=""
         android:textOn=""
-        app:layout_constraintBottom_toBottomOf="@id/reviews_counter_tv"
+        app:layout_constraintBottom_toBottomOf="@id/textViewTitle"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/reviews_counter_tv"
-        app:layout_constraintTop_toTopOf="@id/reviews_counter_tv" />
+        app:layout_constraintStart_toEndOf="@id/textViewTitle"
+        app:layout_constraintTop_toTopOf="@id/textViewTitle"
+        app:layout_constraintVertical_bias="1.0" />
 
     <TextView
         android:id="@+id/textViewOpen"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="40dp"
         android:layout_marginEnd="16dp"
         android:gravity="center"
         android:text="TextView"
         android:textStyle="bold"
+        app:layout_constraintBottom_toBottomOf="@id/linearLayout"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/imageView" />
+        app:layout_constraintStart_toEndOf="@id/linearLayout"
+        app:layout_constraintTop_toTopOf="@id/linearLayout" />
 
 
     <RatingBar
@@ -81,24 +84,28 @@
         style="?android:attr/ratingBarStyleSmall"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginEnd="8dp"
-        android:theme="@style/RatingBar"
-        android:numStars="5"
+        android:layout_marginTop="8dp"
         android:isIndicator="true"
-        app:layout_constraintBottom_toBottomOf="@+id/textViewTitle"
-        app:layout_constraintEnd_toStartOf="@+id/reviews_counter_tv"
-        app:layout_constraintTop_toTopOf="@+id/textViewTitle" />
+        android:numStars="5"
+        android:theme="@style/RatingBar"
+        app:layout_constraintBottom_toTopOf="@id/textViewType"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.41"
+        app:layout_constraintStart_toEndOf="@id/imageView"
+        app:layout_constraintTop_toBottomOf="@id/textViewTitle" />
 
     <TextView
         android:id="@+id/reviews_counter_tv"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
         android:text="(0)"
-        app:layout_constraintBottom_toBottomOf="@+id/rating_bar"
-        app:layout_constraintStart_toStartOf="@+id/textViewOpen"
-        app:layout_constraintTop_toTopOf="@+id/rating_bar" />
+        app:layout_constraintBottom_toBottomOf="@id/rating_bar"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.13"
+        app:layout_constraintStart_toEndOf="@id/rating_bar"
+        app:layout_constraintTop_toTopOf="@id/rating_bar" />
     <LinearLayout
+        android:id="@+id/linearLayout"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="32dp"

@@ -364,12 +364,7 @@ public class SignInActivity extends AppCompatActivity {
                 });
     }
 
-    private void clearText(View view) {
-        if(view.getId() == R.id.cancel_email)
-            edEmail.setText("");
-        else if(view.getId() == R.id.cancel_password)
-            edPassword.setText("");
-    }
+
 
 
     private void handleButton(){
@@ -477,5 +472,12 @@ public class SignInActivity extends AppCompatActivity {
         super.onStop();
         for (MyDatabaseReference my_ref : dbReferenceList.values())
             my_ref.removeAllListener();
+    }
+
+    public void clearText(View view) {
+        if (view.getId() == R.id.cancel_email)
+            edEmail.setText("");
+        else if (view.getId() == R.id.cancel_password)
+            edPassword.setText("");
     }
 }

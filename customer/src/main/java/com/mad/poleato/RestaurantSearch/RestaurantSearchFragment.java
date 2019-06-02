@@ -34,6 +34,7 @@ import android.widget.CompoundButton;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.PopupMenu;
+import android.widget.RelativeLayout;
 import android.widget.SearchView;
 import android.widget.Toast;
 import android.widget.ToggleButton;
@@ -104,7 +105,7 @@ public class RestaurantSearchFragment extends Fragment {
     private FirebaseAuth mAuth;
     private boolean allFields;
 
-    private ConstraintLayout main_view;
+    private RecyclerView main_view;
     private ImageView empty_view;
 
     //id for the filter fragment
@@ -121,6 +122,13 @@ public class RestaurantSearchFragment extends Fragment {
         if(hostActivity != null)
             myToast = Toast.makeText(hostActivity, "", Toast.LENGTH_LONG);
 
+    }
+
+    @Override
+    public void setUserVisibleHint(boolean isVisibleToUser) {
+        super.setUserVisibleHint(isVisibleToUser);
+        if(isVisibleToUser)
+            recyclerAdapter.notifyDataSetChanged();
     }
 
     @Override
@@ -158,7 +166,7 @@ public class RestaurantSearchFragment extends Fragment {
         if(currentUserID == null)
             Authenticator.revokeAccess(Objects.requireNonNull(getActivity()), fragView);
 
-        main_view = (ConstraintLayout) fragView.findViewById(R.id.search_main_view);
+        main_view = (RecyclerView) fragView.findViewById(R.id.recyclerView);
         empty_view = (ImageView) fragView.findViewById(R.id.search_empty_view);
 
         show_empty_view();

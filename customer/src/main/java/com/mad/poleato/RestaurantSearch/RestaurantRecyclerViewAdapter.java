@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -255,7 +256,14 @@ public class RestaurantRecyclerViewAdapter extends RecyclerView.Adapter<Restaura
                         @Override
                         public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                             if(!dataSnapshot.hasChild(restaurantID)){
-                                FirebaseDatabase.getInstance().getReference("customers/"+currentUserID+"/Favorite/"+restaurantID).setValue("none");
+                                FirebaseDatabase.getInstance()
+                                        .getReference("customers/"+currentUserID+"/Favorite/"+restaurantID+"/dishes")
+                                        .setValue("none");
+                            }
+                            else if(dataSnapshot.child(restaurantID).getChildrenCount()==0){
+                                FirebaseDatabase.getInstance()
+                                        .getReference("customers/"+currentUserID+"/Favorite/"+restaurantID+"/dishes")
+                                        .setValue("none");
                             }
                         }
 
@@ -268,7 +276,10 @@ public class RestaurantRecyclerViewAdapter extends RecyclerView.Adapter<Restaura
                 else{
                     // remove restaurant from favorite list
                     String restaurantID= list.get(position).getId();
-                    FirebaseDatabase.getInstance().getReference("customers/"+currentUserID+"/Favorite/"+restaurantID).removeValue();
+                    FirebaseDatabase.getInstance()
+                            .getReference("customers/"+currentUserID+"/Favorite/"+restaurantID)
+                            .removeValue();
+                    holder.buttonFavorite.setChecked(false);
                 }
             }
         });

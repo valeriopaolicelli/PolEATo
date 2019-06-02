@@ -52,6 +52,7 @@ public class MenuExpandableListAdapter extends BaseExpandableListAdapter {
     private Interface listener;
     private String currentUserID;
     private FirebaseAuth mAuth;
+    private HashMap<String, MyDatabaseReference> dbReferenceList;
 
     public MenuExpandableListAdapter(Activity host, List<String> listDataHeader,
                                      HashMap<String, List<Food>> listChildData, Order order, Interface listener) {
@@ -64,6 +65,8 @@ public class MenuExpandableListAdapter extends BaseExpandableListAdapter {
         this._listDataChild = listChildData;
         this.order = order;
         this.listener = listener;
+
+        this.dbReferenceList= new HashMap<>();
 
         mAuth = FirebaseAuth.getInstance();
         FirebaseUser currentUser = mAuth.getCurrentUser();
@@ -159,7 +162,7 @@ public class MenuExpandableListAdapter extends BaseExpandableListAdapter {
         holder.price.setText(priceStr);
         //quantity
         if(food.getSelectedQuantity()==0)
-            holder.selectedQuantity.setText(host.getResources().getString(R.string.slash));
+            holder.selectedQuantity.setText(host.getResources().getString(R.string.minum));
         else
             holder.selectedQuantity.setText(Integer.toString(food.getSelectedQuantity()));
 
@@ -226,7 +229,9 @@ public class MenuExpandableListAdapter extends BaseExpandableListAdapter {
                                                                                        "/Favorite/" + restaurantID +
                                                                                        "/dishes");
 
-        reference.addListenerForSingleValueEvent(new ValueEventListener() {
+        dbReferenceList.put("favorite", new MyDatabaseReference(reference));
+
+        dbReferenceList.get("favorite").setSingleValueListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 if(dataSnapshot.exists()) {
@@ -272,15 +277,18 @@ public class MenuExpandableListAdapter extends BaseExpandableListAdapter {
                     DatabaseReference referenceCustomerFavorite= FirebaseDatabase.getInstance().getReference("customers/" +
                                                                                                                     currentUserID +
                                                                                                                     "/Favorite");
+                    dbReferenceList.put("favoriteCustomer", new MyDatabaseReference(referenceCustomerFavorite));
 
-                    referenceCustomerFavorite.addListenerForSingleValueEvent(new ValueEventListener() {
+                    dbReferenceList.get("favoriteCustomer").setValueListener(new ValueEventListener() {
                         @Override
                         public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                             if(!dataSnapshot.hasChild(restaurantID)) {
                                 // restore restaurant without plates in the favorite list
-                                FirebaseDatabase.getInstance().getReference("customers/" +
-                                                                                    currentUserID +
-                                                                                    "/Favorite/" + restaurantID).setValue("none");
+                                FirebaseDatabase.getInstance()
+                                        .getReference("customers/" +
+                                                            currentUserID +
+                                                            "/Favorite/" + restaurantID + "/dishes")
+                                        .setValue("none");
                                 notifyDataSetChanged();
                             }
                         }
@@ -373,6 +381,10 @@ public class MenuExpandableListAdapter extends BaseExpandableListAdapter {
 
     public Order getOrder(){
         return order;
+    }
+
+    public HashMap<String, MyDatabaseReference> getReferences(){
+         return dbReferenceList;
     }
 
     private class FoodViewHolder {

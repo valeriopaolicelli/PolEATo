@@ -26,6 +26,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.mad.poleato.Classes.Food;
 import com.mad.poleato.Interface;
+import com.mad.poleato.MyDatabaseReference;
 import com.mad.poleato.OrderManagement.Order;
 import com.mad.poleato.R;
 import com.squareup.picasso.Picasso;
@@ -50,6 +51,7 @@ public class FavoriteMenuExpandableListAdapter extends BaseExpandableListAdapter
     private String currentUserID;
     private FirebaseAuth mAuth;
     private Interface listener;
+    private HashMap<String, MyDatabaseReference> dbReferenceList;
 
     public FavoriteMenuExpandableListAdapter(Activity host, List<String> listDataHeader,
                                              HashMap<String, List<Food>> listChildData, Order order, Interface listener) {
@@ -61,6 +63,8 @@ public class FavoriteMenuExpandableListAdapter extends BaseExpandableListAdapter
         this._listDataGroup = listDataHeader;
         this._listDataChild = listChildData;
         this.order = order;
+
+        this.dbReferenceList= new HashMap<>();
 
         this.listener = listener;
         mAuth = FirebaseAuth.getInstance();
@@ -154,7 +158,7 @@ public class FavoriteMenuExpandableListAdapter extends BaseExpandableListAdapter
         holder.price.setText(priceStr);
         //quantity
         if(food.getSelectedQuantity()==0)
-            holder.selectedQuantity.setText(host.getResources().getString(R.string.slash));
+            holder.selectedQuantity.setText(host.getResources().getString(R.string.minum));
         else
             holder.selectedQuantity.setText(Integer.toString(food.getSelectedQuantity()));
         //buttons for handling increase and decrease of quantity
@@ -235,15 +239,16 @@ public class FavoriteMenuExpandableListAdapter extends BaseExpandableListAdapter
                     DatabaseReference referenceCustomerFavorite= FirebaseDatabase.getInstance().getReference("customers/" +
                             currentUserID +
                             "/Favorite");
+                    dbReferenceList.put("favorite", new MyDatabaseReference(referenceCustomerFavorite));
 
-                    referenceCustomerFavorite.addListenerForSingleValueEvent(new ValueEventListener() {
+                    dbReferenceList.get("favorite").setSingleValueListener(new ValueEventListener() {
                         @Override
                         public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                             if(!dataSnapshot.hasChild(restaurantID)) {
                                 // restore restaurant without plates in the favorite list
                                 FirebaseDatabase.getInstance().getReference("customers/" +
                                         currentUserID +
-                                        "/Favorite/" + restaurantID).setValue("none");
+                                        "/Favorite/" + restaurantID + "/dishes").setValue("none");
                             }
                         }
 
@@ -334,6 +339,10 @@ public class FavoriteMenuExpandableListAdapter extends BaseExpandableListAdapter
 
     public Order getOrder(){
         return order;
+    }
+
+    public HashMap<String, MyDatabaseReference> getDbReferenceList(){
+        return dbReferenceList;
     }
 
     private class FoodViewHolder {

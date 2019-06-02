@@ -516,7 +516,7 @@ public class MapsFragment extends Fragment implements
                         riders.get(riderID).getMarker().remove();
                         riders.remove(riderID);
                         listAdapter.removeRider(riderID);
-                        listAdapter.notifyDataSetChanged();
+                         listAdapter.notifyDataSetChanged();
                     }
                 }
                 Log.d("ValerioMap", String.format("Key %s is no longer in the search area", key));

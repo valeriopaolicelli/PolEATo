@@ -8,7 +8,7 @@ import java.io.Serializable;
 /**
  * Class about selected food from customer
  */
-public class Food implements Serializable {
+public class Food implements Serializable, Comparable {
 
     private String img;
     private String name;
@@ -89,5 +89,10 @@ public class Food implements Serializable {
 
     public void setCustomerNotes(String customerNotes) {
         this.customerNotes = customerNotes;
+    }
+
+    @Override
+    public int compareTo(Object o) {
+        return this.getName().compareTo(((Food)o).getName());
     }
 }
