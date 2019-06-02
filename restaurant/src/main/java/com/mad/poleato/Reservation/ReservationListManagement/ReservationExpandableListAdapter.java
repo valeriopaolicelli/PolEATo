@@ -374,7 +374,15 @@ public class ReservationExpandableListAdapter extends BaseExpandableListAdapter{
                             });
                         }
                     }
-                    AlertDialog dialog = builder.create();
+                    final AlertDialog dialog = builder.create();
+                    dialog.setOnShowListener( new DialogInterface.OnShowListener() {
+                        @Override
+                        public void onShow(DialogInterface arg0) {
+                            dialog.getButton(AlertDialog.BUTTON_NEGATIVE).setTextColor(context.getColor(R.color.colorTextSubField));
+                            dialog.getButton(AlertDialog.BUTTON_NEUTRAL).setTextColor(context.getColor(R.color.colorTextSubField));
+                            dialog.getButton(AlertDialog.BUTTON_POSITIVE).setTextColor(context.getColor(R.color.colorPanelPrimary));
+                        }
+                    });
                     dialog.show();
                 }
             });

@@ -6,6 +6,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.design.widget.BottomNavigationView;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
 import android.view.LayoutInflater;
@@ -54,6 +55,7 @@ public class RatingFragment extends Fragment {
     private EditText review_et;
     private Button submitBtn;
     private TextView ratingScale;
+    private BottomNavigationView navigation;
 
     private Context context;
     private DatabaseReference restaurantReference;
@@ -114,6 +116,8 @@ public class RatingFragment extends Fragment {
         review_et =(EditText) view.findViewById(R.id.textReview);
         submitBtn = (Button) view.findViewById(R.id.btnSubmit);
 
+        navigation = getActivity().findViewById(R.id.navigation);
+
         String ratingL = context.getString(R.string.reviewLabel) + " " + restaurantName;
         ratingLabel.setText(ratingL);
 
@@ -172,7 +176,20 @@ public class RatingFragment extends Fragment {
     }
 
     @Override
+    public void onResume() {
+        super.onResume();
+        /** Hide bottomBar for this fragment*/
+        navigation.setVisibility(View.GONE);
+    }
+
+    @Override
     public void onDetach() {
         super.onDetach();
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        navigation.setVisibility(View.VISIBLE);
     }
 }
