@@ -161,7 +161,6 @@ public class RestaurantSearchFragment extends Fragment {
         fragView = inflater.inflate(R.layout.restaurant_recyclerview, container, false);
 
         main_view = (RecyclerView) fragView.findViewById(R.id.recyclerView);
-        main_view = (ConstraintLayout) fragView.findViewById(R.id.search_main_view);
         empty_view = (ImageView) fragView.findViewById(R.id.search_empty_view);
 
         show_empty_view();
