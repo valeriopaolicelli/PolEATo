@@ -36,6 +36,7 @@ import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.mad.poleato.MyDatabaseReference;
+import com.mad.poleato.NavigatorActivity;
 import com.mad.poleato.R;
 import com.onesignal.OneSignal;
 
