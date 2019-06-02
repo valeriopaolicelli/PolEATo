@@ -228,8 +228,10 @@ public class ReservationFragment extends Fragment {
                                         (dataSnapshot.child("status/it").getValue().toString().equals("In consegna") &&
                                                 dataSnapshot.child("status/en").getValue().toString().equals("Delivering")) ||
                                         (dataSnapshot.child("status/it").getValue().toString().equals("Consegnato") &&
-                                                dataSnapshot.child("status/en").getValue().toString().equals("Delivered"))
-                        ) && dataSnapshot.hasChild("date") &&
+                                                dataSnapshot.child("status/en").getValue().toString().equals("Delivered"))||
+                                        (dataSnapshot.child("status/it").getValue().toString().equals("Fallito") &&
+                                                dataSnapshot.child("status/en").getValue().toString().equals("Failed"))
+                                        ) && dataSnapshot.hasChild("date") &&
                                 dataSnapshot.hasChild("dishes")
                         )
                 )
@@ -343,7 +345,9 @@ public class ReservationFragment extends Fragment {
                                         (dataSnapshot.child("status/it").getValue().toString().equals("In consegna") &&
                                                 dataSnapshot.child("status/en").getValue().toString().equals("Delivering")) ||
                                         (dataSnapshot.child("status/it").getValue().toString().equals("Consegnato") &&
-                                                dataSnapshot.child("status/en").getValue().toString().equals("Delivered"))
+                                                dataSnapshot.child("status/en").getValue().toString().equals("Delivered"))||
+                                                (dataSnapshot.child("status/it").getValue().toString().equals("Fallito") &&
+                                                        dataSnapshot.child("status/en").getValue().toString().equals("Failed"))
                           ) && dataSnapshot.hasChild("date") &&
                                 dataSnapshot.hasChild("dishes")
                         )

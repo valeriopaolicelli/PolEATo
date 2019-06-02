@@ -50,8 +50,6 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
     private String localeShort;
     private DishCategoryTranslator translator;
 
-    private ProgressDialog progressDialog;
-
 
     private String currentUserID;
     private FirebaseAuth mAuth;
@@ -165,11 +163,6 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
                     @Override
                     public boolean onMenuItemClick(MenuItem item) {
 
-                        if(host != null)
-                            progressDialog = ProgressDialog.show(host, "", host.getString(R.string.loading));
-
-
-
                         Log.d("matte", item.getTitle().toString());
                         MyViewModel model = ViewModelProviders.of((FragmentActivity) host).get(MyViewModel.class);
 
@@ -188,22 +181,18 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
                         storageReference.delete().addOnSuccessListener(new OnSuccessListener<Void>() {
                             @Override
                             public void onSuccess(Void aVoid) {
-                               if(progressDialog.isShowing())
-                                   progressDialog.dismiss();
                             }
                         }).addOnFailureListener(new OnFailureListener() {
                             @Override
                             public void onFailure(@NonNull Exception e) {
                                 Log.d("matte", "Failure in image remove");
-                                if(progressDialog.isShowing())
-                                    progressDialog.dismiss();
                             }
                         });
 
 
                         //lastly remove it from the list
                         model.removeChild(groupPosition, childPosition);
-                        notifyDataSetChanged(); //todo why it is needed even with the view model?
+                        notifyDataSetChanged();
                         return true;
                     }
                 });
@@ -288,7 +277,6 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
     public boolean isChildSelectable(int groupPosition, int childPosition) {
         return true;
     }
-
 
     private class FoodViewHolder {
         ImageView img;

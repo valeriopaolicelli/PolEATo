@@ -208,12 +208,12 @@ public class DailyOfferFragment extends Fragment {
     @Override
     public void onStop() {
         super.onStop();
-        model.detachListeners();
+       // model.detachListeners();
     }
 
     @Override
     public void onDestroy() {
         super.onDestroy();
-        model.detachListeners();
+      //  model.detachListeners();
     }
 }

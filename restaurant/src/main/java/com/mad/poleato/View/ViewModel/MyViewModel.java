@@ -37,7 +37,7 @@ public class MyViewModel extends ViewModel {
 
     private MyDatabaseReference menuReference;
 
-
+    private boolean alreadyDownloaded= false;
     private ProgressDialog progressDialog;
 
     public LiveData<HashMap<String, List<Food>>> getListC() {
@@ -162,7 +162,7 @@ public class MyViewModel extends ViewModel {
         initGroup(context);
         initChild();
 
-        if(context != null)
+        if(context != null && !alreadyDownloaded)
             progressDialog = ProgressDialog.show(context, "", context.getString(R.string.loading));
 
 
@@ -173,12 +173,14 @@ public class MyViewModel extends ViewModel {
         menuReference.setValueListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                alreadyDownloaded= true;
                 if(progressDialog.isShowing())
                     progressDialog.dismiss();
             }
 
             @Override
             public void onCancelled(@NonNull DatabaseError databaseError) {
+                alreadyDownloaded= true;
                 if(progressDialog.isShowing())
                     progressDialog.dismiss();
             }
@@ -330,10 +332,7 @@ public class MyViewModel extends ViewModel {
         });
     }
 
-
     public void detachListeners(){
-
         menuReference.removeAllListener();
     }
-
 }
