@@ -225,7 +225,7 @@ public class RestaurantSearchFragment extends Fragment {
                 }
                 //display the updated list
                 recyclerAdapter.display(currDisplayedList);
-
+                recyclerAdapter.updateAdapterList(currDisplayedList);
                 Log.d("matte", "queryTextChange | displayed list size: " + currDisplayedList.size());
                 previousLen = currLen;
                 return true;

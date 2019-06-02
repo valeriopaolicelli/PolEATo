@@ -218,7 +218,6 @@ public class MapsFragment extends Fragment implements
                     Navigation.findNavController(getActivity(),R.id.nav_host_fragment).navigateUp();
                 }
                 break;
-
         }
         return true;
     }

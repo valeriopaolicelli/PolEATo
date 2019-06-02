@@ -103,8 +103,8 @@
     <string name="dish_ready">Ready</string>
     <string name="title_activity_main">Restaurant</string>
 
-    <string name="title_bottombar_reservation">Reservation</string>
-    <string name="title_actionbar_reservation">Reservation</string>
+    <string name="title_bottombar_reservation">Reservations</string>
+    <string name="title_actionbar_reservation">Reservations</string>
 
     <string name="title_bottombar_history">History</string>
     <string name="title_actionbar_history">History</string>

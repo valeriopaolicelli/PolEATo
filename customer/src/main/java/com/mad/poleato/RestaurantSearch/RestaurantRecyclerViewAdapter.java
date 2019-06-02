@@ -136,6 +136,9 @@ public class RestaurantRecyclerViewAdapter extends RecyclerView.Adapter<Restaura
         this.dbReferenceList= new HashMap<>();
     }
 
+    public void updateAdapterList(List<Restaurant>list){
+        this.list=list;
+    }
     // Create new views (invoked by the layout manager)
     @Override
     public RestaurantRecyclerViewAdapter.RestaurantViewHolder onCreateViewHolder(ViewGroup parent,
@@ -223,11 +226,13 @@ public class RestaurantRecyclerViewAdapter extends RecyclerView.Adapter<Restaura
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 if(dataSnapshot.exists()) {
-                    String restaurantID = list.get(position).getId();
-                    if (dataSnapshot.hasChild(restaurantID))
-                        holder.buttonFavorite.setChecked(true);
-                    else
-                        holder.buttonFavorite.setChecked(false);
+                    if(position<list.size()) {
+                        String restaurantID = list.get(position).getId();
+                        if (dataSnapshot.hasChild(restaurantID))
+                            holder.buttonFavorite.setChecked(true);
+                        else
+                            holder.buttonFavorite.setChecked(false);
+                    }
                 }
             }
 
