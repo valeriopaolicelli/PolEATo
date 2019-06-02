@@ -130,7 +130,15 @@ public class RiderListAdapter extends ArrayAdapter<Rider>
                         }
                     });
 
-                    AlertDialog dialog = builder.create();
+                    final AlertDialog dialog = builder.create();
+                    dialog.setOnShowListener( new DialogInterface.OnShowListener() {
+                        @Override
+                        public void onShow(DialogInterface arg0) {
+                            dialog.getButton(AlertDialog.BUTTON_NEGATIVE).setTextColor(getContext().getColor(R.color.colorTextSubField));
+                            dialog.getButton(AlertDialog.BUTTON_NEUTRAL).setTextColor(getContext().getColor(R.color.colorTextSubField));
+                            dialog.getButton(AlertDialog.BUTTON_POSITIVE).setTextColor(getContext().getColor(R.color.colorPanelPrimary));
+                        }
+                    });
                     dialog.show();
                 }
             });
