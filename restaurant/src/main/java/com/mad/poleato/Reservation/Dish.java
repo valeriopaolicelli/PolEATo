@@ -2,9 +2,12 @@ package com.mad.poleato.Reservation;
 
 import java.io.Serializable;
 
+
+/**
+ * Class that describes every dish present in a single Reservation
+ */
 public class Dish implements Serializable {
 
-    // REFERENCE TO FOOD CLASS
     private String name;
     private Integer quantity;
     private String notes;

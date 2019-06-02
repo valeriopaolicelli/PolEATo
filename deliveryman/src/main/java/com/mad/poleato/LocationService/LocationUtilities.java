@@ -2,6 +2,10 @@ package com.mad.poleato.LocationService;
 
 import com.google.android.gms.maps.model.LatLng;
 
+/**
+ * Class that compute distance with latitude and longitude given
+ */
+
 public class LocationUtilities {
 
 

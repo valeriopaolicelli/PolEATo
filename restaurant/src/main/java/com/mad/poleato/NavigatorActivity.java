@@ -9,7 +9,6 @@ import android.os.Bundle;
 import android.support.design.widget.BottomNavigationView;
 import android.support.v7.app.AppCompatActivity;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
@@ -30,31 +29,11 @@ public class NavigatorActivity extends AppCompatActivity {
     private FirebaseAuth mAuth;
     ConnectionManager connectionManager;
 
-//    private BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener
-//            = new BottomNavigationView.OnNavigationItemSelectedListener() {
-//
-//        @Override
-//        public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-//            switch (item.getItemId()) {
-//                case R.id.blankFragment1:
-//                    mTextMessage.setText(R.string.title_home);
-//                    return true;
-//                case R.id.blankFragment2:
-//                    mTextMessage.setText(R.string.title_dashboard);
-//                    return true;
-//                case R.id.navigation_notifications:
-//                    mTextMessage.setText(R.string.title_notifications);
-//                    return true;
-//            }
-//
-//            return false;
-//        }
-//    };
 
     BroadcastReceiver networkReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
-
+            //Check if device has Internet connection
             if(!connectionManager.haveNetworkConnection(context))
                 connectionManager.showDialog(context);
         }
@@ -102,6 +81,7 @@ public class NavigatorActivity extends AppCompatActivity {
     @Override
     protected void onStart() {
         super.onStart();
+        //Broadcast receiver for connectivity changes
         IntentFilter filter = new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION);
         registerReceiver(networkReceiver,filter);
     }
