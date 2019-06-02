@@ -292,6 +292,7 @@ public class MainProfile extends Fragment {
         // Google revoke access
         mGoogleSignInClient.revokeAccess();
 
+        OneSignal.sendTag("User_ID", "");
         OneSignal.setSubscription(false);
 
         /**
