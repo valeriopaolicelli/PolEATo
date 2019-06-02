@@ -3,6 +3,10 @@ package com.mad.poleato.History;
 import java.util.Comparator;
 import java.util.Date;
 
+
+/**
+ * This comparator is used to compare two History objects based on Date in descending order
+ * */
 public class HistoryComparator implements Comparator<HistoryItem> {
 
 

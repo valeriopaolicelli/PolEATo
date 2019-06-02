@@ -2,8 +2,6 @@ package com.mad.poleato.Reservation.ReservationsHistory;
 
 import android.app.ProgressDialog;
 import android.graphics.Point;
-import android.os.Handler;
-import android.os.Message;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -11,16 +9,11 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.Display;
 import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ExpandableListView;
 import android.widget.ImageView;
 import android.widget.Toast;
-
-import androidx.navigation.Navigation;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -34,7 +27,6 @@ import com.mad.poleato.MyDatabaseReference;
 import com.mad.poleato.R;
 import com.mad.poleato.Reservation.Dish;
 import com.mad.poleato.Reservation.Reservation;
-import com.onesignal.OneSignal;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -45,6 +37,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 
+
+/**
+ * This is the fragment that shows the history for this restaurant
+ */
 public class HistoryFragment extends Fragment {
 
     private  FirebaseAuth mAuth;
@@ -116,6 +112,9 @@ public class HistoryFragment extends Fragment {
     }
 
 
+    /**
+     * This method shows the empty view and hide the main one
+     */
     private void show_empty_view() {
 
         listView.setVisibility(View.GONE);
@@ -123,6 +122,9 @@ public class HistoryFragment extends Fragment {
     }
 
 
+    /**
+     * This method shows the main view and hide the empty one
+     */
     private void show_history_view(){
 
         empty_view.setVisibility(View.GONE);
@@ -137,6 +139,10 @@ public class HistoryFragment extends Fragment {
         return (int) (pixels * scale + 0.5f);
     }
 
+
+    /**
+     * To init the data by downloading data from firebase
+     */
     private void initData(){
 
         reservations = new ArrayList<>();
@@ -456,6 +462,12 @@ public class HistoryFragment extends Fragment {
         });
     }
 
+
+    /**
+     * read user data from firebase
+     * @param firebaseCallBack
+     * @param key
+     */
     private void readData(final FirebaseCallBack firebaseCallBack, String key){
         ValueEventListener valueEventListener = new ValueEventListener() {
             @Override
@@ -485,9 +497,14 @@ public class HistoryFragment extends Fragment {
         dbReferenceList.get(key).setSingleValueListener(valueEventListener);
     }
 
+
+    /**
+     * This callback is used to retrieve the customer details
+     */
     private interface FirebaseCallBack {
         void onCallBack(List<String> customerDetails);
     }
+
 
     @Override
     public void onStop() {
@@ -496,6 +513,7 @@ public class HistoryFragment extends Fragment {
             my_ref.removeAllListener();
         }
     }
+
 
     @Override
     public void onDestroy() {

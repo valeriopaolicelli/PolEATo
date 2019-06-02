@@ -22,6 +22,10 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.onesignal.OneSignal;
 
+
+/**
+ * This class is the NavigatorActivity that allows to move from one fragment to another
+ */
 public class NavigatorActivity extends AppCompatActivity {
 
     private TextView mTextMessage;

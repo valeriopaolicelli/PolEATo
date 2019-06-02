@@ -2,6 +2,10 @@ package com.mad.poleato.History;
 
 import java.util.Comparator;
 
+
+/**
+ * This class represents a single history object
+ */
 public class HistoryItem {
 
     private String orderID;

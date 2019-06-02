@@ -15,6 +15,10 @@ import com.mad.poleato.Reservation.Status;
 import java.util.HashMap;
 import java.util.List;
 
+
+/**
+ * The expandabelList adapter for the restaurant history
+ */
 public class HistoryExpandableListAdapter extends BaseExpandableListAdapter {
 
     private Context context;

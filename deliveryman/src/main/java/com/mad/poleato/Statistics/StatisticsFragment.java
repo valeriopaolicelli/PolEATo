@@ -48,12 +48,12 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 import java.util.TreeMap;
 
 
+
 /**
- * A simple {@link Fragment} subclass.
+ * The fragment for showing the Rider statistics
  */
 public class StatisticsFragment extends Fragment {
 
@@ -111,6 +111,7 @@ public class StatisticsFragment extends Fragment {
         }
     }
 
+
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -140,6 +141,10 @@ public class StatisticsFragment extends Fragment {
 
     }
 
+
+    /**
+     * It fill the list to map from index to the month's string
+     */
     private void fillMonthList(){
 
         monthList = new ArrayList<>();
@@ -150,6 +155,8 @@ public class StatisticsFragment extends Fragment {
         monthList.add(getString(R.string.sep)); monthList.add(getString(R.string.oct));
         monthList.add(getString(R.string.nov)); monthList.add(getString(R.string.dec));
     }
+
+
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -197,7 +204,7 @@ public class StatisticsFragment extends Fragment {
 
 
     /**
-     * Collect all the view inside the map tv_Fields
+     * Collects all the view inside the map tv_Fields
      */
     private void collectFields() {
 
@@ -234,7 +241,7 @@ public class StatisticsFragment extends Fragment {
 
 
     /**
-     * read all the history table from Firebase
+     * reads all the history table from Firebase
      */
     private void readHistory() {
 
@@ -343,7 +350,7 @@ public class StatisticsFragment extends Fragment {
 
 
     /**
-     * computes the revenues for each single day and insert it in the revenues map
+     * computes the revenues for each single day and insert it in the daily revenues map
      */
     private void computeDailyRevenues() {
 
@@ -358,6 +365,9 @@ public class StatisticsFragment extends Fragment {
     }
 
 
+    /**
+     * computes the revenues for each single month and insert it in the monthly revenues map
+     */
     private void computeMonthlyRevenues(){
 
         for (Date day : dailyRevenues.keySet()){
@@ -375,7 +385,7 @@ public class StatisticsFragment extends Fragment {
 
 
     /**
-     * Initializes the chart with all the collected data
+     * Initializes the daily chart with all the collected statistics
      */
     private void setDailyChart() {
 
@@ -445,6 +455,9 @@ public class StatisticsFragment extends Fragment {
     }
 
 
+    /**
+     * Initializes the monthly chart with all the collected statistics
+     */
     private void setMonthlyChart(){
 
         if(monthlyRevenues == null)
@@ -516,7 +529,7 @@ public class StatisticsFragment extends Fragment {
 
 
     /**
-     * The formatter for the X values.
+     * The formatter for the daily X values.
      * Format: month / day
      */
     private class XDailyValueFormatter extends ValueFormatter{
@@ -535,7 +548,7 @@ public class StatisticsFragment extends Fragment {
 
 
     /**
-     * The formatter for the Y values.
+     * The formatter for the daily Y values.
      * Format: x.xx$
      */
     private class YDailyValueFormatter extends ValueFormatter{
@@ -559,7 +572,7 @@ public class StatisticsFragment extends Fragment {
     }
 
     /**
-     * The formatter for the X values.
+     * The formatter for the monthly X values.
      * Format: <month_string>
      */
     private class XMonthlyValueFormatter extends  ValueFormatter{
@@ -577,7 +590,7 @@ public class StatisticsFragment extends Fragment {
 
 
     /**
-     * The formatter for the Y values.
+     * The formatter for the monthly Y values.
      * Format: x.xx$
      */
     private class YMonthlyValueFormatter extends ValueFormatter{
@@ -630,12 +643,20 @@ public class StatisticsFragment extends Fragment {
         return difference;
     }
 
+
+    /**
+     * Shows the daily chart and hides the monthly one
+     */
     private void showDailyChart(){
 
         monthlyChart.setVisibility(View.GONE);
         dailyChart.setVisibility(View.VISIBLE);
     }
 
+
+    /**
+     * Shows the monthly chart and hides the daily one
+     */
     private void showMonthlyChar(){
 
         dailyChart.setVisibility(View.GONE);

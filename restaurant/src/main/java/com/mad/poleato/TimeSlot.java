@@ -1,5 +1,9 @@
 package com.mad.poleato;
 
+
+/**
+ * This class is used in the AboutUs.class to search for the most popular times
+ */
 public class TimeSlot {
     private String start;
     private String end;

@@ -14,6 +14,10 @@ import com.mad.poleato.R;
 import java.util.HashMap;
 import java.util.Map;
 
+
+/**
+ * The fragment to show more infos of the restaurant
+ */
 public class ShowMoreFragment extends DialogFragment {
 
     private View fragView;

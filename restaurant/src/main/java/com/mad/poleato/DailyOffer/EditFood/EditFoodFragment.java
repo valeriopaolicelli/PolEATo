@@ -1,6 +1,5 @@
 package com.mad.poleato.DailyOffer.EditFood;
 
-import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Intent;
@@ -30,7 +29,6 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
@@ -50,11 +48,9 @@ import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
-import com.mad.poleato.DailyOffer.DailyOfferFragmentDirections;
 import com.mad.poleato.DailyOffer.DishCategoryTranslator;
 import com.mad.poleato.DailyOffer.Food;
 import com.mad.poleato.MyDatabaseReference;
-import com.mad.poleato.NavigatorActivity;
 import com.mad.poleato.R;
 import com.mad.poleato.View.ViewModel.MyViewModel;
 import com.onesignal.OneSignal;
@@ -64,17 +60,17 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-import java.util.TreeMap;
-
 
 
 import static android.app.Activity.RESULT_OK;
 
+
+/**
+ * The Fragment to edit a food from the menu
+ */
 public class EditFoodFragment extends DialogFragment {
 
     private Toast myToast;
@@ -118,6 +114,7 @@ public class EditFoodFragment extends DialogFragment {
      ********   ANDROID CALLBACKS   ****
      *********************************** */
 
+
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -151,6 +148,7 @@ public class EditFoodFragment extends DialogFragment {
         OneSignal.sendTag("User_ID", currentUserID);
     }
 
+
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         menu.clear();
@@ -168,6 +166,7 @@ public class EditFoodFragment extends DialogFragment {
 
         super.onCreateOptionsMenu(menu, inflater);
     }
+
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
@@ -229,6 +228,7 @@ public class EditFoodFragment extends DialogFragment {
         buttonListener();
     }
 
+
     @Override
     public void onResume() {
         super.onResume();
@@ -236,6 +236,10 @@ public class EditFoodFragment extends DialogFragment {
         navigation.setVisibility(View.GONE);
     }
 
+
+    /**
+     * Method to fill the fields of the layout by attaching the listeners to firebase and downloading data
+     */
     private void fillFields(){
 
         //Download text infos
@@ -308,6 +312,9 @@ public class EditFoodFragment extends DialogFragment {
     }
 
 
+    /**
+     * It checks the validity of the inserted data, then it uploads them on firebase
+     */
     private void saveChanges(){
 
         boolean wrongField= false;
@@ -373,6 +380,11 @@ public class EditFoodFragment extends DialogFragment {
     }
 
 
+    /**
+     * It uploads the given bitmap of the given food on firebase Storage
+     * @param bitmap
+     * @param f
+     */
     private void uploadFile(final Bitmap bitmap, final Food f) {
         final StorageReference storageReference = FirebaseStorage
                 .getInstance()
@@ -494,6 +506,10 @@ public class EditFoodFragment extends DialogFragment {
     }
 
 
+    /**
+     * To clear the text on the given view
+     * @param view
+     */
     public void clearText(View view) {
         if(view.getId() == R.id.cancel_name)
             editTextFields.get("Name").setText("");
@@ -504,6 +520,8 @@ public class EditFoodFragment extends DialogFragment {
         else if(view.getId() == R.id.cancel_quantity)
             editTextFields.get("Quantity").setText("");
     }
+
+
 
     public void handleButton(){
         for(ImageButton b : imageButtons.values())
@@ -533,6 +551,7 @@ public class EditFoodFragment extends DialogFragment {
         }
     }
 
+
     public void showButton(EditText field, ImageButton button){
         if(field.getText().toString().length()>0)
             button.setVisibility(View.VISIBLE);
@@ -540,9 +559,11 @@ public class EditFoodFragment extends DialogFragment {
             button.setVisibility(View.INVISIBLE);
     }
 
+
     public void hideButton(ImageButton button){
         button.setVisibility(View.INVISIBLE);
     }
+
 
     public void buttonListener(){
         EditText field;
@@ -585,28 +606,6 @@ public class EditFoodFragment extends DialogFragment {
         }
     }
 
-    public void collectFields(View v){
-
-        editTextFields.put("Name",(EditText)v.findViewById(R.id.nameFood));
-        editTextFields.put("Description",(EditText)v.findViewById(R.id.editDescription));
-        editTextFields.put("Price",(EditText)v.findViewById(R.id.editPrice));
-        editTextFields.put("Quantity",(EditText)v.findViewById(R.id.editQuantity));
-
-        imageButtons.put("Name", (ImageButton)v.findViewById(R.id.cancel_name));
-        imageButtons.put("Description", (ImageButton)v.findViewById(R.id.cancel_description));
-        imageButtons.put("Price", (ImageButton)v.findViewById(R.id.cancel_price));
-        imageButtons.put("Quantity", (ImageButton)v.findViewById(R.id.cancel_quantity));
-
-        for(ImageButton b : imageButtons.values()){
-            b.setOnClickListener(new View.OnClickListener(){
-                @Override
-                public void onClick(View v) {
-                    clearText(v);
-                }
-            });
-        }
-    }
-
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -637,6 +636,12 @@ public class EditFoodFragment extends DialogFragment {
     }
 
 
+    /**
+     * To change the image based with 3 different ways:
+     *  - Camera
+     *  - Gallery
+     *  - remove image
+     */
     private void changeImage() {
         android.support.v7.widget.PopupMenu popup = new android.support.v7.widget.PopupMenu(getContext(), change_im);
         popup.getMenuInflater().inflate(
@@ -668,7 +673,9 @@ public class EditFoodFragment extends DialogFragment {
     }
 
 
-    // create Intent with photoFile
+    /**
+     * Creates Intent with photoFile
+     */
     private void dispatchTakePictureIntent() {
         Uri photoURI;
         Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
@@ -694,7 +701,11 @@ public class EditFoodFragment extends DialogFragment {
     }
 
 
-    // Function to create image file with ExternalFilesDir
+    /**
+     * Method to create image file with ExternalFilesDir
+     * @return
+     * @throws IOException
+     */
     private File createImageFile() throws IOException {
         // Create an image file name
         //String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
@@ -712,10 +723,19 @@ public class EditFoodFragment extends DialogFragment {
         return image;
     }
 
+
+    /**
+     * Method to remove the profile image
+     */
     private void removeProfileImage() {
         imageFood.setImageResource(R.drawable.plate_fork);
     }
 
+
+    /**
+     * Method to set the profile picture
+     * @param currentPhotoPath
+     */
     private void setPic(String currentPhotoPath) {
         // Get the dimensions of the View
         int targetW = imageFood.getWidth();
@@ -749,6 +769,14 @@ public class EditFoodFragment extends DialogFragment {
         }
     }
 
+
+    /**
+     * To rotate the image if required
+     * @param img
+     * @param currentPhotoPath
+     * @return
+     * @throws IOException
+     */
     private static Bitmap rotateImageIfRequired(Bitmap img, String currentPhotoPath) throws IOException {
 
         ExifInterface ei = new ExifInterface(currentPhotoPath);
@@ -767,6 +795,12 @@ public class EditFoodFragment extends DialogFragment {
     }
 
 
+    /**
+     * It rotates the image by the given degrees
+     * @param img
+     * @param degree
+     * @return
+     */
     private static Bitmap rotateImage(Bitmap img, int degree) {
         Matrix matrix = new Matrix();
         matrix.postRotate(degree);
@@ -774,6 +808,7 @@ public class EditFoodFragment extends DialogFragment {
         img.recycle();
         return rotatedImg;
     }
+
 
     @Override
     public void onStop() {
@@ -783,6 +818,7 @@ public class EditFoodFragment extends DialogFragment {
 
         foodReference.removeAllListener();
     }
+
 
     @Override
     public void onDestroy() {

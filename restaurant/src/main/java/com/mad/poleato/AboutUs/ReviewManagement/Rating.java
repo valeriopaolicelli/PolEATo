@@ -5,6 +5,10 @@ import java.text.SimpleDateFormat;
 import java.util.Comparator;
 import java.util.Date;
 
+
+/**
+ * This class represents a single customer Rating object
+ */
 public class Rating {
     private String customerID;
     private Integer rate;
@@ -72,6 +76,9 @@ public class Rating {
         this.orderID = orderID;
     }
 
+    /**
+     * This is the comparator for Rating objects based on the Date
+     */
     public static Comparator<Rating> timeComparator= new Comparator<Rating>() {
         @Override
         public int compare(Rating r1, Rating r2) {

@@ -11,8 +11,6 @@ import android.media.ExifInterface;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
-import android.os.Handler;
-import android.os.Message;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -33,7 +31,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
@@ -69,6 +66,10 @@ import java.util.Map;
 
 import static android.app.Activity.RESULT_OK;
 
+
+/**
+ * The Fragment to add a new food to the menu
+ */
 public class AddFoodFragment extends Fragment {
 
     private Toast myToast;
@@ -134,6 +135,7 @@ public class AddFoodFragment extends Fragment {
         OneSignal.sendTag("User_ID", currentUserID);
     }
 
+
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         menu.clear();
@@ -151,6 +153,7 @@ public class AddFoodFragment extends Fragment {
 
         super.onCreateOptionsMenu(menu, inflater);
     }
+
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
@@ -226,12 +229,14 @@ public class AddFoodFragment extends Fragment {
         return v;
     }
 
+
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         handleButton();
         buttonListener();
     }
+
 
     @Override
     public void onResume() {
@@ -240,6 +245,7 @@ public class AddFoodFragment extends Fragment {
         navigation.setVisibility(View.GONE);
     }
 
+
     @Override
     public void onStop() {
         super.onStop();
@@ -247,6 +253,9 @@ public class AddFoodFragment extends Fragment {
     }
 
 
+    /**
+     * It checks the validity of the inserted data, then it uploads them on firebase
+     */
     private void saveChanges(){
 
         if(getActivity() != null)
@@ -342,7 +351,11 @@ public class AddFoodFragment extends Fragment {
     }
 
 
-
+    /**
+     * It uploads the given bitmap of the given food on firebase Storage
+     * @param bitmap
+     * @param f
+     */
     private void uploadFile(final Bitmap bitmap, final Food f) {
         final StorageReference storageReference = FirebaseStorage
                 .getInstance()
@@ -458,6 +471,10 @@ public class AddFoodFragment extends Fragment {
     }
 
 
+    /**
+     * To clear the text on the given view
+     * @param view
+     */
     private void clearText(View view) {
         if (view.getId() == R.id.cancel_name)
             editTextFields.get("Name").setText("");
@@ -507,9 +524,11 @@ public class AddFoodFragment extends Fragment {
             button.setVisibility(View.INVISIBLE);
     }
 
+
     private void hideButton(ImageButton button) {
         button.setVisibility(View.INVISIBLE);
     }
+
 
     private void buttonListener() {
         EditText field;
@@ -580,6 +599,12 @@ public class AddFoodFragment extends Fragment {
     }
 
 
+    /**
+     * To change the image based with 3 different ways:
+     *  - Camera
+     *  - Gallery
+     *  - remove image
+     */
     private void changeImage() {
         android.support.v7.widget.PopupMenu popup = new android.support.v7.widget.PopupMenu(getContext(), change_im);
         popup.getMenuInflater().inflate(
@@ -610,7 +635,10 @@ public class AddFoodFragment extends Fragment {
         popup.show();
     }
 
-    // create Intent with photoFile
+
+    /**
+     * Creates Intent with photoFile
+     */
     private void dispatchTakePictureIntent() {
         Uri photoURI;
         Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
@@ -636,7 +664,11 @@ public class AddFoodFragment extends Fragment {
     }
 
 
-    // Function to create image file with ExternalFilesDir
+    /**
+     * Method to create image file with ExternalFilesDir
+     * @return
+     * @throws IOException
+     */
     private File createImageFile() throws IOException {
         // Create an image file name
         //String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
@@ -654,10 +686,18 @@ public class AddFoodFragment extends Fragment {
         return image;
     }
 
+
+    /**
+     * Method to remove the profile image
+     */
     private void removeProfileImage() {
         imageFood.setImageResource(R.drawable.plate_fork);
     }
 
+    /**
+     * Method to set the profile picture
+     * @param currentPhotoPath
+     */
     private void setPic(String currentPhotoPath) {
         // Get the dimensions of the View
         int targetW = imageFood.getWidth();
@@ -691,6 +731,14 @@ public class AddFoodFragment extends Fragment {
         }
     }
 
+
+    /**
+     * To rotate the image if required
+     * @param img
+     * @param currentPhotoPath
+     * @return
+     * @throws IOException
+     */
     private static Bitmap rotateImageIfRequired(Bitmap img, String currentPhotoPath) throws IOException {
 
         ExifInterface ei = new ExifInterface(currentPhotoPath);
@@ -709,6 +757,12 @@ public class AddFoodFragment extends Fragment {
     }
 
 
+    /**
+     * It rotates the image by the given degrees
+     * @param img
+     * @param degree
+     * @return
+     */
     private static Bitmap rotateImage(Bitmap img, int degree) {
         Matrix matrix = new Matrix();
         matrix.postRotate(degree);

@@ -42,6 +42,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+
+/**
+ * This Activity handles the sign up for the Rider
+ */
 public class SignUpActivity extends AppCompatActivity {
 
     private FirebaseAuth mAuth;
@@ -55,6 +59,7 @@ public class SignUpActivity extends AppCompatActivity {
     private double latitude;
     private double longitude;
     private ConnectionManager connectionManager;
+
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -152,6 +157,7 @@ public class SignUpActivity extends AppCompatActivity {
         }
     }
 
+
     private void buttonListener(){
 
         for (String fieldName : editTextFields.keySet()){
@@ -183,12 +189,14 @@ public class SignUpActivity extends AppCompatActivity {
         }
     }
 
+
     private void showButton(EditText field, ImageButton button){
         if(field.getText().toString().length()>0)
             button.setVisibility(View.VISIBLE);
         else
             button.setVisibility(View.INVISIBLE);
     }
+
 
     private void hideButton(ImageButton button){
         button.setVisibility(View.INVISIBLE);
@@ -200,7 +208,9 @@ public class SignUpActivity extends AppCompatActivity {
         super.onStart();
     }
 
-    //access to the app
+    /**
+     * To access the account
+     */
     private void access(){
         Intent myIntent = new Intent(SignUpActivity.this, NavigatorActivity.class);
         SignUpActivity.this.startActivity(myIntent);
@@ -208,7 +218,9 @@ public class SignUpActivity extends AppCompatActivity {
     }
 
 
-
+    /**
+     * The sign up method
+     */
     private void signUp(){
 
         mAuth.createUserWithEmailAndPassword(editTextFields.get("Email").getText().toString(),
@@ -267,6 +279,11 @@ public class SignUpActivity extends AppCompatActivity {
                 });
     }
 
+
+    /**
+     * to upload the rider profile image
+     * @param currentUserID
+     */
     private void uploadFile(final String currentUserID) {
         final StorageReference storageReference = FirebaseStorage
                 .getInstance()
@@ -315,6 +332,7 @@ public class SignUpActivity extends AppCompatActivity {
                     }
                 });
     }
+
 
     private View.OnClickListener signUpRoutine = new View.OnClickListener() {
         @Override

@@ -4,14 +4,12 @@ import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
 import android.graphics.Point;
 import android.os.Bundle;
-
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.view.Display;
 import android.view.LayoutInflater;
-
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ExpandableListView;
@@ -21,19 +19,17 @@ import androidx.navigation.Navigation;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.mad.poleato.DailyOffer.ExpandableListManagement.ExpandableListAdapter;
-import com.mad.poleato.MyDatabaseReference;
-import com.mad.poleato.NavigatorActivity;
 import com.mad.poleato.R;
-import com.mad.poleato.SignInActivity;
 import com.mad.poleato.View.ViewModel.MyViewModel;
 import com.onesignal.OneSignal;
 
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 
 
+/**
+ * The fragment to show the restaurant menu
+ */
 public class DailyOfferFragment extends Fragment {
 
 
@@ -101,12 +97,6 @@ public class DailyOfferFragment extends Fragment {
         });
     }
 
-    /*@Override
-    public void setUserVisibleHint(boolean isVisibleToUser) {
-        super.setUserVisibleHint(isVisibleToUser);
-        if(isVisibleToUser)
-            listAdapter.notifyDataSetChanged();
-    }*/
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -140,7 +130,6 @@ public class DailyOfferFragment extends Fragment {
     }
 
 
-
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         /** to collapse all groups except the one tapped */
@@ -160,7 +149,6 @@ public class DailyOfferFragment extends Fragment {
         model.downloadMenu(getActivity());
 
     }
-
 
 
     private int GetDipsFromPixel(float pixels){

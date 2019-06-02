@@ -39,8 +39,9 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 
+
 /**
- * A simple {@link Fragment} subclass.
+ * This is the fragment to show the reviews for this restaurant
  */
 public class RestaurantReviewsFragment extends Fragment {
 
@@ -71,18 +72,14 @@ public class RestaurantReviewsFragment extends Fragment {
     private List<Rating>displayedList;
 
     private ProgressDialog progressDialog;
-    Handler handler = new Handler(){
-        @Override
-        public void handleMessage(Message msg) {
-            progressDialog.dismiss();
-        }
-    };
+
 
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
         this.hostActivity = hostActivity;
     }
+
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -115,6 +112,7 @@ public class RestaurantReviewsFragment extends Fragment {
         }
         fillFields();
     }
+
 
     public RestaurantReviewsFragment() {
         // Required empty public constructor
@@ -170,19 +168,24 @@ public class RestaurantReviewsFragment extends Fragment {
         navigation.setVisibility(View.GONE);
     }
 
+
+    /**
+     * This method fills the fields of the layout by attaching the listeners to firebase and downloading data from there
+     */
     public void fillFields(){
 
         dbReferenceList.get("ratings").setValueListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                handler.sendEmptyMessage(0);
+                if(progressDialog.isShowing())
+                    progressDialog.dismiss();
 
             }
 
             @Override
             public void onCancelled(@NonNull DatabaseError databaseError) {
-                handler.sendEmptyMessage(0);
-
+                if(progressDialog.isShowing())
+                    progressDialog.dismiss();
             }
         });
 
@@ -213,7 +216,8 @@ public class RestaurantReviewsFragment extends Fragment {
                         reviewsList.add(rating);
                         displayedList.add(rating);
                         reviewsMap.put(ds.getKey(), rating);
-//Get customer data
+
+                        //Get customer data
                         DatabaseReference customerReference = FirebaseDatabase.getInstance().getReference("customers/" + customerID);
                         dbReferenceList.put("customerAdded", new MyDatabaseReference(customerReference));
 
@@ -274,7 +278,8 @@ public class RestaurantReviewsFragment extends Fragment {
                             }
                         }
                         reviewsMap.put(ds.getKey(), rating);
-//Get customer data
+
+                        //Get customer data
                         DatabaseReference customerReference = FirebaseDatabase.getInstance().getReference("customers/" + customerID);
                         dbReferenceList.put("customerChanged", new MyDatabaseReference(customerReference));
 
@@ -318,17 +323,31 @@ public class RestaurantReviewsFragment extends Fragment {
 
     }
 
+
+    /**
+     * To restore the originial downloaded list
+     */
     private void restoreOriginalList(){
         displayedList.clear();
         displayedList.addAll(reviewsList);
     }
 
+
+    /**
+     * To remove the giveng rating object from the display
+     * @param rating
+     */
     private void removeFromDisplayable(Rating rating){
         displayedList.remove(rating);
         recyclerViewAdapter.notifyDataSetChanged();
     }
 
 
+    /**
+     * To filter the list based on two criteria:
+     *  - The rating has an attached comment
+     *  - The rating has not an attached comment
+     */
     private void filterList(){
         if(displayedList.isEmpty())
             return;
@@ -342,9 +361,16 @@ public class RestaurantReviewsFragment extends Fragment {
         }
     }
 
+
+    /**
+     * Decide if the the given Rating object is valid to display
+     * @param rating
+     * @return true if is valid to display
+     */
     private boolean isValidToDsplay(Rating rating){
         return !rating.getComment().equals("");
     }
+
 
     @Override
     public void onStop() {
@@ -355,6 +381,7 @@ public class RestaurantReviewsFragment extends Fragment {
         for(MyDatabaseReference my_ref : dbReferenceList.values())
             my_ref.removeAllListener();
     }
+
 
     @Override
     public void onDestroy() {

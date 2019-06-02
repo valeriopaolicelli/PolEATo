@@ -30,11 +30,10 @@ import com.mad.poleato.Ride.Ride;
 import com.onesignal.OneSignal;
 
 import java.util.HashMap;
-import java.util.Objects;
 
 
 /**
- * A simple {@link Fragment} subclass.
+ * This fragment shows the pending ride requests for the Rider
  */
 public class RequestsFragment extends Fragment {
 
@@ -93,6 +92,7 @@ public class RequestsFragment extends Fragment {
 
     }
 
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -118,18 +118,30 @@ public class RequestsFragment extends Fragment {
         return fragView;
     }
 
+
+    /**
+     * This is the method to hide the main view and show the hidden one
+     */
     private void show_empty_view(){
 
         rv.setVisibility(View.GONE);
         empty_view.setVisibility(View.VISIBLE);
     }
 
+
+    /**
+     * This is the method to hide the empty view and show the main one
+     */
     private void show_requests_view(){
 
         empty_view.setVisibility(View.GONE);
         rv.setVisibility(View.VISIBLE);
     }
 
+
+    /**
+     * This method attaches the firebase listeners to download the history
+     */
     private void attachFirebaseListeners(){
 
         //listen for isActive and busy values changes
@@ -251,6 +263,11 @@ public class RequestsFragment extends Fragment {
         });
     }
 
+
+    /**
+     * It creates the request after downloading data and add it to the recyclerView
+     * @param snap
+     */
     private void createRequest(DataSnapshot snap){
 
         String orderID = snap.child("orderID").getValue().toString();
@@ -278,6 +295,7 @@ public class RequestsFragment extends Fragment {
         requestsAdapter.addRequest(r);
 
     }
+
 
     @Override
     public void onDestroy() {

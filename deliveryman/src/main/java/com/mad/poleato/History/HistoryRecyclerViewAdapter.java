@@ -15,11 +15,18 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+
+/**
+ * This is the adapter for the history RecyclerView
+ */
 public class HistoryRecyclerViewAdapter extends RecyclerView.Adapter<HistoryRecyclerViewAdapter.HistoryViewHolder> {
 
     private List<HistoryItem> historyList;
     private Context context;
 
+    /**
+     * The viewHolder for the history view
+     */
     public class HistoryViewHolder extends RecyclerView.ViewHolder {
         public TextView order_tv, restaurant_tv, restaurantAddress_tv;
         public TextView price_tv, date_tv, expectedTime_tv, deliveredTime_tv;

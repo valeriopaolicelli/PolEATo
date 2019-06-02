@@ -4,7 +4,7 @@ import java.io.Serializable;
 import java.util.Comparator;
 
 /**
- * This class represents a single ride
+ * This class represents a single ride object
  */
 public class Ride implements Serializable {
 

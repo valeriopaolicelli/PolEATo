@@ -36,6 +36,10 @@ import com.google.firebase.database.ValueEventListener;
 import com.mad.poleato.LocationService.BackgroundLocationService;
 import com.onesignal.OneSignal;
 
+
+/**
+ * This class is the NavigatorActivity that allows to move from one fragment to another
+ */
 public class NavigatorActivity extends AppCompatActivity {
 
     private NavController navController;
@@ -47,25 +51,7 @@ public class NavigatorActivity extends AppCompatActivity {
     private AlertDialog myAlert;
     private ConnectionManager connectionManager;
     private LocationManager manager;
-    //    private BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener
-//            = new BottomNavigationView.OnNavigationItemSelectedListener() {
-//
-//        @Override
-//        public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-//            switch (item.getItemId()) {
-//                case R.id.navigation_home:
-//                    mTextMessage.setText(R.string.title_home);
-//                    return true;
-//                case R.id.navigation_dashboard:
-//                    mTextMessage.setText(R.string.title_dashboard);
-//                    return true;
-//                case R.id.navigation_notifications:
-//                    mTextMessage.setText(R.string.title_notifications);
-//                    return true;
-//            }
-//            return false;
-//        }
-//    };
+
     /**
      * Broadcast receiver to check if network connection is turned off
      */

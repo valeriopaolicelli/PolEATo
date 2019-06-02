@@ -1,5 +1,9 @@
 package com.mad.poleato.LocationService;
 
+
+/**
+ * This class contains the constants used by the service
+ */
 public final class Constants {
 
     // Milliseconds per second

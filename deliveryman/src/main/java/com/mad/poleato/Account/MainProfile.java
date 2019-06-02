@@ -107,6 +107,7 @@ public class MainProfile extends Fragment {
 
     }
 
+
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         menu.clear();
@@ -146,6 +147,7 @@ public class MainProfile extends Fragment {
         super.onCreateOptionsMenu(menu, inflater);
     }
 
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         view = inflater.inflate(R.layout.fragment_profile, container, false);
@@ -177,6 +179,7 @@ public class MainProfile extends Fragment {
         return view;
     }
 
+
     @Override
     public void onResume() {
         super.onResume();
@@ -191,6 +194,13 @@ public class MainProfile extends Fragment {
 
     }
 
+    /**
+     * This method is used to fill the layout fields. It attaches the firebase listeners to download
+     * all the needed data
+     */    /**
+     * This method is used to fill the layout fields. It attaches the firebase listeners to download
+     * all the needed data
+     */
     private void fillFields() {
 
         deliveryProfileReference.setValueListener(new ValueEventListener() {
@@ -261,24 +271,10 @@ public class MainProfile extends Fragment {
 
     }
 
-//    private void revokeAccess() {
-//        // Firebase sign out
-//        //mAuth.signOut();
-//
-//        Log.d("miche", "Logout");
-//        FirebaseAuth.getInstance().signOut();
-//        // Google revoke access
-//        mGoogleSignInClient.revokeAccess();
-//
-//        OneSignal.setSubscription(false);
-//
-//        /**
-//         *  GO TO LOGIN ****
-//         */
-//        Navigation.findNavController(view).navigate(R.id.action_mainProfile_id_to_signInActivity);
-//        getActivity().finish();
-//    }
 
+    /**
+     * Logout method (both from firebaseAuth and Google)
+     */
     public void revokeAccess() {
         // Firebase sign out
         //mAuth.signOut();
@@ -306,6 +302,8 @@ public class MainProfile extends Fragment {
         Navigation.findNavController(view).navigate(R.id.action_global_signInActivity);
         getActivity().finish();
     }
+
+
     @Override
     public void onStop() {
         super.onStop();

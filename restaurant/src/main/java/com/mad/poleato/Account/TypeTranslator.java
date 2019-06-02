@@ -1,10 +1,8 @@
 package com.mad.poleato.Account;
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Map;
-import java.util.Set;
+
 
 /**
  * This class provide translation from it_IT and en_EN (and vice versa) for the types of cooking

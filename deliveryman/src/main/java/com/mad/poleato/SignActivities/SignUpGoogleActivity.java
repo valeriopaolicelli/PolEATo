@@ -48,6 +48,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+
+/**
+ * Sign up with Google
+ */
 public class SignUpGoogleActivity extends AppCompatActivity {
 
     private FirebaseAuth mAuth;

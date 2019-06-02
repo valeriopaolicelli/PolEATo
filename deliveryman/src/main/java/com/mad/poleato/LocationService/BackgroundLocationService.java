@@ -27,12 +27,12 @@ import com.google.android.gms.location.LocationServices;
 import com.mad.poleato.NavigatorActivity;
 import com.mad.poleato.R;
 
+
 /**
  * This service runs in background giving updates about device position
  * It also runs a foreground service in order to giving updates even when
  * the app is in background so that Android give him priority
  */
-
 public class BackgroundLocationService extends Service {
 
     private FusedLocationProviderClient fusedLocationProviderClient;
@@ -137,8 +137,10 @@ public class BackgroundLocationService extends Service {
 
     }
 
-    //Called when the application task is cleared
-    //Needed to proper stop background service
+    /**
+     * Called when the application task is cleared.
+     * Needed to proper stop background service
+     */
     @Override
     public void onTaskRemoved(Intent rootIntent) {
         super.onTaskRemoved(rootIntent);
