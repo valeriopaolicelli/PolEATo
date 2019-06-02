@@ -4,6 +4,10 @@ import com.google.android.gms.maps.model.Marker;
 
 import java.util.Comparator;
 
+
+/**
+ * This is the class that describes a single Rider object
+ */
 public class Rider {
     private String id;
     private Double distance;
@@ -91,6 +95,10 @@ public class Rider {
         this.marker = marker;
     }
 
+
+    /**
+     * Rider comparator based on the distance from the current restaurant
+     */
     public static Comparator<Rider> distanceComparator= new Comparator<Rider>() {
         @Override
         public int compare(Rider r1, Rider r2) {

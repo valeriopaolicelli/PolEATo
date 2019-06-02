@@ -31,11 +31,10 @@ import com.onesignal.OneSignal;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 
 
 /**
- * A simple {@link Fragment} subclass.
+ * This is the fragment to show the history of the Rider
  */
 public class HistoryFragment extends Fragment {
 
@@ -104,17 +103,6 @@ public class HistoryFragment extends Fragment {
     }
 
 
-//    private void logout(){
-//        //logout
-//        Log.d("matte", "Logout");
-//        FirebaseAuth.getInstance().signOut();
-//        OneSignal.setSubscription(false);
-//
-//        //go to login
-//        //Navigation.findNavController(view).navigate(R.id.action_mainProfile_id_to_signInActivity); TODO mich
-//        getActivity().finish();
-//    }
-
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -142,20 +130,27 @@ public class HistoryFragment extends Fragment {
     }
 
 
+    /**
+     * This is the method to hide the main view and show the hidden one
+     */
     private void show_empty_view(){
 
         rv.setVisibility(View.GONE);
         empty_view.setVisibility(View.VISIBLE);
     }
 
+    /**
+     * This is the method to hide the empty view and show the main one
+     */
     private void show_history_view(){
 
         empty_view.setVisibility(View.GONE);
         rv.setVisibility(View.VISIBLE);
     }
 
-
-
+    /**
+     * This method attaches the firebase listeners to download the history
+     */
     private void attachFirebaseListeners(){
 
         historyReference = new MyDatabaseReference(FirebaseDatabase.getInstance().getReference("deliveryman")

@@ -4,6 +4,10 @@ import android.graphics.Bitmap;
 
 import java.io.Serializable;
 
+
+/**
+ * This is the class that represents a single Food object
+ */
 public class Food implements Serializable, Comparable {
 
     private Bitmap img;
@@ -67,6 +71,11 @@ public class Food implements Serializable, Comparable {
         }
     }
 
+    /**
+     * Comparator for Food object based on the name
+     * @param o
+     * @return
+     */
     @Override
     public int compareTo(Object o) {
         return this.getName().compareTo(((Food)o).getName());

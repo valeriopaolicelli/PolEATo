@@ -41,6 +41,9 @@ import java.util.List;
 import java.util.Locale;
 
 
+/**
+ * The expandableList adapter for the restaurant menu
+ */
 public class ExpandableListAdapter extends BaseExpandableListAdapter {
 
     private final Activity host;
@@ -77,6 +80,7 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
         currentUserID = currentUser.getUid();
     }
 
+
     public void setAllGroup(List<String> strings) {
         this._listDataGroup = strings;
         notifyDataSetChanged();
@@ -86,6 +90,7 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
         this._listDataChild = strings;
         notifyDataSetChanged();
     }
+
 
     @Override
     public View getChildView(final int groupPosition, final int childPosition,
@@ -214,11 +219,13 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
         return convertView;
     }
 
+
     @Override
     public void onGroupExpanded(int groupPosition) {
         super.onGroupExpanded(groupPosition);
 
     }
+
 
     @Override
     public View getGroupView(int groupPosition, boolean isExpanded,
@@ -252,10 +259,12 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
         return this._listDataChild.get(this._listDataGroup.get(groupPosition)).get(childPosition);
     }
 
+
     @Override
     public long getChildId(int groupPosition, int childPosition) {
         return getChild(groupPosition, childPosition).hashCode();
     }
+
 
     @Override
     public int getChildrenCount(int groupPosition) {
@@ -263,10 +272,12 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
                 .size();
     }
 
+
     @Override
     public Object getGroup(int groupPosition) {
         return this._listDataGroup.get(groupPosition);
     }
+
 
     @Override
     public int getGroupCount() {

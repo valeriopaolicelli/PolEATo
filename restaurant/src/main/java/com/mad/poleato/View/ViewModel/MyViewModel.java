@@ -17,7 +17,6 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
@@ -31,6 +30,10 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 
+
+/**
+ * View model class
+ */
 public class MyViewModel extends ViewModel {
     private MutableLiveData<List<String>> _listDataGroup = new MutableLiveData<>(); // header titles
     private MutableLiveData<HashMap<String, List<Food>>> _listDataChild = new MutableLiveData<>(); // child data in format of header title, child title

@@ -3,6 +3,10 @@ package com.mad.poleato.Ride;
 import java.util.Comparator;
 import java.util.Date;
 
+
+/**
+ * This class is used to compare two Rider objects based on the delivery time in descending order
+ */
 public class RideComparator implements Comparator<Ride> {
 
     //sort the rides based on the delivery time

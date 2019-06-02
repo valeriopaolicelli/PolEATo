@@ -15,6 +15,10 @@ import com.mad.poleato.R;
 
 import java.util.List;
 
+
+/**
+ * The RecyvlerView adapter for the reviews for this restaurant
+ */
 public class ReviewRecyclerViewAdapter extends RecyclerView.Adapter<ReviewRecyclerViewAdapter.ReviewViewHolder> {
 
     private List<Rating> reviewList;
@@ -39,6 +43,7 @@ public class ReviewRecyclerViewAdapter extends RecyclerView.Adapter<ReviewRecycl
                 this.comment = (TextView) itemView.findViewById(R.id.customer_comment);
             }
         }
+
 
     public ReviewRecyclerViewAdapter(Context context, List<Rating>reviewList){
         this.reviewList = reviewList;

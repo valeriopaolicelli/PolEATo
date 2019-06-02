@@ -2,12 +2,9 @@ package com.mad.poleato.Account;
 
 import android.app.ProgressDialog;
 import android.content.Context;
-import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.Message;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
@@ -34,26 +31,22 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.mad.poleato.MyDatabaseReference;
-import com.mad.poleato.NavigatorActivity;
 import com.mad.poleato.R;
-import com.mad.poleato.SignInActivity;
 import com.onesignal.OneSignal;
 
-import org.w3c.dom.Text;
-
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
 
+/**
+ * This is the Fragment that shows the restaurant profile infos
+ */
 public class AccountFragment extends Fragment {
 
     private Toast myToast;
@@ -102,13 +95,14 @@ public class AccountFragment extends Fragment {
 
     }
 
+
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
 
     }
 
-    //TODO michelangelo
+
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         menu.clear();
@@ -119,8 +113,6 @@ public class AccountFragment extends Fragment {
             public boolean onMenuItemClick(MenuItem item) {
                 profileReference.removeAllListener();
                 //logout
-
-                /** logout */
                 revokeAccess();
 
                 return true;
@@ -128,6 +120,7 @@ public class AccountFragment extends Fragment {
         });
         super.onCreateOptionsMenu(menu,inflater);
     }
+
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -163,6 +156,7 @@ public class AccountFragment extends Fragment {
         return view;
     }
 
+
     @Override
     public void onResume() {
         super.onResume();
@@ -175,6 +169,10 @@ public class AccountFragment extends Fragment {
 
     }
 
+
+    /**
+     * To fill the layout fields by attaching listeners to firebase and downloading related data
+     */
     public void fillFields() {
 
         profileReference = new MyDatabaseReference(FirebaseDatabase.getInstance()
@@ -268,6 +266,9 @@ public class AccountFragment extends Fragment {
     }
 
 
+    /**
+     * Method for logout
+     */
     public void revokeAccess() {
         // Firebase sign out
         //mAuth.signOut();
@@ -298,11 +299,13 @@ public class AccountFragment extends Fragment {
         getActivity().finish();
     }
 
+
     @Override
     public void onDestroy() {
         super.onDestroy();
         profileReference.removeAllListener();
     }
+
 
     @Override
     public void onStop() {

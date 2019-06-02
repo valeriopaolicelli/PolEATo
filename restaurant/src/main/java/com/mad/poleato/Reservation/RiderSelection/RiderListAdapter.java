@@ -1,16 +1,11 @@
 package com.mad.poleato.Reservation.RiderSelection;
 
-import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
-import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.StrictMode;
 import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-import android.support.v4.content.LocalBroadcastManager;
-import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -22,15 +17,11 @@ import android.widget.TextView;
 
 import androidx.navigation.Navigation;
 
-import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.MutableData;
-import com.google.firebase.database.Transaction;
 import com.google.firebase.database.ValueEventListener;
-import com.mad.poleato.DailyOffer.DailyOfferFragmentDirections;
 import com.mad.poleato.R;
 import com.mad.poleato.Reservation.Reservation;
 import com.mad.poleato.Reservation.Status;
@@ -39,17 +30,16 @@ import com.mad.poleato.Rider;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.text.DateFormat;
 import java.text.DecimalFormat;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Comparator;
-import java.util.Date;
 import java.util.List;
-import java.util.Locale;
 import java.util.Scanner;
 
+
+/**
+ * The adapter for the rider list
+ */
 public class RiderListAdapter extends ArrayAdapter<Rider>
 {
     private List<Rider> ridersList;
@@ -57,6 +47,7 @@ public class RiderListAdapter extends ArrayAdapter<Rider>
     private final LayoutInflater inflater;
     private final Reservation reservation;
     private final String loggedID;
+
 
     public RiderListAdapter(Context context, int resourceId, Reservation r, String loggedID)
     {
@@ -68,6 +59,7 @@ public class RiderListAdapter extends ArrayAdapter<Rider>
         this.reservation= r;
         this.loggedID = loggedID;
     }
+
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent)
@@ -149,11 +141,13 @@ public class RiderListAdapter extends ArrayAdapter<Rider>
         return convertView;
     }
 
+
     @Override
     public int getCount()
     {
         return ridersList.size();
     }
+
 
     @Override
     public Rider getItem(int position)
@@ -161,16 +155,28 @@ public class RiderListAdapter extends ArrayAdapter<Rider>
         return ridersList.get(position);
     }
 
+
+    /**
+     * To add the rider to the view
+     * @param rider
+     */
     public void addRider(Rider rider){
         ridersList.add(rider);
         Collections.sort(ridersList, Rider.distanceComparator);
     }
+
 
     @Override
     public void notifyDataSetChanged() {
         super.notifyDataSetChanged();
     }
 
+
+    /**
+     * To notify the selected rider
+     * @param riderID
+     * @param convertView
+     */
     private void notifyRider(final String riderID, final View convertView) {
 
         /* retrieve the restaurant information */
@@ -239,6 +245,11 @@ public class RiderListAdapter extends ArrayAdapter<Rider>
         });
     }
 
+
+    /**
+     * To send notification to the selected rider
+     * @param childID
+     */
     private void sendNotification(final String childID) {
         AsyncTask.execute(new Runnable() {
             @Override
@@ -306,6 +317,11 @@ public class RiderListAdapter extends ArrayAdapter<Rider>
         });
     }
 
+
+    /**
+     * To remove the rider from the layout
+     * @param riderID
+     */
     public void removeRider(String riderID) {
         for(int i=0; i < ridersList.size(); i++)
             if(ridersList.get(i).getId().equals(riderID)) {
@@ -314,6 +330,7 @@ public class RiderListAdapter extends ArrayAdapter<Rider>
                 Collections.sort(ridersList, Rider.distanceComparator);
             }
     }
+
 
     public class ViewHolder
     {

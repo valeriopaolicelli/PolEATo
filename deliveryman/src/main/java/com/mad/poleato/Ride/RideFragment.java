@@ -80,12 +80,12 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 import java.util.Scanner;
 
 
 /**
- * A simple {@link Fragment} subclass.
+ * This class implements the single ride for the rider. It provides infos about the destination and
+ * the directions, if GPS is enabled, using the Google Directions API.
  */
 public class RideFragment extends Fragment implements OnMapReadyCallback {
 
@@ -189,18 +189,6 @@ public class RideFragment extends Fragment implements OnMapReadyCallback {
     }
 
 
-//    private void logout(){
-//        //logout
-//        Log.d("matte", "Logout");
-//        FirebaseAuth.getInstance().signOut();
-//        OneSignal.setSubscription(false);
-//
-//        //go to signIn activity
-//        //Navigation.findNavController(fragView).navigate(R.id.action_rides_id_to_signInActivity); //TODO mich
-//        getActivity().finish();
-//    }
-
-
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -219,6 +207,9 @@ public class RideFragment extends Fragment implements OnMapReadyCallback {
     }
 
 
+    /**
+     * This method collects all the views and put them in the tv_Fields
+     */
     private void collectFields() {
 
         tv_Fields.put("address", (TextView) fragView.findViewById(R.id.deliveryAddress_tv));
@@ -247,7 +238,9 @@ public class RideFragment extends Fragment implements OnMapReadyCallback {
     }
 
 
-    // shown when there are no active orders
+    /**
+     * This is the method to hide the main view and show the hidden one
+     */
     private void show_empty_view() {
 
         rideCardView.setVisibility(View.GONE);
@@ -256,7 +249,9 @@ public class RideFragment extends Fragment implements OnMapReadyCallback {
     }
 
 
-    // shown when there is an active order
+    /**
+     * This is the method to hide the empty view and show the main one
+     */
     private void show_order_view() {
 
         emptyView.setVisibility(View.GONE);
@@ -265,24 +260,13 @@ public class RideFragment extends Fragment implements OnMapReadyCallback {
     }
 
 
+    /**
+     * Listeners to show more information of the restaurant. It triggers a dialog fragment
+     */
     private class OnClickShowMore implements View.OnClickListener {
 
         @Override
         public void onClick(View v) {
-            /*FragmentTransaction ft = getFragmentManager().beginTransaction();
-            Fragment prev = getFragmentManager().findFragmentByTag("show_more_fragment");
-            if (prev != null) {
-                ft.remove(prev);
-            }
-            ft.addToBackStack(null);
-            ShowMoreFragment showMoreFrag = new ShowMoreFragment();
-            Bundle bundle = new Bundle();
-            //pass the restaurant info
-            bundle.putString("name", ride.getNameRestaurant());
-            bundle.putString("address", ride.getAddressRestaurant());
-            bundle.putString("phone", ride.getPhoneRestaurant());
-            showMoreFrag.setArguments(bundle);
-            showMoreFrag.show(ft, "show_more_fragment");*/
 
             Bundle bundle = new Bundle();
             //pass the restaurant info
@@ -297,17 +281,12 @@ public class RideFragment extends Fragment implements OnMapReadyCallback {
     }
 
 
+    /**
+     * It initializes the map
+     */
     private void createMap() {
 
         //get the map fragment
-       /* FragmentTransaction ft = getFragmentManager().beginTransaction();
-        Fragment prev = getFragmentManager().findFragmentByTag("map_fragment");
-        if (prev != null) {
-            //mapFragment.onDestroy();
-            ((SupportMapFragment) prev).getMapAsync(this);
-            //ft.remove(prev);
-            return;
-        }*/
         mapFragment = (SupportMapFragment) getActivity().getSupportFragmentManager().findFragmentById(R.id.map);
         //mapFragment = (SupportMapFragment) getFragmentManager().findFragmentById(R.id.map);
         if (mapFragment == null) {
@@ -322,6 +301,10 @@ public class RideFragment extends Fragment implements OnMapReadyCallback {
     }
 
 
+    /**
+     * Callback triggered when the map is ready to be shown
+     * @param googleMap
+     */
     @Override
     public void onMapReady(GoogleMap googleMap) {
 
@@ -340,6 +323,12 @@ public class RideFragment extends Fragment implements OnMapReadyCallback {
     }
 
 
+    /**
+     * To request the GPS permission
+     * @param requestCode
+     * @param permissions
+     * @param grantResults
+     */
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         switch (requestCode) {
@@ -354,7 +343,6 @@ public class RideFragment extends Fragment implements OnMapReadyCallback {
                     //permission denied
                     myToast.setText(hostActivity.getString(R.string.permission_denied));
                     myToast.show();
-                    //TODO ?
                 }
                 return;
             }
@@ -363,6 +351,9 @@ public class RideFragment extends Fragment implements OnMapReadyCallback {
     }
 
 
+    /**
+     * It attaches the firebase listeners to retrieve the infos about this ride
+     */
     private void retrieveOrderInfo() {
 
         deliveryReservationReference = new MyDatabaseReference(FirebaseDatabase.getInstance()
@@ -409,6 +400,10 @@ public class RideFragment extends Fragment implements OnMapReadyCallback {
     }
 
 
+    /**
+     * This method is the last called to terminate the ride, set the Rider status to not busy and remove the ride from the pending requests
+     * @param endTime
+     */
     private void terminateRide(String endTime) {
 
         //save the completed ride into the history
@@ -475,6 +470,13 @@ public class RideFragment extends Fragment implements OnMapReadyCallback {
     }
 
 
+    /**
+     * The button map listener, it allows to:
+     *  - Go to the restaurant
+     *  - Go to the customer
+     *  - Deliver the order and terminate
+     *  - Leave the ride if some problem occurs and return to the restaurant
+     */
     private class OnClickButtonMap implements View.OnClickListener {
 
         @Override
@@ -652,6 +654,10 @@ public class RideFragment extends Fragment implements OnMapReadyCallback {
     }
 
 
+    /**
+     * It sends the notification with the given message to the customer
+     * @param msg
+     */
     private void sendNotificationToCustomer(final String msg) {
         AsyncTask.execute(new Runnable() {
             @Override
@@ -720,6 +726,10 @@ public class RideFragment extends Fragment implements OnMapReadyCallback {
     }
 
 
+    /**
+     * It sends the notification with the given message to the restaurant
+     * @param msg
+     */
     private void sendNotificationToRestaurant(final String msg) {
         AsyncTask.execute(new Runnable() {
             @Override
@@ -808,6 +818,11 @@ public class RideFragment extends Fragment implements OnMapReadyCallback {
         deliveryReservationReference.removeAllListener();
     }
 
+
+    /**
+     * It reads the order after firebase downloading and fills the cardView with all the order infos
+     * @param dataSnapshot
+     */
     private void readOrder(DataSnapshot dataSnapshot){
 
         //retrieve order infos from DB
@@ -871,6 +886,9 @@ public class RideFragment extends Fragment implements OnMapReadyCallback {
     }
 
 
+    /**
+     * It updates the map button text based on the ride status (TO_RESTAURANT, TO_CUSTOMER, BACKWARD)
+     */
     private void updateMapButton(){
 
         RideStatus curr_status = ride.getStatus();
@@ -900,6 +918,10 @@ public class RideFragment extends Fragment implements OnMapReadyCallback {
     }
 
 
+    /**
+     * It reads the addresses of both restaurant and customer and transforms them in latitude and longitude
+     * using the GeoCoder
+     */
     private void readTargetAddresses(){
 
         //retrieve location for customer and restaurant
@@ -920,6 +942,10 @@ public class RideFragment extends Fragment implements OnMapReadyCallback {
     }
 
 
+    /**
+     * This is the service receiver. It receives the current position coordinates from the background service.
+     * Then it call the showDirections()
+     */
     private BroadcastReceiver locationReceiver =  new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
@@ -974,6 +1000,10 @@ public class RideFragment extends Fragment implements OnMapReadyCallback {
     };
 
 
+    /**
+     * It moves the map camera to the given location
+     * @param currentLocation
+     */
     private void moveCameraToCurrentLocation(LatLng currentLocation)
     {
         mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(currentLocation,15));
@@ -987,7 +1017,12 @@ public class RideFragment extends Fragment implements OnMapReadyCallback {
 
     //API request relating methods
 
-    //uses the Google Direction API
+    /**
+     * This method draw the direction on the map from origin to destinatino by calling the Google Directions API
+     * @param origin
+     * @param destination
+     * @param title
+     */
     private void showDirections(LatLng origin, LatLng destination, String title){
 
         //add a marker for the destination
@@ -1020,7 +1055,10 @@ public class RideFragment extends Fragment implements OnMapReadyCallback {
 
     }
 
-    //to set distance and duration in the layout. It is called each time a new location is found
+
+    /**
+     * to set distance and duration in the layout. It is called each time a new location is found
+     */
     private void setDirectionParameters(String distance, String duration){
 
         String s;
@@ -1076,6 +1114,9 @@ public class RideFragment extends Fragment implements OnMapReadyCallback {
     }
 
 
+    /**
+     * This class download the json from the url in an AsyncTask
+     */
     private class FetchUrl extends AsyncTask<String, Void, String> {
         @Override
         protected String doInBackground(String[] url) {
@@ -1101,6 +1142,9 @@ public class RideFragment extends Fragment implements OnMapReadyCallback {
     }
 
 
+    /**
+     * This is the parser for the downloaded json
+     */
     private class ParserTask extends AsyncTask<String, Integer, List<List<HashMap<String, String>>>> {
         // Parsing the data in non-ui thread
         @Override
@@ -1245,6 +1289,10 @@ public class RideFragment extends Fragment implements OnMapReadyCallback {
     }
 
 
+    /**
+     * This method upload the km for the ride only the first time we show the directions from the origin to the destination
+     * @param distance
+     */
     private void uploadKm(String distance){
         //distance = "2.43 km" -> take only the floating point number
         Double km = Double.parseDouble(distance.split(" ")[0]);
@@ -1259,88 +1307,4 @@ public class RideFragment extends Fragment implements OnMapReadyCallback {
 
     }
 
-        /*private class OnClickRideStatus implements View.OnClickListener {
-
-        @Override
-        public void onClick(View v) {
-            String title,
-                    message;
-            //towards restaurant
-            if (!delivering) {
-                title = getString(R.string.go_to_customer);
-                message = getString(R.string.dialog_go_to_customer);
-            } else {
-                //toward customer
-                title = getString(R.string.maps_button_order_delivered);
-                message = getString(R.string.dialog_message_order_completed);
-            }
-
-            new AlertDialog.Builder(v.getContext())
-                    .setTitle(title)
-                    .setMessage(message)
-
-                    // Specifying a listener allows you to take an action before dismissing the dialog.
-                    // The dialog is automatically dismissed when a dialog button is clicked.
-                    .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
-                        public void onClick(DialogInterface dialog, int which) {
-                            // If the rider arrives to the restaurant
-                            if (!delivering) {
-                                delivering = true;
-                                button_map.setText(getString(R.string.maps_button_order_delivered));
-                                //update the delivery status on FireBase
-                                DatabaseReference reference = FirebaseDatabase.getInstance().getReference("deliveryman/" + currentUserID + "/reservations/"
-                                        + rideKey);
-                                reference.child("delivering").setValue(true);
-                                sendNotificationToCustomer();
-                            } else {
-                                //here the order is completed
-                                myToast.setText(R.string.message_order_completed);
-                                myToast.show();
-
-                                //retrieve actual time and terminate the order
-                                DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm");
-                                Date date = new Date(); //initialized with current time
-                                terminateRide(dateFormat.format(date));
-                            }
-
-
-                        }
-                    })
-
-                    // A null listener allows the button to dismiss the dialog and take no further action.
-                    .setNegativeButton(android.R.string.no, null)
-                    .show();
-        }
-    }*/
-
-        /*@Override
-    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-        menu.clear();
-        //Inflate the menu; this adds items to the action bar if it is present.
-        inflater.inflate(R.menu.map_menu, menu);
-
-        //If Button is visible go to DeliveringActivity
-        menu.findItem(R.id.map_id).setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
-            @Override
-            public boolean onMenuItemClick(MenuItem item) {
-
-                Intent intent = new Intent(getActivity(), DeliveringActivity.class);
-                intent.putExtra("ride", ride);
-                intent.putExtra("order_key", rideKey);
-                intent.putExtra("delivering", delivering);
-                startActivityForResult(intent, MAPS_ACTIVITY_CODE);
-
-                return true;
-            }
-        });
-
-        // Used to set Visible Button map fo ActionBar
-        if (show_icon_map_menu)
-            menu.findItem(R.id.map_id).setVisible(true);
-        else
-            menu.findItem(R.id.map_id).setVisible(false);
-
-
-        super.onCreateOptionsMenu(menu, inflater);
-    }*/
 }

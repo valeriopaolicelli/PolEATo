@@ -8,6 +8,10 @@ import android.net.NetworkInfo;
 import android.provider.Settings;
 import android.support.v7.app.AlertDialog;
 
+
+/**
+ * This class provides a dialog for to user to notify him when his connection is down
+ */
 public class ConnectionManager {
 
     public ConnectionManager(){

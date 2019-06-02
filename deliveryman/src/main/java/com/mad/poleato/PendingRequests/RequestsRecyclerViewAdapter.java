@@ -4,9 +4,7 @@ package com.mad.poleato.PendingRequests;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
-import android.graphics.Color;
 import android.os.Bundle;
-import android.provider.ContactsContract;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.RecyclerView;
@@ -37,6 +35,9 @@ import java.util.SortedSet;
 import java.util.TreeSet;
 
 
+/**
+ * The recyclerView adapter for the pending ride requests
+ */
 public class RequestsRecyclerViewAdapter extends RecyclerView.Adapter<RequestsRecyclerViewAdapter.RideViewHolder>{
 
     private SortedSet<Ride> rideSet; //SortedSet sorted on date to generate sorted list
@@ -221,6 +222,11 @@ public class RequestsRecyclerViewAdapter extends RecyclerView.Adapter<RequestsRe
     }
 
 
+    /**
+     * This method confirm the ride, creates the ride object on the DB and set this rider to busy
+     * @param ride
+     * @param rideViewHolder
+     */
     private void confirm_ride(Ride ride, RideViewHolder rideViewHolder){
 
         //set this ride to delivering
@@ -266,6 +272,10 @@ public class RequestsRecyclerViewAdapter extends RecyclerView.Adapter<RequestsRe
     }
 
 
+    /**
+     * Set the button as "unclickable" if the rider is busy
+     * @param b
+     */
     private void setButtonGrey(Button b){
 
         b.setText(context.getString(R.string.delivering));

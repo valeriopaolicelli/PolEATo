@@ -17,7 +17,6 @@ import android.widget.ImageButton;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 
-import com.facebook.login.widget.LoginButton;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
@@ -41,10 +40,15 @@ import com.mad.poleato.Firebase.MyDatabaseReference;
 import com.mad.poleato.NavigatorActivity;
 import com.mad.poleato.R;
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 
+
+/**
+ * This is the first activity launched by the navigator. It is the activity for the Rider sign in.
+ * There are 2 ways for the sign in:
+ *  - Google sign in via OAuth
+ *  - Sign in with email and password
+ */
 public class SignInActivity extends AppCompatActivity {
 
     private Toast myToast;
@@ -67,6 +71,7 @@ public class SignInActivity extends AppCompatActivity {
 
     private HashMap<String, MyDatabaseReference> dbReferenceList;
 
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -84,11 +89,6 @@ public class SignInActivity extends AppCompatActivity {
                 .requestIdToken(getString(R.string.default_web_client_id))
                 .requestEmail()
                 .build();
-                // new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
-                // .requestEmail()
-                // .requestIdToken("504775808769-jbk1ab9gqb7gsi149mmvqhre1v37ji2k.apps.googleusercontent.com")
-                // .requestServerAuthCode("504775808769-jbk1ab9gqb7gsi149mmvqhre1v37ji2k.apps.googleusercontent.com", false)
-                // .build();
 
         // Build a GoogleSignInClient with the options specified by gso.
         mGoogleSignInClient = GoogleSignIn.getClient(this, gso);
@@ -123,11 +123,17 @@ public class SignInActivity extends AppCompatActivity {
     }
 
 
+    /**
+     * To show the progress bar
+     */
     private void show_progress(){
         login_constraint.setVisibility(View.GONE);
         progress_bar.setVisibility(View.VISIBLE);
     }
 
+    /**
+     * To hide the progress bar and show the login form
+     */
     private void show_login_form(){
         progress_bar.setVisibility(View.GONE);
         login_constraint.setVisibility(View.VISIBLE);
@@ -141,6 +147,7 @@ public class SignInActivity extends AppCompatActivity {
         handleButton();
         buttonListener();
     }
+
 
     @Override
     public void onStart() {
@@ -184,7 +191,9 @@ public class SignInActivity extends AppCompatActivity {
         }
     }
 
-    //access to the app
+    /**
+     * Method to access the app
+     */
     private void access(){
         Intent myIntent = new Intent(SignInActivity.this, NavigatorActivity.class);
         SignInActivity.this.startActivity(myIntent);
@@ -192,6 +201,11 @@ public class SignInActivity extends AppCompatActivity {
     }
 
 
+    /**
+     * Method to verify the sign in through email and password
+     * @param email
+     * @param password
+     */
     private void signIn(String email, String password){
         mAuth.signInWithEmailAndPassword(email, password)
                 .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
@@ -242,6 +256,11 @@ public class SignInActivity extends AppCompatActivity {
     private boolean implemented = true;
     //request code for the Google sign in activity
     private int RC_SIGN_IN = 0;
+
+
+    /**
+     * The listener for the sign in button. It handles both the Google sign in and the email and password sign in
+     */
     private View.OnClickListener signInRoutine = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
@@ -281,11 +300,17 @@ public class SignInActivity extends AppCompatActivity {
     };
 
 
+    /**
+     * It handles the result returned from launching the Intent from GoogleSignInClient.getSignInIntent(...);
+     * @param requestCode
+     * @param resultCode
+     * @param data
+     */
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
-        // Result returned from launching the Intent from GoogleSignInClient.getSignInIntent(...);
+        //
         if (requestCode == RC_SIGN_IN) {
             // The Task returned from this call is always completed, no need to attach
             // a listener.
@@ -293,6 +318,7 @@ public class SignInActivity extends AppCompatActivity {
             handleSignInResult(task);
         }
     }
+
 
     private void handleSignInResult(Task<GoogleSignInAccount> completedTask) {
         try {
@@ -307,6 +333,11 @@ public class SignInActivity extends AppCompatActivity {
         }
     }
 
+
+    /**
+     * To authenticate with firebase using the Google OAuth protocol
+     * @param account
+     */
     private void firebaseAuthWithGoogle(GoogleSignInAccount account) {
         Log.d("matte", "firebaseAuthWithGoogle:" + account.getId());
 
@@ -363,8 +394,6 @@ public class SignInActivity extends AppCompatActivity {
                     }//onComplete end
                 });
     }
-
-
 
 
     private void handleButton(){
@@ -448,12 +477,14 @@ public class SignInActivity extends AppCompatActivity {
         });
     }
 
+
     private void showButton(EditText field, ImageButton button){
         if(field.getText().toString().length()>0)
             button.setVisibility(View.VISIBLE);
         else
             button.setVisibility(View.INVISIBLE);
     }
+
 
     private void hideButton(ImageButton button){
         button.setVisibility(View.INVISIBLE);
@@ -467,12 +498,14 @@ public class SignInActivity extends AppCompatActivity {
             my_ref.removeAllListener();
     }
 
+
     @Override
     protected void onStop() {
         super.onStop();
         for (MyDatabaseReference my_ref : dbReferenceList.values())
             my_ref.removeAllListener();
     }
+
 
     public void clearText(View view) {
         if (view.getId() == R.id.cancel_email)

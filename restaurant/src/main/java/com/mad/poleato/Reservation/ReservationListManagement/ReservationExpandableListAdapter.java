@@ -57,8 +57,11 @@ public class ReservationExpandableListAdapter extends BaseExpandableListAdapter{
         this.loggedID= currentUserID;
     }
 
-    //This method  add a new value to the collections that handle the check states
-    //Only if there is a new reservation
+    /**
+     *     This method  add a new value to the collections that handle the check states
+     *     Only if there is a new reservation
+     * @param defaultState
+     */
     public void addCheckState(boolean defaultState){
         for (Reservation r : reservations){
             if(!childsChecked.containsKey(r.getOrder_id())){

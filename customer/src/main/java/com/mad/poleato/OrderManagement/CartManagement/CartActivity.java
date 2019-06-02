@@ -59,13 +59,12 @@ import java.util.Locale;
 import java.util.Scanner;
 import java.util.TimeZone;
 
+
 /**
  * Activity related to cart
  * Here the user can still change is choices in terms of quantity
  * select the delivery time and finally confirm the order
  */
-
-
 public class CartActivity extends AppCompatActivity implements Interface,TimePickerDialog.OnTimeSetListener {
 
     private Order order;

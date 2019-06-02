@@ -64,10 +64,10 @@ import java.util.HashMap;
 import java.util.Locale;
 import java.util.Scanner;
 
-/**
- * A simple {@link Fragment} subclass.
- */
 
+/**
+ * This fragment shows the available riders on the map
+ */
 public class MapsFragment extends Fragment implements
         OnMapReadyCallback,
         GoogleMap.OnMarkerClickListener{
@@ -108,6 +108,7 @@ public class MapsFragment extends Fragment implements
         // Required empty public constructor
     }
 
+
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         //in order to open the map view
@@ -115,6 +116,7 @@ public class MapsFragment extends Fragment implements
         super.onCreate(savedInstanceState);
 
     }
+
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -178,6 +180,7 @@ public class MapsFragment extends Fragment implements
         return fragView;
     }
 
+
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         menu.clear();
@@ -203,6 +206,7 @@ public class MapsFragment extends Fragment implements
         super.onCreateOptionsMenu(menu, inflater);
     }
 
+
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
@@ -219,12 +223,14 @@ public class MapsFragment extends Fragment implements
         return true;
     }
 
+
     @Override
     public void onResume() {
         super.onResume();
-        /** Hide bottomBar for this fragment*/
+        // Hide bottomBar for this fragment
         navigation.setVisibility(View.GONE);
     }
+
 
     /**
      * Manipulates the map once available.
@@ -238,12 +244,15 @@ public class MapsFragment extends Fragment implements
         mMap.setOnMarkerClickListener(this);
     }
 
-    /**
+    /*
      * ********************************************************************************
      * body of activity
      * ********************************************************************************
      */
 
+    /**
+     * To shows the map with current restaurant and riders markers
+     */
     private void displayLocation() {
         /*
          * retrieve the name of current restaurant to put the title to the marker in its map
@@ -812,6 +821,7 @@ public class MapsFragment extends Fragment implements
         });
     }
 
+
     private BitmapDescriptor getMarkerIconFromDrawable(Drawable drawable) {
         Canvas canvas = new Canvas();
         Bitmap bitmap = Bitmap.createBitmap(drawable.getIntrinsicWidth(), drawable.getIntrinsicHeight(), Bitmap.Config.ARGB_8888);
@@ -820,6 +830,7 @@ public class MapsFragment extends Fragment implements
         drawable.draw(canvas);
         return BitmapDescriptorFactory.fromBitmap(bitmap);
     }
+
 
     @Override
     public boolean onMarkerClick(Marker marker) {
@@ -860,6 +871,10 @@ public class MapsFragment extends Fragment implements
             return false;
     }
 
+    /**
+     * to notify the rider for this order
+     * @param riderID
+     */
     private void notifyRider(final String riderID) {
 
         /** retrieve the restaurant information */
@@ -923,6 +938,11 @@ public class MapsFragment extends Fragment implements
         });
     }
 
+
+    /**
+     * It sends the notification to the selected rider
+     * @param childID
+     */
     private void sendNotification(final String childID) {
         AsyncTask.execute(new Runnable() {
             @Override
@@ -996,6 +1016,15 @@ public class MapsFragment extends Fragment implements
         Navigation.findNavController(fragView).navigate(R.id.action_mapsFragment_id_to_reservation_id);
     }
 
+
+    /**
+     * To compute the distance between two points given their latitude and longitude. It exploits the Haversin formula
+     * @param latitudeRest
+     * @param longitudeRest
+     * @param latitudeRider
+     * @param longitudeRider
+     * @return
+     */
     public double computeDistance(double latitudeRest, double longitudeRest, double latitudeRider, double longitudeRider) {
         double startLat = latitudeRest;
         double endLat = latitudeRider;
@@ -1015,10 +1044,14 @@ public class MapsFragment extends Fragment implements
         return EARTH_RADIUS * c; // <-- d
     }
 
+    /**
+     * Haversin formula
+     * @param val
+     * @return
+     */
     public static double haversin(double val) {
         return Math.pow(Math.sin(val / 2), 2);
     }
-
 
 
     @Override
@@ -1031,6 +1064,7 @@ public class MapsFragment extends Fragment implements
         if (geoQuery != null)
             geoQuery.removeAllListeners();
     }
+
 
     @Override
     public void onStop() {

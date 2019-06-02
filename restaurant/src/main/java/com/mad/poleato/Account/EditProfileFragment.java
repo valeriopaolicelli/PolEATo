@@ -18,8 +18,6 @@ import android.media.ExifInterface;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
-import android.os.Handler;
-import android.os.Message;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -84,9 +82,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.text.DecimalFormat;
 import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -97,9 +92,7 @@ import java.util.Set;
 import static android.app.Activity.RESULT_OK;
 
 /**
- * A simple {@link Fragment} subclass.
- * Use the {@link EditProfileFragment#newInstance} factory method to
- * create an instance of this fragment.
+ * This Fragment is to allow the restaurant to edit its own profile infos
  */
 public class EditProfileFragment extends Fragment implements TimePickerDialog.OnTimeSetListener {
 
@@ -157,6 +150,7 @@ public class EditProfileFragment extends Fragment implements TimePickerDialog.On
         // Required empty public constructor
     }
 
+
     /**
      * Use this factory method to create a new instance of
      * this fragment using the provided parameters.
@@ -165,7 +159,6 @@ public class EditProfileFragment extends Fragment implements TimePickerDialog.On
      * @param param2 Parameter 2.
      * @return A new instance of fragment EditProfileFragment.
      */
-    // TODO: Rename and change types and number of parameters
     public static EditProfileFragment newInstance(String param1, String param2) {
         EditProfileFragment fragment = new EditProfileFragment();
         Bundle args = new Bundle();
@@ -174,6 +167,7 @@ public class EditProfileFragment extends Fragment implements TimePickerDialog.On
         fragment.setArguments(args);
         return fragment;
     }
+
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -227,6 +221,7 @@ public class EditProfileFragment extends Fragment implements TimePickerDialog.On
         OneSignal.sendTag("User_ID", currentUserID);
 
     }
+
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -397,6 +392,7 @@ public class EditProfileFragment extends Fragment implements TimePickerDialog.On
         super.onCreateOptionsMenu(menu,inflater);
     }
 
+
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
@@ -405,6 +401,7 @@ public class EditProfileFragment extends Fragment implements TimePickerDialog.On
         handleSwitch();
     }
 
+
     @Override
     public void onResume() {
         super.onResume();
@@ -412,6 +409,10 @@ public class EditProfileFragment extends Fragment implements TimePickerDialog.On
         navigation.setVisibility(View.GONE);
     }
 
+
+    /**
+     * To fill the layout fields by downloading data from firebase
+     */
     private void fillFields(){
 
         //Download text infos
@@ -500,6 +501,7 @@ public class EditProfileFragment extends Fragment implements TimePickerDialog.On
 
     }
 
+
     @Override
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
@@ -510,6 +512,7 @@ public class EditProfileFragment extends Fragment implements TimePickerDialog.On
                 new int[]{ mScrollView.getScrollX(), mScrollView.getScrollY()});
 
     }
+
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -539,6 +542,10 @@ public class EditProfileFragment extends Fragment implements TimePickerDialog.On
         }
     }
 
+
+    /**
+     * To change the profile image
+     */
     public void changeImage() {
         android.support.v7.widget.PopupMenu popup = new android.support.v7.widget.PopupMenu(getContext(), change_im);
         popup.getMenuInflater().inflate(
@@ -569,7 +576,10 @@ public class EditProfileFragment extends Fragment implements TimePickerDialog.On
         popup.show();
     }
 
-    // create Intent with photoFile
+
+    /**
+     *  Creates Intent with photoFile
+     */
     private void dispatchTakePictureIntent() {
         Uri photoURI;
         Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
@@ -594,7 +604,12 @@ public class EditProfileFragment extends Fragment implements TimePickerDialog.On
         }
     }
 
-    // Function to create image file with ExternalFilesDir
+
+    /**
+     * Function to create image file with ExternalFilesDir
+     * @return File
+     * @throws IOException
+     */
     private File createImageFile() throws IOException {
         // Create an image file name
         //String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
@@ -612,10 +627,18 @@ public class EditProfileFragment extends Fragment implements TimePickerDialog.On
         return image;
     }
 
+
+    /**
+     * To remove the profile image
+     */
     public void removeProfileImage(){
         profileImage.setImageResource(R.drawable.plate_fork);
     }
 
+    /**
+     * To set the profile picture
+     * @param currentPhotoPath
+     */
     private void setPic(String currentPhotoPath) {
         // Get the dimensions of the View
         int targetW = profileImage.getWidth();
@@ -649,6 +672,14 @@ public class EditProfileFragment extends Fragment implements TimePickerDialog.On
         }
     }
 
+
+    /**
+     * To rotate the image for the restaurant profile (if required)
+     * @param img
+     * @param currentPhotoPath
+     * @return
+     * @throws IOException
+     */
     private static Bitmap rotateImageIfRequired(Bitmap img, String currentPhotoPath) throws IOException {
 
         ExifInterface ei = new ExifInterface(currentPhotoPath);
@@ -666,6 +697,13 @@ public class EditProfileFragment extends Fragment implements TimePickerDialog.On
         }
     }
 
+
+    /**
+     * Rotates the image by the given degrees
+     * @param img
+     * @param degree
+     * @return
+     */
     private static Bitmap rotateImage(Bitmap img, int degree) {
         Matrix matrix = new Matrix();
         matrix.postRotate(degree);
@@ -674,6 +712,11 @@ public class EditProfileFragment extends Fragment implements TimePickerDialog.On
         return rotatedImg;
     }
 
+
+    /**
+     * It checks the validity of the inserted data, saves them and upload them to firebase
+     * @throws ParseException
+     */
     public void saveChanges() throws ParseException {
 
         if(getActivity() != null)
@@ -864,6 +907,13 @@ public class EditProfileFragment extends Fragment implements TimePickerDialog.On
         }
     }
 
+
+    /**
+     * To update the account password
+     * @param oldPass
+     * @param newPass
+     * @return
+     */
     private boolean updatePassword(String oldPass, final String newPass) {
         final FirebaseUser user = mAuth.getCurrentUser();
         if(user == null){
@@ -873,15 +923,15 @@ public class EditProfileFragment extends Fragment implements TimePickerDialog.On
         }
 
         String email= mAuth.getCurrentUser().getEmail();
-// Get auth credentials from the user for re-authentication. The example below shows
-// email and password credentials but there are multiple possible providers,
-// such as GoogleAuthProvider or FacebookAuthProvider.
+        // Get auth credentials from the user for re-authentication. The example below shows
+        // email and password credentials but there are multiple possible providers,
+        // such as GoogleAuthProvider or FacebookAuthProvider.
         AuthCredential credential= null;
         if (email != null)
             credential = EmailAuthProvider.getCredential(email, oldPass);
 
         if (user != null && credential != null) {
-// Prompt the user to re-provide their sign-in credentials
+            // Prompt the user to re-provide their sign-in credentials
             user.reauthenticate(credential).addOnCompleteListener(new OnCompleteListener<Void>() {
                 @Override
                 public void onComplete(@NonNull Task<Void> task) {
@@ -911,6 +961,7 @@ public class EditProfileFragment extends Fragment implements TimePickerDialog.On
         }
         return false;
     }
+
 
     public void updateFields(){
         String otherLocale = "";
@@ -978,6 +1029,11 @@ public class EditProfileFragment extends Fragment implements TimePickerDialog.On
         uploadFile(img);
     }
 
+
+    /**
+     * To upload the given bitmap on firebase
+     * @param bitmap
+     */
     private void uploadFile(Bitmap bitmap) {
         final StorageReference storageReference = FirebaseStorage
                 .getInstance()
@@ -1049,6 +1105,11 @@ public class EditProfileFragment extends Fragment implements TimePickerDialog.On
 
     }
 
+
+    /**
+     * To clear the text of the fiven view
+     * @param view
+     */
     public void clearText(View view) {
         if (view.getId() == R.id.cancel_name)
             editTextFields.get("Name").setText("");
@@ -1073,6 +1134,7 @@ public class EditProfileFragment extends Fragment implements TimePickerDialog.On
         else if(view.getId() == R.id.cancel_renewpass)
             editTextFields.get("ReNewPassword").setText("");
     }
+
 
     public void handleButton(){
         for(ImageButton b : imageButtons.values())
@@ -1101,6 +1163,7 @@ public class EditProfileFragment extends Fragment implements TimePickerDialog.On
             }
         }
     }
+
 
     public void buttonListener(){
 
@@ -1133,6 +1196,7 @@ public class EditProfileFragment extends Fragment implements TimePickerDialog.On
         }
     }
 
+
     public void showButton(EditText field, ImageButton button){
         if(field.getText().toString().length()>0)
             button.setVisibility(View.VISIBLE);
@@ -1140,10 +1204,14 @@ public class EditProfileFragment extends Fragment implements TimePickerDialog.On
             button.setVisibility(View.INVISIBLE);
     }
 
+
     public void hideButton(ImageButton button){
         button.setVisibility(View.INVISIBLE);
     }
 
+    /**
+     * To handle the status switch
+     */
     public void handleSwitch(){
         if(switchPass.isChecked()){
             editTextFields.get("OldPassword").setEnabled(true);
@@ -1178,6 +1246,13 @@ public class EditProfileFragment extends Fragment implements TimePickerDialog.On
         });
     }
 
+
+    /**
+     * The callback triggered after the user inserts the hour through the timePicker widget
+     * @param timePicker
+     * @param hourOfDay
+     * @param minute
+     */
     @Override
     public void onTimeSet(TimePicker timePicker, int hourOfDay, int minute) {
         String hourStr;
@@ -1204,6 +1279,7 @@ public class EditProfileFragment extends Fragment implements TimePickerDialog.On
         }
     }
 
+
     //listener for all the checkbox
     private class CheckListener implements CompoundButton.OnCheckedChangeListener {
 
@@ -1218,6 +1294,7 @@ public class EditProfileFragment extends Fragment implements TimePickerDialog.On
         }
     }
 
+
     private class ClearListener implements View.OnClickListener{
 
         @Override
@@ -1225,6 +1302,7 @@ public class EditProfileFragment extends Fragment implements TimePickerDialog.On
             clearText(v);
         }
     }
+
 
     private class SwitchListener extends OnSwipeTouchListener{
 
@@ -1285,12 +1363,14 @@ public class EditProfileFragment extends Fragment implements TimePickerDialog.On
         }
     }
 
+
     @Override
     public void onDestroy() {
         super.onDestroy();
 
         profileReference.removeAllListener();
     }
+
 
     @Override
     public void onStop() {

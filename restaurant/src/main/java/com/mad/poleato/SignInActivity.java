@@ -17,7 +17,6 @@ import android.widget.ImageButton;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 
-import com.facebook.login.widget.LoginButton;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
@@ -37,11 +36,18 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
+
+
+
+/**
+ * This is the first activity launched by the navigator. It is the activity for the Restaurant sign in.
+ * There are 2 ways for the sign in:
+ *  - Google sign in via OAuth
+ *  - Sign in with email and password
+ */
 public class SignInActivity extends AppCompatActivity {
 
     private Toast myToast;

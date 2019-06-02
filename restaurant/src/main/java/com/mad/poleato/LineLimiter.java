@@ -5,6 +5,10 @@ import android.text.TextWatcher;
 import android.util.Log;
 import android.widget.EditText;
 
+
+/**
+ * This class is an utility to limit the number of lines that can be inserted inside an EditText
+ */
 public class LineLimiter implements TextWatcher {
     private boolean _ignore = false; //to avoid infinite loop
     private int changeStart, changeLength;
