@@ -38,6 +38,7 @@ import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.mad.poleato.MyDatabaseReference;
+import com.mad.poleato.NavigatorActivity;
 import com.mad.poleato.R;
 import com.onesignal.OneSignal;
 
@@ -171,8 +172,10 @@ public class MainProfile extends Fragment {
     public void onResume() {
         super.onResume();
         //fill the views fields
-        if (getActivity() != null)
+        if (getActivity() != null) {
+            NavigatorActivity.hideKeyboard(getActivity());
             progressDialog = ProgressDialog.show(getActivity(), "", getString(R.string.loading));
+        }
 
         //start a new thread to process job
         fillFields();

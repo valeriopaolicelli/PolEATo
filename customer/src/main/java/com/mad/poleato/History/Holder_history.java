@@ -35,6 +35,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.mad.poleato.Classes.Dish;
 import com.mad.poleato.MyDatabaseReference;
+import com.mad.poleato.NavigatorActivity;
 import com.mad.poleato.R;
 import com.mad.poleato.Classes.Reservation;
 import com.onesignal.OneSignal;
@@ -365,5 +366,13 @@ public class Holder_history extends Fragment {
         super.onDestroy();
         for(MyDatabaseReference ref : dbReferenceList.values())
             ref.removeAllListener();
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        if (getActivity() != null) {
+            NavigatorActivity.hideKeyboard(getActivity());
+        }
     }
 }
