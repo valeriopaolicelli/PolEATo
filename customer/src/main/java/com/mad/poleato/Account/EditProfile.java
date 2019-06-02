@@ -233,6 +233,7 @@ public class EditProfile extends Fragment {
             }
         });
 
+        navigation = getActivity().findViewById(R.id.navigation);
 
         profileImage = v.findViewById(R.id.profile_image);
         change_im = v.findViewById(R.id.change_im);

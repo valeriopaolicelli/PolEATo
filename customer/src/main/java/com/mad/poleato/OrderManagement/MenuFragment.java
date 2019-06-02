@@ -304,6 +304,7 @@ public class MenuFragment extends Fragment {
                         listDataChild.put(category, new ArrayList<Food>());
                     }
 
+                    boolean found = false;
                     listDataChild.get(category).add(f);
 
                     if(listDataChild.containsKey(category) &&
@@ -321,11 +322,27 @@ public class MenuFragment extends Fragment {
                         if(!listDataGroup.contains("Popular"))
                             listDataGroup.add("Popular");
 
-                        listDataChild.get("Popular").add(f);
+                        try {
+                            int i = 0;
+                            for (Food food : listDataChild.get("Popular")) {
+                                if (food.getFoodID().equals(f.getFoodID())){
+                                    listDataChild.get("Popular").set(i,f);
+                                    found=true;
+                                    break;
+                                }
+                                i++;
+                            }
+                            if(!found){
+                                listDataChild.get("Popular").add(f);
+                            }
+                        }catch (Exception e){
+                            Log.d("Exception", e.getMessage());
+                        }
 
                         if(listDataChild.containsKey("Popular") &&
                                 listDataChild.get("Popular").size() > 0)
                             Collections.sort(listDataChild.get("Popular"));
+
                     }
 
                     /*
@@ -386,7 +403,7 @@ public class MenuFragment extends Fragment {
                     if(!listDataChild.containsKey(category)){
                         listDataChild.put(category,new ArrayList<Food>());
                     }
-
+                    boolean found = false;
                     /*
                      * if it's  popular food (popularity counter >= popularity average),
                      * add it to popular list
@@ -398,7 +415,22 @@ public class MenuFragment extends Fragment {
                         if(!listDataGroup.contains("Popular"))
                             listDataGroup.add("Popular");
 
-                        listDataChild.get("Popular").add(f);
+                        try {
+                            int i = 0;
+                            for (Food food : listDataChild.get("Popular")) {
+                                if (food.getFoodID().equals(f.getFoodID())){
+                                    listDataChild.get("Popular").set(i,f);
+                                    found=true;
+                                    break;
+                                }
+                                i++;
+                            }
+                            if(!found){
+                                listDataChild.get("Popular").add(f);
+                            }
+                        }catch (Exception e){
+                            Log.d("Exception", e.getMessage());
+                        }
 
                         if(listDataChild.containsKey("Popular") &&
                                 listDataChild.get("Popular").size() > 0)
@@ -406,8 +438,8 @@ public class MenuFragment extends Fragment {
                     }
 
                     int lenght= listDataChild.get(category).size();
-                    boolean found= false;
                     int i;
+                    found = false;
                     for(i=0; i < lenght; i++){
                         if(listDataChild.get(category).get(i).getFoodID().equals(id)) {
                             found = true;

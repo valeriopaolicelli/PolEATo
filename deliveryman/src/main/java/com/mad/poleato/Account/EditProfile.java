@@ -129,6 +129,8 @@ public class EditProfile extends Fragment {
 
         myToast = Toast.makeText(getActivity(), "", Toast.LENGTH_SHORT);
 
+        navigation = getActivity().findViewById(R.id.navigation);
+
         editTextFields = new HashMap<>();
         imageButtons = new HashMap<>();
         imageButtons = new HashMap<>();

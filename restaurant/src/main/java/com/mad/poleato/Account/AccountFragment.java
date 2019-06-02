@@ -161,8 +161,11 @@ public class AccountFragment extends Fragment {
     public void onResume() {
         super.onResume();
         //fill the views fields
-        if(getActivity() != null)
+        if(getActivity() != null) {
             progressDialog = ProgressDialog.show(getActivity(), "", getString(R.string.loading));
+            NavigatorActivity.hideKeyboard(getActivity());
+
+        }
 
         //start a new thread to process job
         fillFields();
