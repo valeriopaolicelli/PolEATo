@@ -27,6 +27,11 @@ import com.google.android.gms.location.LocationServices;
 import com.mad.poleato.NavigatorActivity;
 import com.mad.poleato.R;
 
+/**
+ * This service runs in background giving updates about device position
+ * It also runs a foreground service in order to giving updates even when
+ * the app is in background so that Android give him priority
+ */
 
 public class BackgroundLocationService extends Service {
 
@@ -69,7 +74,7 @@ public class BackgroundLocationService extends Service {
         mLocationRequest.setInterval(Constants.UPDATE_INTERVAL);
 
         mLocationRequest.setFastestInterval(Constants.FASTEST_INTERVAL);
-
+        // Set the smallest displacement
         mLocationRequest.setSmallestDisplacement(Constants.DISPLACEMENT);
 
 
@@ -93,8 +98,7 @@ public class BackgroundLocationService extends Service {
     public int onStartCommand(Intent intent, int flags, int startId) {
         super.onStartCommand(intent, flags, startId);
 
-       // PowerManager mgr = (PowerManager) getSystemService(Context.POWER_SERVICE);
-
+        //Creating the notification for the foreground service
         Intent notificationIntent = new Intent(this, NavigatorActivity.class);
         final PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, notificationIntent, 0);
         notification = new NotificationCompat.Builder(this, CHANNEL_ID)
@@ -104,17 +108,6 @@ public class BackgroundLocationService extends Service {
                 .setContentIntent(pendingIntent)
                 .build();
         startForeground(1, notification);
- /*
-        WakeLock is reference counted so we don't want to create multiple WakeLocks. So do a check before initializing and acquiring.
-        This will fix the "java.lang.Exception: WakeLock finalized while still held: MyWakeLock" error that you may find.
-        */
-//        if (this.mWakeLock == null) { //**Added this
-//            this.mWakeLock = mgr.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, "fabio:MyWakeLock");
-//        }
-//
-//        if (!this.mWakeLock.isHeld()) { //**Added this
-//            this.mWakeLock.acquire();
-//        }
 
 
         // Request location updates using static settings
@@ -132,6 +125,7 @@ public class BackgroundLocationService extends Service {
                     return;
                 }
                 PendingIntent locationIntent = PendingIntent.getBroadcast(getApplicationContext(), 54321, intent_2, PendingIntent.FLAG_CANCEL_CURRENT);
+                //Using FusedLocationProviderClient of GoogleAPI
                 fusedLocationProviderClient.requestLocationUpdates(mLocationRequest, locationIntent);
                 handler.postDelayed(this,Constants.LOCATION_REQUEST_FREQUENCY);
             }
@@ -156,14 +150,6 @@ public class BackgroundLocationService extends Service {
     @Override
     public void onDestroy() {
 
-        // Display the connection status
-        // Toast.makeText(this, DateFormat.getDateTimeInstance().format(new Date()) + ":
-        // Disconnected. Please re-connect.", Toast.LENGTH_SHORT).show();
-
-//        if (this.mWakeLock != null) {
-//            this.mWakeLock.release();
-//            this.mWakeLock = null;
-//        }
         this.stopSelf();
         stopForeground(true);
         handler.removeCallbacks(r);

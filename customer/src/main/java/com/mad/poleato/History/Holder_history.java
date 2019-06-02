@@ -33,7 +33,6 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
-import com.mad.poleato.AuthenticatorC.Authenticator;
 import com.mad.poleato.Classes.Dish;
 import com.mad.poleato.MyDatabaseReference;
 import com.mad.poleato.R;
@@ -119,9 +118,6 @@ public class Holder_history extends Fragment {
         // Inflate the layout for this fragment
         view = inflater.inflate(R.layout.fragment_holder_history, container, false);
 
-        /** Logout a priori if access is revoked */
-        if(currentUserID == null)
-            Authenticator.revokeAccess(Objects.requireNonNull(getActivity()), view);
 
         if (getActivity() != null)
             progressDialog = ProgressDialog.show(getActivity(), "", getString(R.string.loading));

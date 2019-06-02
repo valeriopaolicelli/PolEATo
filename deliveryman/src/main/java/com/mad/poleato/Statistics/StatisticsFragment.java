@@ -17,8 +17,6 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import androidx.navigation.Navigation;
-
 import com.github.mikephil.charting.charts.BarChart;
 import com.github.mikephil.charting.charts.LineChart;
 import com.github.mikephil.charting.components.AxisBase;
@@ -39,7 +37,6 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
-import com.mad.poleato.AuthentucatorD.Authenticator;
 import com.mad.poleato.Firebase.MyDatabaseReference;
 import com.mad.poleato.R;
 import com.onesignal.OneSignal;
@@ -160,10 +157,6 @@ public class StatisticsFragment extends Fragment {
         // Inflate the layout for this fragment
         fragView = inflater.inflate(R.layout.statistics_layout, container, false);
 
-        /** Logout a priori if access is revoked */
-        if (currentUserID == null)
-            Authenticator.revokeAccess(Objects.requireNonNull(getActivity()), fragView);
-
         collectFields();
 
         readHistory();
@@ -226,7 +219,7 @@ public class StatisticsFragment extends Fragment {
 
         // Create an ArrayAdapter using the string array and a default spinner layout
         ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(hostActivity,
-                                                    R.array.chart_array, android.R.layout.simple_spinner_item);
+                                                    R.array.chart_array, android.R.layout.simple_spinner_dropdown_item);
         // Specify the layout to use when the list of choices appears
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         // Apply the adapter to the spinner
@@ -508,8 +501,8 @@ public class StatisticsFragment extends Fragment {
 
         //to remove negative values on y axis
         yAxis.setAxisMinimum(0);
-        yAxis.setAxisMaximum(1500);
-        yAxis.setLabelCount(9);
+        yAxis.setAxisMaximum(1000);
+        yAxis.setLabelCount(7);
         yAxis.setGranularity(250f);
 
         monthlyChart.setScaleEnabled(false);

@@ -335,7 +335,7 @@ public class SignUpGoogleActivity extends AppCompatActivity {
 
                 case R.id.ButtonSignIn:
                     removeUserAuthenticated();
-                    //TODO mich logout globale
+
                     FirebaseAuth.getInstance().signOut();
                     // Google revoke access
                     mGoogleSignInClient.revokeAccess();
@@ -471,8 +471,6 @@ public class SignUpGoogleActivity extends AppCompatActivity {
     public void onBackPressed() {
         super.onBackPressed();
         removeUserAuthenticated();
-
-        //TODO mich logout globale
 
         FirebaseAuth.getInstance().signOut();
         // Google revoke access

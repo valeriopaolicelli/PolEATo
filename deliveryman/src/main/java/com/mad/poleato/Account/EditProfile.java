@@ -44,8 +44,6 @@ import android.widget.Toast;
 import androidx.navigation.Navigation;
 
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
-import com.google.android.gms.auth.api.signin.GoogleSignInClient;
-import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -61,7 +59,6 @@ import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
-import com.mad.poleato.AuthentucatorD.Authenticator;
 import com.mad.poleato.Firebase.MyDatabaseReference;
 import com.mad.poleato.R;
 import com.onesignal.OneSignal;
@@ -158,9 +155,6 @@ public class EditProfile extends Fragment {
                              Bundle savedInstanceState) {
         v = inflater.inflate(R.layout.fragment_edit_profile, container, false);
 
-        /** Logout a priori if access is revoked */
-        if(currentUserID == null)
-            Authenticator.revokeAccess(Objects.requireNonNull(getActivity()), v);
 
         editTextFields.put("Name",(EditText) v.findViewById(R.id.editTextName));
         editTextFields.put("Surname",(EditText) v.findViewById(R.id.editTextSurname));
@@ -227,10 +221,6 @@ public class EditProfile extends Fragment {
         change_im = v.findViewById(R.id.change_im);
 
 
-        /** Hide bottomBar for this fragment*/
-        navigation = getActivity().findViewById(R.id.navigation);
-        navigation.setVisibility(View.GONE);
-
         //fill the fields with initial values (uses FireBase)
         if(getActivity() != null)
             progressDialog = ProgressDialog.show(getActivity(), "", getString(R.string.loading));
@@ -264,6 +254,13 @@ public class EditProfile extends Fragment {
             }
         });
         super.onCreateOptionsMenu(menu,inflater);
+    }
+
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        navigation.setVisibility(View.GONE);
     }
 
 
@@ -976,18 +973,11 @@ public class EditProfile extends Fragment {
         });
     }
 
-    @Override
-    public void onResume() {
-        super.onResume();
-        navigation.setVisibility(View.GONE);
-    }
+
 
     @Override
     public void onDestroy() {
         super.onDestroy();
-
-        navigation.setVisibility(View.VISIBLE);
-
         deliveryProfileReference.removeAllListener();
     }
 

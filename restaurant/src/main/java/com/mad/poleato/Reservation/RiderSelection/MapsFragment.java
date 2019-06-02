@@ -121,9 +121,7 @@ public class MapsFragment extends Fragment implements
                              Bundle savedInstanceState) {
         fragView = inflater.inflate(R.layout.activity_maps, container, false);
 
-        /** Hide bottomBar for this fragment*/
         navigation = getActivity().findViewById(R.id.navigation);
-        navigation.setVisibility(View.GONE);
 
         /**
          * Value of Order FROM RESERVATION FRAGMENT
@@ -219,6 +217,13 @@ public class MapsFragment extends Fragment implements
 
         }
         return true;
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        /** Hide bottomBar for this fragment*/
+        navigation.setVisibility(View.GONE);
     }
 
     /**
@@ -1020,8 +1025,6 @@ public class MapsFragment extends Fragment implements
     public void onDestroy() {
         super.onDestroy();
 
-        navigation.setVisibility(View.VISIBLE);
-
         for(MyDatabaseReference ref : dbReferenceList.values())
             ref.removeAllListener();
 
@@ -1032,6 +1035,9 @@ public class MapsFragment extends Fragment implements
     @Override
     public void onStop() {
         super.onStop();
+
+        navigation.setVisibility(View.VISIBLE);
+
         for(MyDatabaseReference ref : dbReferenceList.values())
             ref.removeAllListener();
 

@@ -1,15 +1,10 @@
 package com.mad.poleato.Reservation.ReservationListManagement;
 
-import android.annotation.SuppressLint;
 import android.app.AlertDialog;
-import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.DialogInterface;
-import android.content.Intent;
-import android.os.AsyncTask;
 import android.os.Handler;
 import android.os.Looper;
-import android.os.StrictMode;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.util.Log;
@@ -43,7 +38,9 @@ import java.util.Locale;
 
 import static android.view.View.GONE;
 
-
+/**
+ * Adapter for the expandable list in ReservationFragment.Class
+ */
 public class ReservationExpandableListAdapter extends BaseExpandableListAdapter{
     private Context context;
     private List<Reservation> reservations;
@@ -74,6 +71,11 @@ public class ReservationExpandableListAdapter extends BaseExpandableListAdapter{
         }
     }
 
+    /**
+     * Method to update collections of the adapter
+     * @param reservations
+     * @param listHashMap
+     */
     public void updateReservationList(List<Reservation>reservations, HashMap<String,List<Dish>>listHashMap){
         this.reservations = reservations;
         this.listHashMap = listHashMap;
@@ -121,7 +123,7 @@ public class ReservationExpandableListAdapter extends BaseExpandableListAdapter{
         final List<Dish> dishes = r.getDishes();
         boolean flag = false;
 
-
+        //ViewHolder pattern
         if( view ==  null){
             holder = new ViewHolder();
             LayoutInflater inflater = (LayoutInflater)this.context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
@@ -138,7 +140,8 @@ public class ReservationExpandableListAdapter extends BaseExpandableListAdapter{
         holder.tv_time.setText(r.getTime());
         holder.tv_status.setText(r.getStat());
 
-
+        //If status is Deliverd, reservation will be removed from the reservations node
+        //and added to History node
         if(r.getStatus() == Status.DELIVERED || r.getStatus() == Status.FAILED){
             //Adding reservation to History
             DatabaseReference dbReference = FirebaseDatabase.getInstance().getReference("restaurants").child(loggedID).child("History");
@@ -160,6 +163,7 @@ public class ReservationExpandableListAdapter extends BaseExpandableListAdapter{
             FirebaseDatabase.getInstance().getReference("restaurants").child(loggedID).child("reservations").child(r.getOrder_id()).removeValue();
         }
 
+        //If for setting the view basing on reservation status
         if (r.getStatus() == Status.REJECTED) {
             flag = true;
             holder.tv_status.setTextColor(context.getResources().getColor(R.color.colorTextRejected));
@@ -174,7 +178,6 @@ public class ReservationExpandableListAdapter extends BaseExpandableListAdapter{
             holder.tv_status.setTextColor(context.getResources().getColor(R.color.colorTextSubField));
             holder.button.setVisibility(View.VISIBLE);
         }
-        // Se lo stato è COOKING allora compare la checkbox
         if(r.getStatus() == Status.COOKING) {
             holder.button.setText(context.getResources().getString(R.string.order_deliver));
             holder.tv_status.setTextColor(context.getResources().getColor(R.color.colorTextSubField));
@@ -185,13 +188,14 @@ public class ReservationExpandableListAdapter extends BaseExpandableListAdapter{
         final int group_pos = i;
 
 
-
+        //flag checks if reservation has not been rejected
         if (!flag) {
             final View finalView1 = view;
             holder.button.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     final AlertDialog.Builder builder = new AlertDialog.Builder(v.getContext());
+                    //If status is "DELIVERY", restaurateur can see customer details
                     if (r.getStatus() == Status.DELIVERY || r.getStatus() == Status.DELIVERED) {
                         builder.setTitle(context.getString(R.string.title_deliver));
                         String msg = v.getResources().getString(R.string.order) + ": " + r.getOrder_id() + "\n"
@@ -220,6 +224,7 @@ public class ReservationExpandableListAdapter extends BaseExpandableListAdapter{
                                     break;
                                 }
                             }
+                            //Changing builder message basing on checkstates
                             if(all_checked)
                                 builder.setMessage(context.getString(R.string.msg_deliver));
                             else
@@ -315,7 +320,6 @@ public class ReservationExpandableListAdapter extends BaseExpandableListAdapter{
                                                     }
                                                 }
                                             }
-                                            //TODO update quantity in food of reservation (list of reservations -> dishes)
                                         }
                                         return Transaction.success(mutableData);
                                     }

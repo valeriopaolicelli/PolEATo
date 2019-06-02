@@ -35,7 +35,6 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
-import com.mad.poleato.AuthentucatorD.Authenticator;
 import com.mad.poleato.Firebase.MyDatabaseReference;
 import com.mad.poleato.R;
 import com.onesignal.OneSignal;
@@ -108,17 +107,6 @@ public class MainProfile extends Fragment {
     }
 
 
-    private void logout() {
-        //logout
-        Log.d("matte", "Logout");
-        FirebaseAuth.getInstance().signOut();
-        OneSignal.setSubscription(false);
-
-        //go to login
-        Navigation.findNavController(view).navigate(R.id.action_mainProfile_id_to_signInActivity);
-        getActivity().finish();
-    }
-
 
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
@@ -152,7 +140,7 @@ public class MainProfile extends Fragment {
                 deliveryProfileReference.removeAllListener();
 
                 /** logout */
-                Authenticator.revokeAccess(getActivity(), view);
+                revokeAccess();
                 return true;
             }
         });
@@ -163,9 +151,6 @@ public class MainProfile extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         view = inflater.inflate(R.layout.fragment_profile, container, false);
 
-        /** Logout a priori if access is revoked */
-        if (currentUserID == null)
-            Authenticator.revokeAccess(Objects.requireNonNull(getActivity()), view);
 
         // Retrieve all fields (restaurant details) in the xml file
         tvFields = new HashMap<>();
@@ -293,7 +278,33 @@ public class MainProfile extends Fragment {
 //        getActivity().finish();
 //    }
 
+    public void revokeAccess() {
+        // Firebase sign out
+        //mAuth.signOut();
+        GoogleSignInClient mGoogleSignInClient;
+        GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+                .requestIdToken(getActivity().getString(R.string.default_web_client_id))
+                .requestEmail()
+                .build();
 
+        /** Build a GoogleSignInClient with the options specified by gso. */
+        mGoogleSignInClient = GoogleSignIn.getClient(getActivity(), gso);
+
+        Log.d("miche", "Logout");
+        FirebaseAuth.getInstance().signOut();
+        // Google revoke access
+        mGoogleSignInClient.revokeAccess();
+
+        OneSignal.setSubscription(false);
+
+        /**
+         *  GO TO LOGIN ****
+         */
+//        Navigation.findNavController(view).navigate(R.id.action_mainProfile_id_to_signInActivity);
+//        getActivity().finish();
+        Navigation.findNavController(view).navigate(R.id.action_global_signInActivity);
+        getActivity().finish();
+    }
     @Override
     public void onStop() {
         super.onStop();

@@ -50,9 +50,11 @@ import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
+import com.mad.poleato.DailyOffer.DailyOfferFragmentDirections;
 import com.mad.poleato.DailyOffer.DishCategoryTranslator;
 import com.mad.poleato.DailyOffer.Food;
 import com.mad.poleato.MyDatabaseReference;
+import com.mad.poleato.NavigatorActivity;
 import com.mad.poleato.R;
 import com.mad.poleato.View.ViewModel.MyViewModel;
 import com.onesignal.OneSignal;
@@ -62,9 +64,12 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.TreeMap;
 
 
 
@@ -87,7 +92,6 @@ public class EditFoodFragment extends DialogFragment {
     private Map<String, ImageButton> imageButtons;
     private Map<String,EditText> editTextFields;
 
-    private Button buttonSave;
     private DishCategoryTranslator translator;
 
     //price ranges
@@ -170,9 +174,7 @@ public class EditFoodFragment extends DialogFragment {
                              @Nullable Bundle savedInstanceState) {
         v = inflater.inflate(R.layout.edit_food_fragment, container, false);
 
-        /** Hide bottomBar for this fragment*/
         navigation = getActivity().findViewById(R.id.navigation);
-        navigation.setVisibility(View.GONE);
 
         //collects the editText
         editTextFields = new HashMap<>();
@@ -200,16 +202,7 @@ public class EditFoodFragment extends DialogFragment {
 
         change_im = v.findViewById(R.id.frag_change_im);
         imageFood = v.findViewById(R.id.imageFood);
-        buttonSave = v.findViewById(R.id.button_frag_save);
 
-
-        buttonSave.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
-                saveChanges();
-            }
-        });
 
         //set the listener to change the image
         change_im.setOnClickListener(new View.OnClickListener() {
@@ -236,6 +229,12 @@ public class EditFoodFragment extends DialogFragment {
         buttonListener();
     }
 
+    @Override
+    public void onResume() {
+        super.onResume();
+        /** Hide bottomBar for this fragment*/
+        navigation.setVisibility(View.GONE);
+    }
 
     private void fillFields(){
 
@@ -777,23 +776,20 @@ public class EditFoodFragment extends DialogFragment {
     }
 
     @Override
+    public void onStop() {
+        super.onStop();
+
+        navigation.setVisibility(View.VISIBLE);
+
+        foodReference.removeAllListener();
+    }
+
+    @Override
     public void onDestroy() {
         super.onDestroy();
 
-
         foodReference.removeAllListener();
     }
 
-    @Override
-    public void onStop() {
-        super.onStop();
-        navigation.setVisibility(View.VISIBLE);
-        foodReference.removeAllListener();
-    }
 
-    @Override
-    public void onResume() {
-        super.onResume();
-        navigation.setVisibility(View.GONE);
-    }
 }

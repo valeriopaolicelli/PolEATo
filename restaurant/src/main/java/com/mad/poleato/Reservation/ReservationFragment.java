@@ -1,42 +1,22 @@
 package com.mad.poleato.Reservation;
 
-import android.app.AlertDialog;
 import android.app.ProgressDialog;
-import android.content.Context;
-import android.content.DialogInterface;
-import android.content.Intent;
+
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.Message;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentTransaction;
-import android.support.v7.widget.DividerItemDecoration;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-
-
 import android.graphics.Point;
 import android.view.Display;
 import android.widget.Button;
 import android.widget.ExpandableListView;
-import android.widget.ImageButton;
 import android.widget.ImageView;
-import android.widget.PopupMenu;
-import android.widget.SearchView;
 import android.widget.TextView;
 import android.widget.Toast;
-
-import androidx.navigation.Navigation;
-
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
@@ -50,11 +30,9 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
 import com.mad.poleato.MyDatabaseReference;
-import com.mad.poleato.NavigatorActivity;
 import com.mad.poleato.R;
 import com.mad.poleato.Reservation.ReservationListManagement.ReservationExpandableListAdapter;
-import com.mad.poleato.SignInActivity;
-import com.mad.poleato.SignUpActivity;
+
 import com.onesignal.OneSignal;
 
 import java.text.DateFormat;
@@ -63,16 +41,13 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
+
 import java.util.List;
 import java.util.Locale;
 
-/*
- * A simple {@link Fragment} subclass.
- * Activities that contain this fragment must implement the
- * Use the {@link ReservationFragment#newInstance} factory method to
- * create an instance of this fragment.
+/**
+ * This fragment shows all the reservations received from the customers
+ * Shows new and pending until they'll be confirmed by the restaurateur
  */
 public class ReservationFragment extends Fragment {
 
@@ -83,12 +58,8 @@ public class ReservationFragment extends Fragment {
     private List<Reservation> reservations;
     private HashMap<String, List<Dish>> listHash = new HashMap<>();
     private List<String> customerDetails;
-    private View view;
-    private Display display;
-    private Point size;
     private int width;
 
-    private FirebaseAuth mAuth;
     private String currentUserID;
     private String localeShort;
 
@@ -98,57 +69,25 @@ public class ReservationFragment extends Fragment {
 
     private HashMap<String, MyDatabaseReference> dbReferenceList;
 
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
-
-    // TODO: Rename and change types of parameters
-    private String mParam1;
-    private String mParam2;
-
-//    private OnFragmentInteractionListener mListener;
-
     public ReservationFragment() {
         // Required empty public constructor
     }
 
-    /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
-     *
-     * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
-     * @return A new instance of fragment ReservationFragment.
-     */
-    // TODO: Rename and change types and number of parameters
-    public static ReservationFragment newInstance(String param1, String param2) {
-        ReservationFragment fragment = new ReservationFragment();
-        Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
-        args.putString(ARG_PARAM2, param2);
-        fragment.setArguments(args);
-        return fragment;
-    }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
-        }
         myToast = Toast.makeText(getActivity(), "", Toast.LENGTH_SHORT);
 
         Locale locale= Locale.getDefault();
         localeShort = locale.toString().substring(0, 2);
         /** Calculate position of ExpandableListView indicator. */
-        display = getActivity().getWindowManager().getDefaultDisplay();
-        size = new Point();
+        Display display = getActivity().getWindowManager().getDefaultDisplay();
+        Point size = new Point();
         display.getSize(size);
         width = size.x;
 
-        mAuth = FirebaseAuth.getInstance();
+        FirebaseAuth mAuth = FirebaseAuth.getInstance();
         FirebaseUser currentUser = mAuth.getCurrentUser();
         currentUserID = currentUser.getUid();
 
@@ -177,7 +116,7 @@ public class ReservationFragment extends Fragment {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        view = inflater.inflate(R.layout.reservation_frag_layout, container, false);
+        View view = inflater.inflate(R.layout.reservation_frag_layout, container, false);
 
 
         lv = view.findViewById(R.id.reservationslv);
@@ -203,13 +142,14 @@ public class ReservationFragment extends Fragment {
                 return false;
             }
         });
-
         show_empty_view();
 
         return view;
     }
 
-
+    /**
+     * This method shows an empty view if the collection are empty
+     */
     private void show_empty_view(){
 
         lv.setVisibility(View.GONE);
@@ -223,7 +163,12 @@ public class ReservationFragment extends Fragment {
         lv.setVisibility(View.VISIBLE);
     }
 
-
+    /**
+     * Needed to place the arrow of expandable list
+     * given the size of the screen
+     * @param pixels
+     * @return
+     */
     public int GetDipsFromPixel(float pixels) {
         /** Get the screen's density scale*/
         final float scale = getResources().getDisplayMetrics().density;
@@ -231,6 +176,9 @@ public class ReservationFragment extends Fragment {
         return (int) (pixels * scale + 0.5f);
     }
 
+    /**
+     * Method that fill the view elements
+     */
     private void initData() {
         reservations = new ArrayList<>();
         listHash = new HashMap<>();
@@ -240,6 +188,9 @@ public class ReservationFragment extends Fragment {
                 .child(currentUserID).child("reservations");
         dbReferenceList.put("reservations", new MyDatabaseReference(reference));
 
+        /**
+         * Listener called after ChildListener that will dismiss progress dialog
+         */
         dbReferenceList.get("reservations").setValueListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
@@ -253,7 +204,7 @@ public class ReservationFragment extends Fragment {
                     progressDialog.dismiss();
             }
         });
-
+        //reference to the reservation of the restaurant
         dbReferenceList.get("reservations").setChildListener( new ChildEventListener() {
             @Override
             public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
@@ -261,7 +212,7 @@ public class ReservationFragment extends Fragment {
                 Reservation r= null;
                 final String order_id, customer_id;
                 String note= null;
-
+                //Check if all fields are present on database
                 if(dataSnapshot.hasChild("customerID") &&
                         dataSnapshot.hasChild("restaurantID") &&
                         dataSnapshot.hasChild("totalPrice") &&
@@ -288,6 +239,7 @@ public class ReservationFragment extends Fragment {
                     order_id = dataSnapshot.getKey();
                     customer_id = dataSnapshot.child("customerID").getValue().toString();
                     final Long dateInMills= Long.parseLong(dataSnapshot.child("date").getValue().toString());
+                    //Date is in millis on database, converting to normal format
                     DateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
                     Calendar calendar = Calendar.getInstance();
                     calendar.setTimeInMillis(dateInMills);
@@ -329,6 +281,7 @@ public class ReservationFragment extends Fragment {
                     int quantity;
                     Dish d;
 
+                    //Getting customer's dishes details
                     for (DataSnapshot dish : dishesOfReservation.getChildren()) {
                         nameDish = dish.child("name").getValue().toString();
                         quantity = Integer.parseInt(dish.child("selectedQuantity").getValue().toString());
@@ -344,6 +297,7 @@ public class ReservationFragment extends Fragment {
                         d = new Dish(nameDish, quantity, note, foodID);
                         r.addDishtoReservation(d);
                     }
+
                     listHash.put(r.getOrder_id(), r.getDishes());
                     if(!listHash.containsKey(order_id)){
                         reservations.add(r);
@@ -353,14 +307,23 @@ public class ReservationFragment extends Fragment {
                             if(res.getOrder_id().equals(order_id))
                                 res.setStat(status);
                     }
+                    //Sort reservation based on date
                     Collections.sort(reservations, Reservation.timeComparator);
+                    //Add new check state to the reservation
                     listAdapter.addCheckState(false);
-                    listAdapter.notifyDataSetChanged();
+                    //update collection of the adapter
                     listAdapter.updateReservationList(reservations,listHash);
+
+                    listAdapter.notifyDataSetChanged();
                     show_resevation_view();
                 }
             }
 
+            /**
+             * Method that resembles the onChildAdded method, see that for more details
+             * @param dataSnapshot
+             * @param s
+             */
             @Override
             public void onChildChanged(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
                 Log.d("Valerio", dataSnapshot.getKey());
@@ -455,6 +418,7 @@ public class ReservationFragment extends Fragment {
                     }
 
                     listHash.put(order_id, dishes);
+                    //set dishes collection to reservation
                     r.setDishes(dishes);
 
                     for(Reservation res : reservations)
@@ -501,6 +465,10 @@ public class ReservationFragment extends Fragment {
     }
 
 
+    /**
+     * Method to save persistence rotating the phone
+     * @param outState
+     */
     @Override
     public void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
@@ -519,6 +487,10 @@ public class ReservationFragment extends Fragment {
         }
     }
 
+    /**
+     * Method to save persistence rotating the phone
+     * @param savedInstanceState
+     */
     @Override
     public void onViewStateRestored(@Nullable Bundle savedInstanceState) {
         super.onViewStateRestored(savedInstanceState);
@@ -539,6 +511,11 @@ public class ReservationFragment extends Fragment {
         }
     }
 
+    /**
+     * Firebase callback to retrieve datas about customer
+     * @param firebaseCallBack
+     * @param key
+     */
     private void readData(final FirebaseCallBack firebaseCallBack, String key){
         ValueEventListener valueEventListener= new ValueEventListener() {
             @Override
@@ -573,23 +550,6 @@ public class ReservationFragment extends Fragment {
         void onCallBack(List<String> customerDetails);
     }
 
-    private void revokeAccess() {
-        // Firebase sign out
-        //mAuth.signOut();
-
-        Log.d("miche", "Logout");
-        FirebaseAuth.getInstance().signOut();
-        // Google revoke access
-        mGoogleSignInClient.revokeAccess();
-
-        OneSignal.setSubscription(false);
-
-        /**
-         *  GO TO LOGIN ****
-         */
-        Navigation.findNavController(view).navigate(R.id.action_reservation_id_to_signInActivity);
-        getActivity().finish();
-    }
 
     @Override
     public void onDestroy() {

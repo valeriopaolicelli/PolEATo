@@ -2,52 +2,34 @@ package com.mad.poleato.PendingRequests;
 
 
 import android.app.Activity;
-import android.app.AlertDialog;
-import android.app.ProgressDialog;
 import android.content.Context;
-import android.content.DialogInterface;
-import android.media.Image;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentTransaction;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageButton;
 import android.widget.ImageView;
-import android.widget.PopupMenu;
-import android.widget.SearchView;
 import android.widget.Toast;
 
-import androidx.navigation.Navigation;
-
-import com.google.android.gms.auth.api.signin.GoogleSignIn;
-import com.google.android.gms.auth.api.signin.GoogleSignInClient;
-import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
-import com.mad.poleato.AuthentucatorD.Authenticator;
 import com.mad.poleato.Firebase.MyDatabaseReference;
 import com.mad.poleato.R;
 import com.mad.poleato.Ride.Ride;
 import com.onesignal.OneSignal;
 
 import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
 import java.util.Objects;
 
 
@@ -116,10 +98,6 @@ public class RequestsFragment extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         fragView =  inflater.inflate(R.layout.pending_requests_recycler, container, false);
-
-        /** Logout a priori if access is revoked */
-        if(currentUserID == null)
-            Authenticator.revokeAccess(Objects.requireNonNull(getActivity()), fragView);
 
         empty_view = (ImageView) fragView.findViewById(R.id.requests_empty_view);
         rv = (RecyclerView) fragView.findViewById(R.id.requests_recyler);
@@ -204,8 +182,7 @@ public class RequestsFragment extends Fragment {
 
                     //create the requests and add it to the recyclerView
                     createRequest(dataSnapshot);
-                    if(requestsAdapter.getItemCount() == 1) //previously it was 0
-                        show_requests_view();
+                    show_requests_view();
                 }
             }
 
@@ -228,8 +205,7 @@ public class RequestsFragment extends Fragment {
 
                     //create the requests and add it to the recyclerView
                     createRequest(dataSnapshot);
-                    if(requestsAdapter.getItemCount() == 1) //previously it was 0
-                        show_requests_view();
+                    show_requests_view();
                 }
             }
 
