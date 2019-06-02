@@ -7,6 +7,9 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.Date;
 
+/**
+ * This class describes the reservations of the restaurants
+ */
 
 public class Reservation implements Serializable{
     private String order_id;

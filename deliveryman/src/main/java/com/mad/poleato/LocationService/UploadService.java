@@ -14,21 +14,14 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
 /**
- * An {@link IntentService} subclass for handling asynchronous task requests in
- * a service on a separate handler thread.
- * <p>
- * TODO: Customize class - update intent actions, extra parameters and static
- * helper methods.
+ * This service upload the coordinates on Firebase Database
  */
 public class UploadService extends IntentService {
-    // TODO: Rename actions, choose action names that describe tasks that this
     private static final int EARTH_RADIUS = 6371; // Approx Earth radius in KM
-    // IntentService can perform, e.g. ACTION_FETCH_NEW_ITEMS
     private static final String ACTION_FOO = "com.mad.poleato.action.FOO";
 
     private Double previous_latitude;
     private Double previous_longitude;
-    // TODO: Rename parameters
     private static final String EXTRA_PARAM1 = "com.mad.poleato.extra.PARAM1";
     private static final String EXTRA_PARAM2 = "com.mad.poleato.extra.PARAM2";
 
@@ -48,7 +41,6 @@ public class UploadService extends IntentService {
      *
      * @see IntentService
      */
-    // TODO: Customize helper method
     public static void startActionUpload(Context context, String param1, String param2) {
         Intent intent = new Intent(context, UploadService.class);
         intent.setAction(ACTION_FOO);
@@ -86,8 +78,8 @@ public class UploadService extends IntentService {
     }
 
     /**
-     * Handle action Foo in the provided background thread with the provided
-     * parameters.
+     * Handle action upload in the provided background thread with the provided
+     * parameters. This method will upload the coordinates on Firebase
      */
     private void handleActionUpload(String param1, String param2) {
         firebaseAuth = FirebaseAuth.getInstance();
