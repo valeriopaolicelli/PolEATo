@@ -130,24 +130,14 @@ public class EditProfile extends Fragment {
 
         myToast = Toast.makeText(getActivity(), "", Toast.LENGTH_SHORT);
 
+        navigation = getActivity().findViewById(R.id.navigation);
+
         editTextFields = new HashMap<>();
         imageButtons = new HashMap<>();
         imageButtons = new HashMap<>();
 
         rightPass= true;
     }
-
-
-//    private void logout(){
-//        //logout
-//        Log.d("matte", "Logout");
-//        FirebaseAuth.getInstance().signOut();
-//        OneSignal.setSubscription(false);
-//
-//        //go to signIn activity
-//        //Navigation.findNavController(view).navigate(R.id.action_rides_id_to_signInActivity); //TODO mich
-//        getActivity().finish();
-//    }
 
 
     @Override
