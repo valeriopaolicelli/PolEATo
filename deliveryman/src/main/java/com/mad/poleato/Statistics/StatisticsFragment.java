@@ -418,7 +418,6 @@ public class StatisticsFragment extends Fragment {
         xAxis.setValueFormatter(new XDailyValueFormatter());
 
         xAxis.setGranularityEnabled(true);
-        //xAxis.setGranularity(8.64e+7f);
         xAxis.setGranularity(1f);
 
         xAxis.setLabelCount(entries.size()); //to show all x labels
@@ -439,9 +438,8 @@ public class StatisticsFragment extends Fragment {
         dailyChart.getDescription().setEnabled(false);
         dailyChart.getLegend().setEnabled(false);
 
-        //dailyChart.setVisibleXRangeMaximum(8.64e+7f * 7);
         dailyChart.setVisibleXRange(1, 7);
-        dailyChart.setVisibleYRange(1, 80, YAxis.AxisDependency.LEFT);
+        dailyChart.setVisibleYRange(1, 110, YAxis.AxisDependency.LEFT);
 
         //to remove negative values on y axis
         yAxis.setAxisMinimum(0);
