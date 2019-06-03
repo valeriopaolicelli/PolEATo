@@ -85,7 +85,7 @@ import static android.app.Activity.RESULT_OK;
 
 
 /**
- * This Fragment is the one responsible for the Rider profile editing
+ * This Fragment is the one responsible for the Customer profile editing
  */
 public class EditProfile extends Fragment {
 
@@ -111,12 +111,6 @@ public class EditProfile extends Fragment {
     private boolean rightPass;
 
     private ProgressDialog progressDialog;
-    private Handler handler = new Handler() {
-        @Override
-        public void handleMessage(Message msg) {
-            progressDialog.dismiss();
-        }
-    };
 
     private String currentUserID;
     private FirebaseAuth mAuth;
@@ -252,9 +246,6 @@ public class EditProfile extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-//        NavController navController = Navigation.findNavController(getActivity(),R.id.nav_host_fragment);
-//        navController.
-
         handleButton();
         buttonListener();
         handleSwitch();
@@ -288,6 +279,10 @@ public class EditProfile extends Fragment {
     }
 
 
+    /**
+     * This method is used to fill the layout fields. It attaches the firebase listeners to download
+     * all the needed data
+     */
     private void fillFields(){
 
         //Download text infos
@@ -338,7 +333,8 @@ public class EditProfile extends Fragment {
                 Bitmap bmp = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
                 profileImage.setImageBitmap(bmp);
                 image = bmp;
-                handler.sendEmptyMessage(0);
+                if(progressDialog.isShowing())
+                    progressDialog.dismiss();
 
             }
         }).addOnFailureListener(new OnFailureListener() {
@@ -347,11 +343,13 @@ public class EditProfile extends Fragment {
                 Log.d("matte", "No image found. Default img setting");
                 //set default image if no image was set
                 profileImage.setImageResource(R.drawable.image_empty);
-                handler.sendEmptyMessage(0);
+                if(progressDialog.isShowing())
+                    progressDialog.dismiss();
             }
         });
 
     }
+
 
     @Override
     public void onSaveInstanceState(Bundle outState) {
@@ -364,6 +362,13 @@ public class EditProfile extends Fragment {
 
     }
 
+
+    /**
+     * Used to wait for the camera to set the photo
+     * @param requestCode
+     * @param resultCode
+     * @param data
+     */
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -392,6 +397,13 @@ public class EditProfile extends Fragment {
         }
     }
 
+
+    /**
+     * To change the image in three different ways:
+     *  - Camera (call the dispatchTakePictureIntent)
+     *  - Gallery
+     *  - Remove image
+     */
     public void changeImage() {
         android.support.v7.widget.PopupMenu popup = new android.support.v7.widget.PopupMenu(getContext(), change_im);
         popup.getMenuInflater().inflate(
@@ -422,7 +434,10 @@ public class EditProfile extends Fragment {
         popup.show();
     }
 
-    // create Intent with photoFile
+
+    /**
+     * It creates the intent for the photo profile
+     */
     private void dispatchTakePictureIntent() {
         Uri photoURI;
         Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
@@ -447,7 +462,11 @@ public class EditProfile extends Fragment {
         }
     }
 
-    // Function to create image file with ExternalFilesDir
+
+
+    /**
+     * Function to create image file with ExternalFilesDir
+     */
     private File createImageFile() throws IOException {
         // Create an image file name
         //String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
@@ -465,10 +484,19 @@ public class EditProfile extends Fragment {
         return image;
     }
 
+
+    /**
+     * Removes the profile image
+     */
     public void removeProfileImage(){
         profileImage.setImageResource(R.drawable.image_empty);
     }
 
+
+    /**
+     * Sets the picture given the image path
+     * @param currentPhotoPath
+     */
     private void setPic(String currentPhotoPath) {
         // Get the dimensions of the View
         int targetW = profileImage.getWidth();
@@ -502,6 +530,14 @@ public class EditProfile extends Fragment {
         }
     }
 
+
+    /**
+     * Used to rotate the image when taken with landscape camera. It checks how many degree to rotate
+     * @param img
+     * @param currentPhotoPath
+     * @return
+     * @throws IOException
+     */
     private static Bitmap rotateImageIfRequired(Bitmap img, String currentPhotoPath) throws IOException {
 
         ExifInterface ei = new ExifInterface(currentPhotoPath);
@@ -519,6 +555,13 @@ public class EditProfile extends Fragment {
         }
     }
 
+
+    /**
+     * It rotate the given image with the given degrees
+     * @param img
+     * @param degree
+     * @return
+     */
     private static Bitmap rotateImage(Bitmap img, int degree) {
         Matrix matrix = new Matrix();
         matrix.postRotate(degree);
@@ -527,6 +570,11 @@ public class EditProfile extends Fragment {
         return rotatedImg;
     }
 
+
+    /**
+     * This method is the last after clicking on the save button. It checks that all the inserted fields
+     * are valid and then it uploads them on firebase
+     */
     public void saveChanges() {
 
         if(getActivity() != null)
@@ -676,10 +724,17 @@ public class EditProfile extends Fragment {
         }
         else{
             if(progressDialog.isShowing())
-                handler.sendEmptyMessage(0);
+                progressDialog.dismiss();
         }
     }
 
+
+    /**
+     * To change the password from oldPass to newPass
+     * @param oldPass
+     * @param newPass
+     * @return
+     */
     private boolean updatePassword(String oldPass, final String newPass) {
         final FirebaseUser user = mAuth.getCurrentUser();
         if(user == null){
@@ -728,6 +783,8 @@ public class EditProfile extends Fragment {
         return false;
     }
 
+
+
     public void updateFields(){
         EditText ed;
         for (String fieldName : editTextFields.keySet()) {
@@ -752,6 +809,11 @@ public class EditProfile extends Fragment {
         uploadFile(img);
     }
 
+
+    /**
+     * It upload the given bitmap on firebase. Upload path: <userID>/ProfileImage/img.jpg
+     * @param bitmap
+     */
     private void uploadFile(Bitmap bitmap) {
         final StorageReference storageReference = FirebaseStorage
                 .getInstance()
@@ -778,7 +840,7 @@ public class EditProfile extends Fragment {
                                         .setValue(downloadUrl);
 
                                 if(progressDialog.isShowing())
-                                    handler.sendEmptyMessage(0);
+                                    progressDialog.dismiss();
                             }
                         });
                         // taskSnapshot.getMetadata() contains file metadata such as size, content-type, and download URL.
@@ -810,7 +872,7 @@ public class EditProfile extends Fragment {
                             myToast.show();
 
                             if(progressDialog.isShowing())
-                                handler.sendEmptyMessage(0);
+                                progressDialog.dismiss();
                         }
                         /**
                          * GO TO ACCOUNT_FRAGMENT
@@ -824,6 +886,11 @@ public class EditProfile extends Fragment {
 
     }
 
+
+    /**
+     * The method called when the editText X buttons are pressed
+     * @param view
+     */
     public void clearText(View view) {
         if (view.getId() == R.id.cancel_name)
             editTextFields.get("Name").setText("");
@@ -843,6 +910,10 @@ public class EditProfile extends Fragment {
             editTextFields.get("ReNewPassword").setText("");
     }
 
+
+    /**
+     * It attaches the listener to the X buttons
+     */
     public void handleButton(){
         for(ImageButton b : imageButtons.values())
             b.setVisibility(View.INVISIBLE);
@@ -946,6 +1017,7 @@ public class EditProfile extends Fragment {
             }
         });
     }
+
 
     private class ClearListener implements View.OnClickListener{
 

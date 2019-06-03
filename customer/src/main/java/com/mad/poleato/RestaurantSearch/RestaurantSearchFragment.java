@@ -1,10 +1,8 @@
 package com.mad.poleato.RestaurantSearch;
 
 import android.app.Activity;
-import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -13,7 +11,6 @@ import android.os.Handler;
 import android.os.Message;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.constraint.ConstraintLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.widget.DividerItemDecoration;
@@ -21,30 +18,16 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.animation.Animation;
-import android.view.animation.BounceInterpolator;
-import android.view.animation.ScaleAnimation;
-import android.widget.Button;
-import android.widget.CompoundButton;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.PopupMenu;
-import android.widget.RelativeLayout;
 import android.widget.SearchView;
 import android.widget.Toast;
-import android.widget.ToggleButton;
 
 
-import androidx.navigation.Navigation;
-
-import com.google.android.gms.auth.api.signin.GoogleSignIn;
-import com.google.android.gms.auth.api.signin.GoogleSignInClient;
-import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
@@ -60,7 +43,6 @@ import com.google.firebase.storage.StorageReference;
 import com.mad.poleato.MyDatabaseReference;
 import com.mad.poleato.R;
 import com.mad.poleato.Classes.Restaurant;
-import com.onesignal.OneSignal;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -68,11 +50,12 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
-import java.util.Objects;
-import java.util.Objects;
 import java.util.Set;
 
 
+/**
+ * This is the fragment showing the restaurant search layout
+ */
 public class RestaurantSearchFragment extends Fragment {
 
     private Toast myToast;
@@ -350,6 +333,9 @@ public class RestaurantSearchFragment extends Fragment {
 
     }
 
+    /**
+     * fill the layout fields using firebase listeners
+     */
     private void fillFields() {
         Locale locale = Locale.getDefault();
         // get "en" or "it"
@@ -566,6 +552,9 @@ public class RestaurantSearchFragment extends Fragment {
         });
     }
 
+    /**
+     * restore the displayer list from the original list (the one with all the downloaded restaurants)
+     */
     private void restoreOriginalList() {
         currDisplayedList.clear();
         for (Restaurant r : restaurantList)
@@ -573,6 +562,10 @@ public class RestaurantSearchFragment extends Fragment {
         show_main_view();
     }
 
+    /**
+     * it adds the given restaurant to the display
+     * @param r
+     */
     private void addToDisplay(Restaurant r) {
         //add new item to the displayed list
         currDisplayedList.add(r);
@@ -581,6 +574,10 @@ public class RestaurantSearchFragment extends Fragment {
         show_main_view();
     }
 
+    /**
+     * removes the given restaurant from the display
+     * @param r
+     */
     private void removeFromDisplay(Restaurant r) {
 
         currDisplayedList.remove(r);
@@ -590,6 +587,9 @@ public class RestaurantSearchFragment extends Fragment {
         recyclerAdapter.notifyDataSetChanged();
     }
 
+    /**
+     * it filters the list displayed on the screen
+     */
     private void filterDisplay() {
         //no filters to apply
         if (typesToFilter.isEmpty())
@@ -604,6 +604,11 @@ public class RestaurantSearchFragment extends Fragment {
 
     }
 
+    /**
+     * Checks if the restaurant is valid based on the current filters criteria
+     * @param r
+     * @return true if is valid
+     */
     private boolean isValidToDisplay(Restaurant r) {
         //no filters to apply -> always valid
         if (typesToFilter.isEmpty())

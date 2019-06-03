@@ -5,8 +5,6 @@ import android.app.ProgressDialog;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.Message;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
@@ -49,13 +47,9 @@ import de.hdodenhof.circleimageview.CircleImageView;
 
 
 /**
- * A simple {@link Fragment} subclass.
+ * This is the fragment showing
  */
 public class MainProfile extends Fragment {
-
-    /**
-     * This class...
-     */
 
     private Toast myToast;
 
@@ -66,12 +60,6 @@ public class MainProfile extends Fragment {
     private View view;
 
     private ProgressDialog progressDialog;
-    private Handler handler = new Handler() {
-        @Override
-        public void handleMessage(Message msg) {
-            progressDialog.dismiss();
-        }
-    };
 
     private String currentUserID;
     private FirebaseAuth mAuth;
@@ -212,10 +200,7 @@ public class MainProfile extends Fragment {
 
             @Override
             public void onCancelled(@NonNull DatabaseError databaseError) {
-//                Log.d("matte", "onCancelled | ERROR: " + databaseError.getDetails() +
-//                        " | MESSAGE: " + databaseError.getMessage());
-//                myToast.setText(databaseError.getMessage().toString());
-//                myToast.show();
+
             }
         });
 
@@ -231,7 +216,7 @@ public class MainProfile extends Fragment {
                 profileImage.setImageBitmap(bmp);
                 //send message to main thread
                 if (progressDialog.isShowing())
-                    handler.sendEmptyMessage(0);
+                    progressDialog.dismiss();
             }
         }).addOnFailureListener(new OnFailureListener() {
             @Override
@@ -241,31 +226,14 @@ public class MainProfile extends Fragment {
                 profileImage.setImageResource(R.drawable.image_empty);
                 //send message to main thread
                 if (progressDialog.isShowing())
-                    handler.sendEmptyMessage(0);
+                    progressDialog.dismiss();
             }
         });
     }
 
-//    private void revokeAccess() {
-//        // Firebase sign out
-//        //mAuth.signOut();
-//
-//        Log.d("miche", "Logout");
-//        FirebaseAuth.getInstance().signOut();
-//        // Google revoke access
-//        mGoogleSignInClient.revokeAccess();
-//
-//        OneSignal.setSubscription(false);
-//
-//        /**
-//         *  GO TO LOGIN ****
-//         */
-////        Navigation.findNavController(view).navigate(R.id.action_mainProfile_id_to_signInActivity);
-////        getActivity().finish();
-//        Navigation.findNavController(view).navigate(R.id.action_global_signInActivity);
-//        getActivity().finish();
-//    }
-
+    /**
+     * Method for the logout
+     */
     public void revokeAccess() {
         // Firebase sign out
         //mAuth.signOut();
@@ -286,11 +254,6 @@ public class MainProfile extends Fragment {
         OneSignal.sendTag("User_ID", "");
         OneSignal.setSubscription(false);
 
-        /**
-         *  GO TO LOGIN ****
-         */
-//        Navigation.findNavController(view).navigate(R.id.action_mainProfile_id_to_signInActivity);
-//        getActivity().finish();
         Navigation.findNavController(view).navigate(R.id.action_global_signInActivity);
         getActivity().finish();
     }

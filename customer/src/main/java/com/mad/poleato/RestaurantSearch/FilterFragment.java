@@ -12,7 +12,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
-import android.widget.RadioGroup;
 
 import com.mad.poleato.R;
 
@@ -21,8 +20,11 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import java.util.stream.Collectors;
 
+
+/**
+ * This is the fragment showing the filter dialog
+ */
 public class FilterFragment extends DialogFragment {
 
     View fragview;
