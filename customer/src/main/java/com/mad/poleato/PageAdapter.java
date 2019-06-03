@@ -10,6 +10,10 @@ import android.view.ViewGroup;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * This class is used to create and handle the fragment page adapter.
+ * It contains the list of fragments showed in the tab view, with their names.
+ */
 public class PageAdapter extends FragmentPagerAdapter {
     private List<Fragment> fragmentList= new ArrayList<>();
     private List<String> fragmentNameList= new ArrayList<>();
