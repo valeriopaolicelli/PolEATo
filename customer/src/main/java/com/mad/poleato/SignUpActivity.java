@@ -42,6 +42,10 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 
+
+/**
+ * This Activity handles the sign up for the Rider
+ */
 public class SignUpActivity extends AppCompatActivity {
 
     private FirebaseAuth mAuth;
@@ -199,8 +203,9 @@ public class SignUpActivity extends AppCompatActivity {
         super.onStart();
     }
 
-    //access to the app
-    public void access(){
+    /**
+     * To access the account
+     */    public void access(){
         Intent myIntent = new Intent(SignUpActivity.this, NavigatorActivity.class);
         SignUpActivity.this.startActivity(myIntent);
         finish();
@@ -208,6 +213,9 @@ public class SignUpActivity extends AppCompatActivity {
 
 
 
+    /**
+     * The sign up method
+     */
     public void signUp(){
 
         mAuth.createUserWithEmailAndPassword(editTextFields.get("Email").getText().toString(),
@@ -266,7 +274,10 @@ public class SignUpActivity extends AppCompatActivity {
                     }
                 });
     }
-
+    /**
+     * to upload the rider profile image
+     * @param currentUserID
+     */
     private void uploadFile(final String currentUserID) {
         final StorageReference storageReference = FirebaseStorage
                 .getInstance()

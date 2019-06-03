@@ -52,7 +52,7 @@ import java.util.Objects;
 
 
 /**
- * Fragment that handle all customer's orders
+ * This is the fragment to show the history of the Customer
  */
 public class Holder_history extends Fragment {
 

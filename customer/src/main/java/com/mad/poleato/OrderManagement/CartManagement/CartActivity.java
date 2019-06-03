@@ -239,6 +239,9 @@ public class CartActivity extends AppCompatActivity implements Interface,TimePic
         registerReceiver(networkReceiver,filter);
     }
 
+    /**
+     *  Function used to send Notification
+     */
     private void sendNotification() {
         AsyncTask.execute(new Runnable() {
             @Override
@@ -343,6 +346,9 @@ public class CartActivity extends AppCompatActivity implements Interface,TimePic
         }
     }
 
+    /**
+     *  Function to set time inside timePicker
+     */
     @Override
     public void onTimeSet(TimePicker timePicker, final int hourOfDay, final int minute) {
         final String hourStr;

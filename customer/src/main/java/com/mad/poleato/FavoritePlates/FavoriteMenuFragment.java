@@ -300,7 +300,6 @@ public class FavoriteMenuFragment extends Fragment {
                                                     public void onSuccess(byte[] bytes) {
                                                         String s = imageUrl;
                                                         Log.d("matte", "onSuccess");
-                                                        //SerialBitmap bmp = new SerialBitmap(BitmapFactory.decodeByteArray(bytes, 0, bytes.length));
                                                         setImg(category, favoriteFoodID, s);
                                                     }
                                                 }).addOnFailureListener(new OnFailureListener() {
@@ -374,7 +373,6 @@ public class FavoriteMenuFragment extends Fragment {
                                                     public void onSuccess(byte[] bytes) {
                                                         String s = imageUrl;
                                                         Log.d("matte", "onSuccess");
-                                                        // SerialBitmap bmp = new SerialBitmap(BitmapFactory.decodeByteArray(bytes, 0, bytes.length));
                                                         setImg(category, favoriteFoodID, s);
 
                                                     }
