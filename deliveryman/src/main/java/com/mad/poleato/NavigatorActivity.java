@@ -282,6 +282,10 @@ public class NavigatorActivity extends AppCompatActivity {
         }
     }
 
+    /**
+     * This method hides keyboard if open
+     * @param activity
+     */
     public static void hideKeyboard(Activity activity) {
         InputMethodManager inputManager = (InputMethodManager) activity
                 .getSystemService(Context.INPUT_METHOD_SERVICE);

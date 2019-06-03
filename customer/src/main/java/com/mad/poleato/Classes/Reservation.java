@@ -83,6 +83,9 @@ public class Reservation {
         return restaurantName;
     }
 
+    /**
+     * Comparator to sort reviews by date
+     */
     public static Comparator<Reservation> timeComparator= new Comparator<Reservation>() {
         @Override
         public int compare(Reservation r1, Reservation r2) {

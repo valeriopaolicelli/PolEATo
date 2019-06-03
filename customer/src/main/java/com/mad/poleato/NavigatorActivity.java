@@ -21,8 +21,9 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.onesignal.OneSignal;
 
-import static com.google.android.gms.common.util.CollectionUtils.setOf;
-
+/**
+ * This class is the NavigatorActivity that allows to move from one fragment to another
+ */
 public class NavigatorActivity extends AppCompatActivity{
     BottomNavigationView navigation;
     private NavController navController;
@@ -30,27 +31,9 @@ public class NavigatorActivity extends AppCompatActivity{
     private String currentUserID;
     ConnectionManager connectionManager;
 
-
-//    private BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener
-//            = new BottomNavigationView.OnNavigationItemSelectedListener() {
-//
-//        @Override
-//        public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-//            switch (item.getItemId()) {
-//                case R.id.navigation_home:
-//                    mTextMessage.setText(R.string.title_home);
-//                    return true;
-//                case R.id.navigation_dashboard:
-//                    mTextMessage.setText(R.string.title_dashboard);
-//                    return true;v
-//                case R.id.navigation_notifications:
-//                    mTextMessage.setText(R.string.title_notifications);
-//                    return true;
-//            }
-//            return false;
-//        }
-//    };
-
+    /**
+     * Broadcast receiver to check if network connection is turned off
+     */
     BroadcastReceiver networkReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
@@ -111,6 +94,10 @@ public class NavigatorActivity extends AppCompatActivity{
         return navController.navigateUp();
     }
 
+    /**
+     * This method hides keyboard if open
+     * @param activity
+     */
 
     public static void hideKeyboard(Activity activity) {
         InputMethodManager inputManager = (InputMethodManager) activity
