@@ -154,6 +154,9 @@ public class FavoriteRestaurantFragment extends Fragment {
     }
 
 
+    /**
+     * This method fills the view's elements
+     */
     private void fillFields() {
         Locale locale = Locale.getDefault();
         // get "en" or "it"
@@ -431,6 +434,7 @@ public class FavoriteRestaurantFragment extends Fragment {
 
         show_empty_view();
     }
+
 
     private void addToDisplay(Restaurant r) {
         //add new item to the displayed list

@@ -17,6 +17,12 @@ public class ConnectionManager {
         //Empty Constructor
     }
 
+    /**
+     * This method check if connection with mobile data or wifi
+     * is available
+     * @param context
+     * @return
+     */
     public boolean haveNetworkConnection(Context context) {
         boolean haveConnectedWifi = false;
         boolean haveConnectedMobile = false;

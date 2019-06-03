@@ -40,7 +40,12 @@ import com.google.firebase.database.ValueEventListener;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-
+/**
+ * This is the first activity launched by the navigator. It is the activity for the Rider sign in.
+ * There are 2 ways for the sign in:
+ *  - Google sign in via OAuth
+ *  - Sign in with email and password
+ */
 public class SignInActivity extends AppCompatActivity {
 
     private Toast myToast;
@@ -116,12 +121,16 @@ public class SignInActivity extends AppCompatActivity {
 
         dbReferenceList = new HashMap<>();
     }
-
+    /**
+     * To show the progress bar
+     */
     private void show_progress() {
         login_constraint.setVisibility(View.GONE);
         progress_bar.setVisibility(View.VISIBLE);
     }
-
+    /**
+     * To hide the progress bar and show the login form
+     */
     private void show_login_form() {
         progress_bar.setVisibility(View.GONE);
         login_constraint.setVisibility(View.VISIBLE);
@@ -178,14 +187,20 @@ public class SignInActivity extends AppCompatActivity {
         }
     }
 
-    //access to the app
-    public void access() {
+
+    /**
+     * Method to access the app
+     */    public void access() {
         Intent myIntent = new Intent(SignInActivity.this, NavigatorActivity.class);
         SignInActivity.this.startActivity(myIntent);
         finish();
     }
 
-
+    /**
+     * Method to verify the sign in through email and password
+     * @param email
+     * @param password
+     */
     public void signIn(String email, String password) {
         mAuth.signInWithEmailAndPassword(email, password)
                 .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
@@ -232,6 +247,9 @@ public class SignInActivity extends AppCompatActivity {
     private boolean implemented = true;
     //request code for the Google sign in activity
     private int RC_SIGN_IN = 0;
+    /**
+     * The listener for the sign in button. It handles both the Google sign in and the email and password sign in
+     */
     private View.OnClickListener signInRoutine = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
@@ -268,7 +286,12 @@ public class SignInActivity extends AppCompatActivity {
         }
     };
 
-
+    /**
+     * It handles the result returned from launching the Intent from GoogleSignInClient.getSignInIntent(...);
+     * @param requestCode
+     * @param resultCode
+     * @param data
+     */
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -294,7 +317,10 @@ public class SignInActivity extends AppCompatActivity {
             Log.d("matte", "signInResult:failed code=" + e.getStatusCode());
         }
     }
-
+    /**
+     * To authenticate with firebase using the Google OAuth protocol
+     * @param account
+     */
     private void firebaseAuthWithGoogle(final GoogleSignInAccount account) {
         Log.d("matte", "firebaseAuthWithGoogle:" + account.getId());
 
