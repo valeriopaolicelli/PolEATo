@@ -38,7 +38,7 @@
 
         <meta-data
             android:name="com.google.android.geo.API_KEY"
-            android:value="AIzaSyAVJnex3Na905KDAgZ_stE5GMP8X-LpG_k" />
+            android:value="XXXXXXXXXX INSERT YOUR KEY" />
 
         <activity
             android:name=".SignInActivity"
