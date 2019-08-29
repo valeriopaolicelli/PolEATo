@@ -3,26 +3,91 @@
     xmlns:tools="http://schemas.android.com/tools"
     package="com.mad.poleato">
 
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
-    <uses-feature android:name="android.hardware.camera"
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="android.permission.WAKE_LOCK" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+    <uses-permission android:name="android.permission.INTERNET"/>
+
+    <uses-permission android:name="com.google.android.providers.gsf.permission.READ_GSERVICES"/>
+    <!-- To access to the Network Provider for current position retrieval-->
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>
+
+
+    <uses-feature
+        android:name="android.hardware.camera"
         android:required="false" />
 
     <application
         android:allowBackup="true"
+
         android:icon="@mipmap/delivery_icon"
         android:label="@string/app_name"
+        android:largeHeap="true"
         android:supportsRtl="true"
-        android:theme="@style/AppTheme">
-        <activity android:name=".EditProfile"
-            android:windowSoftInputMode="stateAlwaysVisible|stateHidden">
-        </activity>
-        <activity android:name=".MainActivity">
+        android:theme="@style/AppTheme"
+        tools:ignore="GoogleAppIndexingWarning">
+        <service
+            android:name=".LocationService.UploadService"
+            android:exported="false"/>
+
+        <receiver
+            android:name=".LocationService.LocationReceiver"
+            android:enabled="true"
+            android:exported="true"/>
+
+        <service
+            android:name=".LocationService.BackgroundLocationService"
+            android:enabled="true"
+            android:exported="true"
+            android:stopWithTask="true"/>
+
+
+        <!--
+     The API key for Google Maps-based APIs is defined as a string resource.
+     (See the file "res/values/google_maps_api.xml").
+     Note that the API key is linked to the encryption key used to sign the APK.
+     You need a different API key for each encryption key, including the release key that is used to
+     sign the APK for publishing.
+     You can define the keys for the debug and release targets in src/debug/ and src/release/.
+        -->
+        <uses-library android:name="org.apache.http.legacy" android:required="false"/>
+
+        <meta-data
+            android:name="com.google.android.geo.API_KEY"
+            android:value="XXXXXX INSERT YOUR KEY" />
+
+
+        <activity
+            android:name=".SignActivities.SignInActivity"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="adjustPan">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-                <action android:name="android.intent.action.VIEW" />
                 <category android:name="android.intent.category.LAUNCHER" />
+                <action android:name="android.intent.action.VIEW" />
             </intent-filter>
         </activity>
+
+        <activity
+            android:name=".SignActivities.SignUpActivity"
+            android:windowSoftInputMode="adjustPan"
+            android:screenOrientation="portrait"/>
+
+        <activity
+            android:name=".SignActivities.SignUpGoogleActivity"
+            android:windowSoftInputMode="adjustPan"
+            android:screenOrientation="portrait"/>
+
+        <activity
+            android:name=".NavigatorActivity"
+            android:hardwareAccelerated="true"
+            android:windowSoftInputMode="adjustPan"
+            android:screenOrientation="portrait"/>
+
 
         <provider
             android:name="android.support.v4.content.FileProvider"
@@ -31,9 +96,8 @@
             android:grantUriPermissions="true">
             <meta-data
                 android:name="android.support.FILE_PROVIDER_PATHS"
-                android:resource="@xml/file_photo_paths"/>
+                android:resource="@xml/file_photo_paths" />
         </provider>
-
     </application>
 
 </manifest>

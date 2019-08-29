@@ -5,7 +5,8 @@
     <string name="restaurant_name"><font size="18">Nome locale</font></string>
     <string name="type"><font size="18">Tipo di cucina</font></string>
     <string name="info"><font size="18">Descrizione ristorante</font></string>
-    <string name="open"><font size="18">Orari apertura</font></string>
+    <string name="open"><font size="18">Orario di apertura</font></string>
+    <string name="close"><font size="18">Orario di chiusura</font></string>
     <string name="owner"><font size="18">Titolare attività</font></string>
     <string name="name"><font size="18">Nome</font></string>
     <string name="surname"><font size="18">Cognome</font></string>
@@ -37,9 +38,10 @@
     <string name="failure">Qualcosa è andato storto</string>
     <string name="saved">Salvato</string>
     <string name="saving">Salvataggio</string>
+    <string name="no_account">Non sei registrato?</string>
 
 
-
+    <string name="password"><font size="18">Password</font></string>
     <string name="ch_pass"><font size="18">Cambia Password(max 12 char)</font></string>
     <string name="old_pass"><font size="18">Inserisci la vecchia password</font></string>
     <string name="new_pass"><font size="18">Inserisci la nuova password</font></string>
@@ -63,6 +65,7 @@
     <string name="error_format_price">Il prezzo deve essere un numero</string>
     <string name="error_format_quantity">La quantità deve essere un numero intero</string>
 
+    <string name="plate_type">Tipo di piatto</string>
     <string-array name="plates_array">
         <item>Antipasti</item>
         <item>Primi</item>
@@ -70,6 +73,8 @@
         <item>Dolci</item>
         <item>Bevande</item>
     </string-array>
+    <string name="description">Descrizione</string>
+    <string name="price">Prezzo</string>
 
     <string name="dishes">Piatto</string>
     <string name="quantity">Quantità</string>
@@ -79,32 +84,45 @@
     <string name="cooking">Preparazione</string>
     <string name="delivery">In consegna</string>
     <string name="reject">Rifiutato</string>
-    <string name="button_reservation">Accetta o Rifiuta</string>
+    <string name="button_reservation">Accetta/Rifiuta</string>
     <string name="button_delivery">E\' pronto</string>
     <string name="order">ID</string>
-    <string name="order_info">Info consegna</string>
+    <string name="order_info">Info</string>
     <string name="order_deliver">Consegna</string>
     <string name="title_deliver">Consegna ordine</string>
     <string name="msg_deliver">E\' tutto pronto? Lo stato della prenotazione passerà su \'In consegna\'</string>
+    <string name="msg_deliver_false">Non tutti i piatti sono pronti, vuoi far partire la consegna ugualmente? Lo stato passerà su \'In Consegna\'</string>
+
     <string name="choice_confirm">Conferma</string>
     <string name="choice_reject">Rifiuta</string>
     <string name="choice_cancel">Cancella</string>
     <string name="title_confirm">Conferma ordine</string>
     <string name="msg_confirm">Vuoi confermare o rifiutare l\'ordine? Se confermi, lo stato della prenotazione passerà su \'Preparazione\'</string>
 
+    <string name="dish_cooking">In Preparazione</string>
+    <string name="dish_ready">Pronto</string>
+
     <string name="title_activity_main">MainActivity</string>
 
     <string name="title_bottombar_reservation">Prenotazioni</string>
     <string name="title_actionbar_reservation">Prenotazioni</string>
+
+    <string name="title_bottombar_history">Storico</string>
+    <string name="title_actionbar_history">Storico</string>
 
     <string name="title_bottombar_dailyoffer">Menù</string>
     <string name="title_actionbar_dailyoffer">Daily Offer</string>
     <string name="title_actionbar_add_food">Aggiungi pietanza</string>
     <string name="title_actionbar_edit_food">Modifica pietanza</string>
 
+    <string name="title_bottombar_deliveryStatistic">Su di noi</string>
+    <string name="title_actionbar_deliveryStatistic">Su di noi</string>
+
+
     <string name="title_bottombar_account">Account</string>
     <string name="title_actionbar_account">Account</string>
     <string name="title_actionbar_edit_account">Modifica Account</string>
+
 
     <string name="title_notifications">Notifications</string>
 
@@ -121,6 +139,50 @@
     <string name="mexican_cooking">Messicano</string>
 
 
+    <!-- Login strings -->
+    <string name="signin">Accedi</string>
+    <string name="signup">Registrati</string>
+    <string name="logout">Esci</string>
+    <string name="void_fields">Campi vuoti</string>
+    <string name="login_succ">Utente riconosciuto!</string>
+    <string name="login_fail">Autenticazione fallita.</string>
+    <string name="creation_succ">Account creato!</string>
+    <string name="creation_fail">Creazione account fallita! Devi inserire una mail valida e una password di almeno 6 caratteri</string>
+    <string name="title_activity_maps">Mappa</string>
 
+    <!-- Incomplete account, after login with google/facebook -->
+    <string name="missing_fields_title">Profilo account non completo</string>
+    <string name="missing_fields_body">Manca poco, compila il tuo profilo, per usare l\'app!</string>
+    <string name="go_to_edit">Vai al mio profilo</string>
+    <string name="already_used">Email usata già per un altro tipo di account</string>
+
+
+    <!-- Address convertion -->
+    <string name="no_address">Indirizzo non valido</string>
+
+    <!-- Rider list adapter -->
+    <string name="rider_id">Rider ID</string>
+    <string name="distance">Distanza</string>
+    <string name="select_rider">Seleziona rider</string>
+    <string name="rider_selected">Rider selezionato</string>
+    <string name="msg_rider_selected">Vuoi selezionare questo rider?</string>
+    <string name="choose_rider">Scegli un rider</string>
+    <string name="delivered">Consegnato</string>
+    <string name="status_rider">Status</string>
+
+    <!--- Internet dialog -->
+    <string name="internet_title">Abilita connession a Internet</string>
+    <string name="internet_message">Per utilizzare l\'applicazione devi essere connesso ad Internet</string>
+    <string name="interner_confirm">Impostazioni Internet</string>
+
+    <!-- The most popular meals and timing -->
+    <string name="popular_timing">Orario di prenotazione più popolare:</string>
+    <string name="popular_foods">I cibi più prenotati</string>
+    <string name="my_reviews">Recensioni su di noi</string>
+    <string name="checkBoxComments">Solo commenti</string>
+    <string name="no_rating">Nessuna recensione per ora</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 
 </resources>

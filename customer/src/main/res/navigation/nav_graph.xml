@@ -5,21 +5,119 @@
     android:id="@+id/nav_graph"
     app:startDestination="@id/restaurantSearchFragment_id">
 
+    <action
+        android:id="@+id/action_global_signInActivity"
+        app:destination="@id/signInActivity" />
+
+
     <fragment
         android:id="@+id/restaurantSearchFragment_id"
-        android:name="com.mad.poleato.RestaurantSearchFragment"
+        android:name="com.mad.poleato.RestaurantSearch.RestaurantSearchFragment"
         android:label="@string/title_actionbar_restaurantSearch"
-        tools:layout="@layout/restaurant_recyclerview" />
+        tools:layout="@layout/restaurant_recyclerview" >
+        <action
+            android:id="@+id/action_restaurantSearchFragment_id_to_favoriteRestaurantFragment_id"
+            app:destination="@id/favoriteRestaurantFragment_id" />
+        <action
+            android:id="@+id/action_restaurantSearchFragment_id_to_editProfile_id"
+            app:destination="@id/editProfile_id"
+            app:popUpTo="@+id/editProfile_id"
+            app:popUpToInclusive="true" />
+    </fragment>
+
+
+    <fragment
+        android:id="@+id/favoriteRestaurantFragment_id"
+        android:name="com.mad.poleato.FavoriteRestaurants.FavoriteRestaurantFragment"
+        android:label="@string/favorite_list_button"
+        tools:layout="@layout/favorite_restaurant_recyclerview" />
+
+
     <fragment
         android:id="@+id/holder_history_id"
-        android:name="com.mad.poleato.holder_history"
+        android:name="com.mad.poleato.History.Holder_history"
         android:label="@string/title_actionbar_historyOrder"
-        tools:layout="@layout/fragment_holder_history" />
+        tools:layout="@layout/fragment_holder_history" >
+        <action
+            android:id="@+id/action_holder_history_id_to_ratingFragment"
+            app:destination="@id/rating_fragment_id"
+            app:enterAnim="@anim/fui_slide_in_right"
+            app:popExitAnim="@anim/nav_default_pop_exit_anim"
+            app:popUpToInclusive="true">
+            <argument
+                android:name="restaurantID"
+                app:argType="string"
+                android:defaultValue=" " />
+            <argument
+                android:name="orderID"
+                app:argType="string"
+                android:defaultValue=" "/>
+        </action>
+    </fragment>
+    <fragment
+        android:id="@+id/rating_fragment_id"
+        android:name="com.mad.poleato.History.RatingManagement.RatingFragment"
+        android:label="Rating"
+        tools:layout="@layout/rating_fragment_layout">
+        <action
+            android:id="@+id/action_rating_fragment_id_to_restaurantSearchFragment_id"
+            app:destination="@id/restaurantSearchFragment_id"
+            app:popUpTo="@+id/restaurantSearchFragment_id"
+            app:popUpToInclusive="true" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/myReviewsFragment_id"
+        android:name="com.mad.poleato.MyReviews.MyReviewsFragment"
+        android:label="@string/title_actionbar_myReviews"
+        tools:layout="@layout/fragment_my_reviews" >
+        <action
+            android:id="@+id/action_myReviewsFragment_id_to_restaurantSearchFragment_id"
+            app:destination="@id/restaurantSearchFragment_id"
+            app:popUpTo="@+id/restaurantSearchFragment_id"
+            app:popUpToInclusive="true" />
+    </fragment>
+    <!--<fragment-->
+        <!--android:id="@+id/myReviewsFragment_id"-->
+        <!--android:name="com.mad.poleato.MyReviews.MyReviewsFragment"-->
+        <!--android:label="@string/title_actionbar_myReviews"-->
+        <!--tool-->
+        <!--<actions:layout="@layout/fragment_my_reviews" >-->
+            <!--android:id="@+id/action_myReviewsFragment_to_signInActivity"-->
+            <!--app:destination="@id/signInActivity" />-->
+    <!--</fragment>-->
+
+
     <fragment
         android:id="@+id/mainProfile_id"
-        android:name="com.mad.poleato.MainProfile"
+        android:name="com.mad.poleato.Account.MainProfile"
         android:label="@string/title_actionbar_account"
-        tools:layout="@layout/fragment_main_profile" />
+        tools:layout="@layout/fragment_main_profile" >
+        <action
+            android:id="@+id/action_mainProfile_id_to_editProfile_id"
+            app:destination="@id/editProfile_id"
+            app:enterAnim="@anim/fui_slide_in_right"
+            app:popExitAnim="@anim/nav_default_pop_exit_anim" />
+    </fragment>
+    <fragment
+        android:id="@+id/editProfile_id"
+        android:name="com.mad.poleato.Account.EditProfile"
+        android:label="@string/title_actionbar_edit_account"
+        tools:layout="@layout/fragment_edit_profile">
+        <action
+            android:id="@+id/action_editProfile_id_to_mainProfile_id"
+            app:destination="@id/mainProfile_id"
+            app:popUpTo="@+id/mainProfile_id"
+            app:popUpToInclusive="true" />
+    </fragment>
+
+
+    <activity
+        android:id="@+id/signInActivity"
+        android:name="com.mad.poleato.SignInActivity"
+        android:label="signin_layout"
+        tools:layout="@layout/signin_layout" />
+
 
 
 </navigation>

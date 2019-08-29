@@ -1,9 +1,14 @@
 package com.mad.poleato.Reservation.ReservationListManagement;
 
-import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.os.AsyncTask;
+import android.os.Handler;
+import android.os.Looper;
+import android.os.StrictMode;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -12,56 +17,78 @@ import android.widget.BaseExpandableListAdapter;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import androidx.navigation.Navigation;
+
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.MutableData;
+import com.google.firebase.database.Transaction;
 import com.mad.poleato.R;
 import com.mad.poleato.Reservation.Dish;
 import com.mad.poleato.Reservation.Reservation;
+import com.mad.poleato.Reservation.ReservationFragmentDirections;
 import com.mad.poleato.Reservation.Status;
 
+import java.io.OutputStream;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-
+import java.util.Locale;
+import java.util.Scanner;
 
 
 import static android.view.View.GONE;
 
-
-public class ReservationExpandableListAdapter extends BaseExpandableListAdapter {
+/**
+ * Adapter for the expandable list in ReservationFragment.Class
+ */
+public class ReservationExpandableListAdapter extends BaseExpandableListAdapter{
     private Context context;
     private List<Reservation> reservations;
-    private HashMap<String, List<Dish>>listHashMap;
-    private ArrayList<Boolean>groupChecked = new ArrayList<>();
-    @SuppressLint("UseSparseArrays")
-    private HashMap<Integer, ArrayList<Boolean>>childsChecked = new HashMap<>();
-    @SuppressLint("UseSparseArrays")
-    private HashMap<Integer, CheckBox> groupCheckBoxes = new HashMap<>();
+    private HashMap<String, List<Dish>>listHashMap; //Map Containg for each order the list of dishes
 
-    public ReservationExpandableListAdapter(Context context, List<Reservation> reservations, HashMap<String, List<Dish>> listHashMap) {
+    private HashMap<String, ArrayList<Boolean>>childsChecked = new HashMap<>(); //This map keep track of checkbox's states of every child for a group
+
+    private String loggedID;
+
+    public ReservationExpandableListAdapter(Context context, List<Reservation> reservations, HashMap<String, List<Dish>> listHashMap, String currentUserID) {
         this.context = context;
         this.reservations = reservations;
         this.listHashMap = listHashMap;
-
-        //initialize default check states of checkboxes
-        initCheckStates(false);
+        this.loggedID= currentUserID;
     }
 
     /**
-     * Called to initialize the default check states of items
-     * @param defaultState : false
+     *     This method  add a new value to the collections that handle the check states
+     *     Only if there is a new reservation
+     * @param defaultState
      */
-    private void initCheckStates(boolean defaultState) {
-        for(int i = 0 ; i <reservations.size(); i++){
-            groupChecked.add(i, defaultState);
-            Reservation r = reservations.get(i);
-            ArrayList<Boolean> childStates = new ArrayList<>();
-            for(int j = 0; j < listHashMap.get(r.getOrder_id()).size(); j++){
-                childStates.add(defaultState);
+    public void addCheckState(boolean defaultState){
+        for (Reservation r : reservations){
+            if(!childsChecked.containsKey(r.getOrder_id())){
+                ArrayList<Boolean> childStates = new ArrayList<>();
+                for(int j = 0; j < listHashMap.get(r.getOrder_id()).size(); j++){
+                    childStates.add(defaultState);
+                }
+                childsChecked.put(r.getOrder_id(), childStates);
             }
-
-            childsChecked.put(i, childStates);
         }
+    }
+
+    /**
+     * Method to update collections of the adapter
+     * @param reservations
+     * @param listHashMap
+     */
+    public void updateReservationList(List<Reservation>reservations, HashMap<String,List<Dish>>listHashMap){
+        this.reservations = reservations;
+        this.listHashMap = listHashMap;
     }
 
     @Override
@@ -100,100 +127,93 @@ public class ReservationExpandableListAdapter extends BaseExpandableListAdapter 
     }
 
     @Override
-    public View getGroupView(int i, boolean b, View view, ViewGroup viewGroup) {
-        final Reservation c = (Reservation) getGroup(i);
+    public View getGroupView(int i, boolean b, View view, final ViewGroup viewGroup) {
+        final Reservation r = (Reservation) getGroup(i);
         final ViewHolder holder;
-        boolean buttonflag = false;
-        final List<Dish> dishes = c.getDishes();
-
+        final List<Dish> dishes = r.getDishes();
         boolean flag = false;
+
+        //ViewHolder pattern
         if( view ==  null){
             holder = new ViewHolder();
             LayoutInflater inflater = (LayoutInflater)this.context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
             view = inflater.inflate(R.layout.layout_reservation_group,null);
 
-            holder.tv_date = (TextView)view.findViewById(R.id.tvDateField);
             holder.tv_time = (TextView) view.findViewById(R.id.tvTimeField);
             holder.tv_status = (TextView) view.findViewById(R.id.tvStatusField);
             holder.button = (Button) view.findViewById(R.id.myButton);
-            holder.selectAllCheckBox = (CheckBox) view.findViewById(R.id.selectAllCheckBox);
-            groupCheckBoxes.put(i, holder.selectAllCheckBox);
 
             view.setTag(holder);
         }else{
             holder = (ViewHolder) view.getTag();
         }
-        holder.tv_date.setText(c.getDate());
-        holder.tv_time.setText(c.getTime());
-        holder.tv_status.setText(c.getStat());
+        holder.tv_time.setText(r.getTime());
+        holder.tv_status.setText(r.getStat());
 
-        if(groupChecked.size()<=i){
-            groupChecked.add(i,false);
-        }else{
-            holder.selectAllCheckBox.setChecked(groupChecked.get(i));
-            groupCheckBoxes.put(i, holder.selectAllCheckBox);
+        //If status is Deliverd, reservation will be removed from the reservations node
+        //and added to History node
+        if(r.getStatus() == Status.DELIVERED || r.getStatus() == Status.FAILED){
+            //Adding reservation to History
+            DatabaseReference dbReference = FirebaseDatabase.getInstance().getReference("restaurants").child(loggedID).child("History");
+            dbReference.child(r.getOrder_id()).child("customerID").setValue(r.getCustomerID());
+            dbReference.child(r.getOrder_id()).child("date").setValue(r.getDate());
+            dbReference.child(r.getOrder_id()).child("time").setValue(r.getTime());
+            dbReference.child(r.getOrder_id()).child("totalPrice").setValue(r.getTotalPrice());
+            if(r.getStatus() == Status.DELIVERED) {
+                dbReference.child(r.getOrder_id()).child("status/it").setValue("Consegnato");
+                dbReference.child(r.getOrder_id()).child("status/en").setValue("Delivered");
+            }
+            else{
+                dbReference.child(r.getOrder_id()).child("status/it").setValue("Fallito");
+                dbReference.child(r.getOrder_id()).child("status/en").setValue("Failed");
+            }
+            dbReference.child(r.getOrder_id()).child("dishes").setValue(r.getDishes());
 
+            //Delete reservation from pending reservations
+            FirebaseDatabase.getInstance().getReference("restaurants").child(loggedID).child("reservations").child(r.getOrder_id()).removeValue();
         }
 
-
-        if (c.getStatus() == Status.REJECTED) {
+        //If for setting the view basing on reservation status
+        if (r.getStatus() == Status.REJECTED) {
             flag = true;
             holder.tv_status.setTextColor(context.getResources().getColor(R.color.colorTextRejected));
         }
-        else if (c.getStatus() == Status.DELIVERY) {
+        else if (r.getStatus() == Status.DELIVERY) {
             holder.button.setText(context.getResources().getString(R.string.order_info));
             holder.tv_status.setTextColor(context.getResources().getColor(R.color.colorTextAccepted));
             holder.button.setVisibility(View.VISIBLE);
         }
-        else if (c.getStatus() == Status.ACCEPATANCE ) {
+        else if (r.getStatus() == Status.ACCEPTANCE ) {
             holder.button.setText(context.getResources().getString(R.string.button_reservation));
             holder.tv_status.setTextColor(context.getResources().getColor(R.color.colorTextSubField));
             holder.button.setVisibility(View.VISIBLE);
         }
-        // Se lo stato è COOKING allora compare la checkbox
-        if(c.getStatus() == Status.COOKING) {
+        if(r.getStatus() == Status.COOKING) {
             holder.button.setText(context.getResources().getString(R.string.order_deliver));
             holder.tv_status.setTextColor(context.getResources().getColor(R.color.colorTextSubField));
-            holder.selectAllCheckBox.setVisibility(View.VISIBLE);
             holder.button.setVisibility(View.VISIBLE);
         }
-        else
-            holder.selectAllCheckBox.setVisibility(View.GONE);
 
 
         final int group_pos = i;
 
-        holder.selectAllCheckBox.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                boolean state = groupChecked.get(group_pos);
-                groupChecked.set(group_pos, state ? false : true);
-                groupCheckBoxes.get(group_pos).setChecked(state ? false : true);
-                ArrayList<Boolean>childs = childsChecked.get(group_pos);
-                for ( int i=0 ; i<listHashMap.get(c.getOrder_id()).size(); i++){
-                    childs.set(i, state ? false : true);
-                }
-                childsChecked.put(group_pos,childs);
-                Log.d("GroupCheckbox", "Clicked Group checkbox: "+ group_pos);
-                notifyDataSetChanged();
-            }
-        });
 
+        //flag checks if reservation has not been rejected
         if (!flag) {
-            //if is the last child, add the button "accept or reject" on the bottom
+            final View finalView1 = view;
             holder.button.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     final AlertDialog.Builder builder = new AlertDialog.Builder(v.getContext());
-                    //TODO transfer all strings to file
-                    if (c.getStatus() == Status.DELIVERY) {
+                    //If status is "DELIVERY", restaurateur can see customer details
+                    if (r.getStatus() == Status.DELIVERY || r.getStatus() == Status.DELIVERED) {
                         builder.setTitle(context.getString(R.string.title_deliver));
-                        String msg = v.getResources().getString(R.string.order) + ": " + c.getOrder_id() + "\n"
-                                + v.getResources().getString(R.string.date) + ": " + c.getDate() + " "
-                                + v.getResources().getString(R.string.time) + ": " + c.getTime() + "\n"
-                                + v.getResources().getString(R.string.surname) + ": " + c.getSurname() + "\n"
-                                + v.getResources().getString(R.string.address) + ": " + c.getAddress() + "\n"
-                                + v.getResources().getString(R.string.phone) + ": " + c.getPhone() + "\n";
+                        String msg = v.getResources().getString(R.string.order) + ": " + r.getOrder_id() + "\n"
+                                + v.getResources().getString(R.string.date) + ": " + r.getDate() + " "
+                                + v.getResources().getString(R.string.time) + ": " + r.getTime() + "\n"
+                                + v.getResources().getString(R.string.surname) + ": " + r.getSurname() + "\n"
+                                + v.getResources().getString(R.string.address) + ": " + r.getAddress() + "\n"
+                                + v.getResources().getString(R.string.phone) + ": " + r.getPhone() + "\n";
                         builder.setMessage(msg);
                         builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
                             @Override
@@ -202,23 +222,40 @@ public class ReservationExpandableListAdapter extends BaseExpandableListAdapter 
                             }
                         });
                     } else {
-                        //se lo status è COOKING, il ristoratore può scegliere se far partire la consegna
-                        if (c.getStatus() == Status.COOKING) {
+                        //If Status is COOKING then the restaurant can start the delivery part
+                        if (r.getStatus() == Status.COOKING) {
                             builder.setTitle(context.getString(R.string.title_deliver));
 
-                            builder.setMessage(context.getString(R.string.msg_deliver));
+                            boolean all_checked = true;
+                            ArrayList<Boolean> childs = childsChecked.get(r.getOrder_id());
+                            for(Boolean b : childs){
+                                if(b.equals(false)) {
+                                    all_checked = false;
+                                    break;
+                                }
+                            }
+                            //Changing builder message basing on checkstates
+                            if(all_checked)
+                                builder.setMessage(context.getString(R.string.msg_deliver));
+                            else
+                                builder.setMessage(context.getString(R.string.msg_deliver_false));
                             builder.setPositiveButton(context.getString(R.string.choice_confirm), new DialogInterface.OnClickListener() {
                                 @Override
                                 public void onClick(DialogInterface dialogInterface, int i) {
 
-                                    //TODO when log in will be enabled, change the R00 child, with the proper one
-                                    FirebaseDatabase.getInstance().getReference("restaurants").child("R00").child("reservations").child(c.getOrder_id()).child("status").child("en").setValue("Delivering");
-                                    FirebaseDatabase.getInstance().getReference("restaurants").child("R00").child("reservations").child(c.getOrder_id()).child("status").child("it").setValue("In consegna");
-                                    c.setStatus(Status.DELIVERY, context);
+                                    /**
+                                     * GO FROM RESERVATION to MAPSFRAGMENT
+                                     */
+                                    ReservationFragmentDirections.ActionReservationIdToMapsFragmentId action =
+                                            ReservationFragmentDirections
+                                                    .actionReservationIdToMapsFragmentId("loggedID", r);
 
-                                    holder.button.setText(context.getString(R.string.order_info));
-                                    c.setButtonText(context.getString(R.string.order_info));
+                                    action.setReservation(r);
+                                    action.setLoggedId(loggedID);
+                                    Navigation.findNavController(finalView1).navigate(action);
+
                                     notifyDataSetChanged();
+
                                 }
                             });
                             builder.setNegativeButton(context.getString(R.string.choice_cancel), new DialogInterface.OnClickListener() {
@@ -228,7 +265,7 @@ public class ReservationExpandableListAdapter extends BaseExpandableListAdapter 
                                 }
                             });
                         } else {
-                            //Se lo stato è ACCEPTANCE, il ristoratore può accetare o rifiutare l'ordine
+                            //Status = ACCEPTANCE => Restaurant can reject or accept the order
                             builder.setTitle(context.getString(R.string.title_confirm));
 
                             builder.setMessage(context.getString(R.string.msg_confirm));
@@ -236,23 +273,96 @@ public class ReservationExpandableListAdapter extends BaseExpandableListAdapter 
                             builder.setPositiveButton(context.getString(R.string.choice_confirm), new DialogInterface.OnClickListener() {
                                 @Override
                                 public void onClick(DialogInterface dialogInterface, int i) {
-                                    // Change button text
-                                    c.setStatus(Status.COOKING, context);
-                                    FirebaseDatabase.getInstance().getReference("restaurants").child("R00").child("reservations").child(c.getOrder_id()).child("status").child("en").setValue("Cooking");
-                                    FirebaseDatabase.getInstance().getReference("restaurants").child("R00").child("reservations").child(c.getOrder_id()).child("status").child("it").setValue("Preparazione");
-                                    holder.button.setText(context.getString(R.string.title_deliver));
-                                    c.setButtonText(context.getString(R.string.title_deliver));
-                                    notifyDataSetChanged();
+                                // Change button text
+                                DatabaseReference dbReference = FirebaseDatabase.getInstance().getReference()
+                                        .child("restaurants")
+                                        .child(loggedID)
+                                        .child("Menu");
 
-                                    //TODO: Aggiornare quantità menù
+                                //Transaction to avoid multiple updates of the quantity of the same dish
+                                dbReference.runTransaction(new Transaction.Handler() {
+                                    @NonNull
+                                    @Override
+                                    public Transaction.Result doTransaction(@NonNull MutableData mutableData) {
+                                        if(mutableData.getChildrenCount() == 0)
+                                            return Transaction.success(mutableData);
+                                        int updated= 0;
+                                        for(MutableData m : mutableData.getChildren()){
+                            /*
+                             * In m there are all plates of restaurant menu;
+                             * in c.getDishes() there are all plates of reservation;
+                             * so for each plate of menu (m) it searches if is contained in the reservation;
+                             * whenever it is found, the quantity is checked and eventually updated in the menu.
+                             * When al plates of reservation are found (counter: int updated),
+                             * the reservation status and the button text are updated,
+                             * then the scanning of menu foods is stopped (pruning).
+                             */
+                                            Reservation reservation = reservations.get(group_pos);
+                                            String foodID= m.getKey();
+                                            Integer quantity= Integer.parseInt(mutableData.child(foodID).child("Quantity").getValue().toString());
+                                            for( Dish d : reservation.getDishes()){
+                                                if(d.getID().equals(foodID)){
+                                                    if(quantity - d.getQuantity()< 0 ){
+                                                        Locale locale= Locale.getDefault();
+                                                        String localeShort = locale.toString().substring(0, 2);
+                                                        if(localeShort.equals("en"))
+                                                            showToast("Not enough " + d.getName().toLowerCase() +" to accept this order");
+                                                        else
+                                                            showToast("Non hai abbastanza " + d.getName().toLowerCase() +" per accettare quest'ordine");
+                                                        return Transaction.success(mutableData);
+                                                    }
+                                                    m.child("Quantity").setValue((quantity-d.getQuantity()));
+                                                    Transaction.success(mutableData);
+                                                    updated++;
+                                                    /*
+                                                     * pruning
+                                                     */
+                                                    if(updated==r.getDishes().size()){
+                                                        r.setStatus(Status.COOKING);
+                                                        FirebaseDatabase.getInstance().getReference("restaurants").child(loggedID).child("reservations").child(r.getOrder_id()).child("status").child("en").setValue("Cooking");
+                                                        FirebaseDatabase.getInstance().getReference("restaurants").child(loggedID).child("reservations").child(r.getOrder_id()).child("status").child("it").setValue("Preparazione");
+
+                                                        FirebaseDatabase.getInstance().getReference("customers").child(r.getCustomerID()).child("reservations").child(r.getOrder_id()).child("status").child("en").setValue("Cooking");
+                                                        FirebaseDatabase.getInstance().getReference("customers").child(r.getCustomerID()).child("reservations").child(r.getOrder_id()).child("status").child("it").setValue("Preparazione");
+
+                                                        r.setButtonText(context.getString(R.string.title_deliver));
+                                                        return Transaction.success(mutableData);
+                                                    }
+                                                }
+                                            }
+                                        }
+                                        return Transaction.success(mutableData);
+                                    }
+
+                                    @Override
+                                    public void onComplete(@Nullable DatabaseError databaseError, boolean b, @Nullable DataSnapshot dataSnapshot) {
+                                        Log.d("Fabio", "Transaction completed");
+                                    }
+                                });
+                                notifyDataSetChanged();
                                 }
                             });
                             builder.setNegativeButton(context.getString(R.string.choice_reject), new DialogInterface.OnClickListener() {
                                 @Override
                                 public void onClick(DialogInterface dialogInterface, int i) {
-                                    c.setStatus(Status.REJECTED, context);
-                                    FirebaseDatabase.getInstance().getReference("restaurants").child("R00").child("reservations").child(c.getOrder_id()).child("status").child("en").setValue("Rejected");
-                                    FirebaseDatabase.getInstance().getReference("restaurants").child("R00").child("reservations").child(c.getOrder_id()).child("status").child("it").setValue("Rifiutato");
+                                    r.setStatus(Status.REJECTED);
+                                    //Adding reservation to History
+                                    DatabaseReference dbReference = FirebaseDatabase.getInstance().getReference("restaurants").child(loggedID).child("History");
+                                    dbReference.child(r.getOrder_id()).child("customerID").setValue(r.getCustomerID());
+                                    dbReference.child(r.getOrder_id()).child("date").setValue(r.getDate());
+                                    dbReference.child(r.getOrder_id()).child("time").setValue(r.getTime());
+                                    dbReference.child(r.getOrder_id()).child("totalPrice").setValue(r.getTotalPrice());
+                                    dbReference.child(r.getOrder_id()).child("status/it").setValue("Rifiutato");
+                                    dbReference.child(r.getOrder_id()).child("status/en").setValue("Rejected");
+                                    dbReference.child(r.getOrder_id()).child("dishes").setValue(r.getDishes());
+
+                                    //Delete reservation from pending reservations
+                                    FirebaseDatabase.getInstance().getReference("restaurants/" + loggedID + "/reservations/" + r.getOrder_id()).removeValue();
+                                    FirebaseDatabase.getInstance().getReference("customers").child(r.getCustomerID()).child("reservations").child(r.getOrder_id()).child("status").child("en").setValue("Rejected");
+                                    FirebaseDatabase.getInstance().getReference("customers").child(r.getCustomerID()).child("reservations").child(r.getOrder_id()).child("status").child("it").setValue("Rifiutato");
+
+                                    //Send notification to customer
+                                    sendNotification(r.getCustomerID());
                                     notifyDataSetChanged();
                                 }
                             });
@@ -264,7 +374,15 @@ public class ReservationExpandableListAdapter extends BaseExpandableListAdapter 
                             });
                         }
                     }
-                    AlertDialog dialog = builder.create();
+                    final AlertDialog dialog = builder.create();
+                    dialog.setOnShowListener( new DialogInterface.OnShowListener() {
+                        @Override
+                        public void onShow(DialogInterface arg0) {
+                            dialog.getButton(AlertDialog.BUTTON_NEGATIVE).setTextColor(context.getColor(R.color.colorTextSubField));
+                            dialog.getButton(AlertDialog.BUTTON_NEUTRAL).setTextColor(context.getColor(R.color.colorTextSubField));
+                            dialog.getButton(AlertDialog.BUTTON_POSITIVE).setTextColor(context.getColor(R.color.colorPanelPrimary));
+                        }
+                    });
                     dialog.show();
                 }
             });
@@ -293,33 +411,31 @@ public class ReservationExpandableListAdapter extends BaseExpandableListAdapter 
             holder.tv_dish_quantity = (TextView) view.findViewById(R.id.tv_dish_quantity);
             holder.tv_dish_notes= (TextView) view.findViewById(R.id.tv_dish_note);
             holder.dish_chechbox= (CheckBox) view.findViewById(R.id.dish_checkbox);
-
+            holder.tv_status = (TextView) view.findViewById(R.id.status_tv);
             view.setTag(holder);
         }
         else {
             holder = ((ChildHolder)view.getTag());
-//            holder.tv_dish_name= (TextView) view.findViewById(R.id.tv_dish_name);
-//            holder.tv_dish_quantity = (TextView) view.findViewById(R.id.tv_dish_quantity);
-//            holder.tv_dish_notes= (TextView) view.findViewById(R.id.tv_dish_note);
-//            holder.dish_chechbox= (CheckBox) view.findViewById(R.id.dish_checkbox);
         }
 
         holder.dish_chechbox.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                boolean state = childsChecked.get(group_pos).get(child_pos);
-                childsChecked.get(group_pos).set(child_pos, state ? false : true);
+                boolean state = childsChecked.get(c.getOrder_id()).get(child_pos);
+                childsChecked.get(c.getOrder_id()).set(child_pos, state ? false : true);
                 Log.d("Parent", "parent position: " + group_pos);
                 Log.d("Child",  "child position: " + child_pos);
                 if(state) { // se true, lo stato sta passando a false
-                    if(groupCheckBoxes.get(group_pos).isChecked()) {
-                        groupCheckBoxes.get(group_pos).setChecked(false);
-                        groupChecked.set(group_pos, false);
-                    }
+                    holder.tv_status.setText(context.getResources().getString(R.string.dish_cooking));
+                    holder.tv_status.setTextColor(context.getColor(R.color.colorStarsRatingBar));
+                }else{
+                    holder.tv_status.setText(context.getResources().getString(R.string.dish_ready));
+                    holder.tv_status.setTextColor(context.getColor(R.color.colorTextAccepted));
                 }
             }
         });
 
+        //check state inside collection for setting view
         if(childsChecked.size() <= i){
             ArrayList<Boolean>childStates = new ArrayList<>();
             for(int j=0 ; j < listHashMap.get(c.getOrder_id()).size(); j++){
@@ -329,29 +445,37 @@ public class ReservationExpandableListAdapter extends BaseExpandableListAdapter 
                 else
                     childStates.add(false);
                 if(childsChecked.size() > group_pos){
-                    childsChecked.put(group_pos,childStates);
+                    childsChecked.put(c.getOrder_id(),childStates);
                 }
                 else
-                    childsChecked.put(group_pos,childStates);
+                    childsChecked.put(c.getOrder_id(),childStates);
             }
         }else{
-            holder.dish_chechbox.setChecked(childsChecked.get(i).get(i1));
+            holder.dish_chechbox.setChecked(childsChecked.get(c.getOrder_id()).get(i1));
         }
 
         holder.tv_dish_name.setText(dish.getName());
         holder.tv_dish_quantity.setText(dish.getQuantity().toString());
         holder.tv_dish_notes.setText(dish.getNotes());
+        if(childsChecked.get(c.getOrder_id()).get(i1).equals(true)){
+            holder.tv_status.setText(context.getResources().getString(R.string.dish_ready));
+            holder.tv_status.setTextColor(context.getColor(R.color.colorTextAccepted));
+        }else {
+            holder.tv_status.setText(context.getResources().getString(R.string.dish_cooking));
+            holder.tv_status.setTextColor(context.getColor(R.color.colorStarsRatingBar));
 
+        }
 
 
         if (c.getStatus() == Status.COOKING) {
-            //Se lo stato della prenotazione è COOKING, rendo la checkbox visibile
+            //If status is cooking, status and checkbox are visible
+            holder.tv_status.setVisibility(View.VISIBLE);
             holder.dish_chechbox.setVisibility(View.VISIBLE);
         }
-        else
+        else {
             holder.dish_chechbox.setVisibility(View.GONE);
-
-
+            holder.tv_status.setVisibility(View.GONE);
+        }
         return view;
     }
 
@@ -365,10 +489,90 @@ public class ReservationExpandableListAdapter extends BaseExpandableListAdapter 
         super.notifyDataSetChanged();
     }
 
+    public void showToast(final String text)
+    {
+        Handler mainHandler = new Handler(Looper.getMainLooper());
+
+        java.lang.Runnable runnableToast = new Runnable() {
+            @Override
+            public void run() {
+                Toast.makeText(context, text, Toast.LENGTH_LONG).show();
+            }
+        };
+
+        mainHandler.post(runnableToast);
+    }
+
+    private void sendNotification(final String childID) {
+        AsyncTask.execute(new Runnable() {
+            @Override
+            public void run() {
+                int SDK_INT = android.os.Build.VERSION.SDK_INT;
+                if (SDK_INT > 8) {
+                    StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder()
+                            .permitAll().build();
+                    StrictMode.setThreadPolicy(policy);
+                    String send_email;
+
+                    /** This is a Simple Logic to Send Notification different Device Programmatically.... */
+                    send_email = childID;
+
+                    try {
+                        String jsonResponse;
+
+                        URL url = new URL("https://onesignal.com/api/v1/notifications");
+                        HttpURLConnection con = (HttpURLConnection) url.openConnection();
+                        con.setUseCaches(false);
+                        con.setDoOutput(true);
+                        con.setDoInput(true);
+
+                        con.setRequestProperty("Content-Type", "application/json; charset=UTF-8");
+                        con.setRequestProperty("Authorization", "Basic YjdkNzQzZWQtYTlkYy00MmIzLTg0NDUtZmQ3MDg0ODc4YmQ1");
+                        con.setRequestMethod("POST");
+
+                        String strJsonBody = "{"
+                                + "\"app_id\": \"a2d0eb0d-4b93-4b96-853e-dcfe6c34778e\","
+
+                                + "\"filters\": [{\"field\": \"tag\", \"key\": \"User_ID\", \"relation\": \"=\", \"value\": \"" + send_email + "\"}],"
+
+                                + "\"data\": {\"Rejected\": \"Order rejected\"},"
+                                + "\"contents\": {\"en\": \"Restaurant has rejected your order. Please contact him for more informations.\"}"
+                                + "}";
+
+
+                        System.out.println("strJsonBody:\n" + strJsonBody);
+
+                        byte[] sendBytes = strJsonBody.getBytes("UTF-8");
+                        con.setFixedLengthStreamingMode(sendBytes.length);
+
+                        OutputStream outputStream = con.getOutputStream();
+                        outputStream.write(sendBytes);
+
+                        int httpResponse = con.getResponseCode();
+                        System.out.println("httpResponse: " + httpResponse);
+
+                        if (httpResponse >= HttpURLConnection.HTTP_OK
+                                && httpResponse < HttpURLConnection.HTTP_BAD_REQUEST) {
+                            Scanner scanner = new Scanner(con.getInputStream(), "UTF-8");
+                            jsonResponse = scanner.useDelimiter("\\A").hasNext() ? scanner.next() : "";
+                            scanner.close();
+                        } else {
+                            Scanner scanner = new Scanner(con.getErrorStream(), "UTF-8");
+                            jsonResponse = scanner.useDelimiter("\\A").hasNext() ? scanner.next() : "";
+                            scanner.close();
+                        }
+                        System.out.println("jsonResponse:\n" + jsonResponse);
+
+                    } catch (Throwable t) {
+                        t.printStackTrace();
+                    }
+                }
+            }
+        });
+    }
+
     private class ViewHolder {
         Button button;
-        CheckBox selectAllCheckBox;
-        TextView tv_date;
         TextView tv_time;
         TextView tv_status;
     }
@@ -377,6 +581,7 @@ public class ReservationExpandableListAdapter extends BaseExpandableListAdapter 
         TextView tv_dish_name;
         TextView tv_dish_quantity;
         TextView tv_dish_notes;
+        TextView tv_status;
         CheckBox dish_chechbox;
 
     }

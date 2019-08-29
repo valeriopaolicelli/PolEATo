@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+
+    <item
+        android:id="@+id/pendingReservations_id"
+        android:icon="@drawable/ic_baseline_format_list_bulleted_24px"
+        android:title="@string/title_bottombar_pendingReservations" />
+
+    <item
+        android:id="@+id/rides_id"
+        android:icon="@drawable/ic_baseline_directions_bike_24px"
+        android:title="@string/title_bottombar_deliveryRide" />
+
+    <item
+        android:id="@+id/routes_id"
+        android:icon="@drawable/ic_baseline_flag_24px"
+        android:title="@string/title_bottombar_deliveryHistory" />
+
+    <item
+        android:id="@+id/statistics_id"
+        android:icon="@drawable/ic_baseline_bar_chart_24px"
+        android:title="@string/title_bottombar_deliveryStatistics" />
+
+    <item
+        android:id="@+id/mainProfile_id"
+        android:icon="@drawable/ic_baseline_person_24px"
+        android:title="@string/title_bottombar_account" />
+
+</menu>

@@ -1,10 +1,8 @@
 package com.mad.poleato.DailyOffer.AddFood;
 
-import android.app.Dialog;
+import android.app.ProgressDialog;
 import android.arch.lifecycle.ViewModelProviders;
-import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Matrix;
@@ -16,22 +14,23 @@ import android.os.Environment;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.design.widget.BottomNavigationView;
 import android.support.design.widget.FloatingActionButton;
-import android.support.v4.app.DialogFragment;
+import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.content.FileProvider;
 import android.support.v7.widget.PopupMenu;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.util.Base64;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
@@ -40,61 +39,463 @@ import android.widget.Toast;
 
 import androidx.navigation.Navigation;
 
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
+import com.google.firebase.storage.UploadTask;
+import com.mad.poleato.DailyOffer.DishCategoryTranslator;
 import com.mad.poleato.DailyOffer.Food;
 import com.mad.poleato.R;
 import com.mad.poleato.View.ViewModel.MyViewModel;
+import com.onesignal.OneSignal;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.TreeMap;
+import java.util.HashMap;
+import java.util.Locale;
+import java.util.Map;
 
 
 import static android.app.Activity.RESULT_OK;
 
-public class AddFoodFragment extends DialogFragment {
+
+/**
+ * The Fragment to add a new food to the menu
+ */
+public class AddFoodFragment extends Fragment {
+
+    private Toast myToast;
 
     private static final int REQUEST_TAKE_PHOTO = 1;
     private static final int RESULT_LOAD_IMG = 2;
     private String currentPhotoPath;
+    private View v; //this view
 
 
     private FloatingActionButton change_im;
-    private String image;
+    private BottomNavigationView navigation;
     private ImageView imageFood;
     private Spinner spinnerFood;
-    private String plateType;
+    private String dishCategory;
 
-    private TreeMap<String, ImageButton> imageButtons= new TreeMap<>();
-    private TreeMap<String,EditText> editTextFields= new TreeMap<>();
+    private Map<String, ImageButton> imageButtons;
+    private Map<String, EditText> editTextFields;
 
-    private Button buttonSave;
+    private DishCategoryTranslator translator;
+
+    //price ranges
+    private int firstRange = 7;
+    private int secondRange = 15;
+
+    private String localeShort;
+    private String currentUserID;
+    private FirebaseAuth mAuth;
+
+    private MyViewModel model;
+
+    private ProgressDialog progressDialog;
 
 
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+
+        setHasOptionsMenu(true);
+
+        myToast = Toast.makeText(getActivity(), "", Toast.LENGTH_LONG);
+
+        //translate dish categories based on the current active Locale
+        String locale = Locale.getDefault().toString();
+        Log.d("matte", "LOCALE: "+locale);
+        localeShort = locale.substring(0, 2);
+
+        translator = new DishCategoryTranslator();
+
+        model = ViewModelProviders.of(getActivity()).get(MyViewModel.class);
+
+        mAuth = FirebaseAuth.getInstance();
+        FirebaseUser currentUser = mAuth.getCurrentUser();
+        currentUserID = currentUser.getUid();
 
 
-    public void clearText(View view) {
-        if(view.getId() == R.id.cancel_name)
+        OneSignal.startInit(getContext())
+                .inFocusDisplaying(OneSignal.OSInFocusDisplayOption.Notification)
+                .unsubscribeWhenNotificationsAreDisabled(true)
+                .init();
+
+        OneSignal.setSubscription(true);
+        OneSignal.sendTag("User_ID", currentUserID);
+    }
+
+
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        menu.clear();
+        /** Inflate the menu; this adds items to the action bar if it is present.*/
+        inflater.inflate(R.menu.save_menu, menu);
+
+        /** Button to show map */
+        menu.findItem(R.id.save_id).setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
+            @Override
+            public boolean onMenuItemClick(MenuItem item) {
+                saveChanges();
+                return true;
+            }
+        });
+
+        super.onCreateOptionsMenu(menu, inflater);
+    }
+
+
+    @Override
+    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
+                             @Nullable Bundle savedInstanceState) {
+        v = inflater.inflate(R.layout.add_food_fragment, container, false);
+
+        //collects the editText
+        editTextFields = new HashMap<>();
+        editTextFields.put("Name", (EditText) v.findViewById(R.id.nameFood));
+        editTextFields.put("Description", (EditText) v.findViewById(R.id.editDescription));
+        editTextFields.put("Price", (EditText) v.findViewById(R.id.editPrice));
+        editTextFields.put("Quantity", (EditText) v.findViewById(R.id.editQuantity));
+
+        //collects the X imageButtons
+        imageButtons = new HashMap<>();
+        imageButtons.put("Name", (ImageButton) v.findViewById(R.id.cancel_name));
+        imageButtons.put("Description", (ImageButton) v.findViewById(R.id.cancel_description));
+        imageButtons.put("Price", (ImageButton) v.findViewById(R.id.cancel_price));
+        imageButtons.put("Quantity", (ImageButton) v.findViewById(R.id.cancel_quantity));
+
+        //set the listener for the X imageButtons to clear the text
+        for (ImageButton b : imageButtons.values()) {
+            b.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    clearText(v);
+                }
+            });
+        }
+
+
+        navigation = getActivity().findViewById(R.id.navigation);
+
+        //retrieve the spinnerFood for the category
+        spinnerFood = (Spinner) v.findViewById(R.id.spinnerFood);
+        /** Create an ArrayAdapter using the string array and a default spinner layout */
+        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(getContext(),
+                R.array.plates_array, android.R.layout.simple_spinner_item);
+        /** Specify the layout to use when the list of choices appears */
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        /** Apply the adapter to the spinner */
+        spinnerFood.setAdapter(adapter);
+        spinnerFood.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                //if italian then translate to eng before push to the DB
+                if(localeShort.equals("it"))
+                    dishCategory = translator.translate(parent.getItemAtPosition(position).toString());
+                else
+                    dishCategory = parent.getItemAtPosition(position).toString();
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+
+            }
+        });
+
+        change_im = v.findViewById(R.id.frag_change_im);
+        imageFood = v.findViewById(R.id.imageFood);
+
+        // Set listener to send DATA to main activity that sends them to DailyOfferFragment
+
+
+        change_im.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                changeImage();
+            }
+        });
+
+        return v;
+    }
+
+
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        handleButton();
+        buttonListener();
+    }
+
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        /** Hide bottomBar for this fragment*/
+        navigation.setVisibility(View.GONE);
+    }
+
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        navigation.setVisibility(View.VISIBLE);
+    }
+
+
+    /**
+     * It checks the validity of the inserted data, then it uploads them on firebase
+     */
+    private void saveChanges(){
+
+        if(getActivity() != null)
+            progressDialog = ProgressDialog.show(getActivity(), "", getActivity().getString(R.string.loading));
+
+        boolean wrongField = false;
+
+        for (String fieldName : editTextFields.keySet()) {
+            EditText field = editTextFields.get(fieldName);
+            if (field != null) {
+                if (field.getText().toString().equals("")) {
+                    Toast.makeText(getContext(), getContext().getString(R.string.empty_field), Toast.LENGTH_LONG).show();
+                    field.setBackground(ContextCompat.getDrawable(getContext(), R.drawable.border_wrong_field));
+                    wrongField = true;
+                } else
+                    field.setBackground(ContextCompat.getDrawable(getContext(), R.drawable.border_right_field));
+            } else
+                return;
+        }
+
+
+        // REGEX FOR FIELDS VALIDATION BEFORE COMMIT
+        String accentedCharacters = new String("àèìòùÀÈÌÒÙáéíóúýÁÉÍÓÚÝâêîôûÂÊÎÔÛãñõÃÑÕäëïöüÿÄËÏÖÜŸçÇßØøÅåÆæœ");
+        String accentedString = new String("[a-zA-Z"+accentedCharacters+"0-9]+");
+        // regex for compound name (e.g. L'acqua)
+        String compoundName = new String(accentedString+"((\\s)?'"+"(\\s)?"+accentedString+")?");
+        //strings separated by space. Start with string and end with string.
+        String nameRegex = new String(compoundName+"(\\s("+compoundName+"\\s)*"+compoundName+")?");
+
+
+        //as above with the addition punctuation
+        String textRegex = new String("[^=&\\/\\s]+([^=&\\/]+)?[^=&\\/\\s]+");
+
+        String priceRegex = new String("[0-9]+([\\.,][0-9][0.9]?)?");
+
+        if (!editTextFields.get("Name").getText().toString().matches(nameRegex)) {
+            myToast.setText("Not a valid name!");
+            myToast.show();
+            editTextFields.get("Name").setBackground(ContextCompat.getDrawable(getContext(), R.drawable.border_wrong_field));
+            wrongField = true;
+        }
+        if (!editTextFields.get("Description").getText().toString().matches(textRegex)) {
+            myToast.setText("Not a valid description!");
+            myToast.show();
+            editTextFields.get("Description").setBackground(ContextCompat.getDrawable(getContext(), R.drawable.border_wrong_field));
+            wrongField = true;
+        }
+        if (!editTextFields.get("Price").getText().toString().matches(priceRegex)) {
+            myToast.setText(getContext().getString(R.string.error_format_price));
+            myToast.show();
+            editTextFields.get("Price").setBackground(ContextCompat.getDrawable(getContext(), R.drawable.border_wrong_field));
+            wrongField = true;
+        }
+        if (!editTextFields.get("Quantity").getText().toString().matches("[0-9]+")) {
+            myToast.setText(getContext().getString(R.string.error_format_quantity));
+            myToast.show();
+            editTextFields.get("Quantity").setBackground(ContextCompat.getDrawable(getContext(), R.drawable.border_wrong_field));
+            wrongField = true;
+        }
+        if (!wrongField) {
+
+            //push a new unique ID in the Menu
+            DatabaseReference reference = FirebaseDatabase.getInstance()
+                                            .getReference("restaurants/"+ currentUserID+"/Menu").push();
+
+            //retrieve the inserted data
+            String name = editTextFields.get("Name").getText().toString();
+            String description = editTextFields.get("Description").getText().toString();
+            String quantity = editTextFields.get("Quantity").getText().toString();
+            String priceString = editTextFields.get("Price").getText().toString().replace(",", ".");
+            String category = dishCategory;
+            String id = reference.getKey();
+            Bitmap img = ((BitmapDrawable) imageFood.getDrawable()).getBitmap();
+
+            //insert the data into the DB
+            reference.child("Name").setValue(name);
+            reference.child("Description").setValue(description);
+            reference.child("Quantity").setValue(quantity);
+            reference.child("Price").setValue(priceString);
+            reference.child("Category").setValue(category);
+            reference.child("PopularityCounter").setValue("0");
+            Food f = new Food(id, null, name, description, Double.parseDouble(priceString), Integer.parseInt(quantity));
+
+            // Save profile pic to the DB
+            /*Navigation controller is moved inside this method. The image must be loaded totally to FireBase
+                before come back to the AccountFragment. This is due to the fact that the image download is async */
+            uploadFile(img, f);
+        }
+        else{
+            if(progressDialog.isShowing())
+                progressDialog.dismiss();
+        }
+    }
+
+
+    /**
+     * It uploads the given bitmap of the given food on firebase Storage
+     * @param bitmap
+     * @param f
+     */
+    private void uploadFile(final Bitmap bitmap, final Food f) {
+        final StorageReference storageReference = FirebaseStorage
+                .getInstance()
+                .getReference()
+                .child(currentUserID +"/FoodImages/"+f.getId()+".jpg");
+
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        bitmap.compress(Bitmap.CompressFormat.JPEG, 20, baos);
+        byte[] data = baos.toByteArray();
+
+        UploadTask uploadTask = storageReference.putBytes(data);
+        uploadTask
+                .addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                    @Override
+                    public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                        storageReference.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+                            @Override
+                            public void onSuccess(Uri uri) {
+                                //save the link to the image
+                                final String downloadUrl =
+                                        uri.toString();
+                                FirebaseDatabase.getInstance()
+                                        .getReference("restaurants")
+                                        .child(currentUserID +"/Menu/"+f.getId()+"/photoUrl")
+                                        .setValue(downloadUrl);
+                                //set the image on the object
+                                f.setImg(bitmap);
+                            }
+                        });
+                        // taskSnapshot.getMetadata() contains file metadata such as size, content-type, and download URL.
+                        Uri downloadUrl = taskSnapshot.getUploadSessionUri();
+
+                        String s = taskSnapshot.getMetadata().getReference().getDownloadUrl().toString();
+                        Log.d("matte", "downloadUrl-->" + downloadUrl);
+                        if(getActivity() != null){
+                            myToast.setText(getString(R.string.saved));
+                            myToast.show();
+                        }
+
+                        /**
+                         * SAVE ON MODEL_VIEW
+                         */
+                        model.insertChild(dishCategory, f);
+
+                        //set the priceRange for the restaurant after the insertion
+                        DatabaseReference reference = FirebaseDatabase.getInstance().getReference()
+                                .child("restaurants/"+currentUserID+"/PriceRange");
+                        double meanPrice = model.getMeanPrice();
+                        if(meanPrice == 0)
+                            reference.setValue(0);
+                        else if(meanPrice < firstRange)
+                            reference.setValue(1);
+                        else if(meanPrice < secondRange)
+                            reference.setValue(2);
+                        else
+                            reference.setValue(3);
+
+                        if(progressDialog.isShowing())
+                            progressDialog.dismiss();
+
+                        /**
+                         * GO TO DAILY_OFFER_FRAGMENT
+                         */
+                        Navigation.findNavController(v).navigate(R.id.action_addFoodFragment_to_daily_offer);
+                    }
+                })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception exception) {
+                        // Handle unsuccessful uploads
+                        Log.d("matte", "Upload failed");
+                        if(getActivity() != null){
+                            myToast.setText(getString(R.string.failure));
+                            myToast.show();
+                        }
+
+
+                        /**
+                         * SAVE ON MODEL_VIEW
+                         */
+                        //save anyway but with the default image
+                        Bitmap bmp = BitmapFactory.decodeResource(getResources(), R.drawable.plate_fork);
+                        f.setImg(bmp);
+                        //here insert new food even without image
+                        model.insertChild(dishCategory, f);
+
+                        //set the priceRange for the restaurant after the insertion
+                        DatabaseReference reference = FirebaseDatabase.getInstance().getReference()
+                                .child("restaurants/"+currentUserID+"/PriceRange");
+                        double meanPrice = model.getMeanPrice();
+                        if(meanPrice == 0)
+                            reference.setValue(0);
+                        else if(meanPrice < firstRange)
+                            reference.setValue(1);
+                        else if(meanPrice < secondRange)
+                            reference.setValue(2);
+                        else
+                            reference.setValue(3);
+
+
+                        if(progressDialog.isShowing())
+                            progressDialog.dismiss();
+                        /**
+                         * GO TO ACCOUNT_FRAGMENT
+                         */
+                        Navigation.findNavController(v).navigate(R.id.action_addFoodFragment_to_daily_offer);
+                        /**
+                         *
+                         */
+                    }
+                });
+
+    }
+
+
+    /**
+     * To clear the text on the given view
+     * @param view
+     */
+    private void clearText(View view) {
+        if (view.getId() == R.id.cancel_name)
             editTextFields.get("Name").setText("");
-        else if(view.getId() == R.id.cancel_description)
+        else if (view.getId() == R.id.cancel_description)
             editTextFields.get("Description").setText("");
-        else if(view.getId() == R.id.cancel_price)
+        else if (view.getId() == R.id.cancel_price)
             editTextFields.get("Price").setText("");
-        else if(view.getId() == R.id.cancel_quantity)
+        else if (view.getId() == R.id.cancel_quantity)
             editTextFields.get("Quantity").setText("");
     }
 
-    public void handleButton(){
-        for(ImageButton b : imageButtons.values())
+
+    private void handleButton() {
+        for (ImageButton b : imageButtons.values())
             b.setVisibility(View.INVISIBLE);
 
-        String[] fieldName= {"Name", "Description", "Price", "Quantity"};
-        for (int i=0; i<fieldName.length; i++){
-            final EditText field= editTextFields.get(fieldName[i]);
-            final ImageButton button= imageButtons.get(fieldName[i]);
-            if(field != null && button != null) {
+
+        for (String fieldName : editTextFields.keySet()) {
+            final EditText field = editTextFields.get(fieldName);
+            final ImageButton button = imageButtons.get(fieldName);
+            if (field != null && button != null) {
                 field.setOnFocusChangeListener(new View.OnFocusChangeListener() {
                     @Override
                     public void onFocusChange(View view, boolean hasFocus) {
@@ -115,24 +516,26 @@ public class AddFoodFragment extends DialogFragment {
         }
     }
 
-    public void showButton(EditText field, ImageButton button){
-        if(field.getText().toString().length()>0)
+
+    private void showButton(EditText field, ImageButton button) {
+        if (field.getText().toString().length() > 0)
             button.setVisibility(View.VISIBLE);
         else
             button.setVisibility(View.INVISIBLE);
     }
 
-    public void hideButton(ImageButton button){
+
+    private void hideButton(ImageButton button) {
         button.setVisibility(View.INVISIBLE);
     }
 
-    public void buttonListener(){
+
+    private void buttonListener() {
         EditText field;
-        String[] fieldName= {"Name", "Description", "Price", "Quantity"};
-        for (int i=0; i<fieldName.length; i++){
-            field= editTextFields.get(fieldName[i]);
-            final ImageButton button= imageButtons.get(fieldName[i]);
-            if(button!=null && field != null) {
+        for (String fieldName : editTextFields.keySet()) {
+            field = editTextFields.get(fieldName);
+            final ImageButton button = imageButtons.get(fieldName);
+            if (button != null && field != null) {
                 field.addTextChangedListener(new TextWatcher() {
                     @Override
                     public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -161,222 +564,49 @@ public class AddFoodFragment extends DialogFragment {
                         }
                     }
                 });
-            }
-            else
+            } else
                 return;
         }
     }
 
-    public void collectFields(View v){
-
-        editTextFields.put("Name",(EditText)v.findViewById(R.id.nameFood));
-        editTextFields.put("Description",(EditText)v.findViewById(R.id.editDescription));
-        editTextFields.put("Price",(EditText)v.findViewById(R.id.editPrice));
-        editTextFields.put("Quantity",(EditText)v.findViewById(R.id.editQuantity));
-
-        imageButtons.put("Name", (ImageButton)v.findViewById(R.id.cancel_name));
-        imageButtons.put("Description", (ImageButton)v.findViewById(R.id.cancel_description));
-        imageButtons.put("Price", (ImageButton)v.findViewById(R.id.cancel_price));
-        imageButtons.put("Quantity", (ImageButton)v.findViewById(R.id.cancel_quantity));
-
-        for(ImageButton b : imageButtons.values()){
-            b.setOnClickListener(new View.OnClickListener(){
-                @Override
-                public void onClick(View v) {
-                    clearText(v);
-                }
-            });
-        }
-    }
-
 
     @Override
-    public void onCreate(@Nullable Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-//        setStyle(DialogFragment.STYLE_NORMAL, R.style.FullScreenDialog);
-    }
-
-    @Override
-    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
-                             @Nullable Bundle savedInstanceState) {
-        View v = inflater.inflate(R.layout.add_food_fragment, container, false);
-
-        spinnerFood = (Spinner) v.findViewById(R.id.spinnerFood);
-        // Create an ArrayAdapter using the string array and a default spinner layout
-        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(getContext(),
-                R.array.plates_array, android.R.layout.simple_spinner_item);
-        // Specify the layout to use when the list of choices appears
-        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        // Apply the adapter to the spinner
-        spinnerFood.setAdapter(adapter);
-        spinnerFood.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                plateType = (String) parent.getItemAtPosition(position).toString();
-            }
-
-            @Override
-            public void onNothingSelected(AdapterView<?> parent) {
-
-            }
-        });
-
-        change_im = v.findViewById(R.id.frag_change_im);
-        imageFood = v.findViewById(R.id.imageFood);
-        buttonSave = v.findViewById(R.id.button_frag_save);
-        collectFields(v);
-        handleButton();
-        buttonListener();
-        // Set listener to send DATA to main activity that sends them to DailyOfferFragment
-
-        buttonSave.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                boolean wrongField= false;
-                String[] fieldName = {"Name", "Description", "Price", "Quantity"};
-                for (int i = 0; i < fieldName.length; i++) {
-                    EditText field = editTextFields.get(fieldName[i]);
-                    if(field != null){
-                        if (field.getText().toString().equals("")) {
-                            Toast.makeText(getContext(), getContext().getString(R.string.empty_field), Toast.LENGTH_LONG).show();
-                            field.setBackground(ContextCompat.getDrawable(getContext(), R.drawable.border_wrong_field));
-                            wrongField = true;
-                        } else
-                            field.setBackground(ContextCompat.getDrawable(getContext(), R.drawable.border_right_field));
-                    }
-                    else
-                        return;
-                }
-                if(!editTextFields.get("Price").getText().toString().matches("[0-9]+([\\.\\,][0-9]+)?") ){
-                    Toast.makeText(getContext(), getContext().getString(R.string.error_format_price), Toast.LENGTH_LONG).show();
-                    editTextFields.get("Price").setBackground(ContextCompat.getDrawable(getContext(), R.drawable.border_wrong_field));
-                    wrongField = true;
-                }
-                if(!editTextFields.get("Quantity").getText().toString().matches("[0-9]+") ){
-                    Toast.makeText(getContext(), getContext().getString(R.string.error_format_quantity), Toast.LENGTH_LONG).show();
-                    editTextFields.get("Quantity").setBackground(ContextCompat.getDrawable(getContext(), R.drawable.border_wrong_field));
-                    wrongField = true;
-                }
-                if(!wrongField){
-
-                    String priceString = editTextFields.get("Price").getText().toString();
-                    priceString = priceString.replaceAll(",", ".");
-
-                    Food food = new Food(((BitmapDrawable) imageFood.getDrawable()).getBitmap()
-                            , editTextFields.get("Name").getText().toString()
-                            , editTextFields.get("Description").getText().toString()
-                            , Double.valueOf(priceString)
-                            , Integer.valueOf(editTextFields.get("Quantity").getText().toString()));
-
-                    // I send even plateType to now where insert new food
-
-                    /**
-                     * SAVE ON MODEL_VIEW
-                     */
-
-                    MyViewModel model = ViewModelProviders.of(getActivity()).get(MyViewModel.class);
-                    model.insertChild(plateType, food);
-
-                    /**
-                      * GO TO DAILY_OFFER_FRAGMENT
-                      */
-                    Navigation.findNavController(v).navigate(R.id.action_addFoodFragment_to_daily_offer);
-                }
-            }
-        });
-
-        change_im.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                changeImage(v);
-            }
-        });
-
-        return v;
-    }
-
-    @Override
-    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
-        super.onActivityCreated(savedInstanceState);
-        SharedPreferences fields = getContext().getSharedPreferences("ProfileDataRestaurant", Context.MODE_PRIVATE);
-        image = fields.getString("BackgroundTmpA", encodeTobase64());
-        imageFood.setImageBitmap(decodeBase64(image));
-
-    }
-
-    @Override
-    public void onStart() {
-        super.onStart();
-        Dialog dialog = getDialog();
-
-        // Set dialog Full screen (You have to control even style.xml to change all params)
-        if (dialog != null) {
-            int width = ViewGroup.LayoutParams.MATCH_PARENT;
-            int height = ViewGroup.LayoutParams.MATCH_PARENT;
-            dialog.getWindow().setLayout(width, height);
-        }
-    }
-
-    public void updateEditText (CharSequence charSequence) {
-//        editText.setText(charSequence);
-    }
-//
-//    @Override
-//    public void onAttach(Context context) {
-//        super.onAttach(context);
-//
-//        if(context instanceof FragmentAddListener){
-//            fragmentAddListener = (FragmentAddListener) context;
-//        }else {
-//            throw new RuntimeException(context.toString() + " must implement FragmentListener");
-//        }
-//    }
-//
-//    @Override
-//    public void onDetach() {
-//        super.onDetach();
-//        fragmentAddListener = null;
-//    }
-
-    @Override
-    public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == REQUEST_TAKE_PHOTO){
+
+        if (requestCode == REQUEST_TAKE_PHOTO) {
             if (resultCode == RESULT_OK) {
                 setPic(currentPhotoPath);
-            }
-            else {
-                SharedPreferences fields= getContext().getSharedPreferences("ProfileDataRestaurant", Context.MODE_PRIVATE);
-                image= fields.getString("ProfileImage", encodeTobase64());
-                imageFood.setImageBitmap(decodeBase64(image));
             }
         }
         if (requestCode == RESULT_LOAD_IMG) {
             if (resultCode == RESULT_OK) {
                 try {
                     final Uri imageUri = data.getData();
-                    final InputStream imageStream = getContext().getContentResolver().openInputStream(imageUri);
+                    final InputStream imageStream = getActivity().getContentResolver().openInputStream(imageUri);
                     final Bitmap selectedImage = BitmapFactory.decodeStream(imageStream);
                     imageFood.setImageBitmap(selectedImage);
-                    SharedPreferences.Editor editor =
-                            getContext().getSharedPreferences("ProfileDataRestaurant", Context.MODE_PRIVATE).edit();
-                    editor.putString("BackgroundTmpA", encodeTobase64());
-                    editor.apply();
                 } catch (FileNotFoundException e) {
                     e.printStackTrace();
-                    Toast.makeText(getContext(), "Something went wrong", Toast.LENGTH_LONG).show();
+                    if (getActivity() != null) {
+                        myToast.setText(getString(R.string.failure));
+                        myToast.show();
+                    }
                 }
 
-            } else {
-                SharedPreferences fields = getContext().getSharedPreferences("ProfileDataRestaurant", Context.MODE_PRIVATE);
-                image = fields.getString("BackgroundTmpA", encodeTobase64());
-                imageFood.setImageBitmap(decodeBase64(image));
             }
         }
     }
 
-    public void changeImage(View view) {
-        PopupMenu popup = new PopupMenu(getContext(), change_im);
+
+    /**
+     * To change the image based with 3 different ways:
+     *  - Camera
+     *  - Gallery
+     *  - remove image
+     */
+    private void changeImage() {
+        android.support.v7.widget.PopupMenu popup = new android.support.v7.widget.PopupMenu(getContext(), change_im);
         popup.getMenuInflater().inflate(
                 R.menu.popup_menu, popup.getMenu());
         popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
@@ -405,8 +635,10 @@ public class AddFoodFragment extends DialogFragment {
         popup.show();
     }
 
-    // create Intent with photoFile
 
+    /**
+     * Creates Intent with photoFile
+     */
     private void dispatchTakePictureIntent() {
         Uri photoURI;
         Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
@@ -431,13 +663,17 @@ public class AddFoodFragment extends DialogFragment {
         }
     }
 
-    // Function to create image file with ExternalFilesDir
 
+    /**
+     * Method to create image file with ExternalFilesDir
+     * @return
+     * @throws IOException
+     */
     private File createImageFile() throws IOException {
         // Create an image file name
         //String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
         String imageFileName = "JPEG_" + "profile";
-        File storageDir = getContext().getExternalFilesDir(Environment.DIRECTORY_PICTURES);
+        File storageDir = getActivity().getExternalFilesDir(Environment.DIRECTORY_PICTURES);
 
         File image = File.createTempFile(
                 imageFileName,  /* prefix */
@@ -450,10 +686,18 @@ public class AddFoodFragment extends DialogFragment {
         return image;
     }
 
-    public void removeProfileImage(){
-        imageFood.setImageResource(R.drawable.food_default);
+
+    /**
+     * Method to remove the profile image
+     */
+    private void removeProfileImage() {
+        imageFood.setImageResource(R.drawable.plate_fork);
     }
 
+    /**
+     * Method to set the profile picture
+     * @param currentPhotoPath
+     */
     private void setPic(String currentPhotoPath) {
         // Get the dimensions of the View
         int targetW = imageFood.getWidth();
@@ -475,7 +719,7 @@ public class AddFoodFragment extends DialogFragment {
 
         Bitmap bitmap = BitmapFactory.decodeFile(currentPhotoPath, bmOptions);
 
-        if(bitmap != null) {
+        if (bitmap != null) {
 
             try {
                 bitmap = rotateImageIfRequired(bitmap, currentPhotoPath);
@@ -487,6 +731,14 @@ public class AddFoodFragment extends DialogFragment {
         }
     }
 
+
+    /**
+     * To rotate the image if required
+     * @param img
+     * @param currentPhotoPath
+     * @return
+     * @throws IOException
+     */
     private static Bitmap rotateImageIfRequired(Bitmap img, String currentPhotoPath) throws IOException {
 
         ExifInterface ei = new ExifInterface(currentPhotoPath);
@@ -504,6 +756,13 @@ public class AddFoodFragment extends DialogFragment {
         }
     }
 
+
+    /**
+     * It rotates the image by the given degrees
+     * @param img
+     * @param degree
+     * @return
+     */
     private static Bitmap rotateImage(Bitmap img, int degree) {
         Matrix matrix = new Matrix();
         matrix.postRotate(degree);
@@ -512,19 +771,5 @@ public class AddFoodFragment extends DialogFragment {
         return rotatedImg;
     }
 
-    private String encodeTobase64() {
-        Bitmap image = ((BitmapDrawable) imageFood.getDrawable()).getBitmap();
-        ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        image.compress(Bitmap.CompressFormat.PNG, 100, baos);
-        byte[] b = baos.toByteArray();
-        String imageEncoded = Base64.encodeToString(b, Base64.DEFAULT);
-        Log.d("Image Log:", imageEncoded);
-        return imageEncoded;
-    }
 
-    public Bitmap decodeBase64(String input) {
-        byte[] decodedByte = Base64.decode(input, 0);
-        return BitmapFactory
-                .decodeByteArray(decodedByte, 0, decodedByte.length);
-    }
 }

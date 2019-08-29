@@ -3,12 +3,26 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".holder_history">
+    tools:context=".History.Holder_history">
 
-    <!-- TODO: Update blank fragment layout -->
-    <TextView
+    <ExpandableListView
+        android:id="@+id/reservationslv"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:text="@string/hello_blank_fragment" />
+
+        android:layout_marginBottom="?attr/actionBarSize"
+        android:dividerHeight="2dp"
+        android:padding="3dp"
+        tools:listitem="@layout/layout_reservation_group"/>
+
+    <ImageView
+        android:id="@+id/history_empty_view"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_gravity="center_horizontal|center_vertical"
+        android:src="@drawable/empty_mail"
+        android:alpha=".5"
+        android:scaleType="fitCenter"
+        android:visibility="gone"/>
 
 </FrameLayout>

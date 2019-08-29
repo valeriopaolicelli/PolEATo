@@ -10,6 +10,7 @@
     <string name="save"><font size="18">Apply</font></string>
     <string name="phone"><font size="18">Phone number</font></string>
     <string name="ch_pass"><font size="18">Change password(max 12 char)</font></string>
+    <string name="password"><font size="18">Password</font></string>
     <string name="old_pass"><font size="18">Insert old password</font></string>
     <string name="new_pass"><font size="18">Insert new password</font></string>
     <string name="re_new_pass"><font size="18">Re-insert new password</font></string>
@@ -18,6 +19,7 @@
     <string name="camera">Camera</string>
     <string name="gallery">Gallery</string>
     <string name="edit">Edit Profile</string>
+    <string name="openings"><font size="18">Opening</font></string>
     <string name="open">Open</string>
     <string name="close">Closed</string>
     <string name="query_hint">Search for restaurants</string>
@@ -25,18 +27,18 @@
     <string name="name_sort">Sort by name(A-Z)</string>
     <string name="price_sort_inverse">Sort by price(from the highest)</string>
     <string name="delivery_sort">Sort by delivery cost(from the lowest)</string>
-    <string name="delivery_cost">Delivery</string>
-    <string name="price_range">Price</string>
+    <string name="star_sort">Sort by star</string>
+    <string name="delivery_cost"><font size="18">Delivery</font></string>
+    <string name="price_range"><font size="18">Price</font></string>
     <string name="free_delivery">Free</string>
     <string name="date">Date</string>
     <string name="time">Time</string>
-    <string name="loading">Loading</string>
     <string name="status">Status</string>
     <string name="new_order">New order</string>
     <string name="cooking">Cooking</string>
     <string name="delivery">Delivering</string>
     <string name="reject">Rejected</string>
-
+    <string name="restaurant">Restaurant</string>
     <string name="closed_restaurant">Restaurant is closed at the moment</string>
 
     <string name="italian_cooking">Italian</string>
@@ -59,7 +61,7 @@
     <string name="slash">/</string>
     <string name="price">Price: </string>
     <string name="empty_cart">Cart is empty</string>
-    <string name="total">Total: </string>
+    <string name="total">Total</string>
     <string name="confirm_order">Confirm Order</string>
     <string name="X">X</string>
     <string name="notes">Insert notes here(max 30 chars)</string>
@@ -67,11 +69,18 @@
     <string name="confirm">Confirm</string>
     <string name="cancel">Cancel</string>
 
+    <string name="dishes">Dish</string>
+    <string name="quantity">Quantity</string>
+    <string name="note">Notes</string>
+    <string name="total_price">Total</string>
 
     <string name="specify_date">Specify the date to receive the order</string>
     <string name="specify_time">Specify the time to receive the order</string>
 
 
+    <string name="active_status"><font size="18">Active</font></string>
+    <string name="inactive_status"><font size="18">Inactive</font></string>
+    <string name="current_status"><font size="18">Your status</font></string>
 
 
     <string name="title_activity_main">MainActivity</string>
@@ -80,15 +89,91 @@
 
     <string name="title_bottombar_historyOrder">Orders</string>
     <string name="title_actionbar_historyOrder">Orders</string>
-    <string name="title_actionbar_add_food">Add food</string>
-    <string name="title_actionbar_edit_food">Edit food</string>
+
+    <string name="title_bottombar_favoriteRestaurant">Favorite</string>
+    <string name="title_actionbar_favoriteRestaurant">Favorite</string>
+
+    <string name="title_bottombar_myReviews">Reviews</string>
+    <string name="title_actionbar_myReviews">Reviews</string>
+
 
     <string name="title_bottombar_account">Account</string>
     <string name="title_actionbar_account">Account</string>
     <string name="title_actionbar_edit_account">Edit Account</string>
 
+    <string name="loading">Loading</string>
+    <string name="failure">Something goes wrong</string>
+    <string name="saved">Saved</string>
+    <string name="saving">Saving changes</string>
+
+
+    <!-- Login string -->
+    <string name="signin">Sign in</string>
+    <string name="signup">Sign up</string>
+    <string name="logout">Logout</string>
+    <string name="void_fields">Void fields</string>
+    <string name="login_succ">Logged in!</string>
+    <string name="login_fail">Authentication failed.</string>
+    <string name="creation_succ">Account created!</string>
+    <string name="creation_fail">Account creation failed! Email must be valid and password composed by at least 6 characters</string>
+    <string name="no_account">Don\'t have an account?</string>
+
+    <!-- Incomplete account, after login with google/facebook -->
+    <string name="missing_fields_title">Account profile not complete</string>
+    <string name="missing_fields_body">Missing fields in your profile. Complete it to use the application!</string>
+    <string name="go_to_edit">Go to my profile</string>
+    <string name="already_used">Email already used for other kind of profile</string>
+
+
+    <!-- Address convertion -->
+    <string name="no_address">No valid address</string>
+
+    <!-- Menu expandable list-->
+    <string name="added_to_cart">Added to cart</string>
+    <string name="max_quantity_cart">Max quantity available reached</string>
+    <string name="removed_from_cart">Removed from cart</string>
+
+    <!--- Internet dialog -->
+    <string name="internet_title">Enable Internet Connection</string>
+    <string name="internet_message">To use this application you must be connected to the Internet</string>
+    <string name="interner_confirm">Data settings</string>
+
+    <!-- Ratings -->
+    <string name="reviewLabel">Leave a review for</string>
+    <string name="reviewText">Leave a comment (Optional)</string>
+    <string name="feedbackBtnText">Send Feedback</string>
+    <string name="very_bad">Very bad!</string>
+    <string name="not_good">Not so good</string>
+    <string name="neutral">Neutral</string>
+    <string name="good">Good</string>
+    <string name="very_good">I loved it!</string>
+
+    <!-- Review holder history -->
+    <string name="review_history_done">Reviewed!</string>
+    <string name="confirm_button">Confirm Delivery</string>
+
+    <!-- Favorite restaurant and foods -->
+    <string name="favorite_list_button">Your favorite restaurants</string>
+    <string name="favorite_list_plates_button">Your favorite plates</string>
+
+    <!-- dialogs -->
+    <string name="title_confirm_dialog">Confirm Delivery</string>
+    <string name="message_confirm_dialog">Has your order arrived? Have you paid the rider?</string>
+    <string name="confirm_btn">Confirm</string>
+
+    <string name="title_review_dialog">Leave a review</string>
+    <string name="review_history_request">Leave a review</string>
+
+    <string name="cancelBTn">Cancel</string>
+
+    <string name="notnowBtn">Not now</string>
+    <string name="message_review">Thank you for your order. Please do not forget to leave a review, is really important for us and the restaurant.</string>
+
+    <string name="my_reviews">My reviews</string>
+    <string name="checkBoxComments">Only Comments</string>
+    <string name="no_rating">No rating for now</string>
+
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
-
-
+    <string name="time_default">hh:mm</string>
 </resources>

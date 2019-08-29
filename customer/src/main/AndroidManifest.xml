@@ -4,10 +4,10 @@
     package="com.mad.poleato">
 
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
-    <uses-permission android:name="android.permission.INTERNET"/>
-    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
-    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
-    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
 
     <uses-feature
         android:name="android.hardware.camera"
@@ -19,15 +19,10 @@
         android:label="@string/app_name"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".CartActivity"
-            android:windowSoftInputMode="stateHidden|adjustPan">
-        </activity>
-        <!--<activity-->
-        <!--android:name=".EditProfile"-->
-        <!--android:windowSoftInputMode="stateAlwaysVisible|stateHidden" />-->
+
         <activity
-            android:name=".MainActivity"
-            android:label="@string/title_activity_main"
+            android:name=".SignInActivity"
+            android:screenOrientation="portrait"
             android:windowSoftInputMode="adjustPan">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -36,19 +31,40 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".OrderActivity"
-            android:theme="@style/AppThemeOrder"/>
+
+        <activity
+            android:name=".SignUpActivity"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="adjustPan" />
+
+        <activity
+            android:name=".SignUpGoogleActivity"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="adjustPan" />
+
+        <activity
+            android:name=".NavigatorActivity"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="adjustNothing" />
+        <activity
+            android:name=".OrderManagement.CartManagement.CartActivity"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="stateHidden|adjustPan"/>
+        <activity
+            android:name=".OrderManagement.OrderActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppThemeOrder"
+            android:windowSoftInputMode="stateHidden|adjustPan" />
 
         <provider
             android:name="android.support.v4.content.FileProvider"
-            android:authorities="com.example.android.mad.fileprovicer"
+            android:authorities="com.example.android.fileproviderC"
             android:exported="false"
             android:grantUriPermissions="true">
             <meta-data
                 android:name="android.support.FILE_PROVIDER_PATHS"
                 android:resource="@xml/file_photo_paths" />
         </provider>
-
     </application>
 
 </manifest>

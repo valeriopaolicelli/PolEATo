@@ -11,6 +11,7 @@
     <string name="save"><font size="18">Salva</font></string>
     <string name="phone"><font size="18">Numero di telefono</font></string>
     <string name="ch_pass"><font size="18">Cambia Password(max 12 char)</font></string>
+    <string name="password"><font size="18">Password</font></string>
     <string name="old_pass"><font size="18">Inserisci la vecchia password</font></string>
     <string name="new_pass"><font size="18">Inserisci la nuova password</font></string>
     <string name="re_new_pass"><font size="18">Re-inserisci la nuova password</font></string>
@@ -19,11 +20,13 @@
     <string name="camera">Fotocamera</string>
     <string name="gallery">Galleria</string>
     <string name="edit">Modifica profilo</string>
+    <string name="openings"><font size="18">Apertura</font></string>
     <string name="open">Aperto</string>
     <string name="close">Chiuso</string>
     <string name="query_hint">Cerca ristoranti</string>
     <string name="currency">€</string>
     <string name="restaurant_name"><font size="18">Nome locale</font></string>
+    <string name="restaurant">Ristorante</string>
     <string name="type"><font size="18">Tipo di cucina</font></string>
     <string name="info"><font size="18">Descrizione</font></string>
     <string name="cart"><font size="18">Carrello</font></string>
@@ -33,19 +36,22 @@
     <string name="price">Prezzo: </string>
     <string name="date">Data</string>
     <string name="time">Orario</string>
-    <string name="loading">Caricamento</string>
     <string name="status">Status</string>
-
+    <string name="total_price">Totale</string>
+    <string name="dishes">Piatto</string>
+    <string name="quantity">Quantità</string>
+    <string name="note">Note</string>
 
     <string name="price_sort">Ordina per prezzo(dal più basso)</string>
     <string name="name_sort">Ordina per nome(A-Z)</string>
     <string name="price_sort_inverse">Ordina per prezzo(dal più alto)</string>
     <string name="delivery_sort">Ordina per costo di consegna</string>
-    <string name="delivery_cost">Consegna</string>
-    <string name="price_range">Prezzo</string>
+    <string name="star_sort">Ordina per stelle</string>
+    <string name="delivery_cost"><font size="18">Consegna</font></string>
+    <string name="price_range"><font size="18">Prezzo</font></string>
     <string name="free_delivery">Gratis</string>
     <string name="empty_cart">Il carrello è vuoto</string>
-    <string name="total">Totale: </string>
+    <string name="total">Totale</string>
     <string name="confirm_order">Conferma Ordine</string>
     <string name="X">X</string>
     <string name="notes">Inserisci qui le note(max 30 caratteri)</string>
@@ -58,6 +64,10 @@
     <string name="order_proceed">Procedere con l\'ordine?</string>
     <string name="confirm">Conferma</string>
     <string name="cancel">Annulla</string>
+
+    <string name="current_status"><font size="18">Il tuo stato</font></string>
+    <string name="active_status"><font size="18">Attivo</font></string>
+    <string name="inactive_status"><font size="18">Inattivo</font></string>
 
 
     <string name="closed_restaurant">Il ristorante è chiuso al momento</string>
@@ -78,15 +88,95 @@
     <string name="title_bottombar_restaurantSearch">Ricerca</string>
     <string name="title_actionbar_restaurantSearch">Ricerca</string>
 
+    <string name="title_bottombar_favoriteRestaurant">Preferiti</string>
+    <string name="title_actionbar_favoriteRestaurant">Preferiti</string>
+
     <string name="title_bottombar_historyOrder">Ordini</string>
     <string name="title_actionbar_historyOrder">Ordini</string>
-    <string name="title_actionbar_add_food">Add food</string>
-    <string name="title_actionbar_edit_food">Edit food</string>
+
+    <string name="title_bottombar_myReviews">Recensioni</string>
+    <string name="title_actionbar_myReviews">Recensioni</string>
+
 
     <string name="title_bottombar_account">Account</string>
     <string name="title_actionbar_account">Account</string>
-    <string name="title_actionbar_edit_account">Edit Account</string>
+    <string name="title_actionbar_edit_account">Modifica Account</string>
+
+
+    <!-- Login strings -->
+    <string name="signin">Accedi</string>
+    <string name="signup">Registrati</string>
+    <string name="logout">Esci</string>
+    <string name="void_fields">Campi vuoti</string>
+    <string name="login_succ">Utente riconosciuto!</string>
+    <string name="login_fail">Autenticazione fallita.</string>
+    <string name="creation_succ">Account creato!</string>
+    <string name="creation_fail">Creazione account fallita! Devi inserire una mail valida e una password di almeno 6 caratteri</string>
+    <string name="no_account">Non sei registrato?</string>
+
+    <!-- Incomplete account, after login with google/facebook -->
+    <string name="missing_fields_title">Profilo account non completo</string>
+    <string name="missing_fields_body">Manca poco, compila il tuo profilo, per usare l\'app!</string>
+    <string name="go_to_edit">Vai al mio profilo</string>
+    <string name="already_used">Email usata già per un altro tipo di account</string>
+
+    <string name="loading">Caricamento</string>
+    <string name="failure">Qualcosa è andato storto</string>
+    <string name="saved">Salvato</string>
+    <string name="saving">Salvataggio</string>
+
+
+    <!-- Address convertion -->
+    <string name="no_address">Indirizzo non valido</string>
+
+    <!-- Menu expandable list-->
+    <string name="added_to_cart">Aggiunto al carrello</string>
+    <string name="max_quantity_cart">Quantità massima disponibile raggiunta</string>
+    <string name="removed_from_cart">Rimosso dal carrello</string>
+
+    <!--- Internet dialog -->
+    <string name="internet_title">Abilita connession a Internet</string>
+    <string name="internet_message">Per utilizzare l\'applicazione devi essere connesso ad Internet</string>
+    <string name="interner_confirm">Impostazioni Internet</string>
+
+    <!-- Ratings -->
+    <string name="reviewLabel">Lascia una recensione per il ristorante </string>
+    <string name="reviewText">Lascia un commento (Facoltativo)</string>
+    <string name="feedbackBtnText">Invia!</string>
+    <string name="very_bad">Molto male!</string>
+    <string name="not_good">Non bene</string>
+    <string name="neutral">Normale</string>
+    <string name="good">Bene</string>
+    <string name="very_good">Benissimo!</string>
+
+
+    <!-- Review holder history -->
+    <string name="review_history_done">Recensito!</string>
+    <!-- Favorite restaurant and foods -->
+    <string name="favorite_list_button">I tuoi ristoranti preferiti</string>
+    <string name="favorite_list_plates_button">I tuoi piatti preferiti</string>
+    <string name="confirm_button">Conferma la consegna</string>
+
+
+    <!-- Dialog -->
+    <string name="title_confirm_dialog">Conferma la consegna</string>
+    <string name="message_confirm_dialog">Il tuo ordine è stato consegnato? Hai pagato il rider?</string>
+    <string name="confirm_btn">Conferma</string>
+
+    <string name="title_review_dialog">Lascia una recensione</string>
+    <string name="review_history_request">Lascia una recensione</string>
+    <string name="cancelBTn">Indietro</string>
+
+    <string name="notnowBtn">Non ora</string>
+
+    <string name="message_review">Grazie per il tuo ordine. Ti ricordiamo di lasciare una recensione, è molto importante per noi e per il ristorante. Grazie!</string>
+
+    <string name="my_reviews">Le mie recensioni</string>
+    <string name="checkBoxComments">Solo commenti</string>
+    <string name="no_rating">Nessuna recensione per ora</string>
 
     <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="hello_blank_fragment">Fragment vuoto</string>
+    <string name="time_default">hh:mm</string>
+
 </resources>

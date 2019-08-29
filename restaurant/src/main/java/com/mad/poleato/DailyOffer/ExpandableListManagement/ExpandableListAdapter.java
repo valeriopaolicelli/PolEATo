@@ -1,7 +1,9 @@
 package com.mad.poleato.DailyOffer.ExpandableListManagement;
 
 import android.app.Activity;
+import android.app.ProgressDialog;
 import android.arch.lifecycle.ViewModelProviders;
+import android.support.annotation.NonNull;
 import android.support.v4.app.FragmentActivity;
 import android.support.v7.widget.PopupMenu;
 import android.util.Log;
@@ -12,13 +14,22 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseExpandableListAdapter;
-import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.navigation.Navigation;
 
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
+import com.mad.poleato.DailyOffer.DailyOfferFragmentDirections;
+import com.mad.poleato.DailyOffer.DishCategoryTranslator;
 import com.mad.poleato.DailyOffer.Food;
 import com.mad.poleato.R;
 import com.mad.poleato.View.ViewModel.MyViewModel;
@@ -27,15 +38,25 @@ import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 
 
+/**
+ * The expandableList adapter for the restaurant menu
+ */
 public class ExpandableListAdapter extends BaseExpandableListAdapter {
 
     private final Activity host;
     private final LayoutInflater inf;
     private List<String> _listDataGroup; // header titles
     private HashMap<String, List<Food>> _listDataChild; // child data in format of header title, child title
-    private Button button_delete;
+    private String localeShort;
+    private DishCategoryTranslator translator;
+
+
+    private String currentUserID;
+    private FirebaseAuth mAuth;
+
 
     public ExpandableListAdapter(Activity host) {
 
@@ -45,7 +66,18 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
         this._listDataChild = new HashMap<>();
         Log.d("matte", "[Init]headers:" + _listDataGroup.toString());
         Log.d("matte", "[Init]childs:" + _listDataChild.toString());
+
+        String locale = Locale.getDefault().toString();
+        Log.d("matte", "LOCALE: "+locale);
+        localeShort = locale.substring(0, 2);
+
+        translator = new DishCategoryTranslator();
+
+        mAuth = FirebaseAuth.getInstance();
+        FirebaseUser currentUser = mAuth.getCurrentUser();
+        currentUserID = currentUser.getUid();
     }
+
 
     public void setAllGroup(List<String> strings) {
         this._listDataGroup = strings;
@@ -56,6 +88,7 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
         this._listDataChild = strings;
         notifyDataSetChanged();
     }
+
 
     @Override
     public View getChildView(final int groupPosition, final int childPosition,
@@ -94,7 +127,6 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
 
         /** three dots vertical menu */
         ImageButton settingsButton = convertView.findViewById(R.id.cardSettings);
-
         final View finalConvertView = convertView;
         settingsButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -104,8 +136,8 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
                 MenuInflater inflater = popup.getMenuInflater();
                 inflater.inflate(R.menu.popup_cardview, popup.getMenu());
                 popup.show();
-                Menu itemList = popup.getMenu();
 
+                Menu itemList = popup.getMenu();
 
                 MenuItem modify = itemList.getItem(0);
                 modify.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
@@ -119,7 +151,13 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
                         /**
                          * GO TO EDIT_FOOD_FRAGMENT
                          */
-                        Navigation.findNavController(finalConvertView).navigate(R.id.action_daily_offer_id_to_editFoodFragment_id);
+                        DailyOfferFragmentDirections.ActionDailyOfferIdToEditFoodFragmentId action =
+                                        DailyOfferFragmentDirections
+                                                .actionDailyOfferIdToEditFoodFragmentId("ID", "Category");
+                        action.setId(f.getId());
+                        String category = _listDataGroup.get(groupPosition);
+                        action.setCategory(category);
+                        Navigation.findNavController(finalConvertView).navigate(action);
 
                         return false;
                     }
@@ -132,6 +170,32 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
 
                         Log.d("matte", item.getTitle().toString());
                         MyViewModel model = ViewModelProviders.of((FragmentActivity) host).get(MyViewModel.class);
+
+                        //firstly remove the food from Firebase database
+                        DatabaseReference reference = FirebaseDatabase.getInstance()
+                                                        .getReference("restaurants/"+currentUserID+
+                                                                "/Menu");
+                        Food toRemove = model.getChild(groupPosition, childPosition);
+                        reference.child(toRemove.getId()).removeValue();
+
+                        //then remove it from the Storage
+                        final StorageReference storageReference = FirebaseStorage
+                                .getInstance()
+                                .getReference()
+                                .child(currentUserID +"/FoodImages/"+toRemove.getId()+".jpg");
+                        storageReference.delete().addOnSuccessListener(new OnSuccessListener<Void>() {
+                            @Override
+                            public void onSuccess(Void aVoid) {
+                            }
+                        }).addOnFailureListener(new OnFailureListener() {
+                            @Override
+                            public void onFailure(@NonNull Exception e) {
+                                Log.d("matte", "Failure in image remove");
+                            }
+                        });
+
+
+                        //lastly remove it from the list
                         model.removeChild(groupPosition, childPosition);
                         notifyDataSetChanged();
                         return true;
@@ -144,11 +208,13 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
         return convertView;
     }
 
+
     @Override
     public void onGroupExpanded(int groupPosition) {
         super.onGroupExpanded(groupPosition);
 
     }
+
 
     @Override
     public View getGroupView(int groupPosition, boolean isExpanded,
@@ -158,6 +224,9 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
         ViewHolder holder; //recycler view pattern
 
         String groupTitle = (String) getGroup(groupPosition);
+        //if italian translate before printing
+        if(localeShort.equals("it"))
+            groupTitle = translator.translate(groupTitle);
 
         if (convertView == null) {
             convertView = inf.inflate(R.layout.layout_menu_group, parent, false);
@@ -179,10 +248,12 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
         return this._listDataChild.get(this._listDataGroup.get(groupPosition)).get(childPosition);
     }
 
+
     @Override
     public long getChildId(int groupPosition, int childPosition) {
         return getChild(groupPosition, childPosition).hashCode();
     }
+
 
     @Override
     public int getChildrenCount(int groupPosition) {
@@ -190,10 +261,12 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
                 .size();
     }
 
+
     @Override
     public Object getGroup(int groupPosition) {
         return this._listDataGroup.get(groupPosition);
     }
+
 
     @Override
     public int getGroupCount() {
@@ -215,7 +288,6 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
     public boolean isChildSelectable(int groupPosition, int childPosition) {
         return true;
     }
-
 
     private class FoodViewHolder {
         ImageView img;

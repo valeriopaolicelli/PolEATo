@@ -1,0 +1,272 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".Statistics.StatisticsFragment"
+    android:weightSum="100"
+    android:orientation="vertical"
+    android:layout_marginBottom="?attr/actionBarSize">
+
+    <android.support.v7.widget.CardView
+        android:id="@+id/StatisticsCardView"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_gravity="center"
+        android:layout_marginStart="4dp"
+        android:layout_marginTop="4dp"
+        android:layout_marginEnd="4dp"
+        android:layout_marginBottom="8dp"
+        app:cardCornerRadius="10dp"
+        android:layout_weight="25">
+
+
+        <android.support.constraint.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <ImageView
+                android:id="@+id/delivery_icon"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="8dp"
+                android:layout_marginEnd="8dp"
+                android:layout_marginBottom="8dp"
+                android:src="@drawable/ic_baseline_directions_bike_24px"
+                app:layout_constraintBottom_toTopOf="@id/workingDays_label"
+                app:layout_constraintEnd_toStartOf="@id/today_label"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <TextView
+                android:id="@+id/today_label"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:layout_marginEnd="8dp"
+                android:text="@string/today_label"
+                android:textAlignment="center"
+                android:textColor="@color/colorPrimaryDark"
+                android:textSize="15sp"
+                app:layout_constraintBottom_toBottomOf="@id/delivery_icon"
+                app:layout_constraintEnd_toStartOf="@id/today_tv"
+                app:layout_constraintStart_toEndOf="@id/delivery_icon"
+                app:layout_constraintTop_toTopOf="@id/delivery_icon" />
+
+            <TextView
+                android:id="@+id/today_tv"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="8dp"
+                android:textColor="@color/browser_actions_title_color"
+                android:textSize="15sp"
+                app:layout_constraintBottom_toBottomOf="@id/delivery_icon"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@id/today_label"
+                app:layout_constraintTop_toTopOf="@id/delivery_icon" />
+
+            <TextView
+                android:id="@+id/workingDays_label"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:layout_marginEnd="8dp"
+                android:text="@string/workingDays_label"
+                android:textColor="@color/colorPrimaryDark"
+                android:textSize="15sp"
+                app:layout_constraintBottom_toTopOf="@id/totRevenues_label"
+                app:layout_constraintEnd_toStartOf="@id/workingDays_tv"
+                app:layout_constraintHorizontal_bias="0.51"
+                app:layout_constraintStart_toStartOf="@id/delivery_icon"
+                app:layout_constraintTop_toBottomOf="@id/delivery_icon" />
+
+            <TextView
+                android:id="@+id/workingDays_tv"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:textSize="15sp"
+                android:textColor="@color/browser_actions_title_color"
+                app:layout_constraintBottom_toBottomOf="@id/workingDays_label"
+                app:layout_constraintEnd_toStartOf="@id/totHours_label"
+                app:layout_constraintStart_toEndOf="@+id/workingDays_label"
+                app:layout_constraintTop_toTopOf="@id/workingDays_label" />
+
+            <TextView
+                android:id="@+id/totHours_label"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:layout_marginEnd="8dp"
+                android:text="@string/workingHours_label"
+                android:textColor="@color/colorPrimaryDark"
+                android:textSize="15sp"
+                app:layout_constraintBottom_toBottomOf="@id/workingDays_tv"
+                app:layout_constraintEnd_toStartOf="@id/totHours_tv"
+                app:layout_constraintStart_toEndOf="@id/workingDays_tv"
+                app:layout_constraintTop_toTopOf="@id/workingDays_tv" />
+
+            <TextView
+                android:id="@+id/totHours_tv"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="8dp"
+                android:textSize="15sp"
+                android:textColor="@color/browser_actions_title_color"
+                app:layout_constraintBottom_toBottomOf="@+id/restaurant_label"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@id/totHours_label"
+                app:layout_constraintTop_toTopOf="@id/totHours_label" />
+
+            <TextView
+                android:id="@+id/totRevenues_label"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:layout_marginEnd="8dp"
+                android:text="@string/totRevenues_label"
+                android:textColor="@color/colorPrimaryDark"
+                android:textSize="15sp"
+                app:layout_constraintBottom_toTopOf="@id/totKm_label"
+                app:layout_constraintEnd_toStartOf="@+id/phone_tv"
+                app:layout_constraintHorizontal_bias="0.0"
+                app:layout_constraintStart_toStartOf="@id/workingDays_label"
+                app:layout_constraintTop_toBottomOf="@id/workingDays_label" />
+
+            <TextView
+                android:id="@+id/totRevenues_tv"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="8dp"
+                android:autoLink="phone"
+                android:textSize="15sp"
+                app:layout_constraintBottom_toBottomOf="@id/totRevenues_label"
+                app:layout_constraintEnd_toStartOf="@id/revenuesPerDay_label"
+                app:layout_constraintTop_toTopOf="@id/totRevenues_label"
+                app:layout_constraintStart_toEndOf="@id/totRevenues_label"/>
+
+            <TextView
+                android:id="@+id/revenuesPerDay_label"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="8dp"
+                android:text="@string/revenuePerDay_label"
+                android:textColor="@color/colorPrimaryDark"
+                android:textSize="15sp"
+                app:layout_constraintBottom_toBottomOf="@id/totRevenues_tv"
+                app:layout_constraintEnd_toStartOf="@id/revenuesPerDay_tv"
+                app:layout_constraintHorizontal_bias="0.0"
+                app:layout_constraintStart_toStartOf="@id/totHours_label"
+                app:layout_constraintTop_toTopOf="@id/totRevenues_tv" />
+
+            <TextView
+                android:id="@+id/revenuesPerDay_tv"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="8dp"
+                android:textColor="@color/browser_actions_title_color"
+                android:textSize="15sp"
+                app:layout_constraintBottom_toBottomOf="@+id/revenuesPerDay_label"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="@id/revenuesPerDay_label"
+                app:layout_constraintStart_toEndOf="@id/revenuesPerDay_label"/>
+
+            <TextView
+                android:id="@+id/totKm_label"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:layout_marginEnd="8dp"
+                android:layout_marginBottom="8dp"
+                android:text="@string/totKm_label"
+                android:textColor="@color/colorPrimaryDark"
+                android:textSize="15sp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toStartOf="@id/totKm_tv"
+                app:layout_constraintHorizontal_bias="0.0"
+                app:layout_constraintStart_toStartOf="@id/totRevenues_label"
+                app:layout_constraintTop_toBottomOf="@id/totRevenues_label" />
+
+            <TextView
+                android:id="@+id/totKm_tv"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="8dp"
+                android:textColor="@color/browser_actions_title_color"
+                android:textSize="15sp"
+                app:layout_constraintBottom_toBottomOf="@+id/totKm_label"
+                app:layout_constraintEnd_toStartOf="@id/kmPerDay_label"
+                app:layout_constraintTop_toTopOf="@id/totKm_label"
+                app:layout_constraintStart_toEndOf="@id/totKm_label" />
+
+            <TextView
+                android:id="@+id/kmPerDay_label"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="8dp"
+                android:text="@string/kmPerDay_label"
+                android:textColor="@color/colorPrimaryDark"
+                android:textSize="15sp"
+                app:layout_constraintBottom_toBottomOf="@id/totKm_label"
+                app:layout_constraintEnd_toStartOf="@id/kmPerDay_tv"
+                app:layout_constraintHorizontal_bias="0.0"
+                app:layout_constraintStart_toStartOf="@id/revenuesPerDay_label"
+                app:layout_constraintTop_toTopOf="@id/totKm_tv" />
+
+            <TextView
+                android:id="@+id/kmPerDay_tv"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="8dp"
+                android:textColor="@color/browser_actions_title_color"
+                android:textSize="15sp"
+                app:layout_constraintBottom_toBottomOf="@id/kmPerDay_label"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="@id/kmPerDay_label"
+                app:layout_constraintStart_toEndOf="@id/kmPerDay_label"/>
+        </android.support.constraint.ConstraintLayout>
+    </android.support.v7.widget.CardView>
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="75">
+
+
+        <com.github.mikephil.charting.charts.LineChart
+            android:id="@+id/lineChart"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginStart="16dp"
+            android:layout_marginEnd="16dp"
+            android:layout_marginBottom="16dp"
+            android:background="#ffffff"
+            android:backgroundTint="#ffffff"/>
+
+        <com.github.mikephil.charting.charts.BarChart
+            android:id="@+id/barChart"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginStart="16dp"
+            android:layout_marginEnd="16dp"
+            android:layout_marginBottom="16dp"
+            android:background="#ffffff"
+            android:backgroundTint="#ffffff"
+            android:visibility="gone"/>
+
+        <Spinner
+            android:id="@+id/chart_spinner"
+            android:layout_width="wrap_content"
+            android:layout_height="54dp"
+            android:layout_gravity="right|top"
+            android:layout_marginEnd="8dp"
+            android:spinnerMode="dropdown" />
+
+
+    </FrameLayout>
+
+
+</LinearLayout>

@@ -5,25 +5,24 @@
     android:layout_height="match_parent"
     tools:context=".Reservation.ReservationFragment">
 
-    <!-- TODO: Update blank fragment layout -->
-    <LinearLayout
-        xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:tools="http://schemas.android.com/tools"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="vertical"
-        tools:context=".MainActivity">
-
         <ExpandableListView
             android:id="@+id/reservationslv"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:divider="#cccccc"
             android:layout_marginBottom="?attr/actionBarSize"
-            android:dividerHeight="10dp"
+            android:dividerHeight="2dp"
             android:padding="3dp"
-            android:childDivider="#00000000"
-            />
-    </LinearLayout>
+            tools:listitem="@layout/layout_reservation_group"/>
+
+        <ImageView
+            android:id="@+id/reservation_empty_view"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_gravity="center_horizontal|center_vertical"
+            android:src="@drawable/empty_mail"
+            android:alpha=".5"
+            android:scaleType="fitCenter"
+            android:visibility="gone"/>
+
 
 </FrameLayout>

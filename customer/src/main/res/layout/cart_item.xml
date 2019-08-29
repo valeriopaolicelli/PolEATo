@@ -27,124 +27,130 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent">
 
-            <ImageView
-                android:id="@+id/cardImage"
-                android:layout_width="98dp"
-                android:layout_height="0dp"
-                android:scaleType="fitCenter"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintLeft_toLeftOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
-
             <TextView
                 android:id="@+id/cardName"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="8dp"
+                android:layout_marginStart="16dp"
                 android:layout_marginTop="8dp"
                 android:layout_marginEnd="8dp"
                 android:layout_marginBottom="8dp"
-                android:gravity="center_horizontal|center_vertical"
+                android:gravity="start"
                 android:textColor="#444444"
                 android:textSize="20sp"
-                app:layout_constraintBottom_toTopOf="@+id/priceLabel"
-                app:layout_constraintEnd_toStartOf="@+id/deleteBtn"
+                app:layout_constraintBottom_toTopOf="@id/notesEditText"
+                app:layout_constraintEnd_toStartOf="@id/deleteBtn"
                 app:layout_constraintHorizontal_bias="0.0"
-                app:layout_constraintStart_toEndOf="@+id/cardImage"
-                app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintVertical_bias="0.0" />
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
 
-            <TextView
-                android:id="@+id/cardPrice"
-                android:layout_width="36dp"
-                android:layout_height="19dp"
-                android:layout_marginEnd="8dp"
-                android:textAllCaps="false"
-                android:textColor="#000000"
-                android:textSize="14sp"
-                android:textStyle="bold"
-                app:layout_constraintBottom_toBottomOf="@+id/priceLabel"
-                app:layout_constraintEnd_toStartOf="@+id/decreaseBtn"
-                app:layout_constraintHorizontal_bias="0.0"
-                app:layout_constraintStart_toEndOf="@+id/priceLabel"
-                app:layout_constraintTop_toTopOf="@+id/priceLabel" />
-
-
-            <TextView
-                android:id="@+id/quantity"
-                android:layout_width="57dp"
-                android:layout_height="18dp"
-                android:layout_marginTop="8dp"
-                android:layout_marginBottom="8dp"
-                android:text="@string/slash"
-                android:textAlignment="center"
-                app:layout_constraintBottom_toBottomOf="@+id/increaseBtn"
-                app:layout_constraintEnd_toStartOf="@+id/increaseBtn"
-                app:layout_constraintTop_toTopOf="@+id/decreaseBtn"
-                app:layout_constraintVertical_bias="0.0" />
-
-            <Button
-                android:id="@+id/increaseBtn"
-                android:layout_width="40dp"
-                android:layout_height="40dp"
-                android:layout_marginEnd="8dp"
-                android:text="@string/plus"
-                android:textAlignment="center"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                tools:text="+" />
-
-            <Button
-                android:id="@+id/decreaseBtn"
-                android:layout_width="40dp"
-                android:layout_height="40dp"
-                android:layout_marginTop="8dp"
-                android:layout_marginBottom="16dp"
-                android:text="@string/minum"
-                android:textAlignment="center"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toStartOf="@+id/quantity"
-                app:layout_constraintTop_toTopOf="@+id/increaseBtn"
-                app:layout_constraintVertical_bias="0.333" />
-
-            <Button
+            <ImageButton
                 android:id="@+id/deleteBtn"
                 android:layout_width="40dp"
                 android:layout_height="40dp"
-                android:layout_marginTop="8dp"
                 android:layout_marginBottom="8dp"
-                android:text="@string/X"
+                android:src="@drawable/ic_remov_icon"
+                android:background="@color/colorBodyPrimary"
                 android:textAlignment="center"
-                app:layout_constraintBottom_toTopOf="@+id/increaseBtn"
+                app:layout_constraintBottom_toBottomOf="@id/cardName"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintVertical_bias="0.0" />
-
-            <TextView
-                android:id="@+id/priceLabel"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="4dp"
-                android:text="@string/price"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintStart_toStartOf="@+id/cardName" />
+                app:layout_constraintStart_toEndOf="@id/cardName"
+                app:layout_constraintTop_toTopOf="@id/cardName"
+                app:layout_constraintVertical_bias="0.47000003" />
 
             <EditText
                 android:id="@+id/notesEditText"
                 android:layout_width="246dp"
                 android:layout_height="34dp"
-                android:layout_marginBottom="8dp"
                 android:hint="@string/notes"
-                android:textSize="12sp"
                 android:imeOptions="actionDone"
+                android:inputType="text"
                 android:maxLength="30"
-                android:maxLines="1"
-                app:layout_constraintBottom_toTopOf="@+id/decreaseBtn"
-                app:layout_constraintEnd_toEndOf="@+id/cardName"
+                android:textSize="12sp"
+                app:layout_constraintBottom_toTopOf="@id/priceLabel"
+                app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_bias="0.0"
-                app:layout_constraintStart_toStartOf="@+id/cardName"
-                />
+                app:layout_constraintStart_toStartOf="@id/cardName"
+                app:layout_constraintTop_toBottomOf="@id/cardName" />
 
+            <TextView
+                android:id="@+id/priceLabel"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/price"
+                android:textColor="#000000"
+                android:textSize="14sp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toStartOf="@id/cardPrice"
+                app:layout_constraintHorizontal_bias="0.0"
+                app:layout_constraintStart_toStartOf="@id/cardName"
+                app:layout_constraintTop_toBottomOf="@id/notesEditText" />
+
+            <TextView
+                android:id="@+id/cardPrice"
+                android:layout_width="0dp"
+                android:layout_height="19dp"
+                android:layout_marginStart="8dp"
+                android:layout_marginEnd="8dp"
+                android:textAllCaps="false"
+                android:textStyle="bold"
+                app:layout_constraintBottom_toBottomOf="@id/priceLabel"
+                app:layout_constraintEnd_toStartOf="@id/quantityLabel"
+                app:layout_constraintHorizontal_bias="0.0"
+                app:layout_constraintStart_toEndOf="@id/priceLabel"
+                app:layout_constraintTop_toTopOf="@+id/priceLabel" />
+
+            <TextView
+                android:id="@+id/quantityLabel"
+                android:layout_width="wrap_content"
+                android:layout_height="18dp"
+                android:layout_marginStart="8dp"
+                android:text="@string/quantity"
+                android:textAlignment="center"
+                android:textColor="#000000"
+                android:textSize="14sp"
+                app:layout_constraintBottom_toBottomOf="@id/cardPrice"
+                app:layout_constraintEnd_toStartOf="@id/quantity"
+                app:layout_constraintStart_toEndOf="@id/cardPrice"
+                app:layout_constraintTop_toTopOf="@id/cardPrice" />
+
+            <TextView
+                android:id="@+id/quantity"
+                android:layout_width="wrap_content"
+                android:layout_height="18dp"
+                android:layout_marginStart="8dp"
+                android:layout_marginEnd="8dp"
+                android:text="0"
+                android:textAlignment="center"
+                app:layout_constraintBottom_toBottomOf="@id/quantityLabel"
+                app:layout_constraintEnd_toStartOf="@id/decreaseBtn"
+                app:layout_constraintStart_toEndOf="@id/quantityLabel"
+                app:layout_constraintTop_toTopOf="@id/quantityLabel" />
+
+            <ImageButton
+                android:id="@+id/increaseBtn"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:backgroundTint="#ffffff"
+                android:src="@drawable/ic_add_icon"
+                android:text="@string/plus"
+                android:textAlignment="center"
+                app:layout_constraintBottom_toBottomOf="@id/decreaseBtn"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@id/decreaseBtn"
+                app:layout_constraintTop_toTopOf="@id/decreaseBtn" />
+
+            <ImageButton
+                android:id="@+id/decreaseBtn"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@color/colorBodyPrimary"
+                android:src="@drawable/ic_minus_icon2"
+                android:textAlignment="center"
+                app:layout_constraintBottom_toBottomOf="@id/quantity"
+                app:layout_constraintEnd_toStartOf="@id/increaseBtn"
+                app:layout_constraintStart_toEndOf="@id/quantity"
+                app:layout_constraintTop_toTopOf="@id/quantity" />
 
         </android.support.constraint.ConstraintLayout>
 

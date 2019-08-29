@@ -19,4 +19,153 @@
     <string name="camera">Camera</string>
     <string name="gallery">Gallery</string>
     <string name="edit">Edit Profile</string>
+
+    <string name="title_activity_main">MainActivity</string>
+
+    <string name="title_bottombar_pendingReservations">Requests</string>
+    <string name="title_actionbar_pendingReservations">Requests</string>
+
+    <string name="title_bottombar_deliveryRide">Rides</string>
+    <string name="title_actionbar_deliveryRide">Rides</string>
+
+    <string name="title_bottombar_deliveryHistory">History</string>
+    <string name="title_actionbar_deliveryHistory">History</string>
+
+    <string name="title_bottombar_deliveryStatistics">Statistics</string>
+    <string name="title_actionbar_deliveryStatistics">Statistics</string>
+
+    <string name="title_bottombar_account">Account</string>
+    <string name="title_actionbar_account">Account</string>
+    <string name="title_actionbar_edit_account">Edit Account</string>
+
+
+    <string name="loading">Loading</string>
+    <string name="failure">Something goes wrong</string>
+    <string name="saved">Saved</string>
+    <string name="saving">Saving changes</string>
+    <string name="no_account">Don\'t have an account?</string>
+
+    <string name="hello_blank_fragment">Work in progress</string>
+
+    <!-- Delivery cardview-->
+    <string name="address_label">Delivery address: </string>
+    <string name="customer_name">Name: </string>
+    <string name="restaurant_name">Restaurant: </string>
+    <string name="phone_number">Phone: </string>
+    <string name="dishes">#Dishes: </string>
+    <string name="delivery_hour">Time: </string>
+    <string name="total_cost">Total: </string>
+    <string name="delivered_date">Date: </string>
+
+    <!-- HistoryFragment cardview-->
+    <string name="orderID_label">Order ID: </string>
+    <string name="expected_hour">Expected hour: </string>
+    <string name="delivered_hour">Delivered hour: </string>
+
+
+    <!-- Maps strings -->
+    <string name="go_to_customer">To customer</string>
+    <string name="dialog_go_to_customer">Are you sure you want to go to the customer?</string>
+    <string name="restaurant_string">Restaurant</string>
+    <string name="customer_string">Customer</string>
+    <string name="you_string">You</string>
+    <string name="you_arrived">You arrived!</string>
+    <string name="maps_button_to_restaurant">Go to customer</string>
+    <string name="maps_button_order_delivered">Deliver/Quit</string>
+    <string name="maps_button_order_failure">End run</string>
+    <string name="dialog_message_order_outcome">Have you delivered the dishes to the customer? If you have trouble with the deliver please click on "Quit"</string>
+    <string name="dialog_message_order_failure">Confirm to end the run</string>
+    <string name="message_order_completed">Order completed!</string>
+    <string name="quit_run">Quit</string>
+    <string name="confirm">Confirm</string>
+
+
+    <string name="active_status"><font size="18">Active</font></string>
+    <string name="inactive_status"><font size="18">Inactive</font></string>
+    <string name="current_status"><font size="18">Your status</font></string>
+    <string name="go_active_message">Are you sure you want to become active? Customers
+                                    will start to send you requests.</string>
+
+    <string name="go_inactive_message">Are you sure you want to become inactive? You can not
+                    receives requests anymore while inactive.</string>
+
+    <string name="yes">Yes</string>
+    <string name="no">No</string>
+
+    <!-- Login string -->
+    <string name="password"><font size="18">Password</font></string>
+    <string name="signin">Sign in</string>
+    <string name="signup">Sign up</string>
+    <string name="logout">Logout</string>
+    <string name="void_fields">Void fields</string>
+    <string name="login_succ">Logged in!</string>
+    <string name="login_fail">Authentication failed.</string>
+    <string name="creation_succ">Account created!</string>
+    <string name="creation_fail">Account creation failed! Email must be valid and password composed by at least 6 characters</string>
+
+    <!-- Incomplete account, after login with google/facebook -->
+    <string name="missing_fields_title">Account profile not complete</string>
+    <string name="missing_fields_body">Missing fields in your profile. Complete it to use the application!</string>
+    <string name="go_to_edit">Go to my profile</string>
+    <string name="already_used">Email already used for other kind of profile</string>
+
+    <!-- Address conversion -->
+    <string name="no_address">Address not valid</string>
+
+    <!-- Rides layout -->
+    <string name="no_order">Nothing to deliver</string>
+    <string name="permission_denied">Location service permission denied!</string>
+    <string name="delivering">Delivering</string>
+    <string name="not_delivering">Not delivering</string>
+    <string name="delivered">Delivered</string>
+
+    <!-- Show more fragment -->
+    <string name="address_semicolon">Address:</string>
+    <string name="show_more_title">Restaurant info:</string>
+
+    <!--- Internet dialog -->
+    <string name="internet_title">Enable Internet Connection</string>
+    <string name="internet_message">To use this application you must be connected to the Internet</string>
+    <string name="interner_confirm">Data settings</string>
+
+    <!-- Statistics fragment -->
+    <string name="today_label">Today:</string>
+    <string name="workingDays_label">Working days:</string>
+    <string name="workingHours_label">Working hours:</string>
+    <string name="totRevenues_label">Total revenues:</string>
+    <string name="totKm_label">Total Km:</string>
+    <string name="kmPerDay_label">Km per day:</string>
+    <string name="revenuePerDay_label">Revenues per day:</string>
+    <string name="chart_title">Your revenues</string>
+
+
+    <!-- Pending -->
+    <string name="start">Start</string>
+    <string name="already_busy">You already have an active ride!</string>
+    <string name="ride_start_alert">Ride start</string>
+    <string name="ride_start_confirm">Are you sure you want to start this ride?</string>
+    <string name="already_delivering">Already delivering ...</string>
+    <string name="alert_is_active">You must be active to start this ride</string>
+    <string name="turn_on_status">Would you switch to active your status and start this ride?</string>
+
+
+    <!-- Chart types array -->
+    <string-array name="chart_array">
+        <item>Daily</item>
+        <item>Monthly</item>
+    </string-array>
+
+    <string name="jan">Jan</string>
+    <string name="feb">Feb</string>
+    <string name="mar">Mar</string>
+    <string name="apr">Apr</string>
+    <string name="may">May</string>
+    <string name="jun">Jun</string>
+    <string name="jul">Jul</string>
+    <string name="aug">Aug</string>
+    <string name="sep">Sep</string>
+    <string name="oct">Oct</string>
+    <string name="nov">Nov</string>
+    <string name="dec">Dec</string>
+
 </resources>

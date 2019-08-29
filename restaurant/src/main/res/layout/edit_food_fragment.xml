@@ -1,104 +1,63 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-
-    android:background="#ffffff"
-    android:descendantFocusability="beforeDescendants"
-    android:focusableInTouchMode="true"
-    android:orientation="vertical"
-    tools:context=".DailyOffer.EditFood.EditFoodFragment">
-
-    <!--android:layout_below="@id/toolbar2"-->
-    <!--<android.support.design.widget.AppBarLayout-->
-    <!--android:id="@+id/appBarLayout2"-->
-    <!--android:layout_width="match_parent"-->
-    <!--android:layout_height="56dp"-->
-    <!--android:layout_marginBottom="19dp"-->
-    <!--android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar">-->
-
-    <!--<android.support.v7.widget.Toolbar-->
-    <!--android:id="@+id/toolbar2"-->
-    <!--android:layout_width="match_parent"-->
-    <!--android:layout_height="wrap_content"-->
-    <!--android:background="?attr/colorPrimary"-->
-    <!--app:layout_scrollFlags="scroll|enterAlways"-->
-    <!--app:popupTheme="@style/ThemeOverlay.AppCompat.Light" />-->
-
-    <!--</android.support.design.widget.AppBarLayout>-->
-
-
-    <!-- image and title -->
-
+    android:layout_height="match_parent"
+    android:background="#ffffff">
 
     <android.support.constraint.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:descendantFocusability="beforeDescendants"
+        android:focusableInTouchMode="true"
+        tools:context=".DailyOffer.AddFood.AddFoodFragment">
+
+        <!-- image and title -->
 
         <android.support.design.widget.FloatingActionButton
             android:id="@+id/frag_change_im"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            android:layout_marginBottom="8dp"
-            android:clickable="true"
+            android:layout_width="56dp"
+            android:layout_height="56dp"
+            android:layout_marginEnd="32dp"
             android:backgroundTint="@color/colorPrimaryDark"
+            android:clickable="true"
+            android:focusable="true"
             android:src="@mipmap/baseline_photo_camera_white_24dp"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.954"
-            app:layout_constraintStart_toStartOf="@+id/imageFood"
+            app:layout_constraintBottom_toBottomOf="@id/imageFood"
+            app:layout_constraintEnd_toEndOf="@id/imageFood"
+            app:layout_constraintHorizontal_bias="0.95"
+            app:layout_constraintStart_toStartOf="@id/imageFood"
             app:layout_constraintTop_toTopOf="@+id/imageFood"
-            app:layout_constraintVertical_bias="0.937" />
+            app:layout_constraintVertical_bias="1.0" />
 
         <ImageView
             android:id="@+id/imageFood"
-            android:layout_width="match_parent"
-            android:layout_height="200dp"
+            android:layout_width="410dp"
+            android:layout_height="160dp"
             android:layout_marginTop="16dp"
             android:scaleType="fitCenter"
-            android:src="@drawable/food_default"
-            app:layout_constraintBottom_toBottomOf="parent"
+            android:src="@drawable/plate_fork"
+            app:layout_constraintBottom_toTopOf="@id/input_layout_name"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintTop_toTopOf="parent"
+            tools:ignore="ContentDescription" />
 
-    </android.support.constraint.ConstraintLayout>
-
-    <!--<EditText-->
-    <!--android:id="@+id/nameFood"-->
-    <!--android:layout_width="match_parent"-->
-    <!--android:layout_height="wrap_content"-->
-    <!--android:layout_marginBottom="10dp"-->
-    <!--android:gravity="center"-->
-    <!--android:text="Plate Name"-->
-    <!--android:textColor="#444444"-->
-    <!--android:textSize="24sp"-->
-    <!--app:layout_constraintEnd_toEndOf="parent"-->
-    <!--app:layout_constraintStart_toStartOf="parent" />-->
-
-    <android.support.constraint.ConstraintLayout
-        android:id="@+id/constraintLayout1"
-        android:layout_width="match_parent"
-        android:layout_height="56dp"
-        android:layout_marginTop="8dp"
-        android:layout_marginBottom="10dp"
-        android:descendantFocusability="beforeDescendants"
-        android:focusableInTouchMode="true">
 
         <android.support.design.widget.TextInputLayout
             android:id="@+id/input_layout_name"
             android:layout_width="0dp"
             android:layout_height="56dp"
             android:layout_marginStart="8dp"
+            android:layout_marginTop="32dp"
             android:layout_marginEnd="8dp"
+            android:layout_marginBottom="8dp"
             android:theme="@style/FloatLabel"
-            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintBottom_toTopOf="@id/input_layout_description"
             app:layout_constraintEnd_toStartOf="@id/cancel_name"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/imageFood"
             app:layout_constraintVertical_bias="0.0">
 
             <EditText
@@ -106,12 +65,13 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="5dp"
-                android:hint="Name"
-                android:imeOptions="actionNext"
+                android:hint="@string/name"
+                android:imeOptions="actionDone"
                 android:inputType="text"
                 android:maxLength="40"
                 android:singleLine="true"
-                android:textColor="@color/colorTextSubField" />
+                android:textColor="@color/colorTextSubField"
+                tools:ignore="Autofill" />
 
         </android.support.design.widget.TextInputLayout>
 
@@ -125,23 +85,11 @@
             android:background="@android:color/transparent"
             android:contentDescription="@string/delete"
             android:src="@drawable/clear"
-            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintBottom_toTopOf="@id/input_layout_description"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toEndOf="@+id/input_layout_name"
-            app:layout_constraintTop_toTopOf="parent" />
-    </android.support.constraint.ConstraintLayout>
+            app:layout_constraintTop_toTopOf="@+id/input_layout_name" />
 
-    <Space
-        android:layout_width="423dp"
-        android:layout_height="10dp" />
-
-    <android.support.constraint.ConstraintLayout
-        android:id="@+id/constraintLayout"
-        android:layout_width="match_parent"
-        android:layout_height="56dp"
-        android:layout_marginBottom="10dp"
-        android:descendantFocusability="beforeDescendants"
-        android:focusableInTouchMode="true">
 
         <android.support.design.widget.TextInputLayout
             android:id="@+id/input_layout_description"
@@ -149,11 +97,12 @@
             android:layout_height="56dp"
             android:layout_marginStart="8dp"
             android:layout_marginEnd="8dp"
+            android:layout_marginBottom="8dp"
             android:theme="@style/FloatLabel"
-            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintBottom_toTopOf="@id/input_layout_price"
             app:layout_constraintEnd_toStartOf="@id/cancel_description"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/input_layout_name"
             app:layout_constraintVertical_bias="0.0">
 
             <EditText
@@ -161,12 +110,13 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="5dp"
-                android:hint="Description"
-                android:imeOptions="actionNext"
+                android:hint="@string/description"
+                android:imeOptions="actionDone"
                 android:inputType="text"
-                android:maxLength="40"
+                android:maxLength="100"
                 android:singleLine="true"
-                android:textColor="@color/colorTextSubField" />
+                android:textColor="@color/colorTextSubField"
+                tools:ignore="Autofill,LabelFor" />
 
         </android.support.design.widget.TextInputLayout>
 
@@ -180,23 +130,10 @@
             android:background="@android:color/transparent"
             android:contentDescription="@string/delete"
             android:src="@drawable/clear"
-            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintBottom_toTopOf="@id/input_layout_price"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toEndOf="@+id/input_layout_description"
-            app:layout_constraintTop_toTopOf="parent" />
-    </android.support.constraint.ConstraintLayout>
-
-    <Space
-        android:layout_width="423dp"
-        android:layout_height="10dp" />
-
-    <android.support.constraint.ConstraintLayout
-        android:id="@+id/constraintLayout2"
-        android:layout_width="match_parent"
-        android:layout_height="56dp"
-        android:layout_marginBottom="10dp"
-        android:descendantFocusability="beforeDescendants"
-        android:focusableInTouchMode="true">
+            app:layout_constraintTop_toBottomOf="@id/input_layout_name" />
 
         <android.support.design.widget.TextInputLayout
             android:id="@+id/input_layout_price"
@@ -204,11 +141,12 @@
             android:layout_height="56dp"
             android:layout_marginStart="8dp"
             android:layout_marginEnd="8dp"
+            android:layout_marginBottom="8dp"
             android:theme="@style/FloatLabel"
-            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintBottom_toTopOf="@id/input_layout_quantity"
             app:layout_constraintEnd_toStartOf="@id/cancel_price"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/input_layout_description"
             app:layout_constraintVertical_bias="0.0">
 
             <EditText
@@ -216,12 +154,13 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="5dp"
-                android:hint="Price"
-                android:imeOptions="actionNext"
-                android:inputType="text"
+                android:hint="@string/price"
+                android:imeOptions="actionDone"
+                android:inputType="numberDecimal"
                 android:maxLength="40"
                 android:singleLine="true"
-                android:textColor="@color/colorTextSubField" />
+                android:textColor="@color/colorTextSubField"
+                tools:ignore="Autofill,LabelFor" />
 
         </android.support.design.widget.TextInputLayout>
 
@@ -235,23 +174,10 @@
             android:background="@android:color/transparent"
             android:contentDescription="@string/delete"
             android:src="@drawable/clear"
-            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintBottom_toTopOf="@id/input_layout_quantity"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toEndOf="@+id/input_layout_price"
-            app:layout_constraintTop_toTopOf="parent" />
-    </android.support.constraint.ConstraintLayout>
-
-    <Space
-        android:layout_width="423dp"
-        android:layout_height="10dp" />
-
-    <android.support.constraint.ConstraintLayout
-        android:id="@+id/constraintLayout3"
-        android:layout_width="match_parent"
-        android:layout_height="56dp"
-        android:layout_marginBottom="16dp"
-        android:descendantFocusability="beforeDescendants"
-        android:focusableInTouchMode="true">
+            app:layout_constraintTop_toBottomOf="@id/input_layout_description" />
 
         <android.support.design.widget.TextInputLayout
             android:id="@+id/input_layout_quantity"
@@ -259,24 +185,25 @@
             android:layout_height="56dp"
             android:layout_marginStart="8dp"
             android:layout_marginEnd="8dp"
+            android:layout_marginBottom="24dp"
             android:theme="@style/FloatLabel"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toStartOf="@id/cancel_quantity"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="1.0">
+            app:layout_constraintTop_toBottomOf="@id/input_layout_price">
 
             <EditText
                 android:id="@+id/editQuantity"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="5dp"
-                android:hint="Quantity"
-                android:imeOptions="actionNext"
-                android:inputType="text"
+                android:hint="@string/quantity"
+                android:imeOptions="actionDone"
+                android:inputType="number"
                 android:maxLength="40"
                 android:singleLine="true"
-                android:textColor="@color/colorTextSubField" />
+                android:textColor="@color/colorTextSubField"
+                tools:ignore="Autofill,LabelFor" />
 
         </android.support.design.widget.TextInputLayout>
 
@@ -290,37 +217,10 @@
             android:background="@android:color/transparent"
             android:contentDescription="@string/delete"
             android:src="@drawable/clear"
-            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintBottom_toBottomOf="@id/input_layout_quantity"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toEndOf="@+id/input_layout_quantity"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintTop_toBottomOf="@id/input_layout_price" />
+
     </android.support.constraint.ConstraintLayout>
-
-    <LinearLayout
-        android:id="@+id/button_fragm_save"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal">
-
-
-        <Button
-            android:id="@+id/button_frag_delete"
-            style="@style/Widget.MaterialComponents.Button.OutlinedButton"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:visibility="gone"
-            android:text="@string/delete" />
-
-        <Button
-            android:id="@+id/button_frag_save"
-            style="@style/Widget.MaterialComponents.Button.OutlinedButton"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="@string/save" />
-
-    </LinearLayout>
-
-
-</LinearLayout>
+</ScrollView>

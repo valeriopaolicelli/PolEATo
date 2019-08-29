@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--<vector-->
+    <!--xmlns:android="http://schemas.android.com/apk/res/android"-->
+    <!--xmlns:aapt="http://schemas.android.com/aapt"-->
+    <!--android:width="256dp"-->
+    <!--android:height="45dp"-->
+    <!--android:viewportWidth="256"-->
+    <!--android:viewportHeight="45"-->
+    <!--&gt;-->
+
+    <!--<group>-->
+
+        <!--<clip-path-->
+            <!--android:pathData="M22.5 0H233.5C245.926 0 256 10.0736 256 22.5C256 34.9264 245.926 45 233.5 45H22.5C10.0736 45 0 34.9264 0 22.5C0 10.0736 10.0736 0 22.5 0Z"-->
+            <!--/>-->
+
+        <!--<path-->
+            <!--android:pathData="M22.5 0H233.5C245.926 0 256 10.0736 256 22.5C256 34.9264 245.926 45 233.5 45H22.5C10.0736 45 0 34.9264 0 22.5C0 10.0736 10.0736 0 22.5 0Z"-->
+            <!--android:strokeWidth="4"-->
+            <!--android:strokeColor="#FFFFFF"-->
+            <!--/>-->
+
+    <!--</group>-->
+
+
+
+    <!--&lt;!&ndash;<ripple xmlns:android="http://schemas.android.com/apk/res/android"&ndash;&gt;-->
+        <!--&lt;!&ndash;android:color="@color/colorPrimaryDark">&ndash;&gt;-->
+        <!--&lt;!&ndash;<item android:id="@android:id/mask">&ndash;&gt;-->
+            <!--&lt;!&ndash;<shape android:shape="rectangle">&ndash;&gt;-->
+                <!--&lt;!&ndash;<solid android:color="@color/colorPrimaryDark" />&ndash;&gt;-->
+                <!--&lt;!&ndash;<corners android:radius="@dimen/button_radius_large" />&ndash;&gt;-->
+            <!--&lt;!&ndash;</shape>&ndash;&gt;-->
+        <!--&lt;!&ndash;</item>&ndash;&gt;-->
+
+        <!--&lt;!&ndash;<item android:id="@android:id/background">&ndash;&gt;-->
+            <!--&lt;!&ndash;<shape android:shape="rectangle">&ndash;&gt;-->
+                <!--&lt;!&ndash;<gradient&ndash;&gt;-->
+                    <!--&lt;!&ndash;android:angle="90"&ndash;&gt;-->
+                    <!--&lt;!&ndash;android:endColor="@color/colorPrimaryLight"&ndash;&gt;-->
+                    <!--&lt;!&ndash;android:startColor="@color/colorPrimary"&ndash;&gt;-->
+                    <!--&lt;!&ndash;android:type="linear" />&ndash;&gt;-->
+                <!--&lt;!&ndash;<corners android:radius="@dimen/button_radius_large" />&ndash;&gt;-->
+            <!--&lt;!&ndash;</shape>&ndash;&gt;-->
+        <!--&lt;!&ndash;</item>&ndash;&gt;-->
+    <!--&lt;!&ndash;</ripple>&ndash;&gt;-->
+
+<!--</vector>-->
+<shape xmlns:android="http://schemas.android.com/apk/res/android">
+    <stroke android:width="5px" android:color="#FFFFFF" />
+    <corners android:radius="200dp"></corners>
+    <ripple>
+    </ripple>
+</shape>

@@ -20,4 +20,157 @@
     <string name="camera">Fotocamera</string>
     <string name="gallery">Galleria</string>
     <string name="edit">Modifica profilo</string>
+
+    <string name="title_activity_main">MainActivity</string>
+
+    <string name="title_bottombar_pendingReservations">Richieste</string>
+    <string name="title_actionbar_pendingReservations">Richieste</string>
+
+    <string name="title_bottombar_deliveryRide">Corse</string>
+    <string name="title_actionbar_deliveryRide">Corse</string>
+
+    <string name="title_bottombar_deliveryHistory">Storico</string>
+    <string name="title_actionbar_deliveryHistory">Storico</string>
+
+    <string name="title_bottombar_deliveryStatistics">Statistiche</string>
+    <string name="title_actionbar_deliveryStatistics">Statistiche</string>
+
+    <string name="title_bottombar_account">Account</string>
+    <string name="title_actionbar_account">Account</string>
+    <string name="title_actionbar_edit_account">Edit Account</string>
+
+
+    <string name="loading">Caricamento</string>
+    <string name="failure">Qualcosa è andato storto</string>
+    <string name="saved">Salvato</string>
+    <string name="saving">Salvataggio</string>
+    <string name="no_account">Non sei registrato?</string>
+
+
+    <string name="hello_blank_fragment">Ci stiamo lavorando</string>
+
+    <!-- Delivery cardview-->
+    <string name="address_label">Indirizzo di consegna: </string>
+    <string name="customer_name">Nome: </string>
+    <string name="restaurant_name">Ristorante: </string>
+    <string name="phone_number">Telefono: </string>
+    <string name="dishes">#Piatti: </string>
+    <string name="delivery_hour">Orario: </string>
+    <string name="total_cost">Totale: </string>
+
+    <!-- HistoryFragment cardview-->
+    <string name="orderID_label">ID ordine: </string>
+    <string name="expected_hour">Ora prevista: </string>
+    <string name="delivered_hour">Ora di consegna: </string>
+    <string name="delivered_date">Data: </string>
+
+
+    <!-- RideFragment strings -->
+    <string name="go_to_customer">Vai dal cliente</string>
+    <string name="dialog_go_to_customer">Sei sicuro che vuoi dirigerti dal cliente?</string>
+    <string name="restaurant_string">Ristorante</string>
+    <string name="customer_string">Cliente</string>
+    <string name="you_string">Tu</string>
+    <string name="you_arrived">Sei arrivato!</string>
+    <string name="maps_button_to_restaurant">Vai dal cliente</string>
+    <string name="maps_button_order_delivered">Consegna/Abbandona</string>
+    <string name="maps_button_order_failure">Termina corsa</string>
+    <string name="dialog_message_order_outcome">Hai consegnato il cibo al cliente? Se hai avuto problemi con la consegna clicca su "Abbandona"</string>
+    <string name="dialog_message_order_failure">Conferma per completare la corsa</string>
+    <string name="message_order_completed">Ordine completato!</string>
+    <string name="quit_run">Abbandona</string>
+    <string name="confirm">Conferma</string>
+
+
+
+
+    <string name="current_status"><font size="18">Il tuo stato</font></string>
+    <string name="active_status"><font size="18">Attivo</font></string>
+    <string name="inactive_status"><font size="18">Inattivo</font></string>
+    <string name="go_active_message">Sei sicuro che vuoi diventare attivo? I clienti
+                                    potranno iniziare ad ordinare.</string>
+    <string name="go_inactive_message">Sei sicuro che vuoi diventare inattivo? Non potrai più
+                    ricevere ordini finché rimani inattivo.</string>
+
+    <string name="yes">Sì</string>
+    <string name="no">No</string>
+
+
+    <!-- Login strings -->
+    <string name="password"><font size="18">Password</font></string>
+    <string name="signin">Accedi</string>
+    <string name="signup">Registrati</string>
+    <string name="logout">Esci</string>
+    <string name="void_fields">Campi vuoti</string>
+    <string name="login_succ">Utente riconosciuto!</string>
+    <string name="login_fail">Autenticazione fallita.</string>
+    <string name="creation_succ">Account creato!</string>
+    <string name="creation_fail">Creazione account fallita! Devi inserire una mail valida e una password di almeno 6 caratteri</string>
+
+    <!-- Incomplete account, after login with google/facebook -->
+    <string name="missing_fields_title">Profilo account non completo</string>
+    <string name="missing_fields_body">Manca poco, compila il tuo profilo, per usare l\'app!</string>
+    <string name="go_to_edit">Vai al mio profilo</string>
+    <string name="already_used">Email usata già per un altro tipo di account</string>
+
+
+    <!-- Address conversion -->
+    <string name="no_address">Indirizzo non valido</string>
+
+    <!-- Rides layout -->
+    <string name="no_order">Niente da consegnare</string>
+    <string name="permission_denied">Permessi per i servizi di localizzazione rifiutati!</string>
+    <string name="delivering">In consegna</string>
+    <string name="not_delivering">Non in consegna</string>
+    <string name="delivered">Consegnato</string>
+
+    <!-- Show more fragment -->
+    <string name="address_semicolon">Indirizzo:</string>
+    <string name="show_more_title">Info ristorante:</string>
+
+    <!--- Internet dialog -->
+    <string name="internet_title">Abilita connession a Internet</string>
+    <string name="internet_message">Per utilizzare l\'applicazione devi essere connesso ad Internet</string>
+    <string name="interner_confirm">Impostazioni Internet</string>
+
+    <!-- Statistics fragment -->
+    <string name="today_label">Data corrente:</string>
+    <string name="workingDays_label">Giorni di lavoro:</string>
+    <string name="workingHours_label">Ore di lavoro:</string>
+    <string name="totRevenues_label">Totale guadagni:</string>
+    <string name="totKm_label">Km totali:</string>
+    <string name="kmPerDay_label">Km al giorno:</string>
+    <string name="revenuePerDay_label">Guadagno/giorno:</string>
+    <string name="chart_title">I tuoi guadagni</string>
+
+
+    <!-- Pending -->
+    <string name="start">Inizia</string>
+    <string name="already_busy">Hai già una consegna attiva!</string>
+    <string name="ride_start_alert">Inizio consegna</string>
+    <string name="ride_start_confirm">Sei sicuro di voler iniziare questa consegna?</string>
+    <string name="already_delivering">Già in consegna ...</string>
+    <string name="alert_is_active">Devi avere lo status su attivo per iniziare questa corsa</string>
+    <string name="turn_on_status">Vuoi passare su attivo e iniziare questa consegna?</string>
+
+
+    <!-- Chart types array -->
+    <string-array name="chart_array">
+        <item>Giornaliero</item>
+        <item>Mensile</item>
+    </string-array>
+
+    <string name="jan">Gen</string>
+    <string name="feb">Feb</string>
+    <string name="mar">Mar</string>
+    <string name="apr">Apr</string>
+    <string name="may">Mag</string>
+    <string name="jun">Giu</string>
+    <string name="jul">Lug</string>
+    <string name="aug">Ago</string>
+    <string name="sep">Set</string>
+    <string name="oct">Ott</string>
+    <string name="nov">Nov</string>
+    <string name="dec">Dic</string>
+
 </resources>

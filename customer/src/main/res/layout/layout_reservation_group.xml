@@ -1,0 +1,220 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.design.circularreveal.cardview.CircularRevealCardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/groupLinearLayout"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    app:cardElevation="10dp"
+    app:cardCornerRadius="2dp"
+    app:cardBackgroundColor="#ECECEC"
+    android:padding="16dp">
+
+    <!-- Name and surname client -->
+    <android.support.constraint.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <ImageView
+            android:id="@+id/reservationIcon"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:layout_marginStart="16dp"
+            android:src="@drawable/reservation_icon"
+            app:layout_constraintBottom_toBottomOf="@id/dateLabel"
+            app:layout_constraintEnd_toStartOf="@id/dateLabel"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="@id/dateLabel"
+            tools:ignore="ContentDescription" />
+
+        <TextView
+            android:id="@+id/dateLabel"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:layout_marginBottom="4dp"
+            android:text="@string/date"
+            android:textColor="@color/colorPanelPrimary"
+            android:textSize="20sp"
+            app:layout_constraintBottom_toTopOf="@+id/totalPriceLabel"
+            app:layout_constraintEnd_toStartOf="@+id/tvDateField"
+            app:layout_constraintStart_toStartOf="@+id/restaurantLabel"
+            app:layout_constraintTop_toBottomOf="@+id/restaurantLabel" />
+
+        <TextView
+            android:id="@+id/tvDateField"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:layout_marginEnd="8dp"
+            android:maxLength="40"
+            android:singleLine="true"
+            android:textColor="@color/colorTextTitle"
+            android:textSize="15sp"
+            app:layout_constraintBottom_toBottomOf="@id/dateLabel"
+            app:layout_constraintEnd_toStartOf="@id/timeLabel"
+            app:layout_constraintStart_toEndOf="@id/dateLabel"
+            app:layout_constraintTop_toTopOf="@id/dateLabel"
+            app:layout_constraintVertical_bias="0.7" />
+
+        <TextView
+            android:id="@+id/timeLabel"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:text="@string/time"
+            android:textColor="@color/colorPanelPrimary"
+            android:textSize="20sp"
+            app:layout_constraintBottom_toBottomOf="@id/dateLabel"
+            app:layout_constraintEnd_toStartOf="@id/tvTimeField"
+            app:layout_constraintStart_toEndOf="@id/tvDateField"
+            app:layout_constraintTop_toTopOf="@id/dateLabel" />
+
+        <TextView
+            android:id="@+id/tvTimeField"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:layout_marginEnd="16dp"
+            android:maxLength="40"
+            android:singleLine="true"
+            android:textColor="@color/colorTextTitle"
+            android:textSize="15sp"
+            app:layout_constraintBottom_toBottomOf="@id/timeLabel"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@id/timeLabel"
+            app:layout_constraintTop_toTopOf="@id/timeLabel" />
+
+        <TextView
+            android:id="@+id/restaurantLabel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="24dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginBottom="4dp"
+            android:maxLength="40"
+            android:singleLine="true"
+            android:text="@string/restaurant"
+            android:textColor="@color/colorPanelPrimary"
+            android:textSize="20sp"
+            app:layout_constraintBottom_toTopOf="@+id/dateLabel"
+            app:layout_constraintEnd_toStartOf="@+id/tvRestaurantField"
+            app:layout_constraintStart_toEndOf="@id/reservationIcon"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/tvRestaurantField"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:layout_marginEnd="8dp"
+            android:maxLength="40"
+            android:textColor="@color/colorTextTitle"
+            android:textSize="15sp"
+            app:layout_constraintBottom_toBottomOf="@id/restaurantLabel"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@id/restaurantLabel"
+            app:layout_constraintTop_toTopOf="@id/restaurantLabel" />
+
+        <TextView
+            android:id="@+id/totalPriceLabel"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:layout_marginBottom="8dp"
+            android:singleLine="true"
+            android:text="@string/total_price"
+            android:textColor="@color/colorPanelPrimary"
+            android:textSize="20sp"
+            app:layout_constraintBottom_toTopOf="@+id/confirmBtn"
+            app:layout_constraintEnd_toStartOf="@id/tvTotalPrice"
+            app:layout_constraintStart_toStartOf="@id/dateLabel"
+            app:layout_constraintTop_toBottomOf="@id/dateLabel" />
+
+        <TextView
+            android:id="@+id/tvTotalPrice"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:layout_marginEnd="16dp"
+            android:maxLength="40"
+            android:textColor="@color/colorTextTitle"
+            android:textSize="15sp"
+            app:layout_constraintBottom_toBottomOf="@+id/totalPriceLabel"
+            app:layout_constraintEnd_toStartOf="@id/statusLabel"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toEndOf="@+id/totalPriceLabel"
+            app:layout_constraintTop_toTopOf="@+id/totalPriceLabel"
+            app:layout_constraintVertical_bias="0.7" />
+
+        <TextView
+            android:id="@+id/statusLabel"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="8dp"
+            android:singleLine="true"
+            android:text="Status"
+            android:textColor="@color/colorPanelPrimary"
+            android:textSize="20sp"
+            app:layout_constraintBottom_toBottomOf="@id/totalPriceLabel"
+            app:layout_constraintEnd_toStartOf="@id/statusTv"
+            app:layout_constraintStart_toStartOf="@id/timeLabel"
+            app:layout_constraintTop_toTopOf="@id/totalPriceLabel"
+            app:layout_constraintVertical_bias="0.0" />
+
+        <TextView
+            android:id="@+id/statusTv"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:layout_marginEnd="16dp"
+            android:text=""
+            android:textSize="15sp"
+            app:layout_constraintBottom_toBottomOf="@id/statusLabel"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.101"
+            app:layout_constraintStart_toEndOf="@+id/statusLabel"
+            app:layout_constraintTop_toTopOf="@+id/statusLabel"
+            app:layout_constraintVertical_bias="0.7" />
+
+        <TextView
+            android:id="@+id/reviewtv"
+            android:layout_width="wrap_content"
+            android:layout_height="31dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginBottom="8dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginEnd="8dp"
+            android:gravity="center_vertical|center_horizontal"
+            android:text="Review"
+            android:textSize="18sp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/statusLabel" />
+
+        <Button
+            android:id="@+id/confirmBtn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom|center_horizontal"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginEnd="8dp"
+            android:layout_marginBottom="8dp"
+            android:background="@drawable/ripple_green"
+            android:focusable="false"
+            android:padding="16dp"
+            android:text="@string/title_confirm_dialog"
+            android:textColor="@color/colorBodyPrimary"
+            android:visibility="visible"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/statusLabel" />
+
+
+    </android.support.constraint.ConstraintLayout>
+</android.support.design.circularreveal.cardview.CircularRevealCardView>

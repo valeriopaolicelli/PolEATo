@@ -1,12 +1,26 @@
 package com.mad.poleato.Reservation;
 
-public class Dish {
+import java.io.Serializable;
 
-    // REFERENCE TO FOOD CLASS
+
+/**
+ * Class that describes every dish present in a single Reservation
+ */
+public class Dish implements Serializable {
+
     private String name;
     private Integer quantity;
     private String notes;
     private boolean checked;
+    private String id;
+
+    public String getID() {
+        return id;
+    }
+
+    public void setID(String id) {
+        this.id = id;
+    }
 
     public String getName() {
         return name;
@@ -24,11 +38,12 @@ public class Dish {
         return notes;
     }
 
-    public Dish(String name, int quantity, String notes) {
+    public Dish(String name, int quantity, String notes, String foodID) {
         this.name = name;
         this.quantity = quantity;
         this.notes = notes;
         checked= false;
+        this.id= foodID;
     }
 
     public boolean isChecked() {

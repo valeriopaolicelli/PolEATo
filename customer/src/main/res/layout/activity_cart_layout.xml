@@ -3,77 +3,69 @@
     android:layout_width="fill_parent"
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools">
+
     <LinearLayout
         android:id="@+id/layout_total"
-        android:layout_height="wrap_content"
         android:layout_width="match_parent"
+        android:layout_height="wrap_content"
         android:padding="5dp"
         android:weightSum="2">
-        <TextView android:gravity="end"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
+
+        <TextView
             android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="4dp"
+            android:layout_weight="1"
+            android:gravity="end"
             android:text="@string/total"
             android:textColor="@color/colorTextField"
-            android:textSize="20sp">
-        </TextView>
+            android:textSize="20sp" />
 
         <TextView
             android:id="@+id/tv_total"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:layout_width="match_parent"
-            android:textSize="20sp">
-        </TextView>
+            android:textSize="20sp" />
     </LinearLayout>
+
     <LinearLayout
         android:id="@+id/time_layout"
-        android:layout_width="match_parent"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@id/layout_total">
-        <TextView
-            android:id="@+id/date_label"
-            android:layout_weight="1"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="10dp"
-            android:text="@string/date"
-            android:textColor="@color/colorTextField"
-            android:textSize="20sp"/>
+        android:layout_below="@id/layout_total"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentEnd="true"
 
-        <EditText
-            android:id="@+id/input_date"
-            android:layout_weight="1"
-            android:layout_width="100dp"
-            android:layout_height="wrap_content"
-            android:inputType="date"
-            android:imeOptions="actionNext"
-            android:maxLength="10"
-            tools:ignore="Autofill,LabelFor,TextFields"
-            android:textSize="20sp"/>
+        android:layout_marginTop="-1dp"
+        android:layout_marginEnd="14dp">
 
         <TextView
             android:id="@+id/time_label"
-            android:layout_weight="1"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="10dp"
+            android:lines="1"
+            android:layout_weight="1"
             android:text="@string/time"
+            android:textAlignment="textEnd"
             android:textColor="@color/colorTextField"
-            android:textSize="20sp"/>
+            android:textSize="20sp" />
 
         <EditText
             android:id="@+id/input_time"
-            android:layout_weight="1"
-            android:layout_width="80dp"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:inputType="time"
-            android:imeOptions="actionDone"
+            android:layout_marginEnd="10dp"
+            android:layout_weight="1"
+            android:focusable="false"
+            android:hint="@string/time_default"
+            android:inputType="none"
             android:maxLength="6"
-            tools:ignore="Autofill,LabelFor,TextFields"
             android:textSize="20sp"
-            android:layout_marginEnd="10dp"/>
+            tools:ignore="Autofill" />
     </LinearLayout>
+
     <TextView
         android:id="@+id/empty_cart"
         android:layout_width="match_parent"

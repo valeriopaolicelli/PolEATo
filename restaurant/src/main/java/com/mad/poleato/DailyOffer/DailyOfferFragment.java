@@ -2,7 +2,6 @@ package com.mad.poleato.DailyOffer;
 
 import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
-import android.graphics.BitmapFactory;
 import android.graphics.Point;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -17,25 +16,23 @@ import android.widget.ExpandableListView;
 
 import androidx.navigation.Navigation;
 
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.mad.poleato.DailyOffer.ExpandableListManagement.ExpandableListAdapter;
+import com.mad.poleato.NavigatorActivity;
 import com.mad.poleato.R;
 import com.mad.poleato.View.ViewModel.MyViewModel;
+import com.onesignal.OneSignal;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
 
-/*
- * A simple {@link Fragment} subclass.
- * Use the {@link DailyOfferFragment#newInstance} factory method to
- * create an instance of this fragment.
+/**
+ * The fragment to show the restaurant menu
  */
 public class DailyOfferFragment extends Fragment {
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
+
 
     private View fragView;
     private ExpandableListAdapter listAdapter;
@@ -48,47 +45,42 @@ public class DailyOfferFragment extends Fragment {
 
     private MyViewModel model;
 
-    // TODO: Rename and change types of parameters
-    private String mParam1;
-    private String mParam2;
 
+    private String currentUserID;
+    private FirebaseAuth mAuth;
 
     public DailyOfferFragment() {
         // Required empty public constructor
     }
 
-    /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
-     *
-     * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
-     * @return A new instance of fragment DailyOfferFragment.
-     */
-    // TODO: Rename and change types and number of parameters
-    public static DailyOfferFragment newInstance(String param1, String param2) {
-        DailyOfferFragment fragment = new DailyOfferFragment();
-        Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
-        args.putString(ARG_PARAM2, param2);
-        fragment.setArguments(args);
-        return fragment;
+    @Override
+    public void onResume() {
+        super.onResume();
+        if(getActivity()!=null)
+            NavigatorActivity.hideKeyboard(getActivity());
     }
-
-
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
-        }
         /** Calculate position of ExpandableListView indicator. */
         display = getActivity().getWindowManager().getDefaultDisplay();
         size = new Point();
         display.getSize(size);
         width = size.x;
+
+        mAuth = FirebaseAuth.getInstance();
+        FirebaseUser currentUser = mAuth.getCurrentUser();
+        currentUserID = currentUser.getUid();
+
+
+        OneSignal.startInit(getContext())
+                .inFocusDisplaying(OneSignal.OSInFocusDisplayOption.Notification)
+                .unsubscribeWhenNotificationsAreDisabled(true)
+                .init();
+
+        OneSignal.setSubscription(true);
+        OneSignal.sendTag("User_ID", currentUserID);
 
         /** Listeners to update UI Expandable list from VIEW_MODEL list group and child*/
         model = ViewModelProviders.of(getActivity()).get(MyViewModel.class);
@@ -102,20 +94,9 @@ public class DailyOfferFragment extends Fragment {
             @Override
             public void onChanged(@Nullable HashMap<String, List<Food>> stringListHashMap) {
                 listAdapter.setAllChild(stringListHashMap);
-                //upload menu on FireBase
-                uploadMenu();
             }
         });
-
-
     }
-
-    public void uploadMenu(){
-
-
-
-    }
-
 
 
     @Override
@@ -136,9 +117,7 @@ public class DailyOfferFragment extends Fragment {
                  * GO TO ADD_FOOD_FRAGMENT
                  */
                 Navigation.findNavController(v).navigate(R.id.action_daily_offer_to_addFoodFragment);
-                /**
-                 *
-                 */
+
             }
         });
 
@@ -150,7 +129,6 @@ public class DailyOfferFragment extends Fragment {
 
         return fragView;
     }
-
 
 
     @Override
@@ -168,12 +146,10 @@ public class DailyOfferFragment extends Fragment {
             }
         });
 
-        /** PREPARE ELEMENT LIST OF EXPANDABLE LIST (da modificare per avere la lista vuota)*/
-        //model.prepareListData(getContext());
+        //download the menu to display
         model.downloadMenu(getActivity());
 
     }
-
 
 
     private int GetDipsFromPixel(float pixels){
@@ -183,4 +159,15 @@ public class DailyOfferFragment extends Fragment {
         return (int) (pixels * scale + 0.5f);
     }
 
+    @Override
+    public void onStop() {
+        super.onStop();
+       // model.detachListeners();
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+      //  model.detachListeners();
+    }
 }

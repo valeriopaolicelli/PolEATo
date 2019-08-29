@@ -1,11 +1,12 @@
 buildscript {
     repositories {
-        maven { url 'https://plugins.gradle.org/m2/'}
+        maven { url 'https://plugins.gradle.org/m2/' }
     }
     dependencies {
         classpath 'gradle.plugin.com.onesignal:onesignal-gradle-plugin:0.12.1'
     }
 }
+
 apply plugin: 'com.onesignal.androidsdk.onesignal-gradle-plugin'
 
 repositories {
@@ -18,13 +19,13 @@ android {
     compileSdkVersion 28
     defaultConfig {
         applicationId "com.mad.poleato"
-        minSdkVersion 21
+        minSdkVersion 23
         targetSdkVersion 28
         versionCode 1
         versionName "1.0"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
         manifestPlaceholders = [
-                onesignal_app_id: 'a2d0eb0d-4b93-4b96-853e-dcfe6c34778e',
+                onesignal_app_id               : 'a2d0eb0d-4b93-4b96-853e-dcfe6c34778e',
                 // Project number pulled from dashboard, local value is ignored.
                 onesignal_google_project_number: 'REMOTE'
         ]
@@ -49,12 +50,37 @@ dependencies {
     androidTestImplementation 'com.android.support.test:runner:1.0.2'
     androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.2'
     implementation 'com.android.support:cardview-v7:28.0.0'
+
+    /**
+     * push notification
+     */
+    implementation 'com.onesignal:OneSignal:3.10.8'
+
+
+    /**
+     * Firebase
+     */
     implementation 'com.google.firebase:firebase-core:16.0.8'
     implementation 'com.google.firebase:firebase-database:16.1.0'
     implementation 'com.google.firebase:firebase-storage:16.1.0'
+    // Auth
+    implementation 'com.google.firebase:firebase-auth:16.2.1'
+    implementation 'com.firebaseui:firebase-ui-auth:4.3.1'
+    //google auth
+    implementation 'com.google.android.gms:play-services-auth:16.0.1'
+    // Required only if Facebook login support is required
+    // Find the latest Facebook SDK releases here: https://goo.gl/Ce5L94
+    implementation 'com.facebook.android:facebook-android-sdk:5.0.0'
 
-    implementation 'com.onesignal:OneSignal:3.10.8'
+    //GeoFire
+    implementation 'com.h6ah4i.android.widget.verticalseekbar:verticalseekbar:0.7.2'
+    implementation 'com.google.android.gms:play-services-maps:16.0.0'
+    implementation 'com.google.android.gms:play-services-places:16.0.0'
+    implementation 'com.firebase:geofire-android:2.3.1'
 
+    /**
+     * Navigator
+     */
     def nav_version = "1.0.0"
 
     implementation "android.arch.navigation:navigation-fragment:$nav_version"
@@ -64,3 +90,4 @@ dependencies {
 }
 
 apply plugin: 'com.google.gms.google-services'
+apply plugin: 'androidx.navigation.safeargs'

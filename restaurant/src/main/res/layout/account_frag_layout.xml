@@ -1,15 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
-
-
-
-<ScrollView
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/mainScrollView"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="@color/colorBodyPrimary">
+    android:background="@color/colorBodyPrimary"
+    android:layout_marginBottom="?attr/actionBarSize">
 
     <android.support.constraint.ConstraintLayout
         android:id="@+id/accountMainView"
@@ -19,9 +16,10 @@
         <ImageView
             android:id="@+id/ivBackground"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="380dp"
+            android:layout_marginBottom="8dp"
             android:adjustViewBounds="true"
-            app:layout_constraintBottom_toTopOf="@id/name_icon"
+            app:layout_constraintBottom_toTopOf="@+id/name_icon"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toStartOf="parent"
@@ -52,7 +50,6 @@
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:layout_marginStart="16dp"
-            android:layout_marginTop="8dp"
             android:contentDescription="@string/restaurant_name"
             android:padding="4dp"
             android:src="@drawable/restaurant_icon"
@@ -67,7 +64,6 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
-            android:layout_marginTop="8dp"
             android:layout_marginEnd="16dp"
             android:text="@string/restaurant_name"
             android:textColor="@color/colorTextField"
@@ -134,7 +130,6 @@
             app:layout_constraintTop_toBottomOf="@id/typeLabel" />
 
 
-
         <!-- Info -->
         <ImageView
             android:id="@+id/info_icon"
@@ -178,7 +173,6 @@
             app:layout_constraintTop_toBottomOf="@id/infoLabel" />
 
 
-
         <!-- Opening hours -->
         <ImageView
             android:id="@+id/open_icon"
@@ -216,10 +210,54 @@
             android:maxLength="90"
             android:maxLines="7"
             android:textColor="@color/colorTextSubField"
-            app:layout_constraintBottom_toTopOf="@id/addressLabel"
+            app:layout_constraintBottom_toTopOf="@id/closeLabel"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="@id/openLabel"
             app:layout_constraintTop_toBottomOf="@id/openLabel" />
+
+        <!-- Closing Hour -->
+        <ImageView
+            android:id="@+id/close_icon"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="8dp"
+            android:contentDescription="@string/info"
+            android:padding="4dp"
+            android:src="@drawable/open_icon"
+            app:layout_constraintBottom_toTopOf="@id/tvCloseField"
+            app:layout_constraintEnd_toStartOf="@+id/closeLabel"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/tvOpenField" />
+
+        <TextView
+            android:id="@+id/closeLabel"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginEnd="16dp"
+            android:text="@string/close"
+            android:textColor="@color/colorTextField"
+            app:layout_constraintBottom_toTopOf="@id/tvCloseField"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@id/close_icon"
+            app:layout_constraintTop_toBottomOf="@id/tvOpenField" />
+
+        <TextView
+            android:id="@+id/tvCloseField"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="16dp"
+            android:maxLength="90"
+            android:maxLines="7"
+            android:textColor="@color/colorTextSubField"
+            app:layout_constraintBottom_toTopOf="@id/addressLabel"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="@id/closeLabel"
+            app:layout_constraintTop_toBottomOf="@id/closeLabel" />
+
+
 
         <!-- Address -->
         <ImageView
@@ -234,7 +272,7 @@
             app:layout_constraintBottom_toTopOf="@id/tvAddressField"
             app:layout_constraintEnd_toStartOf="@id/addressLabel"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/tvOpenField" />
+            app:layout_constraintTop_toBottomOf="@id/tvCloseField" />
 
         <TextView
             android:id="@+id/addressLabel"
@@ -248,21 +286,20 @@
             app:layout_constraintBottom_toTopOf="@id/tvAddressField"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toEndOf="@id/address_icon"
-            app:layout_constraintTop_toBottomOf="@id/tvOpenField" />
+            app:layout_constraintTop_toBottomOf="@id/tvCloseField" />
 
         <TextView
             android:id="@+id/tvAddressField"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginEnd="16dp"
-            android:maxLength="25"
+            android:maxLength="80"
             android:singleLine="true"
             android:textColor="@color/colorTextSubField"
             app:layout_constraintBottom_toTopOf="@id/emailLabel"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="@id/addressLabel"
             app:layout_constraintTop_toBottomOf="@id/addressLabel" />
-
 
 
         <!-- Email -->
@@ -360,9 +397,9 @@
             android:id="@+id/deliveryCost_icon"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
-            android:contentDescription="@string/phone"
-            android:layout_marginTop="8dp"
             android:layout_marginStart="16dp"
+            android:layout_marginTop="8dp"
+            android:contentDescription="@string/phone"
             android:padding="4dp"
             android:src="@drawable/ic_baseline_directions_bike_24px"
             app:layout_constraintBottom_toTopOf="@id/tvDeliveryCostField"
@@ -374,8 +411,8 @@
             android:id="@+id/deliveryCostLabel"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
             android:layout_marginStart="16dp"
+            android:layout_marginTop="8dp"
             android:layout_marginEnd="16dp"
             android:text="@string/delivery_cost"
             android:textColor="@color/colorTextField"
@@ -405,8 +442,8 @@
             android:id="@+id/status_icon"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
-            android:layout_marginTop="8dp"
             android:layout_marginStart="16dp"
+            android:layout_marginTop="8dp"
             android:contentDescription="@string/phone"
             android:padding="4dp"
             android:src="@drawable/ic_baseline_notification_important_24px"
@@ -419,8 +456,8 @@
             android:id="@+id/statusLabel"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
             android:layout_marginStart="16dp"
+            android:layout_marginTop="8dp"
             android:layout_marginEnd="16dp"
             android:text="@string/current_status"
             android:textColor="@color/colorTextField"
@@ -449,8 +486,8 @@
             android:id="@+id/priceRange_icon"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
-            android:layout_marginTop="8dp"
             android:layout_marginStart="16dp"
+            android:layout_marginTop="8dp"
             android:contentDescription="@string/phone"
             android:padding="4dp"
             android:src="@drawable/ic_baseline_attach_money_24px"
@@ -463,8 +500,8 @@
             android:id="@+id/priceRangeLabel"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
             android:layout_marginStart="16dp"
+            android:layout_marginTop="8dp"
             android:layout_marginEnd="16dp"
             android:text="@string/price_range"
             android:textColor="@color/colorTextField"
@@ -487,7 +524,7 @@
             app:layout_constraintStart_toStartOf="@id/priceRangeLabel"
             app:layout_constraintTop_toBottomOf="@id/priceRangeLabel" />
 
-            <!-- Blank view to avoid that scroll view cuts off the last field -->
-        </android.support.constraint.ConstraintLayout>
+        <!-- Blank view to avoid that scroll view cuts off the last field -->
+    </android.support.constraint.ConstraintLayout>
 
-    </ScrollView>
+</ScrollView>

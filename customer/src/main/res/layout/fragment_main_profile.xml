@@ -1,334 +1,268 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/mainScrollView"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/colorPanelPrimary"
-    android:orientation="vertical"
-    tools:context=".MainProfile">
+    android:layout_marginBottom="?attr/actionBarSize"
+    android:background="@color/colorBodyPrimary"
+    tools:context=".Account.MainProfile">
 
-
-
-
-    <FrameLayout
+    <android.support.constraint.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="wrap_content">
 
-
-        <ScrollView
-            android:id="@+id/mainScrollView"
+        <ImageView
+            android:id="@+id/ivBackground"
+            style="@style/BackGroundImageView"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:background="@color/colorBodyPrimary"
-            tools:layout_editor_absoluteX="0dp"
-            tools:layout_editor_absoluteY="0dp">
+            android:adjustViewBounds="true"
+            app:layout_constraintBottom_toTopOf="@id/nameLabel"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:ignore="ContentDescription" />
+
+        <android.support.design.widget.FloatingActionButton
+            android:id="@+id/buttEdit"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:clickable="true"
+            android:focusable="true"
+            android:src="@drawable/ic_baseline_edit_24px"
+            app:backgroundTint="@color/colorPanelPrimary"
+            app:layout_constraintBottom_toBottomOf="@id/ivBackground"
+            app:layout_constraintEnd_toEndOf="@id/ivBackground"
+            app:layout_constraintHorizontal_bias="0.954"
+            app:layout_constraintStart_toStartOf="@id/ivBackground"
+            app:layout_constraintTop_toTopOf="@id/ivBackground"
+            app:layout_constraintVertical_bias="0.944" />
+
+        <de.hdodenhof.circleimageview.CircleImageView
+            android:id="@+id/profile_image"
+            android:layout_width="170dp"
+            android:layout_height="170dp"
+            android:src="@drawable/image_empty"
+            app:civ_border_color="@color/colorBodyPrimary"
+            app:civ_border_width="2dp"
+            app:layout_constraintBottom_toBottomOf="@id/ivBackground"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:srcCompat="@tools:sample/avatars" />
 
 
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical"
-                app:layout_constraintTop_toTopOf="parent">
+        <!-- Name -->
+
+        <ImageView
+            android:id="@+id/name_icon"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="16dp"
+            android:layout_marginEnd="16dp"
+            android:src="@drawable/name_icon"
+            app:layout_constraintBottom_toBottomOf="@id/nameLabel"
+            app:layout_constraintEnd_toStartOf="@id/nameLabel"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/ivBackground"
+            tools:ignore="contentDescription" />
+
+        <TextView
+            android:id="@+id/nameLabel"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="16dp"
+            android:text="@string/name"
+            android:textColor="@color/colorPanelPrimary"
+            app:layout_constraintBottom_toTopOf="@id/tvNameField"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@id/name_icon"
+            app:layout_constraintTop_toBottomOf="@id/ivBackground"/>
+
+        <TextView
+            android:id="@+id/tvNameField"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="16dp"
+            android:maxLength="40"
+            android:singleLine="true"
+            android:textColor="@color/colorTextSubField"
+            app:layout_constraintBottom_toTopOf="@id/surnameLabel"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="@id/nameLabel"
+            app:layout_constraintTop_toBottomOf="@id/nameLabel" />
+
+        <!-- Surname -->
+
+        <ImageView
+            android:id="@+id/surname_icon"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="16dp"
+            android:layout_marginEnd="16dp"
+            android:contentDescription="@string/name"
+            android:src="@drawable/name_icon"
+            app:layout_constraintBottom_toTopOf="@id/tvSurnameField"
+            app:layout_constraintEnd_toStartOf="@id/surnameLabel"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/tvNameField" />
+
+        <TextView
+            android:id="@+id/surnameLabel"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:layout_marginEnd="16dp"
+            android:text="@string/surname"
+            android:textColor="@color/colorPanelPrimary"
+            app:layout_constraintBottom_toTopOf="@id/tvSurnameField"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@id/surname_icon"
+            app:layout_constraintTop_toBottomOf="@id/tvNameField" />
+
+        <TextView
+            android:id="@+id/tvSurnameField"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="16dp"
+            android:maxLength="40"
+            android:singleLine="true"
+            android:textColor="@color/colorTextSubField"
+            app:layout_constraintBottom_toTopOf="@id/addressLabel"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="@id/surnameLabel"
+            app:layout_constraintTop_toBottomOf="@id/surnameLabel" />
 
 
-                <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:orientation="vertical">
+        <!-- Address -->
+        <ImageView
+            android:id="@+id/address_icon"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="16dp"
+            android:layout_marginEnd="16dp"
+            android:contentDescription="@string/name"
+            app:layout_constraintBottom_toTopOf="@id/tvAddressField"
+            app:layout_constraintEnd_toStartOf="@id/addressLabel"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/tvSurnameField"
+            app:srcCompat="@drawable/address_icon" />
 
-                    <ImageView
-                        style="@style/BackGroundImageView"
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:layout_alignParentTop="true"
-                        android:layout_centerHorizontal="true"
-                        tools:ignore="ContentDescription"
-                        android:adjustViewBounds="true"/>
+        <TextView
+            android:id="@+id/addressLabel"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:layout_marginEnd="16dp"
+            android:text="@string/address"
+            android:textColor="@color/colorPanelPrimary"
+            app:layout_constraintBottom_toTopOf="@id/tvAddressField"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@id/address_icon"
+            app:layout_constraintTop_toBottomOf="@id/tvSurnameField" />
 
-                    <de.hdodenhof.circleimageview.CircleImageView
-                        android:id="@+id/profile_image"
-                        android:layout_width="170dp"
-                        android:layout_height="170dp"
-                        android:layout_gravity="center_vertical|center_horizontal"
-                        android:src="@drawable/image_empty"
-                        app:civ_border_color="@color/colorBodyPrimary"
-                        app:civ_border_width="2dp"
-                        app:layout_constraintBottom_toBottomOf="parent"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintHorizontal_bias="0.497"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toTopOf="parent"
-                        tools:srcCompat="@tools:sample/avatars" />
+        <TextView
+            android:id="@+id/tvAddressField"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="16dp"
+            android:maxLength="80"
+            android:singleLine="true"
+            android:textColor="@color/colorTextSubField"
+            app:layout_constraintBottom_toTopOf="@id/emailLabel"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="@id/addressLabel"
+            app:layout_constraintTop_toBottomOf="@id/addressLabel" />
 
-                </FrameLayout>
+        <!-- Email -->
+        <ImageView
+            android:id="@+id/email_icon"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="16dp"
+            android:layout_marginEnd="16dp"
+            android:contentDescription="@string/email"
+            android:src="@drawable/mail_icon"
+            app:layout_constraintBottom_toTopOf="@id/tvEmailField"
+            app:layout_constraintEnd_toStartOf="@id/emailLabel"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/tvAddressField" />
 
+        <TextView
+            android:id="@+id/emailLabel"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:layout_marginEnd="16dp"
+            android:text="@string/email"
+            android:textColor="@color/colorPanelPrimary"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@id/email_icon"
+            app:layout_constraintTop_toBottomOf="@id/tvAddressField"
+            app:layout_constraintBottom_toTopOf="@id/tvEmailField"/>
 
-                <LinearLayout
-                    android:id="@+id/linearLayout2"
-                    android:layout_width="match_parent"
-                    android:layout_height="0dp"
-                    android:layout_marginBottom="8dp"
-                    android:layout_weight=".7"
-                    android:background="@color/colorBodyPrimary"
-                    android:orientation="vertical"
-                    android:padding="16dp"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/linearLayout">
-
-                    <!-- Name -->
-                    <android.support.constraint.ConstraintLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content">
-
-                        <ImageView
-                            android:id="@+id/name_icon"
-                            android:layout_width="wrap_content"
-                            android:layout_height="match_parent"
-                            android:layout_alignTop="@+id/nameLabel"
-                            android:layout_alignEnd="@+id/nameLabel"
-                            android:layout_alignBottom="@+id/nameLabel"
-                            android:layout_marginTop="8dp"
-                            android:layout_marginEnd="5dp"
-                            android:contentDescription="@string/name"
-                            app:layout_constraintBottom_toBottomOf="@+id/nameLabel"
-                            app:layout_constraintEnd_toStartOf="@id/nameLabel"
-                            app:layout_constraintHorizontal_bias="0.002"
-                            app:layout_constraintStart_toStartOf="parent"
-                            app:layout_constraintTop_toTopOf="parent"
-                            app:srcCompat="@drawable/name_icon" />
-
-                        <TextView
-                            android:id="@+id/nameLabel"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:layout_marginTop="8dp"
-                            android:layout_marginEnd="8dp"
-                            android:layout_marginBottom="8dp"
-                            android:text="@string/name"
-                            android:textColor="@color/colorTextField"
-                            app:layout_constraintBottom_toBottomOf="parent"
-                            app:layout_constraintEnd_toEndOf="parent"
-                            app:layout_constraintStart_toEndOf="@id/name_icon"
-                            app:layout_constraintTop_toTopOf="parent" />
-                    </android.support.constraint.ConstraintLayout>
-
-                    <TextView
-                        android:id="@+id/tvNameField"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginStart="30dp"
-                        android:maxLength="40"
-                        android:singleLine="true"
-                        android:textColor="@color/colorTextSubField" />
-
-                    <Space
-                        android:layout_width="423dp"
-                        android:layout_height="10dp" />
-
-                    <android.support.constraint.ConstraintLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content">
-
-                        <ImageView
-                            android:id="@+id/surname_icon"
-                            android:layout_width="wrap_content"
-                            android:layout_height="match_parent"
-                            android:layout_alignTop="@+id/surnameLabel"
-                            android:layout_alignEnd="@+id/surnameLabel"
-                            android:layout_alignBottom="@+id/surnameLabel"
-                            android:layout_marginTop="8dp"
-                            android:layout_marginEnd="5dp"
-                            android:contentDescription="@string/name"
-                            app:layout_constraintBottom_toBottomOf="@+id/surnameLabel"
-                            app:layout_constraintEnd_toStartOf="@id/surnameLabel"
-                            app:layout_constraintHorizontal_bias="0.002"
-                            app:layout_constraintStart_toStartOf="parent"
-                            app:layout_constraintTop_toTopOf="parent"
-                            app:srcCompat="@drawable/name_icon" />
-
-                        <TextView
-                            android:id="@+id/surnameLabel"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:layout_marginTop="8dp"
-                            android:layout_marginEnd="8dp"
-                            android:layout_marginBottom="8dp"
-                            android:text="@string/surname"
-                            android:textColor="@color/colorTextField"
-                            app:layout_constraintBottom_toBottomOf="parent"
-                            app:layout_constraintEnd_toEndOf="parent"
-                            app:layout_constraintStart_toEndOf="@id/surname_icon"
-                            app:layout_constraintTop_toTopOf="parent" />
-                    </android.support.constraint.ConstraintLayout>
-
-                    <TextView
-                        android:id="@+id/tvSurnameField"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginStart="30dp"
-                        android:maxLength="40"
-                        android:singleLine="true"
-                        android:textColor="@color/colorTextSubField" />
-
-                    <Space
-                        android:layout_width="423dp"
-                        android:layout_height="10dp" />
-
-                    <android.support.constraint.ConstraintLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content">
-
-                        <ImageView
-                            android:id="@+id/address_icon"
-                            android:layout_width="wrap_content"
-                            android:layout_height="match_parent"
-                            android:layout_alignTop="@+id/addressLabel"
-                            android:layout_alignEnd="@+id/addressLabel"
-                            android:layout_alignBottom="@+id/addressLabel"
-                            android:layout_marginTop="8dp"
-                            android:layout_marginEnd="5dp"
-                            android:contentDescription="@string/name"
-                            app:layout_constraintBottom_toBottomOf="@+id/addressLabel"
-                            app:layout_constraintEnd_toStartOf="@id/addressLabel"
-                            app:layout_constraintHorizontal_bias="0.002"
-                            app:layout_constraintStart_toStartOf="parent"
-                            app:layout_constraintTop_toTopOf="parent"
-                            app:srcCompat="@drawable/address_icon" />
-
-                        <TextView
-                            android:id="@+id/addressLabel"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:layout_marginTop="8dp"
-                            android:layout_marginEnd="8dp"
-                            android:layout_marginBottom="8dp"
-                            android:text="@string/address"
-                            android:textColor="@color/colorTextField"
-                            app:layout_constraintBottom_toBottomOf="parent"
-                            app:layout_constraintEnd_toEndOf="parent"
-                            app:layout_constraintStart_toEndOf="@id/address_icon"
-                            app:layout_constraintTop_toTopOf="parent" />
-                    </android.support.constraint.ConstraintLayout>
-
-                    <TextView
-                        android:id="@+id/tvAddressField"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginStart="30dp"
-                        android:maxLength="25"
-                        android:singleLine="true"
-                        android:textColor="@color/colorTextSubField" />
-
-                    <Space
-                        android:layout_width="423dp"
-                        android:layout_height="10dp" />
-
-                    <android.support.constraint.ConstraintLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content">
-
-                        <ImageView
-                            android:id="@+id/email_icon"
-                            android:layout_width="wrap_content"
-                            android:layout_height="match_parent"
-                            android:layout_alignTop="@+id/emailLabel"
-                            android:layout_alignEnd="@+id/emailLabel"
-                            android:layout_alignBottom="@+id/emailLabel"
-                            android:layout_marginTop="8dp"
-                            android:contentDescription="@string/email"
-                            app:layout_constraintBottom_toBottomOf="@+id/emailLabel"
-                            app:layout_constraintEnd_toStartOf="@id/emailLabel"
-                            app:layout_constraintHorizontal_bias="0.002"
-                            app:layout_constraintStart_toStartOf="parent"
-                            app:layout_constraintTop_toTopOf="parent"
-                            app:srcCompat="@drawable/mail_icon" />
-
-                        <TextView
-                            android:id="@+id/emailLabel"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:layout_marginStart="5dp"
-                            android:layout_marginTop="8dp"
-                            android:layout_marginEnd="8dp"
-                            android:layout_marginBottom="8dp"
-                            android:text="@string/email"
-                            android:textColor="@color/colorTextField"
-                            app:layout_constraintBottom_toBottomOf="parent"
-                            app:layout_constraintEnd_toEndOf="parent"
-                            app:layout_constraintStart_toEndOf="@id/email_icon"
-                            app:layout_constraintTop_toTopOf="parent" />
-                    </android.support.constraint.ConstraintLayout>
-
-                    <TextView
-                        android:id="@+id/tvEmailField"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginStart="30dp"
-                        android:maxLength="254"
-                        android:singleLine="true"
-                        android:textColor="@color/colorTextSubField"
-                        android:textIsSelectable="true" />
-                    <!--android:ellipsize="end"-->
+        <TextView
+            android:id="@+id/tvEmailField"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="16dp"
+            android:maxLength="254"
+            android:singleLine="true"
+            android:textColor="@color/colorTextSubField"
+            android:textIsSelectable="true"
+            app:layout_constraintBottom_toTopOf="@id/phoneLabel"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="@id/emailLabel"
+            app:layout_constraintTop_toBottomOf="@id/emailLabel" />
 
 
-                    <Space
-                        android:layout_width="423dp"
-                        android:layout_height="10dp" />
+        <!-- Address -->
+        <ImageView
+            android:id="@+id/phone_icon"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="16dp"
+            android:layout_marginEnd="16dp"
+            android:contentDescription="@string/name"
+            android:src="@drawable/phone_icon"
+            app:layout_constraintBottom_toTopOf="@id/tvPhoneField"
+            app:layout_constraintEnd_toStartOf="@id/phoneLabel"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/tvEmailField" />
 
-                    <android.support.constraint.ConstraintLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content">
+        <TextView
+            android:id="@+id/phoneLabel"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:layout_marginEnd="16dp"
+            android:text="@string/phone"
+            android:textColor="@color/colorPanelPrimary"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@id/phone_icon"
+            app:layout_constraintTop_toBottomOf="@id/tvEmailField"
+            app:layout_constraintBottom_toBottomOf="@id/tvPhoneField"/>
 
-                        <ImageView
-                            android:id="@+id/phone_icon"
-                            android:layout_width="wrap_content"
-                            android:layout_height="match_parent"
-                            android:layout_alignTop="@+id/phoneLabel"
-                            android:layout_alignEnd="@+id/phoneLabel"
-                            android:layout_alignBottom="@+id/phoneLabel"
-                            android:layout_marginTop="8dp"
-                            android:layout_marginEnd="5dp"
-                            android:contentDescription="@string/name"
-                            app:layout_constraintBottom_toBottomOf="@id/phoneLabel"
-                            app:layout_constraintEnd_toStartOf="@id/phoneLabel"
-                            app:layout_constraintHorizontal_bias="0.002"
-                            app:layout_constraintStart_toStartOf="parent"
-                            app:layout_constraintTop_toTopOf="parent"
-                            app:srcCompat="@drawable/phone_icon" />
-
-                        <TextView
-                            android:id="@+id/phoneLabel"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:layout_marginTop="8dp"
-                            android:layout_marginEnd="8dp"
-                            android:layout_marginBottom="8dp"
-                            android:text="@string/phone"
-                            android:textColor="@color/colorTextField"
-                            app:layout_constraintBottom_toBottomOf="parent"
-                            app:layout_constraintEnd_toEndOf="parent"
-                            app:layout_constraintStart_toEndOf="@id/phone_icon"
-                            app:layout_constraintTop_toTopOf="parent" />
-                    </android.support.constraint.ConstraintLayout>
-
-                    <TextView
-                        android:id="@+id/tvPhoneField"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginStart="30dp"
-                        android:maxLength="15"
-                        android:singleLine="true"
-                        android:textColor="@color/colorTextSubField"
-                        android:textIsSelectable="true" />
-                </LinearLayout>
-            </LinearLayout>
-        </ScrollView>
-
-
-
-    </FrameLayout>
-
-</android.support.constraint.ConstraintLayout>
+        <TextView
+            android:id="@+id/tvPhoneField"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="16dp"
+            android:layout_marginBottom="16dp"
+            android:maxLength="15"
+            android:singleLine="true"
+            android:textColor="@color/colorTextSubField"
+            android:textIsSelectable="true"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="@id/phoneLabel"
+            app:layout_constraintTop_toBottomOf="@id/phoneLabel" />
+    </android.support.constraint.ConstraintLayout>
+</ScrollView>
