@@ -14,9 +14,9 @@ The customer application allow to search for the restaurants and place food orde
 
 ![alt text](https://github.com/valeriopaolicelli/PolEATo/blob/master/Screenshots/restaurant_search.jpg)
 
-The restaurant application provide a clean interface for publish the restaurant menu with descriptions and picture of foods. Each restaurant can also choose its type of cuisine in settings by simply tapping one of the voice provided.
+The restaurant application provides a clean interface for publishing the restaurant menu with descriptions and picture of foods. Each restaurant can also choose its type of cuisine in the settings by simply tapping one of the voice provided.
 
-The rider application help the delivery man to deliver the food. It contains a map for indication to the restaurant (for taking the food) or to the customer house.
+The rider application helps the delivery man to deliver the food. It contains a map for indications to the restaurant (for taking the food) or to the customer house.
 
 ![alt text](https://github.com/valeriopaolicelli/PolEATo/blob/master/Screenshots/rider_map.jpg)
 
